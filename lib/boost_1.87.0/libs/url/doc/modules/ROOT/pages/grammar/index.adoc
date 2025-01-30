@@ -1,0 +1,75 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+[#grammar]
+= Customization
+
+For a wide range of applications the library's container interfaces
+are sufficient for URLs using the generic syntax or the well known
+schemes. There are however more complex cases where it is desired
+to go beyond what the library offers:
+
+* Create new custom containers for other schemes
+* Incorporate the parsing of URLs in an enclosing grammar
+* Parse https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_] elements in non-URL contexts
+  (cpp:authority_view[] is an example of this).
+* Define new ABNF rules used to parse non-URL strings
+
+To enable these use-cases, the library provides a suite of general
+facilities for processing low-ASCII character strings, and makes
+public the interface to useful rules found in rfc3986. The design
+goals of these facilities are:
+
+* No use of cpp:std::locale[] or cpp:std::char_traits[]
+* No exotic character types, just low-ASCII cpp:char[]
+* No memory allocation (or bounded allocation)
+* Flexible composition with non-terminal rules
+* Optimized for the grammars commonly found in RFCs
+* Easily extended by downstream consumers
+
+The general facilities are nested in the fully qualified namespace
+cpp:boost::urls::grammar[], while the headers for rfc3986-specific parsing
+algorithms are located in the cpp:<boost/url/rfc/>[] include directory.
+This section explains the design and use of the general facilities
+to define and parse new grammars.
+
+== Syntax Notation
+
+The documentation and reference for this library use the
+Augmented Backus-Naur Form
+(https://datatracker.ietf.org/doc/html/rfc2234[ABNF,window=blank_])
+notation throughout to specify grammar rules. An
+understanding of this notation is necessary to achieve
+best results for learning how to use the custom parsing
+features.
+
+[NOTE]
+====
+Code samples and identifiers in this customization
+section are written as if the following declarations
+are in effect:
+
+[source,cpp]
+----
+#include <boost/url/grammar.hpp>
+
+using namespace ::boost::urls::grammar;
+----
+
+====
+
+
+
+
+
+
+
+
+

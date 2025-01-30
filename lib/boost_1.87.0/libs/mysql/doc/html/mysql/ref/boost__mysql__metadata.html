@@ -1,0 +1,359 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>metadata</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__make_tuple_element_t.html" title="make_tuple_element_t">
+<link rel="next" href="boost__mysql__metadata/metadata.html" title="metadata::metadata">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__make_tuple_element_t.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__metadata/metadata.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__metadata"></a><a class="link" href="boost__mysql__metadata.html" title="metadata">metadata</a>
+</h4></div></div></div>
+<p>
+        Metadata about a column in a SQL query.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__metadata.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__metadata.synopsis"></a></span><a class="link" href="boost__mysql__metadata.html#mysql.ref.boost__mysql__metadata.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/metadata.hpp" target="_top">boost/mysql/metadata.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">metadata</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__metadata.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__metadata.member_functions"></a></span><a class="link" href="boost__mysql__metadata.html#mysql.ref.boost__mysql__metadata.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/column_collation.html" title="metadata::column_collation">column_collation</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the ID of the collation that fields belonging to this column
+                  use.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/column_length.html" title="metadata::column_length">column_length</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the maximum length of the column.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/column_name.html" title="metadata::column_name">column_name</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the actual name of the column.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/database.html" title="metadata::database">database</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the name of the database (schema) the column belongs to.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/decimals.html" title="metadata::decimals">decimals</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the number of decimals of the column.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/has_no_default_value.html" title="metadata::has_no_default_value">has_no_default_value</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column does not have a default value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_auto_increment.html" title="metadata::is_auto_increment">is_auto_increment</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is defined as <code class="computeroutput"><span class="identifier">AUTO_INCREMENT</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_multiple_key.html" title="metadata::is_multiple_key">is_multiple_key</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is part of a <code class="computeroutput"><span class="identifier">KEY</span></code>
+                  (but not a <code class="computeroutput"><span class="identifier">UNIQUE</span> <span class="identifier">KEY</span></code> or <code class="computeroutput"><span class="identifier">PRIMARY</span>
+                  <span class="identifier">KEY</span></code>).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_not_null.html" title="metadata::is_not_null">is_not_null</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is not allowed to be NULL, <code class="computeroutput"><span class="keyword">false</span></code>
+                  if it is nullable.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_primary_key.html" title="metadata::is_primary_key">is_primary_key</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is part of a <code class="computeroutput"><span class="identifier">PRIMARY</span>
+                  <span class="identifier">KEY</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_set_to_now_on_update.html" title="metadata::is_set_to_now_on_update">is_set_to_now_on_update</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is defined as <code class="computeroutput"><span class="identifier">ON</span>
+                  <span class="identifier">UPDATE</span> <span class="identifier">CURRENT_TIMESTAMP</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_unique_key.html" title="metadata::is_unique_key">is_unique_key</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is part of a <code class="computeroutput"><span class="identifier">UNIQUE</span>
+                  <span class="identifier">KEY</span></code> (but not a <code class="computeroutput"><span class="identifier">PRIMARY</span> <span class="identifier">KEY</span></code>).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_unsigned.html" title="metadata::is_unsigned">is_unsigned</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column has no sign (is <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/is_zerofill.html" title="metadata::is_zerofill">is_zerofill</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns <code class="computeroutput"><span class="keyword">true</span></code> if the
+                  column is defined as <code class="computeroutput"><span class="identifier">ZEROFILL</span></code>
+                  (padded to its maximum length by zeros).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/metadata.html" title="metadata::metadata">metadata</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Default constructor. <br><span class="silver">—</span><br>Move
+                  constructor. <br><span class="silver">—</span><br>Copy constructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/operator_eq_.html" title="metadata::operator=">operator=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Move assignment. <br><span class="silver">—</span><br>Copy assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/original_column_name.html" title="metadata::original_column_name">original_column_name</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the original (physical) name of the column.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/original_table.html" title="metadata::original_table">original_table</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the name of the physical table the column belongs to.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/table.html" title="metadata::table">table</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the name of the virtual table the column belongs to.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/type.html" title="metadata::type">type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the type of the column (see <a class="link" href="boost__mysql__column_type.html" title="column_type"><code class="computeroutput"><span class="identifier">column_type</span></code></a> for more info).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__metadata/_dtor_metadata.html" title="metadata::~metadata">~metadata</a> <span class="silver">[destructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destructor.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__metadata.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__metadata.description"></a></span><a class="link" href="boost__mysql__metadata.html#mysql.ref.boost__mysql__metadata.description">Description</a>
+      </h5>
+<p>
+        This is a regular, value type. Instances of this class are not created by
+        the user directly, but by the library.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__make_tuple_element_t.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__metadata/metadata.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SSL/TLS Shutdown</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Beast">
+<link rel="up" href="../using_io.html" title="Networking">
+<link rel="prev" href="writing_composed_operations/detect_ssl.html" title="Detect SSL 💡">
+<link rel="next" href="../config.html" title="Configuration">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="writing_composed_operations/detect_ssl.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../using_io.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../config.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="beast.using_io.ssl_tls_shutdown"></a><a class="link" href="ssl_tls_shutdown.html" title="SSL/TLS Shutdown">SSL/TLS Shutdown</a>
+</h3></div></div></div>
+<p>
+        A secure SSL/TLS connection requires a proper shutdown process to securely
+        indicate the <a href="https://en.wikipedia.org/wiki/End-of-file" target="_top"><span class="emphasis"><em>EOF</em></span></a>
+        condition. This process prevents a type of attack known as a <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security#Truncation_attack" target="_top"><span class="emphasis"><em>truncation
+        attack</em></span></a> in which an attacker can close the underlying transport
+        layer and control the length of the last message in the SSL/TLS connection.
+        A shutdown process consists of exchanging <code class="computeroutput"><span class="identifier">close_notify</span></code>
+        message between two parties. In <a href="../../../../../../libs/asio/index.html" target="_top">Boost.Asio</a>
+        these steps happen by calling <code class="computeroutput"><span class="identifier">shutdown</span><span class="special">()</span></code> or <code class="computeroutput"><span class="identifier">async_shutdown</span><span class="special">()</span></code> on <code class="computeroutput"><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">stream</span></code>
+        object.
+      </p>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="beast.using_io.ssl_tls_shutdown.error_stream_truncated"></a><a class="link" href="ssl_tls_shutdown.html#beast.using_io.ssl_tls_shutdown.error_stream_truncated" title="error::stream_truncated">error::stream_truncated</a>
+</h4></div></div></div>
+<p>
+          There are SSL/TLS implementations that don't perform a proper shutdown
+          process and simply close the underlying transport layer instead. As a result,
+          the EOF condition in these applications is not cryptographically secure
+          and should not be relied upon. However, there are scenarios where an HTTPS
+          client or server doesn't need EOF for determining the end of the last message:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              The HTTP message has a <code class="computeroutput"><span class="identifier">Content</span><span class="special">-</span><span class="identifier">Length</span></code>
+              header, and the body is fully received (a known body length).
+            </li>
+<li class="listitem">
+              The HTTP message uses chunked transfer encoding, and the final chunk
+              is received.
+            </li>
+<li class="listitem">
+              The HTTP message doesn't contain a body, such as any response with
+              a 1xx (Informational), 204 (No Content), or 304 (Not Modified) status
+              code.
+            </li>
+</ul></div>
+<p>
+          In such scenarios, <code class="computeroutput"><span class="identifier">http</span><span class="special">::</span><span class="identifier">read</span></code>
+          or <code class="computeroutput"><span class="identifier">http</span><span class="special">::</span><span class="identifier">async_read</span></code> operations succeed as they
+          don't need EOF to complete. However, the next operation on the stream would
+          fail with an <a href="../../../../../../doc/html/boost_asio/reference/ssl__error__stream_errors.html" target="_top"><code class="computeroutput"><span class="identifier">net</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">error</span><span class="special">::</span><span class="identifier">stream_truncated</span></code></a> error.
+        </p>
+<p>
+          For example, let's assume we are using Beast for communicating with an
+          HTTPS server that doesn't perform a proper SSL/TLS shutdown:
+        </p>
+<pre class="programlisting"><span class="comment">// Receive the HTTP response</span>
+<span class="identifier">http</span><span class="special">::</span><span class="identifier">read</span><span class="special">(</span><span class="identifier">stream</span><span class="special">,</span> <span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">res</span><span class="special">);</span>
+
+<span class="comment">// Gracefully shutdown the SSL/TLS connection</span>
+<span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+<span class="identifier">stream</span><span class="special">.</span><span class="identifier">shutdown</span><span class="special">(</span><span class="identifier">ec</span><span class="special">);</span>
+<span class="comment">// Non-compliant servers don't participate in the SSL/TLS shutdown process and</span>
+<span class="comment">// close the underlying transport layer. This causes the shutdown operation to</span>
+<span class="comment">// complete with a `stream_truncated` error. One might decide not to log such</span>
+<span class="comment">// errors as there are many non-compliant servers in the wild.</span>
+<span class="keyword">if</span><span class="special">(</span><span class="identifier">ec</span> <span class="special">!=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">error</span><span class="special">::</span><span class="identifier">stream_truncated</span><span class="special">)</span>
+    <span class="identifier">log</span><span class="special">(</span><span class="identifier">ec</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="beast.using_io.ssl_tls_shutdown.error_stream_truncated.h0"></a>
+          <span class="phrase"><a name="beast.using_io.ssl_tls_shutdown.error_stream_truncated.non_compliant_peers_and_unknown_"></a></span><a class="link" href="ssl_tls_shutdown.html#beast.using_io.ssl_tls_shutdown.error_stream_truncated.non_compliant_peers_and_unknown_">Non-Compliant
+          Peers and Unknown Body Length</a>
+        </h6>
+<p>
+          This is a rare case and indeed a security issue when HTTPS servers don't
+          perform a proper SSL/TLS shutdown procedure and send an HTTP response message
+          that relies on EOF to determine the end of the body. This is a security
+          concern because without an SSL/TLS shutdown procedure, the EOF is not cryptographically
+          secure, leaving the message body vulnerable to truncation attacks.
+        </p>
+<p>
+          The following is an example that can read an HTTP response from such a
+          server:
+        </p>
+<pre class="programlisting"><span class="comment">// Use an HTTP response parser to have more control</span>
+<span class="identifier">http</span><span class="special">::</span><span class="identifier">response_parser</span><span class="special">&lt;</span><span class="identifier">http</span><span class="special">::</span><span class="identifier">dynamic_body</span><span class="special">&gt;</span> <span class="identifier">parser</span><span class="special">;</span>
+
+<span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">;</span>
+<span class="comment">// Receive the HTTP response until the end or until an error occurs</span>
+<span class="identifier">http</span><span class="special">::</span><span class="identifier">read</span><span class="special">(</span><span class="identifier">stream</span><span class="special">,</span> <span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">parser</span><span class="special">,</span> <span class="identifier">ec</span><span class="special">);</span>
+
+<span class="comment">// Try to manually commit the EOF, the resulting message body would be</span>
+<span class="comment">// vulnerable to truncation attacks.</span>
+<span class="keyword">if</span><span class="special">(</span><span class="identifier">parser</span><span class="special">.</span><span class="identifier">need_eof</span><span class="special">()</span> <span class="special">&amp;&amp;</span> <span class="identifier">ec</span> <span class="special">==</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">error</span><span class="special">::</span><span class="identifier">stream_truncated</span><span class="special">)</span>
+    <span class="identifier">parser</span><span class="special">.</span><span class="identifier">put_eof</span><span class="special">(</span><span class="identifier">ec</span><span class="special">);</span> <span class="comment">// Override the error_code</span>
+
+<span class="keyword">if</span><span class="special">(</span><span class="identifier">ec</span><span class="special">)</span>
+    <span class="keyword">throw</span> <span class="identifier">system_error</span><span class="special">{</span><span class="identifier">ec</span><span class="special">};</span>
+
+<span class="comment">// Access the HTTP response inside the parser</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">parser</span><span class="special">.</span><span class="identifier">get</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+
+
+<span class="comment">// Gracefully shutdown the SSL/TLS connection</span>
+<span class="identifier">stream</span><span class="special">.</span><span class="identifier">shutdown</span><span class="special">(</span><span class="identifier">ec</span><span class="special">);</span> <span class="comment">// Override the error_code</span>
+<span class="comment">// Non-compliant servers don't participate in the SSL/TLS shutdown process and</span>
+<span class="comment">// close the underlying transport layer. This causes the shutdown operation to</span>
+<span class="comment">// complete with a `stream_truncated` error. One might decide not to log such</span>
+<span class="comment">// errors as there are many non-compliant servers in the wild.</span>
+<span class="keyword">if</span><span class="special">(</span><span class="identifier">ec</span> <span class="special">!=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">ssl</span><span class="special">::</span><span class="identifier">error</span><span class="special">::</span><span class="identifier">stream_truncated</span><span class="special">)</span>
+    <span class="identifier">log</span><span class="special">(</span><span class="identifier">ec</span><span class="special">);</span>
+</pre>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Vinnie
+      Falco<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="writing_composed_operations/detect_ssl.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../using_io.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../config.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

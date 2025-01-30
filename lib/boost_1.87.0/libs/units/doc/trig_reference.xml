@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="trigonometry_and_angle_system_reference"><title>Trigonometry and Angle System Reference</title><header id="doxygen.trigonometry_and_angle_system_reference.degrees_8hpp" name="boost/units/systems/angle/degrees.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="degree">
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1degree_1a0d8654751e82fb1d7e152b3a74a0323a" name="system"><type>make_system&lt; boost::units::angle::degree_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1degree_1ac5e1a047773a317be1a131888d6f8d98" name="dimensionless"><type>unit&lt; dimensionless_type, system &gt;</type></typedef>
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1degree_1a67acd2d742a221654baf93eba888c45c" name="plane_angle"><purpose>angle degree unit constant </purpose><type>unit&lt; plane_angle_dimension, system &gt;</type></typedef>
+<data-member id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1degree_1a42088ada749ecf463b1c3b4204067654" name="degree" specifiers="static"><type>const plane_angle</type></data-member>
+<data-member id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1degree_1add8625a90f1474a86201ee3e85f17cd9" name="degrees" specifiers="static"><type>const plane_angle</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.trigonometry_and_angle_system_reference.gradians_8hpp" name="boost/units/systems/angle/gradians.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="gradian">
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1gradian_1ac38683504e6d37278866b1896ee75287" name="system"><type>make_system&lt; boost::units::angle::gradian_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1gradian_1ad27fd936f6681088910ab11ecf214c56" name="dimensionless"><type>unit&lt; dimensionless_type, system &gt;</type></typedef>
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1gradian_1a4ec2ab1d72d4eaebb21a1e4e9af79806" name="plane_angle"><purpose>angle gradian unit constant </purpose><type>unit&lt; plane_angle_dimension, system &gt;</type></typedef>
+<data-member id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1gradian_1aa158c460a0c878620bf2eeb185063b1e" name="gradian" specifiers="static"><type>const plane_angle</type></data-member>
+<data-member id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1gradian_1a9a92700345bff4f647e15e199c19287c" name="gradians" specifiers="static"><type>const plane_angle</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.trigonometry_and_angle_system_reference.revolutions_8hpp" name="boost/units/systems/angle/revolutions.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="revolution">
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1revolution_1ac3e734288b1e0675c18984c9ae073597" name="system"><type>make_system&lt; boost::units::angle::revolution_base_unit &gt;::type</type></typedef>
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1revolution_1ac557bda6f73512f8d36b9e7186669bd7" name="dimensionless"><type>unit&lt; dimensionless_type, system &gt;</type></typedef>
+<typedef id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1revolution_1a1d5a2be0400938b37efbb44f6e7acfef" name="plane_angle"><purpose>angle revolution unit constant </purpose><type>unit&lt; plane_angle_dimension, system &gt;</type></typedef>
+<data-member id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1revolution_1a5def9c4bc461bd80112ea616eecec987" name="revolution" specifiers="static"><type>const plane_angle</type></data-member>
+<data-member id="doxygen.trigonometry_and_angle_system_reference.namespaceboost_1_1units_1_1revolution_1aa98d650c03ed11cb17011b693f1f0370" name="revolutions" specifiers="static"><type>const plane_angle</type></data-member>
+</namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

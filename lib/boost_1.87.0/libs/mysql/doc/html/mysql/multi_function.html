@@ -1,0 +1,571 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Multi-function operations</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="multi_resultset.html" title="Multi-resultset: stored procedures and multi-queries">
+<link rel="next" href="connection_pool.html" title="Connection pools">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="multi_resultset.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="connection_pool.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.multi_function"></a><a class="link" href="multi_function.html" title="Multi-function operations">Multi-function operations</a>
+</h2></div></div></div>
+<p>
+      Multi-function operations allow running operations as a set of separate steps,
+      which gives you better control over execution. They work by splitting some
+      of the reads and writes into several function calls.
+    </p>
+<p>
+      You can use multi-function operations to execute text queries and prepared
+      statements, and through the dynamic or the static interface.
+    </p>
+<h4>
+<a name="mysql.multi_function.h0"></a>
+      <span class="phrase"><a name="mysql.multi_function.protocol_primer"></a></span><a class="link" href="multi_function.html#mysql.multi_function.protocol_primer">Protocol
+      primer</a>
+    </h4>
+<p>
+      To make a good use of multi-function operations, you should have a basic understanding
+      of the underlying protocol.
+    </p>
+<p>
+      The protocol uses <span class="emphasis"><em>messages</em></span> to communicate. These are delimited
+      by headers containing the message length. All operations are initiated by the
+      client, by sending a single <span class="emphasis"><em>request message</em></span>, to which
+      the server responds with a set of <span class="emphasis"><em>response messages</em></span>.
+    </p>
+<p>
+      The diagram below shows the message exchange between client and server for
+      text queries and statement executions. Each arrow represents a message.
+    </p>
+<p>
+      <span class="inlinemediaobject"><object type="image/svg+xml" data="images/protocol.svg" align="middle"></object></span>
+    </p>
+<p>
+      There are two separate cases:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          If your query retrieved at least one column (even if no rows were generated),
+          we're in <span class="emphasis"><em>case 1</em></span>. The server sends:
+          <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                An initial packet informing that the query executed correctly, and
+                that we're in <span class="emphasis"><em>case 1</em></span>.
+              </li>
+<li class="listitem">
+                Some matadata packets describing the columns that the query retrieved.
+                These become available to the user and are necessary to parse the
+                rows.
+              </li>
+<li class="listitem">
+                The actual rows.
+              </li>
+<li class="listitem">
+                An OK packet, which marks the end of the resultset and contains information
+                like <code class="computeroutput"><span class="identifier">last_insert_id</span></code>
+                and <code class="computeroutput"><span class="identifier">affected_rows</span></code>.
+              </li>
+</ul></div>
+        </li>
+<li class="listitem">
+          If your query didn't retrieve any column, we're in <span class="emphasis"><em>case 2</em></span>.
+          The server will just send an OK packet, with the same information as in
+          <span class="emphasis"><em>case 1</em></span>.
+        </li>
+</ul></div>
+<p>
+      <a class="link" href="ref/boost__mysql__connection/execute.html" title="connection::execute"><code class="literal">connection::execute</code></a>
+      handles the full message exchange. In contrast, <a class="link" href="ref/boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="literal">connection::start_execution</code></a>
+      will not read the rows, if any.
+    </p>
+<p>
+      Some takeaways:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          The distinction between single-function and multi-function operations exists
+          only in the client. The wire messages exchanged by both are the same.
+        </li>
+<li class="listitem">
+          There is no way to tell how many rows a resultset has upfront. You need
+          to read row by row until you find the OK packet marking the end of the
+          resultset.
+        </li>
+<li class="listitem">
+          When the server processes the request message, <span class="bold"><strong>it
+          sends all the response messages immediately</strong></span>. These responses
+          will be waiting in the client to be read. If you don't read <span class="bold"><strong>all</strong></span>
+          of them, subsequent operations will mistakenly read them as their response,
+          causing packet mismatches. Be careful and don't let this happen!
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.multi_function.h1"></a>
+      <span class="phrase"><a name="mysql.multi_function.using_multi_function_operations_"></a></span><a class="link" href="multi_function.html#mysql.multi_function.using_multi_function_operations_">Using
+      multi-function operations through the dynamic interface</a>
+    </h4>
+<p>
+      <a class="link" href="ref/boost__mysql__execution_state.html" title="execution_state"><code class="literal">execution_state</code></a>
+      is the main class for the dynamic interface in multi-function operations. An
+      execution state holds information required to progress the execution operation,
+      like metadata (required to parse the rows) and protocol state. Contrary to
+      <code class="computeroutput"><span class="identifier">results</span></code>, it doesn't contain
+      the rows.
+    </p>
+<p>
+      Given the following table definition:
+    </p>
+<pre class="programlisting"><span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">table_definition</span> <span class="special">=</span> <span class="identifier">R</span><span class="string">"%(
+    CREATE TEMPORARY TABLE posts (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR (256) NOT NULL,
+        body TEXT NOT NULL
+    )
+)%"</span><span class="special">;</span>
+</pre>
+<p>
+      You can start a multi-function operation using <a class="link" href="ref/boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="literal">connection::start_execution</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// st will hold information about the operation being executed.</span>
+<span class="comment">// It must be passed to any successive operations for this execution</span>
+<span class="identifier">execution_state</span> <span class="identifier">st</span><span class="special">;</span>
+
+<span class="comment">// Sends the query and reads response and meta, but not the rows</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">start_execution</span><span class="special">(</span><span class="string">"SELECT title, body FROM posts"</span><span class="special">,</span> <span class="identifier">st</span><span class="special">);</span>
+</pre>
+<p>
+      We now <span class="bold"><strong>must</strong></span> read all the generated rows by
+      calling <a class="link" href="ref/boost__mysql__connection/read_some_rows.html" title="connection::read_some_rows"><code class="literal">connection::read_some_rows</code></a>,
+      which will return a batch of an unspecified size:
+    </p>
+<pre class="programlisting"><span class="comment">// st.complete() returns true once the OK packet is received</span>
+<span class="keyword">while</span> <span class="special">(!</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">complete</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="comment">// row_batch will be valid until conn performs the next network operation</span>
+    <span class="identifier">rows_view</span> <span class="identifier">row_batch</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">row_view</span> <span class="identifier">post</span> <span class="special">:</span> <span class="identifier">row_batch</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="comment">// Process post as required</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Title:"</span> <span class="special">&lt;&lt;</span> <span class="identifier">post</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Some remarks:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          If there are rows to be read, <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+          will return at least one, but may return more.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__execution_state/complete.html" title="execution_state::complete"><code class="literal">execution_state::complete</code></a>
+          returns <code class="computeroutput"><span class="keyword">true</span></code> after we've read
+          the final OK packet for this operation.
+        </li>
+<li class="listitem">
+          The final <code class="computeroutput"><span class="identifier">row_batch</span></code> may
+          or may not be empty, depending on the number of rows and their size.
+        </li>
+<li class="listitem">
+          Calling <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+          after reading the final OK packet returns an empty batch.
+        </li>
+</ul></div>
+<p>
+      <code class="computeroutput"><span class="identifier">read_some_rows</span></code> returns a <a class="link" href="ref/boost__mysql__rows_view.html" title="rows_view"><code class="literal">rows_view</code></a>
+      object pointing into the connection's internal buffer. This view is valid until
+      the connection performs any other operation involving a network transfer.
+    </p>
+<p>
+      Note that there is no need to distinguish between <span class="emphasis"><em>case 1</em></span>
+      and <span class="emphasis"><em>case 2</em></span> in the diagram above in our code, as reading
+      rows for a complete operation is well defined.
+    </p>
+<h4>
+<a name="mysql.multi_function.h2"></a>
+      <span class="phrase"><a name="mysql.multi_function.using_multi_function_operations0"></a></span><a class="link" href="multi_function.html#mysql.multi_function.using_multi_function_operations0">Using
+      multi-function operations through the static interface</a>
+    </h4>
+<p>
+      The mechanics are similar to what's been exposed above. The static interface
+      uses <a class="link" href="ref/boost__mysql__static_execution_state.html" title="static_execution_state"><code class="literal">static_execution_state</code></a>
+      to carry state. As with <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>,
+      we must define and pass a type describing our rows:
+    </p>
+<pre class="programlisting"><span class="comment">// We can use a plain struct with ints and strings to describe our rows.</span>
+<span class="comment">// This must be placed at the namespace level</span>
+<span class="keyword">struct</span> <span class="identifier">post</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">body</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="comment">// We use BOOST_DESCRIBE_STRUCT to add reflection capabilities to post.</span>
+<span class="comment">// We must list all the fields that should be populated by Boost.MySQL</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">post</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">title</span><span class="special">,</span> <span class="identifier">body</span><span class="special">))</span>
+</pre>
+<p>
+      We can now start our operation using the same <a class="link" href="ref/boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="literal">connection::start_execution</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// st will hold information about the operation being executed.</span>
+<span class="comment">// It must be passed to any successive operations for this execution</span>
+<span class="identifier">static_execution_state</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;</span> <span class="identifier">st</span><span class="special">;</span>
+
+<span class="comment">// Sends the query and reads response and meta, but not the rows.</span>
+<span class="comment">// If there is any schema mismatch between the declared row type and</span>
+<span class="comment">// what the server returned, start_execution will detect it and fail</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">start_execution</span><span class="special">(</span><span class="string">"SELECT id, title, body FROM posts"</span><span class="special">,</span> <span class="identifier">st</span><span class="special">);</span>
+</pre>
+<p>
+      We now <span class="bold"><strong>must</strong></span> read all the generated rows by
+      calling <a class="link" href="ref/boost__mysql__connection/read_some_rows.html" title="connection::read_some_rows"><code class="literal">connection::read_some_rows</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// storage will be filled with the read rows. You can use any other contiguous range.</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">,</span> <span class="number">20</span><span class="special">&gt;</span> <span class="identifier">posts</span><span class="special">;</span>
+
+<span class="comment">// st.complete() returns true once the OK packet is received</span>
+<span class="keyword">while</span> <span class="special">(!</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">complete</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">read_rows</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;(</span><span class="identifier">posts</span><span class="special">));</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">post</span><span class="special">&amp;</span> <span class="identifier">p</span> <span class="special">:</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;(</span><span class="identifier">posts</span><span class="special">.</span><span class="identifier">data</span><span class="special">(),</span> <span class="identifier">read_rows</span><span class="special">))</span>
+    <span class="special">{</span>
+        <span class="comment">// Process post as required</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Title "</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">title</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Some remarks:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__static_execution_state.html" title="static_execution_state"><code class="literal">static_execution_state</code></a>
+          doesn't store rows anyhow. It uses the row types passed as template parameters
+          to validate the metadata returned by the server, and ensure it is compatible
+          with the C++ data structures that will be used with <code class="computeroutput"><span class="identifier">read_some_rows</span></code>.
+        </li>
+<li class="listitem">
+          We must pass <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+          a <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span></code> of the appropriate row type. We've
+          used <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span></code> to place rows on the stack, but
+          you can use any other contiguous range.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">read_some_rows</span></code> returns
+          the number of read rows. At maximum, this will be the size of the span,
+          but there may be less, depending on row and network buffer sizes.
+        </li>
+<li class="listitem">
+          If there are rows to be read, <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+          will return at least one, but may return more.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__execution_state/complete.html" title="execution_state::complete"><code class="literal">execution_state::complete</code></a>
+          returns <code class="computeroutput"><span class="keyword">true</span></code> after we've read
+          the final OK packet for this operation.
+        </li>
+<li class="listitem">
+          The final read may or may not return rows, depending on the number of rows
+          and their size.
+        </li>
+<li class="listitem">
+          Calling <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+          after reading the final OK packet always reads zero rows.
+        </li>
+</ul></div>
+<h4>
+<a name="mysql.multi_function.h3"></a>
+      <span class="phrase"><a name="mysql.multi_function.accessing_metadata_and_ok_packet"></a></span><a class="link" href="multi_function.html#mysql.multi_function.accessing_metadata_and_ok_packet">Accessing
+      metadata and OK packet data</a>
+    </h4>
+<p>
+      You can access metadata at any point, using <a class="link" href="ref/boost__mysql__execution_state/meta.html" title="execution_state::meta"><code class="literal">execution_state::meta</code></a>
+      or <a class="link" href="ref/boost__mysql__static_execution_state/meta.html" title="static_execution_state::meta"><code class="literal">static_execution_state::meta</code></a>.
+      This function returns a collection of <a class="link" href="ref/boost__mysql__metadata.html" title="metadata"><code class="literal">metadata</code></a>
+      objects. For more information, plase refer to <a class="link" href="meta.html" title="Metadata">this
+      section</a>.
+    </p>
+<p>
+      You can access OK packet data using functions like <a class="link" href="ref/boost__mysql__execution_state/last_insert_id.html" title="execution_state::last_insert_id"><code class="literal">last_insert_id</code></a>
+      and <a class="link" href="ref/boost__mysql__execution_state/affected_rows.html" title="execution_state::affected_rows"><code class="literal">affected_rows</code></a>
+      in both <code class="computeroutput"><span class="identifier">execution_state</span></code> and
+      <code class="computeroutput"><span class="identifier">static_execution_state</span></code>. As
+      this information is contained in the OK packet, <span class="bold"><strong>it can
+      only be accessed once the <a class="link" href="ref/boost__mysql__execution_state/complete.html" title="execution_state::complete"><code class="literal">complete</code></a>
+      function returns <code class="computeroutput"><span class="keyword">true</span></code></strong></span>.
+    </p>
+<h4>
+<a name="mysql.multi_function.h4"></a>
+      <span class="phrase"><a name="mysql.multi_function.using_multi_function_operations1"></a></span><a class="link" href="multi_function.html#mysql.multi_function.using_multi_function_operations1">Using
+      multi-function operations with stored procedures and multi-queries</a>
+    </h4>
+<p>
+      When using operations that return more than one resultset (e.g. when calling
+      stored procedures), the protocol is slightly more complex:
+    </p>
+<p>
+      <span class="inlinemediaobject"><object type="image/svg+xml" data="images/protocol_multi_resultset.svg" align="middle"></object></span>
+    </p>
+<p>
+      The message exchange is as follows:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          A single execution request is sent to the server.
+        </li>
+<li class="listitem">
+          The server sends a first resultset, as in the single resultset case. The
+          OK packet contains a flag indicating that another resultset follows.
+        </li>
+<li class="listitem">
+          Another resultset is sent, with the same structure as the previous one.
+          The process is repeated until an OK packet indicates that no more resultsets
+          follow.
+        </li>
+</ul></div>
+<p>
+      For example, given the following stored procedure:
+    </p>
+<pre class="programlisting">CREATE PROCEDURE get_company(IN pin_company_id CHAR(10))
+BEGIN
+    START TRANSACTION READ ONLY;
+    SELECT id, name, tax_id FROM company WHERE id = pin_company_id;
+    SELECT first_name, last_name, salary FROM employee WHERE company_id = pin_company_id;
+    COMMIT;
+END
+</pre>
+<p>
+      We can write:
+    </p>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Dynamic interface
+              </p>
+            </th>
+<th>
+              <p>
+                Static interface
+              </p>
+            </th>
+</tr></thead>
+<tbody><tr>
+<td>
+<pre class="table-programlisting"><span class="comment">// Get the company ID to retrieve, possibly from the user</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">company_id</span> <span class="special">=</span> <span class="identifier">get_company_id</span><span class="special">();</span>
+
+<span class="comment">// Call the procedure</span>
+<span class="identifier">execution_state</span> <span class="identifier">st</span><span class="special">;</span>
+<span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"CALL get_employees(?)"</span><span class="special">);</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">start_execution</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">company_id</span><span class="special">),</span> <span class="identifier">st</span><span class="special">);</span>
+
+<span class="comment">// The above code will generate 3 resultsets</span>
+<span class="comment">// Read the 1st one, which contains the matched companies</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">should_read_rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">rows_view</span> <span class="identifier">company_batch</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+
+    <span class="comment">// Use the retrieved companies as required</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">row_view</span> <span class="identifier">company</span> <span class="special">:</span> <span class="identifier">company_batch</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Company: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">company</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">).</span><span class="identifier">as_string</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="comment">// Move on to the 2nd one, containing the employees for these companies</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_resultset_head</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">should_read_rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">rows_view</span> <span class="identifier">employee_batch</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+
+    <span class="comment">// Use the retrieved employees as required</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="identifier">row_view</span> <span class="identifier">employee</span> <span class="special">:</span> <span class="identifier">employee_batch</span><span class="special">)</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee "</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">as_string</span><span class="special">()</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span> <span class="special">&lt;&lt;</span> <span class="identifier">employee</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">).</span><span class="identifier">as_string</span><span class="special">()</span>
+                  <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="comment">// The last one is an empty resultset containing information about the</span>
+<span class="comment">// CALL statement itself. We're not interested in this</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_resultset_head</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">complete</span><span class="special">());</span>
+</pre>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Get the company ID to retrieve, possibly from the user</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">company_id</span> <span class="special">=</span> <span class="identifier">get_company_id</span><span class="special">();</span>
+
+<span class="comment">// Our procedure generates three resultsets. We must pass each row type</span>
+<span class="comment">// to static_execution_state as template parameters</span>
+<span class="keyword">using</span> <span class="identifier">empty</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;&gt;;</span>
+<span class="identifier">static_execution_state</span><span class="special">&lt;</span><span class="identifier">company</span><span class="special">,</span> <span class="identifier">employee</span><span class="special">,</span> <span class="identifier">empty</span><span class="special">&gt;</span> <span class="identifier">st</span><span class="special">;</span>
+
+<span class="comment">// Call the procedure</span>
+<span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"CALL get_employees(?)"</span><span class="special">);</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">start_execution</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">company_id</span><span class="special">),</span> <span class="identifier">st</span><span class="special">);</span>
+
+<span class="comment">// Read the 1st one, which contains the matched companies</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">company</span><span class="special">,</span> <span class="number">5</span><span class="special">&gt;</span> <span class="identifier">companies</span><span class="special">;</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">should_read_rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">read_rows</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="identifier">company</span><span class="special">&gt;(</span><span class="identifier">companies</span><span class="special">));</span>
+
+    <span class="comment">// Use the retrieved companies as required</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">company</span><span class="special">&amp;</span> <span class="identifier">c</span> <span class="special">:</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="identifier">company</span><span class="special">&gt;(</span><span class="identifier">companies</span><span class="special">.</span><span class="identifier">data</span><span class="special">(),</span> <span class="identifier">read_rows</span><span class="special">))</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Company: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">c</span><span class="special">.</span><span class="identifier">name</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="comment">// Move on to the 2nd one, containing the employees for these companies</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_resultset_head</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">,</span> <span class="number">20</span><span class="special">&gt;</span> <span class="identifier">employees</span><span class="special">;</span>
+<span class="keyword">while</span> <span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">should_read_rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">read_rows</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_some_rows</span><span class="special">(</span><span class="identifier">st</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;(</span><span class="identifier">employees</span><span class="special">));</span>
+
+    <span class="comment">// Use the retrieved companies as required</span>
+    <span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">employee</span><span class="special">&amp;</span> <span class="identifier">emp</span> <span class="special">:</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span><span class="identifier">employee</span><span class="special">&gt;(</span><span class="identifier">employees</span><span class="special">.</span><span class="identifier">data</span><span class="special">(),</span> <span class="identifier">read_rows</span><span class="special">))</span>
+    <span class="special">{</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Employee "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">first_name</span> <span class="special">&lt;&lt;</span> <span class="string">" "</span> <span class="special">&lt;&lt;</span> <span class="identifier">emp</span><span class="special">.</span><span class="identifier">last_name</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+
+<span class="comment">// The last one is an empty resultset containing information about the</span>
+<span class="comment">// CALL statement itself. We're not interested in this</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">read_resultset_head</span><span class="special">(</span><span class="identifier">st</span><span class="special">);</span>
+<span class="identifier">assert</span><span class="special">(</span><span class="identifier">st</span><span class="special">.</span><span class="identifier">complete</span><span class="special">());</span>
+</pre>
+            </td>
+</tr></tbody>
+</table></div>
+<p>
+      Note that we're using <a class="link" href="ref/boost__mysql__execution_state/should_read_rows.html" title="execution_state::should_read_rows"><code class="literal">should_read_rows</code></a>
+      instead of <a class="link" href="ref/boost__mysql__execution_state/complete.html" title="execution_state::complete"><code class="literal">complete</code></a>
+      as our loop termination condition. <code class="computeroutput"><span class="identifier">complete</span><span class="special">()</span></code> returns true when all the resultsets have
+      been read, while <code class="computeroutput"><span class="identifier">should_read_rows</span><span class="special">()</span></code> will return false once an individual result
+      has been fully read.
+    </p>
+<p>
+      When using the static interface with multi-function operations, not all schema
+      mismatches can be found by the <code class="computeroutput"><span class="identifier">start_execution</span></code>
+      function, since not all the information is available at this point. Errors
+      may be reported by <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+      and <code class="computeroutput"><span class="identifier">read_resultset_head</span></code>, too.
+      Overall, the same checks are performed as when using <a class="link" href="ref/boost__mysql__connection/execute.html" title="connection::execute"><code class="literal">connection::execute</code></a>,
+      but at different points in time.
+    </p>
+<h4>
+<a name="mysql.multi_function.h5"></a>
+      <span class="phrase"><a name="mysql.multi_function.multi_resultset_in_the_general_c"></a></span><a class="link" href="multi_function.html#mysql.multi_function.multi_resultset_in_the_general_c">Multi-resultset
+      in the general case</a>
+    </h4>
+<p>
+      <code class="computeroutput"><span class="identifier">execution_state</span></code> and <code class="computeroutput"><span class="identifier">static_execution_state</span></code> can be seen as state
+      machines with four states. Each state describes which reading function should
+      be invoked next:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__execution_state/should_start_op.html" title="execution_state::should_start_op"><code class="literal">should_start_op</code></a>:
+          the initial state, after you default-construct an <code class="computeroutput"><span class="identifier">execution_state</span></code>.
+          You should call <a class="link" href="ref/boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="literal">connection::start_execution</code></a>
+          or <a class="link" href="ref/boost__mysql__connection/async_start_execution.html" title="connection::async_start_execution"><code class="literal">connection::async_start_execution</code></a>
+          to start the operation.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__execution_state/should_read_rows.html" title="execution_state::should_read_rows"><code class="literal">should_read_rows</code></a>:
+          the next operation should be <a class="link" href="ref/boost__mysql__connection/read_some_rows.html" title="connection::read_some_rows"><code class="literal">connection::read_some_rows</code></a>,
+          to read the generated rows.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__execution_state/should_read_head.html" title="execution_state::should_read_head"><code class="literal">should_read_head</code></a>:
+          the next operation should be <a class="link" href="ref/boost__mysql__connection/read_resultset_head.html" title="connection::read_resultset_head"><code class="literal">connection::read_resultset_head</code></a>,
+          to read the next resultset metadata. Only operations that generate multiple
+          resultsets go into this state.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__execution_state/complete.html" title="execution_state::complete"><code class="literal">complete</code></a>:
+          no more operations are required.
+        </li>
+</ul></div>
+<p>
+      For multi-function operations, you may also access OK packet data ever time
+      a resultset has completely been read, i.e. when <a class="link" href="ref/boost__mysql__execution_state/should_read_head.html" title="execution_state::should_read_head"><code class="literal">should_read_head</code></a>
+      returns <code class="computeroutput"><span class="keyword">true</span></code>.
+    </p>
+<p>
+      <a class="link" href="examples/source_script.html" title="Sourcing a .sql file using multi-queries">This example</a> shows this
+      general case. It uses multi-queries to run an arbitrary SQL script file.
+    </p>
+<h4>
+<a name="mysql.multi_function.h6"></a>
+      <span class="phrase"><a name="mysql.multi_function.read_some_rows"></a></span><a class="link" href="multi_function.html#mysql.multi_function.read_some_rows">More
+      on read_some_rows</a>
+    </h4>
+<p>
+      To properly understand <code class="computeroutput"><span class="identifier">read_some_rows</span></code>,
+      we need to know that every <a class="link" href="ref/boost__mysql__connection.html" title="connection"><code class="literal">connection</code></a>
+      owns an <span class="bold"><strong>internal buffer</strong></span>, where packets sent
+      by the server are stored. It is a single, flat buffer, and you can configure
+      its initial size when creating a <code class="computeroutput"><span class="identifier">connection</span></code>,
+      passing a <a class="link" href="ref/boost__mysql__buffer_params.html" title="buffer_params"><code class="literal">buffer_params</code></a>
+      object as the first argument to <code class="computeroutput"><span class="identifier">connection</span></code>'s
+      constructor. The read buffer may be grown under certain circumstances to accommodate
+      large messages.
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">read_some_rows</span></code> gets the maximum
+      number of rows that fit in the internal buffer (without growing it) performing
+      a single <code class="computeroutput"><span class="identifier">read_some</span></code> operation
+      on the stream (or using cached data). If there are rows to read, <code class="computeroutput"><span class="identifier">read_some_rows</span></code> guarantees to read at least
+      one. This means that, if doing what we described yields no rows (e.g. because
+      of a large row that doesn't fit into the buffer), <code class="computeroutput"><span class="identifier">read_some_rows</span></code>
+      will grow the buffer or perform more reads until at least one row has been
+      read. If you're using the static interface, the number of read rows is limited
+      by the size of span you passed, too.
+    </p>
+<p>
+      If you want to get the most of <code class="computeroutput"><span class="identifier">read_some_rows</span></code>,
+      customize the initial buffer size to maximize the number of rows that each
+      batch retrieves.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="multi_resultset.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="connection_pool.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

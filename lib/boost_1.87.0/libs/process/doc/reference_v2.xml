@@ -1,0 +1,1391 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.v2_8hpp" name="boost/process/v2.hpp">
+</header>
+<header id="doxygen.bind__launcher_8hpp" name="boost/process/v2/bind_launcher.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher" name="bound_launcher"><template>
+      <template-type-parameter name="Launcher"><purpose><para>The inner launcher to be used </para></purpose></template-type-parameter>
+      <template-nontype-parameter name="Init"><type>typename ...</type></template-nontype-parameter>
+    </template><purpose>Utility class to bind initializers to a launcher. </purpose><description><para>
+This can be used when multiple processes shared some settings, e.g. </para></description><method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1a7691004c7d87ab3a4092f03dfdf21e0b"><template>
+          <template-type-parameter name="Launcher_"/>
+          <template-nontype-parameter name="Init_"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="l"><paramtype>Launcher_ &amp;&amp;</paramtype></parameter><parameter name="init"><paramtype>Init_ &amp;&amp;...</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1a66a10552828f0c2a70a08e069801b485" name="operator()"><type>auto</type><template>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1a864bbaa12f186a648c5ce08124e3a5a0" name="operator()"><type>auto</type><template>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1a5bc4e7ae74a349ed42442f0300dcfd21" name="operator()"><type>auto</type><template>
+          <template-type-parameter name="Executor"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="exec"><paramtype>Executor</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; net::execution::is_executor&lt; Executor &gt;::value||net::is_executor&lt; Executor &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1af9c69886bd2e2705790954c4fd7797d9" name="operator()"><type>auto</type><template>
+          <template-type-parameter name="Executor"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="exec"><paramtype>Executor</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; net::execution::is_executor&lt; Executor &gt;::value||net::is_executor&lt; Executor &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1a10a11117e866a6f151801f3ffa6a2279" name="invoke"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t ...</type></template-nontype-parameter>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1a74788c47561032c26076c572911afbf9" name="invoke"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t ...</type></template-nontype-parameter>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1aec6622aec22353c18d4ff507ef4386c7" name="invoke"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t ...</type></template-nontype-parameter>
+          <template-type-parameter name="Executor"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="exec"><paramtype>Executor</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; net::execution::is_executor&lt; Executor &gt;::value||net::is_executor&lt; Executor &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1bound__launcher_1ae73aa1e866451702412c008606f29fb0" name="invoke"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t ...</type></template-nontype-parameter>
+          <template-type-parameter name="Executor"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="exec"><paramtype>Executor</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><parameter name="executable"><paramtype>const typename std::enable_if&lt; net::execution::is_executor&lt; Executor &gt;::value||net::is_executor&lt; Executor &gt;::value, filesystem::path &gt;::type &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.bind__launcher_8hpp_1a409d1e8cf2c4201bdf963fbea7e3464c" name="bind_launcher"><type>auto</type><template>
+          <template-type-parameter name="Launcher"/>
+          <template-nontype-parameter name="Init"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="launcher"><paramtype>Launcher &amp;&amp;</paramtype></parameter><parameter name="init"><paramtype>Init &amp;&amp;...</paramtype></parameter></function>
+<function id="doxygen.bind__launcher_8hpp_1a73ece7c418328b30c979e4ea0b034215" name="bind_default_launcher"><type>auto</type><template>
+          <template-nontype-parameter name="Init"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="init"><paramtype>Init &amp;&amp;...</paramtype></parameter></function>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cstring__ref_8hpp" name="boost/process/v2/cstring_ref.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref" name="basic_cstring_ref"><template>
+      <template-type-parameter name="CharT"/>
+      <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+    </template><purpose>Small wrapper for a null-terminated string that can be directly passed to C APIS. </purpose><description><para>This ref can only be modified by moving the front pointer. It does not store the size, but can detect values that can directly be passed to system APIs.</para><para>It can be constructed from a <computeroutput>char*</computeroutput> pointer or any class that has a <computeroutput>c_str()</computeroutput> member function, e.g. std::string or boost::static_string. </para></description><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a51e012db51fbd882d0854678b9b3aa5f" name="value_type"><type>CharT</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a1811be7b76acef67fb780cfc58498f40" name="traits_type"><type>Traits</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a1a512f7725e4a2bd50faf8ec3adf1f66" name="string_view_type"><type>basic_string_view&lt; value_type, Traits &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a5f52d33e798878de7e1f9bea816312a2" name="pointer"><type>CharT *</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a39a2f68f0ee81e8df5cd13b906c746b4" name="const_pointer"><type>const CharT *</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a0d41361c78e8b8fe1952196f8a71347e" name="reference"><type>CharT &amp;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ac2d9734da97db418c29aef6dcbd1ee36" name="const_reference"><type>const CharT &amp;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a438111161c67751cb93757e69d121942" name="const_iterator"><type>const_pointer</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a7c250200f2250f9e096afb0169282ce3" name="iterator"><type>const_iterator</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a15ae337c56eb3c8d2fd063427531f034" name="const_reverse_iterator"><type>typename std::reverse_iterator&lt; const_iterator &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ab37b1c3f6b7a871bee24afc725be3257" name="reverse_iterator"><type>typename std::reverse_iterator&lt; iterator &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a846700d5391b0a582c60de4aa559a2ea" name="size_type"><type>std::size_t</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1af94f7dc76c150aafb9c2acffd0a51d74" name="difference_type"><type>std::ptrdiff_t</type></typedef>
+<data-member id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a9382236b3fbec8491d983996f54e2200" name="npos" specifiers="static"><type>constexpr size_type</type></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ae7339ab4c5cd9bc65df52f4410032b6f" cv="noexcept"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1afba01675264c185b5a6039f851f4ef33" cv="= delete"><parameter name=""><paramtype>std::nullptr_t</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1aed388492e8e75969ddc6bd1c75a5ef7b"><parameter name="s"><paramtype>const value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a6722efcee0f8d2ef1873a06cae39be9c"><template>
+          <template-type-parameter name="Source"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt; std::is_same&lt;const value_type, typename std::remove_pointer&lt;decltype(std::declval&lt;Source&gt;().c_str())&gt;::type &gt;::value</default></template-type-parameter>
+          <template-nontype-parameter name=""><type>::type</type></template-nontype-parameter>
+        </template><parameter name="src"><paramtype>Source &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ac89a16efc72def38292a4f5190f272f9" name="c_str" cv="const noexcept"><type>constexpr basic_string_view&lt; value_type, Traits &gt;::const_pointer</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a28fd4fd02da5a436904f44287d4b7a12" name="operator string_view_type" cv="const"><type>constexpr</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1af408772af3d9856dade43d1469d13d71" name="begin" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1af420fa53ac980dfd372c3168f6cb37c7" name="end" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1afabf4f819ed2ac7e00b56fd7224765d7" name="cbegin" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a0e9f2d2dd7bdd7483096544af2a2b0ca" name="cend" cv="const noexcept"><type>constexpr const_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1aa69dc840998c38d85754ddeb40984024" name="rbegin" cv="const noexcept"><type>constexpr const_reverse_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ae6865ac5360a5dc3d4a5de8f7b1ba543" name="rend" cv="const noexcept"><type>constexpr const_reverse_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a3edad8fa2494665ff5bfb1694fed87d6" name="crbegin" cv="const noexcept"><type>constexpr const_reverse_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ad8da659499462c58af92d39deebd849d" name="crend" cv="const noexcept"><type>constexpr const_reverse_iterator</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a816c1c3b52e63f1acc1643cd25900b0b" name="size" cv="const noexcept"><type>constexpr size_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a4746c9b858e2258c5a2be7e7ee06e180" name="length" cv="const noexcept"><type>constexpr size_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a18eb2f435d9ca0420481645a47c1874e" name="max_size" cv="const noexcept"><type>constexpr size_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a74895ab6298e0128c48cc5dcedff5c34" name="empty" cv="const noexcept"><type>constexpr bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1aec5acfef2b8c540b10c157377acf8250" name="operator[]" cv="const"><type>constexpr const_reference</type><parameter name="pos"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a10e7e154333f03aa960ec578f6251d5b" name="at" cv="const"><type>constexpr const_reference</type><parameter name="pos"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a970c041d6e7e9e43b0fcbcccc4ba6d17" name="front" cv="const"><type>constexpr const_reference</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a4fc6862f869234f4e1552a41e6a40c3d" name="back" cv="const"><type>constexpr const_reference</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a0c0f1d808ab4f06cf59382a1ae37ebfd" name="data" cv="const noexcept"><type>constexpr const_pointer</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a3d5bf1aa3cd66c0f45e8d0993497ec96" name="remove_prefix"><type>constexpr void</type><parameter name="n"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1afba6fe84be5bdb02cfcca9f131f501ae" name="swap" cv="noexcept"><type>void</type><parameter name="s"><paramtype><classname>basic_cstring_ref</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a05c03408d8574e3b6ae73d099201aef7" name="copy" cv="const"><type>size_type</type><parameter name="s"><paramtype>value_type *</paramtype></parameter><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a3f4365b49e8042c6301b8c2216c282ec" name="substr" cv="const"><type>constexpr <classname>basic_cstring_ref</classname></type><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ab41646553a1e3f3daaee818caba15807" name="substr" cv="const"><type>constexpr string_view_type</type><parameter name="pos"><paramtype>size_type</paramtype></parameter><parameter name="length"><paramtype>size_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a26aa81e02981990b3fb788ea728915e4" name="compare" cv="const noexcept"><type>constexpr int</type><parameter name="x"><paramtype><classname>basic_cstring_ref</classname></paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ac98d543be74a5d22cfbfff956ac760cd" name="starts_with" cv="const noexcept"><type>constexpr bool</type><parameter name="x"><paramtype>string_view_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ac7d713efa619bf31ebd8df97dd5ffd9c" name="starts_with" cv="const noexcept"><type>constexpr bool</type><parameter name="x"><paramtype>value_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a31fb689a2234e470ca1a2a43c775119a" name="find" cv="const noexcept"><type>constexpr size_type</type><parameter name="ch"><paramtype>CharT</paramtype></parameter><parameter name="pos"><paramtype>size_type</paramtype><default>0</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1ab7fbb332fcb705666eece2a558980a77" name="clear" cv="noexcept"><type>void</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a51ed1c6904da95dfd6308fc8267fe35b" name="to_string" cv="const"><type>std::basic_string&lt; value_type, traits_type &gt;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a5e7d21027666de5163e464084d63b668" name="to_string" cv="const"><type>std::basic_string&lt; value_type, traits_type, Allocator &gt;</type><template>
+          <template-type-parameter name="Allocator"/>
+        </template><parameter name="a"><paramtype>const Allocator &amp;</paramtype></parameter></method>
+</method-group>
+<method-group name="private static functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__cstring__ref_1a8262a76d0d894ecb016a790102089ab5" name="null_char_" specifiers="static"><type>constexpr const_pointer</type></method>
+</method-group>
+</struct>
+<typedef id="doxygen.cstring__ref_8hpp_1a113d13bb29fcf93b1fc43c6f67b34e51" name="cstring_ref"><type><classname>basic_cstring_ref</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.cstring__ref_8hpp_1aefffdb2fc464a768ced1e5e9bdd6574e" name="wcstring_ref"><type><classname>basic_cstring_ref</classname>&lt; wchar_t &gt;</type></typedef>
+<typedef id="doxygen.cstring__ref_8hpp_1a54df0550802d845e8f62c6f7d67b1b56" name="u16cstring_ref"><type><classname>basic_cstring_ref</classname>&lt; char16_t &gt;</type></typedef>
+<typedef id="doxygen.cstring__ref_8hpp_1a5fd545eb1f2f43a528f87359311b4b99" name="u32cstring_ref"><type><classname>basic_cstring_ref</classname>&lt; char32_t &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.cstring__ref_8hpp_1a51da6ea216a30130d083ad6aff5fd31a" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="str"><paramtype>const <classname>basic_cstring_ref</classname>&lt; charT, traits &gt; &amp;</paramtype></parameter></function>
+<function id="doxygen.cstring__ref_8hpp_1a422b898c2c185a0430dd728c17aa06c5" name="hash_value"><type>std::size_t</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="s"><paramtype>basic_string_view&lt; charT, traits &gt;</paramtype></parameter></function>
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.default__launcher_8hpp" name="boost/process/v2/default_launcher.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+
+<typedef id="doxygen.default__launcher_8hpp_1aa00bccf2edad7fde443ed0b8c6ffbc95" name="default_process_launcher"><purpose>The default launcher for processes. </purpose><description><para>This launcher will be used by process if a process is launched through the constructor:</para><para><programlisting language="c++"><link linkend="doxygen.structboost_1_1process_1_1v2_1_1basic__process">process</link> proc("test", {});
+// equivalent to
+process prod = default_launcher()("test", {});
+</programlisting> </para></description><type>implementation_defined</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.environment_8hpp" name="boost/process/v2/environment.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1process__environment" name="process_environment"><purpose>Initializer for the environment of sub process. </purpose><description><para>This will set the environment in a subprocess:</para><para><programlisting language="c++">process proc{executor, <link linkend="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab884a5b0a65e938c90ba7d7b56d480b8">find_executable</link>("printenv"), {"foo"}, process_environment{"foo=bar"}};
+</programlisting></para><para>The environment initializer will persist it's state, so that it can be used multiple times. Do however note the the Operating System is allowed to modify the internal state.</para><para><programlisting language="c++">auto exe = <link linkend="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab884a5b0a65e938c90ba7d7b56d480b8">find_executable</link>("printenv");
+process_environment env = {"FOO=BAR", "BAR=FOO"};
+
+process proc1(executor, exe, {"FOO"}, env);
+process proc2(executor, exe, {"BAR"}, env);
+</programlisting> </para></description><data-member id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1a408eafe80c0baf039e62828e2b987fd0" name="env_buffer"><type>std::vector&lt; <classname>environment::key_value_pair</classname> &gt;</type></data-member>
+<data-member id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1a3f826bb1e6277b96ef45a4705f9359b6" name="env"><type>std::vector&lt; const char * &gt;</type></data-member>
+<method-group name="public static functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1a0d6a00f649377d064a1cf81e2ad5dc73" name="build_env" specifiers="static"><type>std::vector&lt; const char * &gt;</type><template>
+          <template-type-parameter name="Args"/>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name=""><paramtype>typename std::enable_if&lt; std::is_convertible&lt; decltype(*std::begin(std::declval&lt; Args &gt;())), <classname>cstring_ref</classname> &gt;::value</paramtype></parameter><parameter name=""><paramtype>::type *</paramtype><default>nullptr</default></parameter></method>
+</method-group>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1ab38e60613a5da52098eec90d557a5dd3" name="build_env"><type>std::vector&lt; const char * &gt;</type><template>
+          <template-type-parameter name="Args"/>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name=""><paramtype>typename std::enable_if&lt; !std::is_convertible&lt; decltype(*std::begin(std::declval&lt; Args &gt;())), <classname>cstring_ref</classname> &gt;::value</paramtype></parameter><parameter name=""><paramtype>::type *</paramtype><default>nullptr</default></parameter></method>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1a40c12d3f32cede2b34ebd83042c1fc63"><parameter name="sv"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1a1062ac61448d36a856062c05e67ba5fb"><template>
+          <template-type-parameter name="Args"/>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1process__environment_1a145daaae272cefd02ed6748cd3079604" name="on_setup"><type>error_code</type><parameter name="launcher"><paramtype>posix::default_launcher &amp;</paramtype></parameter><parameter name=""><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name=""><paramtype>const char *const *</paramtype></parameter></method>
+</method-group>
+</struct><namespace name="environment">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view" name="current_view"><purpose>A view object for the current environment of this process. </purpose><description><para>The view might (windows) or might not (posix) be owning; if it owns it will deallocate the on destruction, like a unique_ptr.</para><para>Note that accessing the environment in this way is not thread-safe.</para><para><programlisting language="c++">void dump_my_env(current_view env = <link linkend="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a5bd71c17238d490925a9f4810416ec08">current</link>())
+{
+   for (auto  &amp; [k, v] : env)
+       std::cout &lt;&lt; k.string() &lt;&lt; " = "  &lt;&lt; v.string() &lt;&lt; std::endl;
+}
+</programlisting> </para></description><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator" name="iterator"><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a2d295f3c8c124070e0861e0f57bf91da" name="value_type"><type><classname>key_value_pair_view</classname></type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1ada6b9200cdd60e9865e87773e01c4121" name="difference_type"><type>int</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a8e0c865c4ffc1badf587aed69516d61a" name="reference"><type><classname>key_value_pair_view</classname></type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a6ef7834347a05b27913e63095c7c831a" name="pointer"><type><classname>key_value_pair_view</classname></type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a4d97e31cbef08f34e165fd1e16119011" name="iterator_category"><type>std::forward_iterator_tag</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a2ba94153cadbc8d998150875addb07f8" cv="= default"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1aa332cea3ff67b60f0d2bd8e5c4650843" cv="= default"><parameter name=""><paramtype>const <classname>iterator</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1adeb1ff423f75acdf4ec68d6c270b56bf"><parameter name="native_handle"><paramtype>const native_iterator &amp;</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a8e9a036e47d967ac7885201bde6b4ed5" name="operator++"><type><classname>iterator</classname> &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1aafd5224db4a1c7fd48f59b5c10a7eefd" name="operator++"><type><classname>iterator</classname></type><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1_1iterator_1a71146fc22cdd508fd4cba18458a7157c" name="operator*" cv="const"><type><classname>key_value_pair_view</classname></type></method>
+</method-group>
+</struct><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1ab0b4c4995715899929e0cd216d0d5079" name="native_handle_type"><type>environment::native_handle_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1a69516da468a69cdf331258946c1e5e9a" name="value_type"><type><classname>key_value_pair_view</classname></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1a15399f560f4a1213e46a9df16e74462a" cv="= default"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1a178f6392e5b156c9e2ad546e1e984eb1" cv="= default"><parameter name="nt"><paramtype><classname>current_view</classname> &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1a57cdd7a2b284a1f60f751dce1aaddfc5" name="native_handle"><type>native_handle_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1a1fa184150d5d38c43ce99ca9df551da8" name="begin" cv="const"><type><classname>iterator</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1current__view_1aceb1b037a4c3ea33bdc9b0b618ab0d24" name="end" cv="const"><type><classname>iterator</classname></type></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key" name="key"><purpose>A class representing a key within an environment. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a478524dceb2c102627c921e4c284bb42" name="value_type"><type>char_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1adf8c8e53916b95fab8948a2177243b76" name="traits_type"><type>key_char_traits&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a0068c61ba0f95d584269b06630b1addf" name="string_type"><type>std::basic_string&lt; char_type, traits_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1aac1372369e83ae2da66b0e993538a2cb" name="string_view_type"><type>basic_string_view&lt; char_type, traits_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1aefc51f64704d47fc3694901393156c95"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a99b42833110d47733315a6c865411ce0" cv="= default"><parameter name="p"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a2cbfa5cfcc10522e69afb5f8e2b87742"><parameter name="p"><paramtype><classname>key</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1aae4e9ad30d45ebb6d7bc2e325423d32d"><parameter name="source"><paramtype>const string_type &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a9ad009d219db66ce2c12303ab5b9642a"><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a471d83f8610f67382422f4b1d86c0e0c"><parameter name="raw"><paramtype>const value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a698a7aef071b6ebdf7ada432c47e7641"><parameter name="raw"><paramtype>value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a766acfb803fdc29f5140843f7fc09ef0" specifiers="explicit"><parameter name="kv"><paramtype><classname>key_view</classname></paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ab2fd09adc0ed56c3f28d5729b511e09d"><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter><parameter name=""><paramtype>decltype(std::declval&lt; Source &gt;().data())</paramtype><default>nullptr</default></parameter><parameter name=""><paramtype>decltype(std::declval&lt; Source &gt;().size())</paramtype><default>0u</default></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a5e490d96b82b7122cf7b55f2c081a329"><parameter name="raw"><paramtype>const typename conditional&lt; is_same&lt; value_type, char &gt;::value, wchar_t, char &gt;::type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ab7b42fc2435c5d182a2c8e6e016bc5c5"><template>
+          <template-type-parameter name="InputIt"/>
+        </template><parameter name="first"><paramtype>InputIt</paramtype></parameter><parameter name="last"><paramtype>InputIt</paramtype></parameter></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ab9c2291d3c3b03aeddbeb8336fbf58b4" cv="= default"/>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a85ebc3d502be59e61117641997646014" cv="= default"><type><classname>key</classname> &amp;</type><parameter name="p"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1abdc5db3f9878b3e145d561c8d611b2ce"><type><classname>key</classname> &amp;</type><parameter name="p"><paramtype><classname>key</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a446dfd20b3b1e0412861bf2844bbe845"><type><classname>key</classname> &amp;</type><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a60b68580b885123119e46204f0e5b168"><type><classname>key</classname> &amp;</type><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ad54e94d3b52877a8b20a422b1ef666b9" name="assign"><type><classname>key</classname> &amp;</type><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a3a4fb4a729a306479bc0e29e588c0241" name="assign"><type><classname>key</classname> &amp;</type><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a455704464de39ffb8982abe6f1a5bf8c" name="assign"><type><classname>key</classname> &amp;</type><template>
+          <template-type-parameter name="InputIt"/>
+        </template><parameter name="first"><paramtype>InputIt</paramtype></parameter><parameter name="last"><paramtype>InputIt</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a39e46c60a0e4f0a2a49fb32c9a1ba64f" name="clear"><type>void</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1aa1f2bc731c6cb2efd5c638a7b59283bb" name="swap" cv="noexcept"><type>void</type><parameter name="other"><paramtype><classname>key</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a9b92c9c285f78d24a7a7718936239279" name="c_str" cv="const noexcept"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1acb7dc57b6562d98d53d416b2db976757" name="native" cv="const noexcept"><type>const string_type &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a620fe6d0a024ddd780bd27f8b7f8bbb9" name="native_view" cv="const noexcept"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a7eb537e61c42685cbcf85c4a7cf4fd74" name="conversion-operator" cv="const"><type>string_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a4f06b83edec9b93eb8b95ec4bef524ed" name="conversion-operator" cv="const"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ae863bd65d68e7fd8b25ebe3f4444e90d" name="compare" cv="const noexcept"><type>int</type><parameter name="p"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1acbe35ae0ca718327949bb07b7dc3cc4a" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype>const string_type &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a1b4bfe4eb77ebf5b5438d7ab6b9cd5c2" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype>string_view_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ab1fa5c43629d4e2c06c843abfc284f9b" name="compare" cv="const"><type>int</type><parameter name="s"><paramtype>const value_type *</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1af438c55e7905df00709fdb8f08a33a1c" name="basic_string" cv="const"><type>std::basic_string&lt; CharT, Traits, Alloc &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+          <template-type-parameter name="Alloc"><default>std::allocator&lt;CharT&gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>const Alloc &amp;</paramtype><default>Alloc()</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a43e1e7aa42a3f40a34bbd20984d947c2" name="string" cv="const"><type>std::string</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1aab1fa03b990758eebea05c274da15464" name="wstring" cv="const"><type>std::wstring</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a58a7b72bc43758e09a49323259b936b3" name="native_string" cv="const"><type>const string_type &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1ae8387f4df275387ff638e0d4c5d9e474" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1a67bc3d978c6e0f28b7ef49642648830d" name="data" cv="const"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key_1af80ac3529d042c25a7ac8ac91f16e8d9" name="size" cv="const"><type>std::size_t</type></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair" name="key_value_pair"><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1aae2cb72daccb55900444b51c3eb0dbc0" name="value_type"><type>char_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a08d427b766e65199b3515cc1aa6b4bf1" name="traits_type"><type>std::char_traits&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a01ad45739731129785031d716e941832" name="string_type"><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a00d0fe9548eb341432e26aa4848ad74f" name="string_view_type"><type><classname>basic_cstring_ref</classname>&lt; char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a22c356b8a06431a81eac53be17302695"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a17cbdca8a287dddc0d4dafb6672f78cc" cv="= default"><parameter name="p"><paramtype>const <classname>key_value_pair</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a85c1cf61f9c396f839f0d8fc2a65f2a2"><parameter name="p"><paramtype><classname>key_value_pair</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a79f985ae2d209bcf4ef4abf3b3ef11bd"><parameter name="key"><paramtype><classname>key_view</classname></paramtype></parameter><parameter name="value"><paramtype><classname>value_view</classname></paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a4a6b81ea99b2dbd5b251911db1dde374"><parameter name="key"><paramtype><classname>key_view</classname></paramtype></parameter><parameter name="values"><paramtype>std::initializer_list&lt; basic_string_view&lt; char_type &gt; &gt;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a8c9d52a3b9b42162c7ddc18585566dc2"><parameter name="source"><paramtype>const string_type &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1adaaa27f1ab3b710ddbb6b2f4fff4cff4"><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a4746b3af0ad045ffe26203977fab6d3e"><parameter name="raw"><paramtype>const value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a06d63016d7a82122abe66befc6d6e1a1"><parameter name="raw"><paramtype>value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a332d82a3db70d2370a1d6b1a909401f3" specifiers="explicit"><parameter name="kv"><paramtype><classname>key_value_pair_view</classname></paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a8d100414a78c055fd89edde8c0de0c15"><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter><parameter name=""><paramtype>decltype(std::declval&lt; Source &gt;().data())</paramtype><default>nullptr</default></parameter><parameter name=""><paramtype>decltype(std::declval&lt; Source &gt;().size())</paramtype><default>0u</default></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a120bb13a9c7943b8f8d05e0307e324a7"><template>
+          <template-type-parameter name="Key"/>
+          <template-type-parameter name="Value"/>
+        </template><parameter name="kv"><paramtype>const std::pair&lt; Key, Value &gt; &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a847144054dae5c8e321501a845e9adc6"><parameter name="raw"><paramtype>const typename conditional&lt; is_same&lt; value_type, char &gt;::value, wchar_t, char &gt;::type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ada6a16c2034249238e9411145a1041fe"><template>
+          <template-type-parameter name="InputIt"/>
+          <template-type-parameter name="std::iterator_traits&lt; InputIt &gt;::iterator_category"/>
+        </template><parameter name="first"><paramtype>InputIt</paramtype></parameter><parameter name="last"><paramtype>InputIt</paramtype></parameter></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ab47fababce86669cac7c60a93457e1af" cv="= default"/>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a2bdce3b7e8602ac07d967342af294369" cv="= default"><type><classname>key_value_pair</classname> &amp;</type><parameter name="p"><paramtype>const <classname>key_value_pair</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a2706f029f0c4a22b1fd6539231d57f83"><type><classname>key_value_pair</classname> &amp;</type><parameter name="p"><paramtype><classname>key_value_pair</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ae68314f8596c524126f26747acdc6ebf"><type><classname>key_value_pair</classname> &amp;</type><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a0ec460f552df5669adb79d2c096c03eb"><type><classname>key_value_pair</classname> &amp;</type><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ab19630986c504ca78c1337c0b48416b2" name="assign"><type><classname>key_value_pair</classname> &amp;</type><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a7fcdad428adfa849625d436629dd8f2c" name="assign"><type><classname>key_value_pair</classname> &amp;</type><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a596822eeb87b897019f343ac6c1970e6" name="assign"><type><classname>key_value_pair</classname> &amp;</type><template>
+          <template-type-parameter name="InputIt"/>
+        </template><parameter name="first"><paramtype>InputIt</paramtype></parameter><parameter name="last"><paramtype>InputIt</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1afd8ff4d1bbf088d363962d5c879203e8" name="clear"><type>void</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ac2c8ada65fea98219504cfcd41953be3" name="swap" cv="noexcept"><type>void</type><parameter name="other"><paramtype><classname>key_value_pair</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a9b0675d579e40497d4146ca16e403a8b" name="c_str" cv="const noexcept"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ac2f2dc2100ded4d8378cd1ebe5a6edcd" name="native" cv="const noexcept"><type>const string_type &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a79a27a8cb849fea158087ed0afe06493" name="native_view" cv="const noexcept"><type><classname>string_view_type</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ab97a667d5ca038aca69f8e0b600fa1d0" name="conversion-operator" cv="const"><type>string_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ac98e910bb8736aa9fa88f6ff014bb094" name="conversion-operator" cv="const"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1ae8061c135d66877eacb25310cd4930ec" name="conversion-operator" cv="const"><type>typename string_view_type::string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a476cf47398e6a03bd704428261265970" name="conversion-operator" cv="const"><type>key_value_pair_view</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1af1526abfa74d507bdc4b44e924397c21" name="compare" cv="const noexcept"><type>int</type><parameter name="p"><paramtype>const <classname>key_value_pair</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a43805ddac05cf5ef72a939746e35f0d4" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype>const string_type &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a2879fc5c04bf89073df65197f07d7c49" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype><classname>string_view_type</classname></paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1aa81fca1035400722c485885df3fff06c" name="compare" cv="const"><type>int</type><parameter name="s"><paramtype>const value_type *</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a9d2e8a55c027f774617cdc56776fa68d" name="basic_string" cv="const"><type>std::basic_string&lt; CharT, Traits, Alloc &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+          <template-type-parameter name="Alloc"><default>std::allocator&lt;CharT&gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>const Alloc &amp;</paramtype><default>Alloc()</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1afb8d1344c1f90a1e5c61fbc6a0e400f4" name="string" cv="const"><type>std::string</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a6d97cfa92b830a89b6ce60fb7ef66a79" name="wstring" cv="const"><type>std::wstring</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1aeffcf35369cf56745530303416ad5c34" name="native_string" cv="const"><type>const string_type &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a89ab872234ba219175bddceed208f44c" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a7968e4e6bde5d9af8b2be07d01b79069" name="key" cv="const"><type>struct <classname>key_view</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a9e2f2804276d7a6ca4ff7b58fc636e36" name="value" cv="const"><type>struct <classname>value_view</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1afcba7a6842dce36016dcf0f8d80c3182" name="data" cv="const"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a0f904c2fb7f42e107930d607ee9cdfd0" name="size" cv="const"><type>std::size_t</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a69a168de70ec576c4fdff39e4ab82bf8" name="get" cv="const = 0" specifiers="virtual"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t</type></template-nontype-parameter>
+        </template></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a4bd2c0583eee209e13d4eab02e0558b4" name="get" cv="const = 0" specifiers="virtual"><type><classname>key_view</classname></type><template>
+        </template></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair_1a452bab216a14e8da7a4b9299a0a5100a" name="get" cv="const = 0" specifiers="virtual"><type><classname>value_view</classname></type><template>
+        </template></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view" name="key_value_pair_view"><purpose>A view for a key value pair in an environment. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a4408a848857e50baf25a4335543baca2" name="value_type"><type>char_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a0a9a105a83a3306ec9ef1ca4cfa48a82" name="string_type"><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a295f48c1c754d783a4865c91d840f1b8" name="string_view_type"><type><classname>basic_cstring_ref</classname>&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a84e667abafb52532e0bdb9646626b500" name="traits_type"><type>std::char_traits&lt; char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a01998a8b5fe2a2437fc049c82b12ecbc"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a97e5e52bfbd93240eb6ef39f3a24a851" cv="= default"><parameter name="p"><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a4e80d0f118f5346802b78b9dcadf1c54"><parameter name="p"><paramtype><classname>key_value_pair_view</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a852884c65368c7567c5e334be7ea065b"><template>
+          <template-type-parameter name="Source"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;is_constructible&lt;string_view_type, Source&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a044d34b1967887f35d6e3655710c197e"><parameter name="p"><paramtype>const char_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1adfd3a8cb31b0a7007eabeb82a7e85a19"><parameter name="p"><paramtype>char_type *</paramtype></parameter></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1af8ecc44258c6b430ff97d47e6502bdb4" cv="= default"/>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a2846a230fb05163068f5f6ed11bb878f" cv="= default"><type><classname>key_value_pair_view</classname> &amp;</type><parameter name="p"><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a5b355d233ebf5a10498a11dc8d676294"><type><classname>key_value_pair_view</classname> &amp;</type><parameter name="p"><paramtype><classname>key_value_pair_view</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a852e71678f8db590b8a62742b3ac1c6f" name="swap" cv="noexcept"><type>void</type><parameter name="other"><paramtype><classname>key_value_pair_view</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a179525f7349f24341e9da95f8a52ec8c" name="native" cv="const noexcept"><type><classname>string_view_type</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a3ee67ef2cbb837da91475870f545f606" name="conversion-operator" cv="const"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1aef4e3dead6dd4599cfaed0747ae03628" name="conversion-operator" cv="const"><type>typename string_view_type::string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a2b2f00707f4c248ff140d506391a24f6" name="compare" cv="const noexcept"><type>int</type><parameter name="p"><paramtype><classname>key_value_pair_view</classname></paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a3fd2cf366b93acaab753b0c3c8fa7822" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype>const string_type &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a9485da4aebe313760042d9668caaa405" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype><classname>string_view_type</classname></paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1abce81eeb825ac914cd63dbe76065a244" name="compare" cv="const"><type>int</type><parameter name="s"><paramtype>const value_type *</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a212728395ee1e7463be2edd5a0bff176" name="basic_string" cv="const"><type>std::basic_string&lt; CharT, Traits, Alloc &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+          <template-type-parameter name="Alloc"><default>std::allocator&lt;CharT&gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>const Alloc &amp;</paramtype><default>Alloc()</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1af1bc8c51c38e8cbcddc2d2ad9f0dcf8d" name="string" cv="const"><type>std::string</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a8a7df4708e53a300ab4fd683d1b2fad3" name="wstring" cv="const"><type>std::wstring</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1af830153df1050abb5a174e8450f9fe8e" name="native_string" cv="const"><type>string_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a8356b062e7f1b7feedf1ef2efc90b939" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1ac64f3c0bd1f6dfed0bd035a34c4e453d" name="key" cv="const"><type><classname>key_view</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a598db4cc5ffd7a58cd7d72a5fb1fa68a" name="value" cv="const"><type><classname>value_view</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1ad0b2f12241df52255065b005763359b1" name="get" cv="const = 0" specifiers="virtual"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t</type></template-nontype-parameter>
+        </template></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a38054404a12a7ba55fb1ebb44b128df0" name="c_str" cv="const noexcept"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1ab9f9ed32e2b596ffd5a51a5c4bd8e4ad" name="data" cv="const"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a110a95211e919506b4e61a2b7b02b534" name="size" cv="const"><type>std::size_t</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1ae4adef603dd818b6b803e8013a0ccefa" name="get" cv="const = 0" specifiers="virtual"><type><classname>key_view</classname></type><template>
+        </template></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_1a0fd7c77916960fe70e334600306aa940" name="get" cv="const = 0" specifiers="virtual"><type><classname>value_view</classname></type><template>
+        </template></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view" name="key_view"><purpose>A view type for a key of an environment. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a8efcc139bc751cb3fdd747d4ed067a15" name="value_type"><type>char_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1afb53732cca6d32994d61a6ea99083bda" name="traits_type"><type>key_char_traits&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a5e9846c79dca2b6546155f2d639494bb" name="string_view_type"><type>basic_string_view&lt; char_type, traits_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a7b5be226127999350867f9dedcdc3dfe" name="string_type"><type>std::basic_string&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a9d042e3aa65dfeefbd3a492c883c44de"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a28d1e02017a7628178b27046afe4967e" cv="= default"><parameter name="p"><paramtype>const <classname>key_view</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1ac3238d595eed1325aaa7133e841318d2"><parameter name="p"><paramtype><classname>key_view</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a6df80626ce02d18b4058574893005d7f"><template>
+          <template-type-parameter name="Source"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;is_constructible&lt;string_view_type, Source&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a9023a61edbca8c5020df8277cf93c7ec"><parameter name="p"><paramtype>const char_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a860e00797d653a312c8540550c205d1a"><parameter name="p"><paramtype>char_type *</paramtype></parameter></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1aa569b3a64596723100104ffba7fb69e1" cv="= default"/>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1ad433820e05a99f6ccd9c78ea1961c9e2" cv="= default"><type><classname>key_view</classname> &amp;</type><parameter name="p"><paramtype>const <classname>key_view</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a0e26924c02f21725fe7f937505faffac"><type><classname>key_view</classname> &amp;</type><parameter name="p"><paramtype><classname>key_view</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a1214102e017a275912c14603e6091c30"><type><classname>key_view</classname> &amp;</type><parameter name="source"><paramtype>string_view_type</paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a4744755f00d62509e3a01fd1668794a7" name="swap" cv="noexcept"><type>void</type><parameter name="other"><paramtype><classname>key_view</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1ab75ca611107663a54ffefd5343a5c458" name="native" cv="const noexcept"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a9494d98a8ac187e821056e8b69ff0e81" name="conversion-operator" cv="const"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1adb760fcb0d163717fe9cbdfaca3a56c5" name="compare" cv="const noexcept"><type>int</type><parameter name="p"><paramtype>const <classname>key_view</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a0b7625f94135c1b28bf98e37b7b102fd" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype>string_view_type</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1aa437e0e36df719fb995bb06f6eeb6bd9" name="compare" cv="const"><type>int</type><parameter name="s"><paramtype>const value_type *</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a32af10f8e43f885f9aca695da7bdc147" name="basic_string" cv="const"><type>std::basic_string&lt; CharT, Traits, Alloc &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+          <template-type-parameter name="Alloc"><default>std::allocator&lt;CharT&gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>const Alloc &amp;</paramtype><default>Alloc()</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1abe40f95d4ab4211a22cff12325c9e88a" name="string" cv="const"><type>std::string</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a31aa18bc5578778149ae6586f3399755" name="wstring" cv="const"><type>std::wstring</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1ad4192f403a66b5d1f779225ba6d69181" name="native_string" cv="const"><type>string_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1aee17b828ff0bcdffea1814b805608a01" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a6651559be5741c120d034c15f3014292" name="data" cv="const"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view_1a1d1c34fe28ffdf59292029296080bf1b" name="size" cv="const"><type>std::size_t</type></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value" name="value"><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1aecf291c956323bb8ed5996d9db2be1a7" name="value_type"><type>char_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ad642619505e638db3ff5f90bb7b12572" name="traits_type"><type>value_char_traits&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a69b2dd6d7be564c5abdc8e37c5ad1809" name="string_type"><type>std::basic_string&lt; char_type, traits_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a93eb11888ee4eb81deeda81d13941ecb" name="string_view_type"><type><classname>basic_cstring_ref</classname>&lt; char_type, traits_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a10605d5648f0ee3162e871c6211e7e21"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ac116dc16bf701cdc30dc50e1f132d7f0" cv="= default"><parameter name="p"><paramtype>const <classname>value</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a954e3da3a7bf21c9a5db4b639c54214e"><parameter name="source"><paramtype>const string_type &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ab75c739369d0138478a1b034f227359d"><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a35196c848d391be428835ddda91e2a6b"><parameter name="raw"><paramtype>const value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ab8e115d1377e245d0914f2f395b67065"><parameter name="raw"><paramtype>value_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a41af226e5026f69f40f2775b47b2215d" specifiers="explicit"><parameter name="kv"><paramtype><classname>value_view</classname></paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a2c5ba3bae68c5af0dcc608871942af34"><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter><parameter name=""><paramtype>decltype(std::declval&lt; Source &gt;().data())</paramtype><default>nullptr</default></parameter><parameter name=""><paramtype>decltype(std::declval&lt; Source &gt;().size())</paramtype><default>0u</default></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1afd5bc2012f7aa5a5ab79af56208aedd1"><parameter name="raw"><paramtype>const typename conditional&lt; is_same&lt; value_type, char &gt;::value, wchar_t, char &gt;::type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1aff30711af94a878d39e820909b83f82a"><template>
+          <template-type-parameter name="InputIt"/>
+        </template><parameter name="first"><paramtype>InputIt</paramtype></parameter><parameter name="last"><paramtype>InputIt</paramtype></parameter></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a64ad80d574157008420c57d53652a479" cv="= default"/>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ab04a336eec57d08e86236c239a31f9ec" cv="= default"><type><classname>value</classname> &amp;</type><parameter name="p"><paramtype>const <classname>value</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1af89e1050c62c9cd169f656ddc8f3d437"><type><classname>value</classname> &amp;</type><parameter name="p"><paramtype><classname>value</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a588716ca698ac90284c1a723780a4e4e"><type><classname>value</classname> &amp;</type><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a9753c24d0b362972565a946231816192"><type><classname>value</classname> &amp;</type><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a264503fdaab5aa6593a63a5e86a0b91b" name="assign"><type><classname>value</classname> &amp;</type><parameter name="source"><paramtype>string_type &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ac27f84d3cf701406bbedaa5a01c52eec" name="assign"><type><classname>value</classname> &amp;</type><template>
+          <template-type-parameter name="Source"/>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a4c490ff050788f4a90df571b6edcf309" name="assign"><type><classname>value</classname> &amp;</type><template>
+          <template-type-parameter name="InputIt"/>
+        </template><parameter name="first"><paramtype>InputIt</paramtype></parameter><parameter name="last"><paramtype>InputIt</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a59d8f36684c09c45a6b8ae9a5c9de9a7" name="push_back"><type>void</type><parameter name="sv"><paramtype>const <classname>value</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ac661d5895114e6c6e34b6a2a4244b437" name="clear"><type>void</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a50f305bc545b81f53e9dbf1a807cac2c" name="swap" cv="noexcept"><type>void</type><parameter name="other"><paramtype><classname>value</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a5edaa5f155df108738e8660bb3eb1e9f" name="c_str" cv="const noexcept"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a182493da96647ad134814f4c1ed0e955" name="native" cv="const noexcept"><type>const string_type &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a753aff0a816be918c0caf77651c8a3b6" name="native_view" cv="const noexcept"><type><classname>string_view_type</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ade74567a995a6137203bb970f016c360" name="conversion-operator" cv="const"><type>string_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a6c47b1bed41c3067dc679e3596de3d2e" name="conversion-operator" cv="const"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a8ee4cccd31de0c179cc8710cbf6598c9" name="conversion-operator" cv="const"><type>typename string_view_type::string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a579d6573c6f9c5a6a4afde0f1e8569c8" name="compare" cv="const noexcept"><type>int</type><parameter name="p"><paramtype>const <classname>value</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a81ad114c31fe573a5b50cd2657540eb1" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype>const string_type &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a9423f535b9c2a7cb6f359edaef3020e8" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype><classname>string_view_type</classname></paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a6d99f3fe84acf2f24fb500c807b86bce" name="compare" cv="const"><type>int</type><parameter name="s"><paramtype>const value_type *</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a5f86f76e415c366a49e9d079a311bbf9" name="basic_string" cv="const"><type>std::basic_string&lt; CharT, Traits, Alloc &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+          <template-type-parameter name="Alloc"><default>std::allocator&lt;CharT&gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>const Alloc &amp;</paramtype><default>Alloc()</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1af373735fb28fa506a6f15f83b8ce04e2" name="string" cv="const"><type>std::string</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a2991a19e663f6b282723ce3cfc54d4e2" name="wstring" cv="const"><type>std::wstring</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a09d2e8ee219bab42043cc8f7c9756fd7" name="native_string" cv="const"><type>const string_type &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a8c3dd501dbbe61b21ef840054688e2b7" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1aaa2acc1b0c672d8a43eed21c0492a95b" name="begin" cv="const"><type><classname>value_iterator</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1aab5c12d099300d9abfec4f220fbdc32e" name="end" cv="const"><type><classname>value_iterator</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1a0c0ac781398ca3eba1108ac2ed71e840" name="data" cv="const"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value_1ab7c0756adeddf1acc6335501f5bd760f" name="size" cv="const"><type>std::size_t</type></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator" name="value_iterator"><purpose>The iterator used by a value or <link linkend="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view">value_view</link> to iterator through environments that are lists. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1a34088b343d18483e64c8043db4964df1" name="string_view_type"><type>basic_string_view&lt; char_type, value_char_traits&lt; char_type &gt; &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1a80fc252f645bfc305234d343dc64127f" name="difference_type"><type>int</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1adb1578f9140b01ba600823b809c32ec2" name="reference"><type>string_view_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1aafb96464b4ac6d2dff60d42b10544a4a" name="iterator_category"><type>std::forward_iterator_tag</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1ac78d5432a7d630d47913e93899f54ddf" name="operator++"><type><classname>value_iterator</classname> &amp;</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1ad3b97fd1c37cf0d6ba28302ccf2ff4b3" name="operator++"><type><classname>value_iterator</classname></type><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1a3b1cd42eeb084103a1f54a1440b04dc9" name="operator*" cv="const"><type>string_view_type</type></method>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1a45e8dc0e560e33c00799e546447ec15e" cv="= default"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1ad21487dbda4e1a888e9d7f65ec9b5503" cv="= default"><parameter name=""><paramtype>const <classname>value_iterator</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__iterator_1a679adaf8e02f9d883c77c711d2913d3f"><parameter name="view"><paramtype>string_view_type</paramtype></parameter><parameter name="offset"><paramtype>std::size_t</paramtype><default>0u</default></parameter></constructor>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view" name="value_view"><purpose>A view for a value in an environment. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a048139d342017e6fd8ff9daaddea8d12" name="value_type"><type>char_type</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a6ce1e70274ee21f2c048b98919f4b71f" name="string_view_type"><type><classname>basic_cstring_ref</classname>&lt; char_type, value_char_traits&lt; char_type &gt; &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1aa6c1c741703511ac745a84271aecf960" name="string_type"><type>std::basic_string&lt; char_type, value_char_traits&lt; char_type &gt; &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a4936995a287083a4909b82f5f851137d" name="traits_type"><type>value_char_traits&lt; char_type &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1ad82689035d8705b371375b7beec0dcc5"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1ad9649268defeda3c6752ff14eb86a2ca" cv="= default"><parameter name="p"><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1afff5360e17ce67d86b0d70a9e59dbbb0"><parameter name="p"><paramtype><classname>value_view</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1ab49903410149c86e95b9194391620130"><template>
+          <template-type-parameter name="Source"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;is_constructible&lt;string_view_type, Source&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="source"><paramtype>const Source &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a511c624be44b885b26e73475575fc658"><parameter name="p"><paramtype>const char_type *</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a8f399265d344fb55111a97f2441acbb8"><parameter name="p"><paramtype>char_type *</paramtype></parameter></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a18969ffacce02dcee8981a50ee42d051" cv="= default"/>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1ab0c15a3c0da378415ba8d58d0e4086e4" cv="= default"><type><classname>value_view</classname> &amp;</type><parameter name="p"><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a40def645f1ec6e28b94189eafe6d8d3e"><type><classname>value_view</classname> &amp;</type><parameter name="p"><paramtype><classname>value_view</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1ac396d47adf18ac2aecaa865c2758f7bf"><type><classname>value_view</classname> &amp;</type><parameter name="source"><paramtype><classname>string_view_type</classname></paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a5b41fa6148b796c59c8db414157f9ce9" name="swap" cv="noexcept"><type>void</type><parameter name="other"><paramtype><classname>value_view</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1afdca734f966534660d48d3a90641322c" name="native" cv="const noexcept"><type><classname>string_view_type</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a64734e89338586d8aa52775bba19e1b7" name="conversion-operator" cv="const"><type>string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1adddc157fe233f524e30b333d0eac7e1e" name="conversion-operator" cv="const"><type>typename string_view_type::string_view_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a9d0fa51d6b475334409b85d7727d4cd4" name="compare" cv="const noexcept"><type>int</type><parameter name="p"><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a4f43e089a3303d06723eb42b39f14a55" name="compare" cv="const"><type>int</type><parameter name="str"><paramtype><classname>string_view_type</classname></paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a5b6bddc1967cc51f5ad46d5d096bad51" name="compare" cv="const"><type>int</type><parameter name="s"><paramtype>const value_type *</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a0b025f7fb123b169d748cb2e30acb987" name="basic_string" cv="const"><type>std::basic_string&lt; CharT, Traits, Alloc &gt;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"><default>std::char_traits&lt;CharT&gt;</default></template-type-parameter>
+          <template-type-parameter name="Alloc"><default>std::allocator&lt;CharT&gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>const Alloc &amp;</paramtype><default>Alloc()</default></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a898e66f9a238ce6cd0d84365347b555e" name="string" cv="const"><type>std::string</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1aff8f61a59fdd9780853d653b623dbb00" name="wstring" cv="const"><type>std::wstring</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1ab782f98d4698746aee7e17c986dc41f3" name="native_string" cv="const"><type>string_type</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a5a347ec57fe4adb27fff7ff874e98b80" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a2914b9f546e7323af807288ac7a03db8" name="begin" cv="const"><type><classname>value_iterator</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1aaa69912c98003b7b48fc79f9ba2478dd" name="end" cv="const"><type><classname>value_iterator</classname></type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a6dccce5a2678c35d879d4f2b09c831ab" name="c_str"><type>const char_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1abfc1293eae73907ee05eba6d6d1cce35" name="data" cv="const"><type>const value_type *</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view_1a82df2d633a91f1b592e69240981d6826" name="size" cv="const"><type>std::size_t</type></method>
+</method-group>
+</struct><typedef id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ad3a62003b7f960324dc7436fc6d2458f" name="key_char_traits"><purpose>A char traits type that reflects the OS rules for string representing environment keys. </purpose><description><para>Can be an alias of std::char_traits. May only be defined for <computeroutput>char</computeroutput> and <computeroutput>wchar_t</computeroutput>.</para><para>Windows treats keys as case-insensitive yet perserving. The char traits are made to reflect that behaviour. </para></description><type>implementation_defined</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aff01fb27659e4ed994c387126916d1f6" name="value_char_traits"><purpose>A char traits type that reflects the OS rules for string representing environment values. </purpose><description><para>Can be an alias of std::char_traits. May only be defined for <computeroutput>char</computeroutput> and <computeroutput>wchar_t</computeroutput>. </para></description><type>implementation_defined</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a458e76f5088ef88cc9fcf4c345c6f711" name="char_type"><purpose>The character type used by the environment. Either <computeroutput>char</computeroutput> or <computeroutput>wchar_t</computeroutput>. </purpose><type>implementation_defined</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a530b0a78f6539fb4688328aa8c991f0d" name="native_handle"><purpose>The native handle of an environment. Note that this can be an owning pointer and is generally not thread safe. </purpose><type>implementation_defined</type></typedef>
+<data-member id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a98070575119c3ee850f15f43c7f14270" name="equality_sign"><type>constexpr char_type</type><purpose>The equal character in an environment string used to separate key and value. </purpose></data-member>
+<data-member id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a2fa42218f981aa075a80da5e5b1ef21a" name="delimiter"><type>constexpr char_type</type><purpose>The delimiter in environemtn lists. Commonly used by the <computeroutput>PATH</computeroutput> variable. </purpose></data-member>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ac2e950486818a45f6eb5b4196552b823" name="hash_value"><type>std::size_t</type><parameter name="value"><paramtype>const <classname>key_view</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a33348dcfc053de43c928f485ccfcb111" name="hash_value"><type>std::size_t</type><parameter name="value"><paramtype>const <classname>boost::process::v2::environment::value_view</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a5ba2cdfd2fad65ae3d617bfd0081dd86" name="hash_value"><type>std::size_t</type><parameter name="value"><paramtype>const <classname>boost::process::v2::environment::key_value_pair_view</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a6a611c9432d1afb537d5ca3ff2dd3a75" name="operator=="><type>bool</type><parameter name=""><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter><parameter name="value_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1adbcaaf0e67fe8c2fe3830b7c7458942c" name="operator!="><type>bool</type><parameter name=""><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter><parameter name="value_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ac2b0764bb96d28da836379de2ea731b7" name="operator&lt;="><type>bool</type><parameter name=""><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter><parameter name="value_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1af1c61f37ffc74f150bf259cb4d244a53" name="operator&lt;"><type>bool</type><parameter name=""><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter><parameter name="value_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aa2175fdebc95d78059da628c2e515c58" name="operator&gt;"><type>bool</type><parameter name=""><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter><parameter name="value_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab74c1d50975b4b67e2dfc1a478611991" name="operator&gt;="><type>bool</type><parameter name=""><paramtype>const <classname>value_view</classname> &amp;</paramtype></parameter><parameter name="value_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aff63d6931cc20a7aca95360ff2872ca8" name="operator=="><type>bool</type><parameter name=""><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter><parameter name="key_value_pair_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a7c88fb9931cc74a18d9395f6f7d9c84e" name="operator!="><type>bool</type><parameter name=""><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter><parameter name="key_value_pair_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a7617a0c0a126cd229238da2f162ddeae" name="operator&lt;="><type>bool</type><parameter name=""><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter><parameter name="key_value_pair_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a0ad774372cd1a854ff0a4224da3c50b4" name="operator&lt;"><type>bool</type><parameter name=""><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter><parameter name="key_value_pair_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a94afd5620d465815c4b6ff1d504a3ff9" name="operator&gt;"><type>bool</type><parameter name=""><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter><parameter name="key_value_pair_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a35ac819fea7a49c4fc43c7cefb87b630" name="operator&gt;="><type>bool</type><parameter name=""><paramtype>const <classname>key_value_pair_view</classname> &amp;</paramtype></parameter><parameter name="key_value_pair_view"><paramtype>const</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a5bd71c17238d490925a9f4810416ec08" name="current"><type><classname>current_view</classname></type><purpose>Obtain a handle to the current environment. </purpose></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a43b627a8787c847ccac25e3c8fc02498" name="home"><type>filesystem::path</type><template>
+          <template-type-parameter name="Environment"><default>current_view</default></template-type-parameter>
+        </template><parameter name="env"><paramtype>Environment &amp;&amp;</paramtype><default>current()</default><description><para>The environment to search. Defaults to the current environment of this process</para></description></parameter><purpose>Find the home folder in an environment-like type. </purpose><description><para>
+The environment type passed in must be a range with value T that fulfills the following requirements:</para><para>For <computeroutput>T value</computeroutput></para><para><itemizedlist>
+<listitem><para>std::get&lt;0&gt;(value) must return a type comparable to <computeroutput><link linkend="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view">key_view</link></computeroutput>.</para>
+</listitem><listitem><para>std::get&lt;1&gt;(value) must return a type convertible to filesystem::path.</para>
+</listitem></itemizedlist>
+</para><para>
+</para></description><returns><para>A filesystem::path to the home directory or an empty path if it cannot be found. </para>
+</returns></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab884a5b0a65e938c90ba7d7b56d480b8" name="find_executable"><type>boost::process::v2::filesystem::path</type><template>
+          <template-type-parameter name="Environment"><default>current_view</default></template-type-parameter>
+        </template><parameter name="name"><paramtype>boost::process::v2::filesystem::path</paramtype></parameter><parameter name="env"><paramtype>Environment &amp;&amp;</paramtype><default>current()</default><description><para>The environment to search. Defaults to the current environment of this process</para></description></parameter><purpose>Find the executable <computeroutput>name</computeroutput> in an environment-like type. </purpose><description><para>
+The environment type passed in must be a range with value T that fulfills the following requirements:</para><para>For <computeroutput>T value</computeroutput></para><para><itemizedlist>
+<listitem><para>std::get&lt;0&gt;(value) must return a type comparable to <computeroutput><link linkend="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1key__view">key_view</link></computeroutput>.</para>
+</listitem><listitem><para>std::get&lt;1&gt;(value) must return a type convertible to <computeroutput><link linkend="doxygen.structboost_1_1process_1_1v2_1_1environment_1_1value__view">value_view</link></computeroutput>.</para>
+</listitem></itemizedlist>
+</para><para>
+</para></description><returns><para>A filesystem::path to the executable or an empty path if it cannot be found. </para>
+</returns></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1abfeb973b3a4e5481365a43fa4c0d7c81" name="get"><type><classname>value</classname></type><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Get an environment variable from the current process. </purpose></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aa1a77661c9af4751599484d68303bd64" name="get"><type><classname>value</classname></type><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a7cabdbb48412fbae357099214fd97b67" name="get"><type><classname>value</classname></type><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab25cfa5199e2c65a0b0c724786d97982" name="get"><type><classname>value</classname></type><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a2958fadd0c4e4057457045151aa41693" name="get"><type><classname>value</classname></type><parameter name="c"><paramtype>const char_type *</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aafda62ea4c279cad16f9f03c9b135b23" name="get"><type><classname>value</classname></type><parameter name="c"><paramtype>const char_type *</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1af26c01732d6c2c8c045dd946a38cc640" name="set"><type>void</type><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter><parameter name="vw"><paramtype><classname>value_view</classname></paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Set an environment variable for the current process. </purpose><description><para>Disambiguating.</para><para>Throwing. </para></description></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ae852fa23ed1823d86ee101a974d2f5e4" name="set"><type>void</type><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter><parameter name="vw"><paramtype><classname>value_view</classname></paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab45f6bf376d05f1767857a9ca662515d" name="set"><type>void</type><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter><parameter name="vw"><paramtype><classname>value_view</classname></paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a9169f02e520a5a392508bce009f1aa6d" name="set"><type>void</type><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter><parameter name="vw"><paramtype><classname>value_view</classname></paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1accc897104bce5aca1c4f54e36d77084f" name="set"><type>void</type><parameter name="k"><paramtype>const char_type *</paramtype></parameter><parameter name="vw"><paramtype><classname>value_view</classname></paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1acc7bad7d9f683abf666ac431cecdcfec" name="set"><type>void</type><parameter name="k"><paramtype>const char_type *</paramtype></parameter><parameter name="vw"><paramtype><classname>value_view</classname></paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a4c18da347600b81f391caf85b8037182" name="set"><type>void</type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;!std::is_same&lt;Char, char_type&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter><parameter name="vw"><paramtype>const Char *</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a339233a61ef5abc0474c94ae304ad77d" name="set"><type>void</type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;!std::is_same&lt;Char, char_type&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter><parameter name="vw"><paramtype>const Char *</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aa8744675da005443efd10a428df56d45" name="set"><type>void</type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;!std::is_same&lt;Char, char_type&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter><parameter name="vw"><paramtype>const Char *</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a4514687a62530b92915cacf65597fa03" name="set"><type>void</type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;!std::is_same&lt;Char, char_type&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter><parameter name="vw"><paramtype>const Char *</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a6c54acfbd4b0a3ebff72a431b4a1cdac" name="set"><type>void</type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;!std::is_same&lt;Char, char_type&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="k"><paramtype>const char_type *</paramtype></parameter><parameter name="vw"><paramtype>const Char *</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1afd7434b63ee25828cf6d7e2a183700ce" name="set"><type>void</type><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name=""><default>typename std::enable_if&lt;!std::is_same&lt;Char, char_type&gt;::value&gt;::type</default></template-type-parameter>
+        </template><parameter name="k"><paramtype>const char_type *</paramtype></parameter><parameter name="vw"><paramtype>const Char *</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a3f89200cf929c2f25f82eab349528681" name="unset"><type>void</type><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Remove an environment variable from the current process. </purpose><description><para>Disambiguating.</para><para>Throwing. </para></description></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aa0d3ab8363369c17e9f8ff8efdb9d3c1" name="unset"><type>void</type><parameter name="k"><paramtype>const <classname>key</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ad80285b1c99a63d17841c155dd2fc00f" name="unset"><type>void</type><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a667bed7150a6db1608a3567fdd731d02" name="unset"><type>void</type><parameter name="k"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type, key_char_traits&lt; char_type &gt; &gt;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1a9e1ae3a1b2e0bbe6b117af23853145c1" name="unset"><type>void</type><parameter name="c"><paramtype>const char_type *</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1aae9a3e7291d7f489a2a3f63757453876" name="unset"><type>void</type><parameter name="c"><paramtype>const char_type *</paramtype></parameter></function>
+</namespace>
+<namespace name="posix">
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+<namespace name="std">
+<struct-specialization id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key_01_4" name="hash"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::key</template-arg></specialization><method-group name="public member functions">
+<method id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key_01_4_1a0223879344b0256de6f231dbad7ff27a" name="operator()" cv="const noexcept"><type>std::size_t</type><parameter name="kv"><paramtype><classname>boost::process::v2::environment::key_view</classname></paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4" name="hash"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::key_value_pair</template-arg></specialization><method-group name="public member functions">
+<method id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4_1ae275ab8b43848df46647b816c5a8422f" name="operator()" cv="const noexcept"><type>std::size_t</type><parameter name="kv"><paramtype><classname>boost::process::v2::environment::key_value_pair_view</classname></paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4" name="hash"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::key_value_pair_view</template-arg></specialization><method-group name="public member functions">
+<method id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4_1ad7a0ecf6dcb7e0ad991f8fb1920e2b0d" name="operator()" cv="const noexcept"><type>std::size_t</type><parameter name="kv"><paramtype><classname>boost::process::v2::environment::key_value_pair_view</classname></paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key__view_01_4" name="hash"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::key_view</template-arg></specialization><method-group name="public member functions">
+<method id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1key__view_01_4_1a5938b87cdc1f3190731c0e3c10408afc" name="operator()" cv="const noexcept"><type>std::size_t</type><parameter name="kv"><paramtype><classname>boost::process::v2::environment::key_view</classname></paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1value_01_4" name="hash"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::value</template-arg></specialization><method-group name="public member functions">
+<method id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1value_01_4_1ad9fa92678d3b53ac4168f7f1a3ea94c9" name="operator()" cv="const noexcept"><type>std::size_t</type><parameter name="kv"><paramtype><classname>boost::process::v2::environment::value_view</classname></paramtype></parameter></method>
+</method-group>
+</struct-specialization><struct-specialization id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1value__view_01_4" name="hash"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::value_view</template-arg></specialization><method-group name="public member functions">
+<method id="doxygen.structstd_1_1hash_3_01boost_1_1process_1_1v2_1_1environment_1_1value__view_01_4_1af1ce1685ef22972bb7984157e7bc4683" name="operator()" cv="const noexcept"><type>std::size_t</type><parameter name="kv"><paramtype><classname>boost::process::v2::environment::value_view</classname></paramtype></parameter></method>
+</method-group>
+</struct-specialization><class-specialization id="doxygen.classstd_1_1tuple__element_3_010u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4" name="tuple_element"><template>
+    </template><specialization><template-arg>0u</template-arg><template-arg>boost::process::v2::environment::key_value_pair</template-arg></specialization><typedef id="doxygen.classstd_1_1tuple__element_3_010u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4_1aa888ab9eb2957b4e6b0da897d8034128" name="type"><type><classname>boost::process::v2::environment::key_view</classname></type></typedef>
+</class-specialization><class-specialization id="doxygen.classstd_1_1tuple__element_3_010u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4" name="tuple_element"><template>
+    </template><specialization><template-arg>0u</template-arg><template-arg>boost::process::v2::environment::key_value_pair_view</template-arg></specialization><typedef id="doxygen.classstd_1_1tuple__element_3_010u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4_1a931eaefb8dbcff6c56283c174245f722" name="type"><type><classname>boost::process::v2::environment::key_view</classname></type></typedef>
+</class-specialization><class-specialization id="doxygen.classstd_1_1tuple__element_3_011u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4" name="tuple_element"><template>
+    </template><specialization><template-arg>1u</template-arg><template-arg>boost::process::v2::environment::key_value_pair</template-arg></specialization><typedef id="doxygen.classstd_1_1tuple__element_3_011u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4_1ad868b46319585122f63e0dfd55f030b3" name="type"><type><classname>boost::process::v2::environment::value_view</classname></type></typedef>
+</class-specialization><class-specialization id="doxygen.classstd_1_1tuple__element_3_011u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4" name="tuple_element"><template>
+    </template><specialization><template-arg>1u</template-arg><template-arg>boost::process::v2::environment::key_value_pair_view</template-arg></specialization><typedef id="doxygen.classstd_1_1tuple__element_3_011u_00_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4_1a37e10244fc3abb1186bedc64582cdcd0" name="type"><type><classname>boost::process::v2::environment::value_view</classname></type></typedef>
+</class-specialization><class-specialization id="doxygen.classstd_1_1tuple__size_3_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair_01_4" name="tuple_size"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::key_value_pair</template-arg></specialization><inherit access="private">integral_constant&lt; std::size_t, 2u &gt;</inherit></class-specialization><class-specialization id="doxygen.classstd_1_1tuple__size_3_01boost_1_1process_1_1v2_1_1environment_1_1key__value__pair__view_01_4" name="tuple_size"><template>
+    </template><specialization><template-arg>boost::process::v2::environment::key_value_pair_view</template-arg></specialization><inherit access="private">integral_constant&lt; std::size_t, 2u &gt;</inherit></class-specialization><function id="doxygen.environment_8hpp_1a457c5dee353e45047c2b249bce75bf08" name="get"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t</type></template-nontype-parameter>
+        </template><parameter name="kvp"><paramtype>const <classname>boost::process::v2::environment::key_value_pair</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.environment_8hpp_1aa2f75e0bad4454992f916c1933f727fe" name="get"><type>auto</type><template>
+          <template-nontype-parameter name="Idx"><type>std::size_t</type></template-nontype-parameter>
+        </template><parameter name="kvp"><paramtype><classname>boost::process::v2::environment::key_value_pair_view</classname></paramtype></parameter></function>
+</namespace>
+</header>
+<header id="doxygen.error_8hpp" name="boost/process/v2/error.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<namespace name="error">
+<enum id="doxygen.error_8hpp_1af90232b144851a340a626d767b828289" name="utf8_conv_error"><enumvalue id="doxygen.error_8hpp_1af90232b144851a340a626d767b828289a15b26e9a76da25e1af997120835609b0" name="insufficient_buffer"><default>1</default></enumvalue><enumvalue id="doxygen.error_8hpp_1af90232b144851a340a626d767b828289a873828afdc45f1b24e75f5aa32dde2e1" name="invalid_character"/><purpose>Errors used for utf8 &lt;-&gt; UCS-2 conversions. </purpose></enum>
+<data-member id="doxygen.error_8hpp_1ad24014725c7800e3799a6cfb9344eb67" name="utf8_category" specifiers="static"><type>const error_category &amp;</type></data-member>
+<data-member id="doxygen.error_8hpp_1a9e125b8b9798f28db5efc9ab84ab4cc3" name="exit_code_category" specifiers="static"><type>const error_category &amp;</type><purpose>An error category that can be used to interpret exit codes of subprocesses. </purpose><description><para>Currently not used by boost.process, but it might be in the future.</para><para>void run_my_process(filesystem::path pt, error_code &amp; ec) { process proc(pt, {}); proc.wait(); ec.assign(proc.native_exit_code(), error::get_exit_code_category()); } </para></description></data-member>
+<function id="doxygen.error_8hpp_1ab65b5e8f11f39be20278c996b2664b22" name="get_utf8_category"><type>const error_category &amp;</type></function>
+<function id="doxygen.error_8hpp_1a88e4f6f5ab1faf231a7d05b81b9f2a54" name="get_exit_code_category"><type>const error_category &amp;</type></function>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.execute_8hpp" name="boost/process/v2/execute.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.execute_8hpp_1ad7b0a57c596b1f6225373ef3f95179ee" name="execute"><type>int</type><template>
+          <template-type-parameter name="Executor"><purpose><para>The asio executor of the process handle </para></purpose></template-type-parameter>
+        </template><parameter name="proc"><paramtype><classname>basic_process</classname>&lt; Executor &gt;</paramtype><description><para>The process to be run. </para></description></parameter><purpose>Run a process and wait for it to complete. </purpose><description><para>
+
+
+
+</para></description><returns><para>int The exit code of the process </para>
+</returns><throws><simpara><classname>system_error</classname> An error that might have occurred during the wait.</simpara>
+</throws></function>
+<function id="doxygen.execute_8hpp_1ad53e7b72b5453391fd1ae4bf19f7fd06" name="execute"><type>int</type><template>
+          <template-type-parameter name="Executor"/>
+        </template><parameter name="proc"><paramtype><classname>basic_process</classname>&lt; Executor &gt;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.execute_8hpp_1a61adcfccb9bde8ddf6d2ae67e580777a" name="async_execute"><type>auto</type><template>
+          <template-type-parameter name="Executor"><default>net::any_io_executor</default></template-type-parameter>
+          <template-nontype-parameter name="WaitHandler"><type>Token</type><default>net::default_completion_token_t&lt;Executor&gt;</default></template-nontype-parameter>
+        </template><parameter name="proc"><paramtype><classname>basic_process</classname>&lt; Executor &gt;</paramtype></parameter><parameter name="handler"><paramtype>WaitHandler &amp;&amp;</paramtype><default>net::default_completion_token_t&lt; Executor &gt;()</default></parameter><purpose>Execute a process asynchronously. </purpose><description><para>This function asynchronously for a process to complete.</para><para>Cancelling the execution will signal the child process to exit with the following interpretations:</para><para><itemizedlist>
+<listitem><para>cancellation_type::total -&gt; interrupt</para>
+</listitem><listitem><para>cancellation_type::partial -&gt; request_exit</para>
+</listitem><listitem><para>cancellation_type::terminal -&gt; terminate</para>
+</listitem></itemizedlist>
+</para><para>It is to note that <computeroutput>async_execute</computeroutput> will us the lowest selected cancellation type. A subprocess might ignore anything not terminal. </para></description></function>
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.exit__code_8hpp" name="boost/process/v2/exit_code.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<function id="doxygen.exit__code_8hpp_1a8ae8bc8f15efccf38468007f9e872261" name="check_exit_code"><type>error_code</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><parameter name="native_code"><paramtype>native_exit_code_type</paramtype></parameter><parameter name="category"><paramtype>const error_category &amp;</paramtype><default>error::get_exit_code_category()</default></parameter><description><para>Helper to subsume an exit-code into an error_code if there's no actual error isn't set. <programlisting language="c++"><link linkend="doxygen.structboost_1_1process_1_1v2_1_1basic__process">process</link> proc{ctx, "exit", {"1"}};
+
+proc.<link linkend="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a3ab2d8a8dfb6b16447be94b0f30fd743">async_wait</link>(
+    asio::deferred(
+     [&amp;proc](error_code ec, int)
+     {
+       return asio::deferred.values(
+                 check_exit_code(ec, proc.native_exit_code())
+             );
+
+   [](error_code ec)
+   {
+     assert(ec.value() == 10);
+     assert(ec.category() == error::get_exit_code_category());
+   }));
+</programlisting> </para></description></function>
+<typedef id="doxygen.exit__code_8hpp_1ad152ed40a7edebed0857169be2b7b96c" name="native_exit_code_type"><purpose>The native exit-code type, usually an integral value. </purpose><description><para>The OS may have a value different from <computeroutput>int</computeroutput> to represent the exit codes of subprocesses. It might also contain additional information. </para></description><type>implementation_defined</type></typedef>
+
+
+
+
+
+
+
+
+<function id="doxygen.exit__code_8hpp_1a2b50b30964eeba13645b16e34741a3c6" name="process_is_running"><type>bool</type><parameter name="code"><paramtype>native_exit_code_type</paramtype></parameter><purpose>Check if the native exit code indicates the process is still running. </purpose></function>
+<function id="doxygen.exit__code_8hpp_1a0e42a23c55ef32532e43a5b7e85c632e" name="evaluate_exit_code"><type>int</type><parameter name="code"><paramtype>native_exit_code_type</paramtype></parameter><purpose>Obtain the portable part of the exit code, i.e. what the subprocess has returned from main. </purpose></function>
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.ext_8hpp" name="boost/process/v2/ext.hpp">
+</header>
+<header id="doxygen.pid_8hpp" name="boost/process/v2/pid.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+
+<typedef id="doxygen.pid_8hpp_1aa82e6b14307a8c9acca7783eff59584a" name="pid_type"><type>implementation_defined</type></typedef>
+
+<function id="doxygen.pid_8hpp_1ab505a1c4759304ff0d8cc7f5622f2976" name="current_pid"><type>pid_type</type><purpose>Get the process id of the current process. </purpose></function>
+<function id="doxygen.pid_8hpp_1a3400796f93defbe7fd8351f9bb9f522c" name="all_pids"><type>std::vector&lt; pid_type &gt;</type><parameter name="ec"><paramtype>boost::system::error_code &amp;</paramtype></parameter><purpose>List all available pids. </purpose></function>
+<function id="doxygen.pid_8hpp_1a544496df4bae92bb5a4090e94fc8ede8" name="all_pids"><type>std::vector&lt; pid_type &gt;</type><purpose>List all available pids. </purpose></function>
+<function id="doxygen.pid_8hpp_1aa613a323d499ff174af9b72292663877" name="parent_pid"><type>pid_type</type><parameter name="pid"><paramtype>pid_type</paramtype></parameter><parameter name="ec"><paramtype>boost::system::error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.pid_8hpp_1ad2fd59724fc5646e1819a40bf21671c4" name="parent_pid"><type>pid_type</type><parameter name="pid"><paramtype>pid_type</paramtype></parameter></function>
+<function id="doxygen.pid_8hpp_1a58a6f08b036641903767680e1713c330" name="child_pids"><type>std::vector&lt; pid_type &gt;</type><parameter name="pid"><paramtype>pid_type</paramtype></parameter><parameter name="ec"><paramtype>boost::system::error_code &amp;</paramtype></parameter></function>
+<function id="doxygen.pid_8hpp_1ae1d59e0afa09b2da4843c265387d967e" name="child_pids"><type>std::vector&lt; pid_type &gt;</type><parameter name="pid"><paramtype>pid_type</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.popen_8hpp" name="boost/process/v2/popen.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen" name="basic_popen"><template>
+      <template-type-parameter name="Executor"><default>net::any_io_executor</default></template-type-parameter>
+    </template><inherit access="public">boost::process::v2::basic_process&lt; net::any_io_executor &gt;</inherit><purpose>A subprocess with automatically assigned pipes. </purpose><description><para>The purpose os the popen is to provide a convenient way to use the stdin &amp; stdout of a process.</para><para><programlisting language="c++">popen proc(executor, <link linkend="doxygen.namespaceboost_1_1process_1_1v2_1_1environment_1ab884a5b0a65e938c90ba7d7b56d480b8">find_executable</link>("addr2line"), {argv[0]});
+asio::write(proc, asio::buffer("main\n"));
+std::string line;
+asio::read_until(proc, asio::dynamic_buffer(line), '\n');
+</programlisting></para><para>Popen can be used as a stream object in other protocols. </para></description><struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor" name="rebind_executor"><template>
+      <template-type-parameter name="Executor1"/>
+    </template><purpose>Rebinds the popen type to another executor. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor_1a63b62fc2367bd156e5b6e7477c040e6c" name="other"><purpose>The pipe type when rebound to the specified executor. </purpose><type><classname>basic_popen</classname>&lt; Executor1 &gt;</type></typedef>
+</struct><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ac469ea8cd53841eb00998d51fdf82838" name="executor_type"><purpose>The executor of the process. </purpose><type>Executor</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a9ae92789c4e365398ef13802fea4487a" name="stdin_type"><purpose>The type used for stdin on the parent process side. </purpose><type>net::basic_writable_pipe&lt; Executor &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ae4244d84ea220d1fe5a294a509f03ce2" name="stdout_type"><purpose>The type used for stdout on the parent process side. </purpose><type>net::basic_readable_pipe&lt; Executor &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a0dad34a7ef9abb72d1ee29bfe611bde4" cv="= default"><parameter name=""><paramtype><classname>basic_popen</classname> &amp;&amp;</paramtype></parameter><purpose>Move construct a popen. </purpose></constructor>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a1dca6bcea299fe617b852221b13eb9aa" cv="= default"><type><classname>basic_popen</classname> &amp;</type><parameter name=""><paramtype><classname>basic_popen</classname> &amp;&amp;</paramtype></parameter><purpose>Move assign a popen. </purpose></copy-assignment>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a2952705eddc35989adfe12fe05c10c75"><template>
+          <template-type-parameter name="Executor1"/>
+        </template><parameter name="lhs"><paramtype><classname>basic_popen</classname>&lt; Executor1 &gt; &amp;&amp;</paramtype></parameter><purpose>Move construct a popen and change the executor type. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a9f2dfd70fd5d033994d6b0b314fe2c92" specifiers="explicit"><parameter name="exec"><paramtype>executor_type</paramtype></parameter><purpose>Create a closed process handle. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5a0de57704bf1a38e66953d0700a7b8f" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name=""><paramtype>typename std::enable_if&lt; is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, void * &gt;::type</paramtype><default>nullptr</default></parameter><purpose>Create a closed process handle. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ae58f6c5c8460d3bc3f6894845377db72" specifiers="explicit"><template>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="exe"><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name="args"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a307c433e66107c8dd6af664c42f662c2" specifiers="explicit"><template>
+          <template-type-parameter name="Launcher"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="launcher"><paramtype>Launcher &amp;&amp;</paramtype></parameter><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="exe"><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name="args"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a47c85e2537756bd9ff5eb2d55a994b96" specifiers="explicit"><template>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="exe"><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1af056a9f074c9b93e9d8e811e4ce7a907" specifiers="explicit"><template>
+          <template-type-parameter name="Launcher"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="launcher"><paramtype>Launcher &amp;&amp;</paramtype></parameter><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="exe"><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ada205375c03938e9e7407172de9495bf" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="exe"><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, const filesystem::path &amp; &gt;::type</paramtype></parameter><parameter name="args"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ad3da53fc60b1bb23460d4476b328c88c" specifiers="explicit"><template>
+          <template-type-parameter name="Launcher"/>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="launcher"><paramtype>Launcher &amp;&amp;</paramtype></parameter><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="exe"><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, const filesystem::path &amp; &gt;::type</paramtype></parameter><parameter name="args"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a72a0c2f3ff5f3d010ade60f3d7e897f9" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="exe"><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, const filesystem::path &amp; &gt;::type</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ada72761bc96b375ff69f602b9367db98" specifiers="explicit"><template>
+          <template-type-parameter name="Launcher"/>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="launcher"><paramtype>Launcher &amp;&amp;</paramtype></parameter><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="exe"><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, const filesystem::path &amp; &gt;::type</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default process launcher. </purpose></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5df5f8358107ead2ca5689c32f450524" name="get_stdin"><type>stdin_type &amp;</type><purpose>Get the stdin pipe. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a8f3e27a694d674c2c54cdcee6aff3b88" name="get_stdout"><type>stdout_type &amp;</type><purpose>Get the stdout pipe. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1aa0ad2a235908b03d8572bc02af456750" name="get_stdin" cv="const"><type>const stdin_type &amp;</type><purpose>Get the stdin pipe. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ad4a300b5149606d40a4e67569f3fae25" name="get_stdout" cv="const"><type>const stdout_type &amp;</type><purpose>Get the stdout pipe. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1afd76da0184b100a2dd39b3b812bf36cb" name="write_some"><type>std::size_t</type><template>
+          <template-type-parameter name="ConstBufferSequence"/>
+        </template><parameter name="buffers"><paramtype>const ConstBufferSequence &amp;</paramtype><description><para>One or more data buffers to be written to the pipe.</para></description></parameter><purpose>Write some data to the pipe. </purpose><description><para>This function is used to write data to the pipe. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.</para><para>
+
+
+<note><para>The write_some operation may not transmit all of the data to the peer. Consider using the write function if you need to ensure that all data is written before the blocking operation completes.</para>
+</note>
+<formalpara><title>Example</title><para>To write a single data buffer use the buffer function as follows: <programlisting language="c++">pipe.write_some(boost::asio::buffer(data, size));
+</programlisting> See the buffer documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </para>
+</formalpara>
+</para></description><returns><para>The number of bytes written.</para>
+</returns><throws><simpara><classname>boost::system::system_error</classname> Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the subprocess.</simpara>
+</throws></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a7c6657ac84a3cb4bb0fc366ceca218d4" name="write_some"><type>std::size_t</type><template>
+          <template-type-parameter name="ConstBufferSequence"/>
+        </template><parameter name="buffers"><paramtype>const ConstBufferSequence &amp;</paramtype><description><para>One or more data buffers to be written to the pipe.</para></description></parameter><parameter name="ec"><paramtype>boost::system::error_code &amp;</paramtype><description><para>Set to indicate what error occurred, if any.</para></description></parameter><purpose>Write some data to the pipe. </purpose><description><para>This function is used to write data to the pipe. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.</para><para>
+
+<note><para>The write_some operation may not transmit all of the data to the subprocess. Consider using the write function if you need to ensure that all data is written before the blocking operation completes. </para>
+</note>
+</para></description><returns><para>The number of bytes written. Returns 0 if an error occurred.</para>
+</returns></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a007c63c1e7d0d26dd57fb4632801e738" name="async_write_some"><type>auto</type><template>
+          <template-type-parameter name="ConstBufferSequence"/>
+          <template-nontype-parameter name=""><type>WriteToken</type><default>net::default_completion_token_t&lt;executor_type&gt;</default></template-nontype-parameter>
+        </template><parameter name="buffers"><paramtype>const ConstBufferSequence &amp;</paramtype><description><para>One or more data buffers to be written to the pipe. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.</para></description></parameter><parameter name="token"><paramtype>WriteToken &amp;&amp;</paramtype><default>net::default_completion_token_t&lt; executor_type &gt;()</default><description><para>The completion_token that will be used to produce a completion handler, which will be called when the write completes. Potential completion tokens include use_future, use_awaitable, yield_context, or a function object with the correct completion signature. The function signature of the completion handler must be: <programlisting language="c++"> void handler(
+  const boost::system::error_code&amp; error, // Result of operation.
+  std::size_t bytes_transferred // Number of bytes written.
+); 
+</programlisting> Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using boost::asio::post().</para></description></parameter><purpose>Start an asynchronous write. </purpose><description><para>This function is used to asynchronously write data to the pipe. It is an initiating function for an asynchronous_operation, and always returns immediately.</para><para>
+<formalpara><title>Completion Signature</title><para><programlisting language="c++">void(boost::system::error_code, std::size_t) 
+</programlisting></para>
+</formalpara>
+<note><para>The write operation may not transmit all of the data to the peer. Consider using the async_write function if you need to ensure that all data is written before the asynchronous operation completes.</para>
+</note>
+<formalpara><title>Example</title><para>To write a single data buffer use the buffer function as follows: <programlisting language="c++">popen.async_write_some(boost::asio::buffer(data, size), handler);
+</programlisting> See the buffer documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </para>
+</formalpara>
+</para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a6632258132fc1588035a24aaa76c1e96" name="read_some"><type>std::size_t</type><template>
+          <template-type-parameter name="MutableBufferSequence"/>
+        </template><parameter name="buffers"><paramtype>const MutableBufferSequence &amp;</paramtype><description><para>One or more buffers into which the data will be read.</para></description></parameter><purpose>Read some data from the pipe. </purpose><description><para>This function is used to read data from the pipe. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.</para><para>
+
+
+<note><para>The read_some operation may not read all of the requested number of bytes. Consider using the read function if you need to ensure that the requested amount of data is read before the blocking operation completes.</para>
+</note>
+<formalpara><title>Example</title><para>To read into a single data buffer use the buffer function as follows: <programlisting language="c++">basic_readable_pipe.read_some(boost::asio::buffer(data, size));
+</programlisting> See the buffer documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </para>
+</formalpara>
+</para></description><returns><para>The number of bytes read.</para>
+</returns><throws><simpara><classname>boost::system::system_error</classname> Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the peer.</simpara>
+</throws></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a3cfa01946239e6ee3d4cf6aa523c2777" name="read_some"><type>std::size_t</type><template>
+          <template-type-parameter name="MutableBufferSequence"/>
+        </template><parameter name="buffers"><paramtype>const MutableBufferSequence &amp;</paramtype><description><para>One or more buffers into which the data will be read.</para></description></parameter><parameter name="ec"><paramtype>boost::system::error_code &amp;</paramtype><description><para>Set to indicate what error occurred, if any.</para></description></parameter><purpose>Read some data from the pipe. </purpose><description><para>This function is used to read data from the pipe. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.</para><para>
+
+<note><para>The read_some operation may not read all of the requested number of bytes. Consider using the read function if you need to ensure that the requested amount of data is read before the blocking operation completes. </para>
+</note>
+</para></description><returns><para>The number of bytes read. Returns 0 if an error occurred.</para>
+</returns></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5c9af23db8b856653136ce2813225b10" name="async_read_some"><type>auto</type><template>
+          <template-type-parameter name="MutableBufferSequence"/>
+          <template-nontype-parameter name=""><type>ReadToken</type><default>net::default_completion_token_t&lt;executor_type&gt;</default></template-nontype-parameter>
+        </template><parameter name="buffers"><paramtype>const MutableBufferSequence &amp;</paramtype><description><para>One or more buffers into which the data will be read. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.</para></description></parameter><parameter name="token"><paramtype>BOOST_ASIO_MOVE_ARG(ReadToken)</paramtype><default>net::default_completion_token_t&lt; executor_type &gt;()</default><description><para>The completion_token that will be used to produce a completion handler, which will be called when the read completes. Potential completion tokens include use_future, use_awaitable, yield_context, or a function object with the correct completion signature. The function signature of the completion handler must be: <programlisting language="c++"> void handler(
+  const boost::system::error_code&amp; error, // Result of operation.
+  std::size_t bytes_transferred // Number of bytes read.
+); 
+</programlisting> Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using boost::asio::post().</para></description></parameter><purpose>Start an asynchronous read. </purpose><description><para>This function is used to asynchronously read data from the pipe. It is an initiating function for an asynchronous_operation, and always returns immediately.</para><para>
+<formalpara><title>Completion Signature</title><para><programlisting language="c++">void(boost::system::error_code, std::size_t) 
+</programlisting></para>
+</formalpara>
+<note><para>The read operation may not read all of the requested number of bytes. Consider using the async_read function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.</para>
+</note>
+<formalpara><title>Example</title><para>To read into a single data buffer use the buffer function as follows: <programlisting language="c++">basic_readable_pipe.async_read_some(
+    boost::asio::buffer(data, size), handler);
+</programlisting> See the buffer documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </para>
+</formalpara>
+</para></description></method>
+</method-group>
+</struct>
+<typedef id="doxygen.popen_8hpp_1a2a36e75d98872fe5ef20ef5a2948b00e" name="popen"><purpose>A popen object with the default executor. </purpose><type><classname>basic_popen</classname>&lt;&gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.process_8hpp" name="boost/process/v2/process.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__process" name="basic_process"><template>
+      <template-type-parameter name="Executor"><default>net::any_io_executor</default></template-type-parameter>
+    </template><purpose>A class managing a subprocess. </purpose><struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1async__wait__op__" name="async_wait_op_"><data-member id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1async__wait__op___1a4221952b1d4d3e23b70605871b04edd9" name="handle"><type><classname>basic_process_handle</classname>&lt; Executor &gt; &amp;</type></data-member>
+<data-member id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1async__wait__op___1a4286d0580b9e7f3a614a92354c130faa" name="res"><type>native_exit_code_type &amp;</type></data-member>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1async__wait__op___1ab6c5b758e7aa27e91d598ca12281b9b3" name="operator()"><type>void</type><template>
+          <template-type-parameter name="Self"/>
+        </template><parameter name="self"><paramtype>Self &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1async__wait__op___1ae1433b51aa501ba08d27bd3043408a9e" name="operator()"><type>void</type><template>
+          <template-type-parameter name="Self"/>
+        </template><parameter name="self"><paramtype>Self &amp;&amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code</paramtype></parameter><parameter name="code"><paramtype>native_exit_code_type</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1rebind__executor" name="rebind_executor"><template>
+      <template-type-parameter name="Executor1"/>
+    </template><purpose>Rebinds the process_handle to another executor. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1_1rebind__executor_1a533ab45e9aafb8a5d8ffea040ec0effa" name="other"><purpose>The socket type when rebound to the specified executor. </purpose><type><classname>basic_process</classname>&lt; Executor1 &gt;</type></typedef>
+</struct><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1abeae3023ee18fa2464478a1d1738087d" name="executor_type"><purpose>The executor of the process. </purpose><type>Executor</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1ab90ca5edf5528c7c99ac593ed05633e1" name="handle_type"><purpose>The non-closing handle type. </purpose><type><classname>basic_process_handle</classname>&lt; executor_type &gt;</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1abb17bb526ce0a613e38e02253be0dff1" name="native_handle_type"><purpose>Provides access to underlying operating system facilities. </purpose><type>typename handle_type::native_handle_type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1af648b4fde338b12e2cb370a58a2b17ec" name="get_executor"><type>executor_type</type><purpose>Get the executor of the process. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1aa9f2cf35795653290e3dc0667b79f1e5" name="handle"><type>handle_type &amp;</type><purpose>Get the underlying non-closing handle. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a786529c22a04cf61551491cd5ea6ce21" name="handle" cv="const"><type>const handle_type &amp;</type><purpose>Get the underlying non-closing handle. </purpose></method>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a8050df55c79bdb1ec8163eb72faebe0e" cv="= default"><description><para>An empty process is similar to a default constructed thread. It holds an empty handle and is a place holder for a process that is to be launched later. </para></description></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1ae800fa36bcb69e55c393e634e7f98d25" cv="= delete"><parameter name=""><paramtype>const <classname>basic_process</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a98b864b13c84df7dbece6a969a927abf" cv="= delete"><type><classname>basic_process</classname> &amp;</type><parameter name=""><paramtype>const <classname>basic_process</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a1620a2e338a70f6b6285ffbdff6d993a" cv="= default"><parameter name="lhs"><paramtype><classname>basic_process</classname> &amp;&amp;</paramtype></parameter><purpose>Move construct the process. It will be detached from <computeroutput>lhs</computeroutput>. </purpose></constructor>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a74e928b8281367415cdd1d8206f4695e" cv="= default"><type><classname>basic_process</classname> &amp;</type><parameter name="lhs"><paramtype><classname>basic_process</classname> &amp;&amp;</paramtype></parameter><purpose>Move assign a process. It will be detached from <computeroutput>lhs</computeroutput>. </purpose></copy-assignment>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a4130419d3651d736a13830c4d4013b2d"><template>
+          <template-type-parameter name="Executor1"/>
+        </template><parameter name="lhs"><paramtype><classname>basic_process</classname>&lt; Executor1 &gt; &amp;&amp;</paramtype></parameter><purpose>Move construct and rebind the executor. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a13f9e7519edda26616d6c158dc2bd5ca" specifiers="explicit"><template>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="exe"><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name="args"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default launcher.. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1abab063da2aa9f27c8707f515d054f763" specifiers="explicit"><template>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="exe"><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default launcher.. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a915c95c6a2c470b34a21b2597dd4087e" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="exe"><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, const filesystem::path &amp; &gt;::type</paramtype></parameter><parameter name="args"><paramtype>std::initializer_list&lt; string_view &gt;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default launcher.. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1af56b1d2043f7da56d4d871a6a4764e0f" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+          <template-type-parameter name="Args"/>
+          <template-nontype-parameter name="Inits"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="exe"><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, const filesystem::path &amp; &gt;::type</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;</paramtype></parameter><parameter name="inits"><paramtype>Inits &amp;&amp;...</paramtype></parameter><purpose>Construct a child from a property list and launch it using the default launcher. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a2138065b0c1cf2773659835b72305ec4" specifiers="explicit"><parameter name="exec"><paramtype>executor_type</paramtype></parameter><parameter name="pid"><paramtype>pid_type</paramtype></parameter><purpose>Attach to an existing process. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a8482ac5ce398dc88bb14570ea6312e9b" specifiers="explicit"><parameter name="exec"><paramtype>executor_type</paramtype></parameter><parameter name="pid"><paramtype>pid_type</paramtype></parameter><parameter name="native_handle"><paramtype>native_handle_type</paramtype></parameter><purpose>Attach to an existing process and the internal handle. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a41dc5c85db4cdf0aff57fb08ae879b29" specifiers="explicit"><parameter name="exec"><paramtype>executor_type</paramtype></parameter><purpose>Create an invalid handle. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a89fd9e826e7558101f8657a5b9ea344e" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="pid"><paramtype>pid_type</paramtype></parameter><parameter name=""><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, void * &gt;::type</paramtype><default>nullptr</default></parameter><purpose>Attach to an existing process. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a908716b53b890b6d026c63338ca5df6d" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name="pid"><paramtype>pid_type</paramtype></parameter><parameter name="native_handle"><paramtype>native_handle_type</paramtype></parameter><parameter name=""><paramtype>typename std::enable_if&lt; std::is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, void * &gt;::type</paramtype><default>nullptr</default></parameter><purpose>Attach to an existing process and the internal handle. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1ac79e74396fae37a1001424164f91639d" specifiers="explicit"><template>
+          <template-type-parameter name="ExecutionContext"/>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><parameter name=""><paramtype>typename std::enable_if&lt; is_convertible&lt; ExecutionContext &amp;, net::execution_context &amp; &gt;::value, void * &gt;::type</paramtype><default>nullptr</default></parameter><purpose>Create an invalid handle. </purpose></constructor>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a3798e8df065d796239bba03e4fd5327d"><purpose>Destruct the handle and terminate the process if it wasn't detached. </purpose></destructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1abf3e7ab69a5567581685a004a7db91fe" name="interrupt"><type>void</type><purpose>Sends the process a signal to ask for an interrupt, which the process may interpret as a shutdown. </purpose><description><para>Maybe be ignored by the subprocess.</para><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1acc1345c1be301c4465664c1660ce7d79" name="interrupt"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1ab8e504766f9d0cfc2b0fedc702225188" name="request_exit"><type>void</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a24d367787e4d850a3b88085da930fd28" name="request_exit"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Sends the process a signal to ask for a graceful shutdown. Maybe be ignored by the subprocess. </purpose><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1af738eb285a41208a7f469d0de6aa8642" name="suspend"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Send the process a signal requesting it to stop. This may rely on undocumented functions. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a3275bc462c4d3b4d89276b1a096089d0" name="suspend"><type>void</type><purpose>Send the process a signal requesting it to stop. This may rely on undocumented functions. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a8f9e158ec8f25b760e6dcf0f456610c9" name="resume"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Send the process a signal requesting it to resume. This may rely on undocumented functions. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a6e954077fbf95b94afe0be9dd5fac6ed" name="resume"><type>void</type><purpose>Send the process a signal requesting it to resume. This may rely on undocumented functions. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1ab12b9f8679a2c7dc75f8e51185fcc584" name="terminate"><type>void</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a46b8ff457dc1788960853cc1beb56597" name="terminate"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Unconditionally terminates the process and stores the exit code in exit_status. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a847c06085fd3db0d133c9d0592a74032" name="wait"><type>int</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a6b6e68380d89839587bd51b06dae48eb" name="wait"><type>int</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Waits for the process to exit, store the exit code internally and return it. </purpose><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1aa5e280b95d73428ee125dfb13e6fb921" name="detach"><type>handle_type</type><purpose>Detach the process. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a45c3416871a89bc395d7a901128789ed" name="native_handle"><type>native_handle_type</type><purpose>Get the native. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1afc9a9c96c44ddbf9a33ae001d6a113f7" name="exit_code" cv="const"><type>int</type><purpose>Return the evaluated exit_code. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a2642414731c647988907d6986f8bef0e" name="id" cv="const"><type>pid_type</type><purpose>Get the id of the process;. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1ad728a68410c00e3684b86c44e1b6b76c" name="native_exit_code" cv="const"><type>native_exit_code_type</type><purpose>The native handle of the process. </purpose><description><para>This might be undefined on posix systems that only support signals </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a1f3313b673e3d445314495c40bee0353" name="running"><type>bool</type><purpose>Checks if the current process is running. </purpose><description><para>If it has already completed the exit code will be stored internally and can be obtained by calling `exit_code. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a9424dcdd08b50b7347a18c0fd1dd4f47" name="running" cv="noexcept"><type>bool</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a6a5f0c9a58f914e4fcee14b5277885ad" name="is_open" cv="const"><type>bool</type><purpose>Check if the process is referring to an existing process. </purpose><description><para>Note that this might be a process that already exited. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process_1a3ab2d8a8dfb6b16447be94b0f30fd743" name="async_wait"><type>auto</type><template>
+          <template-nontype-parameter name="WaitHandler"><type>Token</type><default>net::default_completion_token_t&lt;executor_type&gt;</default></template-nontype-parameter>
+        </template><parameter name="handler"><paramtype>WaitHandler &amp;&amp;</paramtype><default>net::default_completion_token_t&lt; executor_type &gt;()</default></parameter><purpose>Asynchronously wait for the process to exit and deliver the native exit-code in the completion handler. </purpose></method>
+</method-group>
+</struct>
+<typedef id="doxygen.process_8hpp_1afde14d5e9b617b820f712f9b6d2ac23c" name="process"><purpose>Process with the default executor. </purpose><type><classname>basic_process</classname></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.process__handle_8hpp" name="boost/process/v2/process_handle.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle" name="basic_process_handle"><template>
+      <template-type-parameter name="Executor"><default>net::any_io_executor</default></template-type-parameter>
+    </template><description><para>A process handle is an unmanaged version of a process. This means it does not terminate the proces on destruction and will not keep track of the exit-code.</para><para>Note that the exit code might be discovered early, during a call to <computeroutput>running</computeroutput>. Thus it can only be discovered that process has exited already. </para></description><struct id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1_1rebind__executor" name="rebind_executor"><template>
+      <template-type-parameter name="Executor1"/>
+    </template><purpose>Rebinds the process_handle to another executor. </purpose><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1_1rebind__executor_1acb5ca3f0c08bd6d474303ef708efa4bf" name="other"><purpose>The socket type when rebound to the specified executor. </purpose><type><classname>basic_process_handle</classname>&lt; Executor1 &gt;</type></typedef>
+</struct><typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1ae825b11dbc52af51f6fa4ebdc54bcb74" name="native_handle_type"><purpose>The native handle of the process. </purpose><description><para>This might be undefined on posix systems that only support signals </para></description><type>implementation_defined</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a3aaa08746c03777150e984d4c2916ea7" name="executor_type"><purpose>The executor_type of the process_handle. </purpose><type>Executor</type></typedef>
+<data-member id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a4c2acceb3b569a76fa2bca720cef900f" name="ec"><type>void error_code &amp;</type></data-member>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a45879271e3a706de40f895e8bfcca8da" name="get_executor"><type>executor_type</type><purpose>Getter for the executor. </purpose></method>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a2e5d6f53cb5fadd4a25396ccde66b090"><template>
+          <template-type-parameter name="ExecutionContext"><purpose><para>The context must fulfill the asio::execution_context requirements </para></purpose></template-type-parameter>
+        </template><parameter name="context"><paramtype>ExecutionContext &amp;</paramtype></parameter><purpose>Construct a <link linkend="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle">basic_process_handle</link> from an execution_context. </purpose><description><para>
+</para></description></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a89f1947bb438b7c1c5f25d238d759e6f"><parameter name="executor"><paramtype>executor_type</paramtype></parameter><purpose>Construct an empty process_handle from an executor. </purpose></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1ac728c261a83b02539a4a35b6a4ee1e3c"><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="pid"><paramtype>pid_type</paramtype></parameter><purpose>Construct an empty process_handle from an executor and bind it to a pid. </purpose><description><para>On NON-linux posix systems this call is not able to obtain a file-descriptor and will thus rely on signals. </para></description></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1ac24dcd71c24ebc1978a550b52b19db9d"><parameter name="executor"><paramtype>executor_type</paramtype></parameter><parameter name="pid"><paramtype>pid_type</paramtype></parameter><parameter name="process_handle"><paramtype>native_handle_type</paramtype></parameter><purpose>Construct an empty process_handle from an executor and bind it to a pid and the native-handle. </purpose><description><para>On some non-linux posix systems this overload is not present. </para></description></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a7d76f7867214364419b76c9788b4c558"><template>
+          <template-type-parameter name="Executor1"/>
+        </template><parameter name="handle"><paramtype><classname>basic_process_handle</classname>&lt; Executor1 &gt; &amp;&amp;</paramtype></parameter><purpose>Move construct and rebind the executor. </purpose></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a2757a032f4f07ac69b925b2d7b5854f2" name="id" cv="const"><type>pid_type</type><purpose>Get the id of the process. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1af4c547e60e7e79edb000353d40b1d5a5" name="terminate_if_running"><type>void</type><parameter name=""><paramtype>error_code &amp;</paramtype></parameter><purpose>Terminate the process if it's still running and ignore the result. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1adb1d924316720664128b280fbeb99455" name="terminate_if_running"><type>void</type><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1ab884988dab6e7b307fafcfe70f861e3d" name="wait"><type>void</type><parameter name="exit_status"><paramtype>native_exit_code_type &amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>wait for the process to exit and store the exit code in exit_status. </purpose><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a6eb62f8b27e0a473e592f6b870494d6d" name="wait"><type>void</type><parameter name="exit_status"><paramtype>native_exit_code_type &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a1bb5166f9df302d7a79861889de77927" name="interrupt"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Sends the process a signal to ask for an interrupt, which the process may interpret as a shutdown. </purpose><description><para>Maybe be ignored by the subprocess. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1afe5ee8bf4d7038541bc4acac6ab1ee8a" name="interrupt"><type>void</type><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1ac0db60cc0e1ce64b37d520f58256fee9" name="request_exit"><type>void</type><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Sends the process a signal to ask for a graceful shutdown. Maybe be ignored by the subprocess. </purpose><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a1a4019ff7a1c89f9cc7e4eb3d18c23ff" name="request_exit"><type>void</type><purpose>Unconditionally terminates the process and stores the exit code in exit_status. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a37dcf7d9b5141727d16ec90f9b4cbb46" name="terminate"><type>void</type><parameter name="exit_status"><paramtype>native_exit_code_type &amp;</paramtype></parameter><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1aa4c71d17f5a3145d65df163f8c5e2bf7" name="running"><type>bool</type><parameter name="exit_code"><paramtype>native_exit_code_type &amp;</paramtype></parameter><parameter name="ec"><paramtype>error_code &amp;</paramtype></parameter><purpose>Checks if the current process is running. </purpose><description><para>If it has already completed, it assigns the exit code to <computeroutput>exit_code</computeroutput>.</para><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1a5cff2110c9f7dcdc7a1ee690734c7b91" name="running"><type>bool</type><parameter name="exit_code"><paramtype>native_exit_code_type &amp;</paramtype></parameter></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1ab5e5033fd37eb4e1ccb549a762a50954" name="is_open" cv="const"><type>bool</type><purpose>Check if the process handle is referring to an existing process. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1basic__process__handle_1adcfa6568dabd798f854559013fa7ad43" name="async_wait"><type>auto</type><template>
+          <template-nontype-parameter name="WaitHandler"><type>Token</type><default>net::default_completion_token_t&lt;executor_type&gt;</default></template-nontype-parameter>
+        </template><parameter name="handler"><paramtype>WaitHandler &amp;&amp;</paramtype><default>net::default_completion_token_t&lt; executor_type &gt;()</default></parameter><purpose>Asynchronously wait for the process to exit and deliver the native exit-code in the completion handler. </purpose></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.shell_8hpp" name="boost/process/v2/shell.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1shell" name="shell"><purpose>Utility to parse commands. </purpose><description><para>This utility class parses command lines into tokens and allows users to executed based on textual inputs.</para><para>In v1, this was possible directly when starting a process, but has been removed based on the security risks associated with this.</para><para>By making the shell parsing explicitly, it encourages a user to run a sanity check on the executable before launching it.</para><para><formalpara><title>Example</title><para><programlisting language="c++">asio::io_context ctx;
+
+auto cmd = shell("my-app --help");
+auto exe = cmd.exe();
+check_if_malicious(exe);
+
+process proc{ctx, exe, cmd.args()};
+</programlisting> </para>
+</formalpara>
+</para></description><typedef id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a8f9903424761b751c9b69327a2dfc99c" name="char_type"><type>char</type></typedef>
+<typedef id="doxygen.structboost_1_1process_1_1v2_1_1shell_1aec890e2ab1446d4b740ae4d72eeb9ff8" name="args_type"><type>const char **</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1abc43bb3d4f3b541080e2dbe1910b0505" cv="= default"/>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a882a08a483f2a0e3e3154a586284f70e"><template>
+          <template-type-parameter name="Char"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="input"><paramtype>basic_string_view&lt; Char, Traits &gt;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a515bad73d81994c33d013e7970fad8a2"><parameter name="input"><paramtype><classname>basic_cstring_ref</classname>&lt; char_type &gt;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a0f922354df028aa5162c1a163325c622"><parameter name="input"><paramtype>basic_string_view&lt; typename std::conditional&lt; std::is_same&lt; char_type, char &gt;::value, wchar_t, char &gt;::type &gt;</paramtype></parameter></constructor>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a67bbbeb051b99735713f6c9b31efd39c" cv="= delete"><parameter name=""><paramtype>const <classname>shell</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a43ee1d9693d1dc8f5b90d70f3fe64d01" cv="= delete"><type><classname>shell</classname> &amp;</type><parameter name=""><paramtype>const <classname>shell</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a3ea42751e7d674da449ede896afd65f6" cv="noexcept"><parameter name="lhs"><paramtype><classname>shell</classname> &amp;&amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a0493fa1df2e8a5f68267127d79e9e1f5" cv="noexcept"><type><classname>shell</classname> &amp;</type><parameter name="lhs"><paramtype><classname>shell</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a77f547f8360a7e398bec320c8a710325" name="argc" cv="const"><type>int</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1ae8d0b4b1f45dabf1e915baa55a16dcac" name="argv" cv="const"><type>char_type **</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1ad2bcdef151afcee6daa75a06f8df5e04" name="begin" cv="const"><type>char_type **</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1ac16680ff72be6ff7c44ad3cef90fce13" name="end" cv="const"><type>char_type **</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1ac789befde18070a82712485f8071bf30" name="empty" cv="const"><type>bool</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1acb2b802b18fa16e5ed107238dad6f060" name="size" cv="const"><type>std::size_t</type></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1aad5fc3895025b4a7ca32c56905650a5c" name="args" cv="const"><type>args_type</type><purpose>Native representation of the arguments to be used - excluding the executable. </purpose></method>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1affa1e90667b9f57dfa47d8a3eac55b18" name="exe" cv="const"><type>filesystem::path</type><template>
+          <template-type-parameter name="Environment"><default>environment::current_view</default></template-type-parameter>
+        </template><parameter name="env"><paramtype>Environment &amp;&amp;</paramtype><default>environment::current()</default></parameter></method>
+<destructor id="doxygen.structboost_1_1process_1_1v2_1_1shell_1a6182a7253a8b48a0b78ada7dac5ca9cf"/>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1shell_1aa5a306278f3468a54f14cc1896b99917" name="parse_"><type>void</type></method>
+</method-group>
+</struct>
+<data-member id="doxygen.shell_8hpp_1a182037b6f62c98ae92dada52c2b912c2" name="shell_category" specifiers="static"><type>const error_category &amp;</type></data-member>
+<function id="doxygen.shell_8hpp_1ac8412040913454de83e2ab3322acd7ed" name="get_shell_category"><type>const error_category &amp;</type><purpose>Error category used by the shell parser. </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.start__dir_8hpp" name="boost/process/v2/start_dir.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1process__start__dir" name="process_start_dir"><purpose>Initializer for the starting directory of a subprocess to be launched. </purpose><data-member id="doxygen.structboost_1_1process_1_1v2_1_1process__start__dir_1a89f80776e8ca6285d477b33f5f3c12be" name="start_dir"><type>filesystem::path</type></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.structboost_1_1process_1_1v2_1_1process__start__dir_1ae5de1e1ac3efee64d3c3d6a6a0e87769"><parameter name="start_dir"><paramtype>filesystem::path</paramtype></parameter></constructor>
+<method id="doxygen.structboost_1_1process_1_1v2_1_1process__start__dir_1a1d2d885470d94919b0c14beba20ef36b" name="on_exec_setup"><type>error_code</type><parameter name="launcher"><paramtype>posix::default_launcher &amp;</paramtype></parameter><parameter name=""><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name=""><paramtype>const char *const *</paramtype></parameter></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.stdio_8hpp" name="boost/process/v2/stdio.hpp">
+<namespace name="boost">
+<namespace name="process">
+<namespace name="v2">
+<struct id="doxygen.structboost_1_1process_1_1v2_1_1process__stdio" name="process_stdio"><purpose>The initializer for the stdio of a subprocess. </purpose><description><para>The subprocess initializer has three members:</para><para><itemizedlist>
+<listitem><para>in for stdin</para>
+</listitem><listitem><para>out for stdout</para>
+</listitem><listitem><para>err for stderr</para>
+</listitem></itemizedlist>
+</para><para>If the initializer is present all three will be set for the subprocess. By default they will inherit the stdio handles from the parent process. This means that this will forward stdio to the subprocess:</para><para><programlisting language="c++">asio::io_context ctx;
+v2::process proc(ctx, "/bin/bash", {}, v2::process_stdio{});
+</programlisting></para><para>No constructors are provided in order to support designated initializers in later version of C++.</para><para><itemizedlist>
+<listitem><para><programlisting language="c++">asio::io_context ctx;
+v2::process proc17(ctx, "/bin/bash", {}, v2::process_stdio{.stderr=nullptr});
+v2::process proc17(ctx, "/bin/bash", {}, v2::process_stdio{ {}, {}, nullptr});
+                                                       stdin ^  ^ stderr
+</programlisting></para>
+</listitem></itemizedlist>
+</para><para>Valid initializers for any stdio are:</para><para><itemizedlist>
+<listitem><para><computeroutput>std::nullptr_t</computeroutput> assigning a null-device</para>
+</listitem><listitem><para><computeroutput>FILE*</computeroutput> any open file, including <computeroutput>stdin</computeroutput>, <computeroutput>stdout</computeroutput> and <computeroutput>stderr</computeroutput></para>
+</listitem><listitem><para>a filesystem::path, which will open a readable or writable depending on the direction of the stream</para>
+</listitem><listitem><para><computeroutput>native_handle</computeroutput> any native file handle (<computeroutput>HANDLE</computeroutput> on windows) or file descriptor (<computeroutput>int</computeroutput> on posix)</para>
+</listitem><listitem><para>any io-object with a .native_handle() function that is compatible with the above. E.g. a asio::ip::tcp::socket</para>
+</listitem><listitem><para>an asio::basic_writeable_pipe for stdin or asio::basic_readable_pipe for stderr/stdout. </para>
+</listitem></itemizedlist>
+</para></description><data-member id="doxygen.structboost_1_1process_1_1v2_1_1process__stdio_1a3f24ce80be3dd91cc50af473e13cad1a" name="in"><type><emphasis>unspecified</emphasis></type></data-member>
+<data-member id="doxygen.structboost_1_1process_1_1v2_1_1process__stdio_1aa987e38a384fda1c66717e5b29c98aa3" name="out"><type><emphasis>unspecified</emphasis></type></data-member>
+<data-member id="doxygen.structboost_1_1process_1_1v2_1_1process__stdio_1ae1454cc743fa5b21598a496cb8e48656" name="err"><type><emphasis>unspecified</emphasis></type></data-member>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1process_1_1v2_1_1process__stdio_1a823a36fc59da74d1341a7b46dc92e03c" name="on_exec_setup"><type>error_code</type><parameter name="launcher"><paramtype>posix::default_launcher &amp;</paramtype></parameter><parameter name=""><paramtype>const filesystem::path &amp;</paramtype></parameter><parameter name=""><paramtype>const char *const *</paramtype></parameter></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

@@ -1,0 +1,138 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template threefry_engine</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.threefry__engine_8hpp" title="Header &lt;boost/compute/random/threefry_engine.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1normal__distribution.html" title="Class template normal_distribution">
+<link rel="next" href="classboost_1_1compute_1_1uniform__int__distribution.html" title="Class template uniform_int_distribution">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1normal__distribution.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.threefry__engine_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1uniform__int__distribution.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template threefry_engine</span></h2>
+<p>boost::compute::threefry_engine — Threefry pseudorandom number generator. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.threefry__engine_8hpp" title="Header &lt;boost/compute/random/threefry_engine.hpp&gt;">boost/compute/random/threefry_engine.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T <span class="special">=</span> <span class="identifier">uint_</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a388947f6598172c40591fcc3af994908"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#id81-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1abc77fc6a4cf4640f1ece15ce63c17167"><span class="identifier">threefry_engine</span></a><span class="special">(</span><span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">ulong_</span> <span class="special">=</span> <span class="identifier">default_seed</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1acadf07616e8ec7de7d194d702cb37433"><span class="identifier">threefry_engine</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a0f27db0365c085ad3b78ce28d41a0410"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a50cbe666c1188ed3f43db3f09a324927"><span class="special">~</span><span class="identifier">threefry_engine</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a29419222e51bb5162d108fcc17203692"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">ulong_</span><span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a28ffe6ef2dfc52ee4d02627eeae772d7"><span class="identifier">seed</span></a><span class="special">(</span><span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a6fc485f7b261ed831ab5f78a46c7264d"><span class="identifier">generate</span></a><span class="special">(</span><span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">,</span> <span class="keyword">typename</span> Function<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1ac32593fb34912932d247c571f2f7d7b5"><span class="identifier">generate</span></a><span class="special">(</span><span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">Function</span><span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a8f085bdc1011d8b519b2c8fe5ab6f34e"><span class="identifier">discard</span></a><span class="special">(</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#id82-bb">private member functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html#doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a5bf642417144930c18174773c6ec60cd"><span class="identifier">load_program</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">ulong_</span> <span class="identifier">default_seed</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id37225"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id37227"></a><h3>
+<a name="id81-bb"></a><code class="computeroutput">threefry_engine</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1abc77fc6a4cf4640f1ece15ce63c17167"></a><span class="identifier">threefry_engine</span><span class="special">(</span><span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">,</span> <span class="identifier">ulong_</span> value <span class="special">=</span> <span class="identifier">default_seed</span><span class="special">)</span><span class="special">;</span></pre>Creates a new <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a> and seeds it with <code class="computeroutput">value</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1acadf07616e8ec7de7d194d702cb37433"></a><span class="identifier">threefry_engine</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Creates a new <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a> object as a copy of <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a0f27db0365c085ad3b78ce28d41a0410"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Copies <code class="computeroutput">other</code> to <code class="computeroutput">*this</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a50cbe666c1188ed3f43db3f09a324927"></a><span class="special">~</span><span class="identifier">threefry_engine</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the <a class="link" href="classboost_1_1compute_1_1threefry__engine.html" title="Class template threefry_engine">threefry_engine</a> object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a29419222e51bb5162d108fcc17203692"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">ulong_</span> value<span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>
+<p>Seeds the random number generator with <code class="computeroutput">value</code>.</p>
+<p>
+If no seed value is provided, <code class="computeroutput">default_seed</code> is used. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>seed value for the random-number generator </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">queue</code></span></p></td>
+<td><p>command queue to perform the operation</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a28ffe6ef2dfc52ee4d02627eeae772d7"></a><span class="identifier">seed</span><span class="special">(</span><span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a6fc485f7b261ed831ab5f78a46c7264d"></a><span class="identifier">generate</span><span class="special">(</span><span class="identifier">OutputIterator</span> first<span class="special">,</span> <span class="identifier">OutputIterator</span> last<span class="special">,</span> 
+                <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>Generates random numbers and stores them to the range [<code class="computeroutput">first</code>, <code class="computeroutput">last</code>). </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">,</span> <span class="keyword">typename</span> Function<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1ac32593fb34912932d247c571f2f7d7b5"></a><span class="identifier">generate</span><span class="special">(</span><span class="identifier">OutputIterator</span> first<span class="special">,</span> <span class="identifier">OutputIterator</span> last<span class="special">,</span> <span class="identifier">Function</span> op<span class="special">,</span> 
+                <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>
+<p>Generates random numbers, transforms them with <code class="computeroutput">op</code>, and then stores them to the range [<code class="computeroutput">first</code>, <code class="computeroutput">last</code>). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a8f085bdc1011d8b519b2c8fe5ab6f34e"></a><span class="identifier">discard</span><span class="special">(</span><span class="identifier">size_t</span> z<span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>Generates <code class="computeroutput">z</code> random numbers and discards them. </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id37402"></a><h3>
+<a name="id82-bb"></a><code class="computeroutput">threefry_engine</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1threefry__engine_1a5bf642417144930c18174773c6ec60cd"></a><span class="identifier">load_program</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1normal__distribution.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.threefry__engine_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1uniform__int__distribution.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

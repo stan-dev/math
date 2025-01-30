@@ -1,0 +1,24 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/bind//boost_bind
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/throw_exception//boost_throw_exception
+    ;
+
+project /boost/function ;
+
+explicit
+    [ alias boost_function : : : : <include>include <library>$(boost_dependencies) ]
+    [ alias all : boost_function example test ]
+    ;
+
+call-if : boost-library function
+    ;

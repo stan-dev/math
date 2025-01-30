@@ -1,0 +1,162 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>array::swap</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../boost__json__array.html" title="array">
+<link rel="prev" href="max_size.html" title="array::max_size">
+<link rel="next" href="operator_eq__eq__fr.html" title="array::operator==">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="max_size.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__json__array.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_eq__eq__fr.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="json.ref.boost__json__array.swap_fr"></a><a class="link" href="swap_fr.html" title="array::swap">array::swap</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id22143"></a>
+Exchange the given values.
+        </p>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h0"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.synopsis"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.synopsis">Synopsis</a>
+        </h6>
+<p>
+          Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/json/blob/master/include/boost/json/array.hpp" target="_top">boost/json/array.hpp</a>&gt;</code>
+        </p>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">swap</span><span class="special">(</span>
+    <a class="link" href="../boost__json__array.html" title="array"><code class="literal">array</code></a><span class="special">&amp;</span> <span class="identifier">lhs</span><span class="special">,</span>
+    <a class="link" href="../boost__json__array.html" title="array"><code class="literal">array</code></a><span class="special">&amp;</span> <span class="identifier">rhs</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h1"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.description"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.description">Description</a>
+        </h6>
+<p>
+          Exchanges the contents of the array <code class="computeroutput"><span class="identifier">lhs</span></code>
+          with another array <code class="computeroutput"><span class="identifier">rhs</span></code>.
+          Ownership of the respective <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">pmr</span><span class="special">::</span><span class="identifier">memory_resource</span></code>
+          objects is not transferred.
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              If <code class="computeroutput"><span class="special">*</span><span class="identifier">lhs</span><span class="special">.</span><span class="identifier">storage</span><span class="special">()</span> <span class="special">==</span> <span class="special">*</span><span class="identifier">rhs</span><span class="special">.</span><span class="identifier">storage</span><span class="special">()</span></code>, ownership of the underlying memory
+              is swapped in constant time, with no possibility of exceptions. All
+              iterators and references remain valid.
+            </li>
+<li class="listitem">
+              If <code class="computeroutput"><span class="special">*</span><span class="identifier">lhs</span><span class="special">.</span><span class="identifier">storage</span><span class="special">()</span> <span class="special">!=</span> <span class="special">*</span><span class="identifier">rhs</span><span class="special">.</span><span class="identifier">storage</span><span class="special">()</span></code>, the contents are logically swapped
+              by making a copy, which can throw. In this case all iterators and references
+              are invalidated.
+            </li>
+</ul></div>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h2"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.effects"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.effects">Effects</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">lhs</span><span class="special">.</span><span class="identifier">swap</span><span class="special">(</span> <span class="identifier">rhs</span> <span class="special">);</span>
+</pre>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h3"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.complexity"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.complexity">Complexity</a>
+        </h6>
+<p>
+          Constant or linear in <code class="computeroutput"><span class="identifier">lhs</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">+</span> <span class="identifier">rhs</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span></code>.
+        </p>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h4"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.exception_safety"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Strong guarantee. Calls to <code class="computeroutput"><span class="identifier">memory_resource</span><span class="special">::</span><span class="identifier">allocate</span></code>
+          may throw.
+        </p>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h5"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.parameters"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">lhs</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The array to exchange.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">rhs</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The array to exchange. If <code class="computeroutput"><span class="special">&amp;</span><span class="identifier">lhs</span> <span class="special">==</span>
+                    <span class="special">&amp;</span><span class="identifier">rhs</span></code>,
+                    this function call has no effect.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+<h6>
+<a name="json.ref.boost__json__array.swap_fr.h6"></a>
+          <span class="phrase"><a name="json.ref.boost__json__array.swap_fr.see_also"></a></span><a class="link" href="swap_fr.html#json.ref.boost__json__array.swap_fr.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="swap.html" title="array::swap"><code class="computeroutput"><span class="identifier">array</span><span class="special">::</span><span class="identifier">swap</span></code></a>
+        </p>
+<p>
+          Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/json/blob/master/include/boost/json.hpp" target="_top">boost/json.hpp</a>&gt;</code>
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="max_size.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__json__array.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_eq__eq__fr.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

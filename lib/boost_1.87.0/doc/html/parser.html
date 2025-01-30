@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chapter 26. Boost.Parser</title>
+<link rel="stylesheet" href="../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="libraries.html" title="Part I. The Boost C++ Libraries (BoostBook Subset)">
+<link rel="prev" href="auxiliary.html" title="Auxiliary Components">
+<link rel="next" href="boost_parser/configuration_and_optional_features.html" title="Configuration and Optional Features">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../boost.png"></td>
+<td align="center"><a href="../../index.html">Home</a></td>
+<td align="center"><a href="../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="auxiliary.html"><img src="../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="libraries.html"><img src="../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost_parser/configuration_and_optional_features.html"><img src="../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="chapter">
+<div class="titlepage"><div>
+<div><h2 class="title">
+<a name="parser"></a>Chapter 26. Boost.Parser</h2></div>
+<div><div class="author"><h3 class="author">
+<span class="firstname">Zach</span> <span class="surname">Laine</span>
+</h3></div></div>
+<div><p class="copyright">Copyright © 2020 T. Zachary Laine</p></div>
+<div><div class="legalnotice">
+<a name="parser.legal"></a><p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div></div>
+</div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl class="toc">
+<dt><span class="section"><a href="parser.html#boost_parser.introduction">Introduction</a></span></dt>
+<dt><span class="section"><a href="boost_parser/configuration_and_optional_features.html">Configuration
+    and Optional Features</a></span></dt>
+<dt><span class="section"><a href="boost_parser/this_library_s_relationship_to_boost_spirit.html">This
+    Library's Relationship to Boost.Spirit</a></span></dt>
+<dt><span class="section"><a href="boost_parser/cheat_sheet.html">Cheat Sheet</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html">Tutorial</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.terminology">Terminology</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.hello__whomever">Hello, Whomever</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.a_trivial_example">A Trivial Example</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.a_trivial_example_that_gracefully_handles_whitespace">A
+      Trivial Example That Gracefully Handles Whitespace</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.semantic_actions">Semantic Actions</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.parsing_to_find_subranges">Parsing
+      to Find Subranges</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.the_parse_context">The Parse Context</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.rule_parsers">Rule Parsers</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.parsing_into__struct_s_and__class_es">Parsing
+      into <code class="computeroutput"><span class="keyword">struct</span></code>s and <code class="computeroutput"><span class="keyword">class</span></code>es</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.alternative_parsers">Alternative
+      Parsers</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.parsing_quoted_strings">Parsing
+      Quoted Strings</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.parsing_in_detail">Parsing In Detail</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.backtracking">Backtracking</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.symbol_tables">Symbol Tables</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.mutable_symbol_tables">Mutable
+      Symbol Tables</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.the_parsers_and_their_uses">The
+      Parsers And Their Uses</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.directives">Directives</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.combining_operations">Combining
+      Operations</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.attribute_generation">Attribute
+      Generation</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.the__parse____api">The <code class="computeroutput"><span class="identifier">parse</span><span class="special">()</span></code> API</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.more_about_rules">More About Rules</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.algorithms_and_views_that_use_parsers">Algorithms
+      and Views That Use Parsers</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.unicode_support">Unicode Support</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.callback_parsing">Callback Parsing</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.error_handling_and_debugging">Error
+      Handling and Debugging</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.memory_allocation">Memory Allocation</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.best_practices">Best Practices</a></span></dt>
+<dt><span class="section"><a href="boost_parser/tutorial.html#boost_parser.tutorial.writing_your_own_parsers">Writing
+      Your Own Parsers</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="boost_parser/extended_examples.html">Extended Examples</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="boost_parser/extended_examples.html#boost_parser.extended_examples.parsing_json">Parsing
+      JSON</a></span></dt>
+<dt><span class="section"><a href="boost_parser/extended_examples.html#boost_parser.extended_examples.parsing_json_with_callbacks">Parsing
+      JSON With Callbacks</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="boost_parser/concepts.html">Concepts</a></span></dt>
+<dt><span class="section"><a href="parser/compiler_support.html">Compiler Support</a></span></dt>
+<dt><span class="section"><a href="headers.html">Headers</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="headers.html#doxygen.headers.config_8hpp">Header &lt;boost/parser/config.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.error__handling_8hpp">Header &lt;boost/parser/error_handling.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.error__handling__fwd_8hpp">Header &lt;boost/parser/error_handling_fwd.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.parser_8hpp">Header &lt;boost/parser/parser.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.parser__fwd_8hpp">Header &lt;boost/parser/parser_fwd.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.replace_8hpp">Header &lt;boost/parser/replace.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.search_8hpp">Header &lt;boost/parser/search.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.split_8hpp">Header &lt;boost/parser/split.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.subrange_8hpp">Header &lt;boost/parser/subrange.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.transcode__view_8hpp">Header &lt;boost/parser/transcode_view.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.transform__replace_8hpp">Header &lt;boost/parser/transform_replace.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="headers.html#doxygen.headers.tuple_8hpp">Header &lt;boost/parser/tuple.hpp&gt;</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="boost_parser/rationale.html">Rationale</a></span></dt>
+</dl>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_parser.introduction"></a><a class="link" href="parser.html#boost_parser.introduction" title="Introduction">Introduction</a>
+</h2></div></div></div>
+<p>
+      Boost.Parser is a <a href="https://en.wikipedia.org/wiki/Parser_combinator" target="_top">parser
+      combinator</a> library. That is, it consists of a set of low-level primitive
+      parsers, and operations that can be used to combine those parsers into more
+      complicated parsers.
+    </p>
+<p>
+      There are primitive parsers that parse <span class="emphasis"><em>epsilon</em></span> (the empty
+      string), <code class="computeroutput"><span class="keyword">char</span></code>s, <code class="computeroutput"><span class="keyword">int</span></code>s, <code class="computeroutput"><span class="keyword">float</span></code>s,
+      etc.
+    </p>
+<p>
+      There are operations which combine parsers to create new parsers. For instance,
+      the <a href="https://en.wikipedia.org/wiki/Kleene_star" target="_top">Kleene star</a>
+      operation takes an existing parser <code class="computeroutput"><span class="identifier">p</span></code>
+      and creates a new parser that matches zero or more occurrences of whatever
+      <code class="computeroutput"><span class="identifier">p</span></code> matches. Both callable objects
+      and operator overloads are used for the combining operations. For instance,
+      <code class="computeroutput"><span class="keyword">operator</span><span class="special">*()</span></code>
+      is used for <a href="https://en.wikipedia.org/wiki/Kleene_star" target="_top">Kleene star</a>,
+      and you can also write <code class="computeroutput"><span class="identifier">repeat</span><span class="special">(</span><span class="identifier">n</span><span class="special">)[</span><span class="identifier">p</span><span class="special">]</span></code> to create
+      a parser for exactly <code class="computeroutput"><span class="identifier">n</span></code> repetitions
+      of <code class="computeroutput"><span class="identifier">p</span></code>.
+    </p>
+<p>
+      Boost.Parser also tries to accommodate the multiple ways that people often
+      want to get a parse result out of their parsing code. Some parsing may best
+      be done by returning an object that represents the result of the parse. Other
+      parsing may best be done by filling in a preexisting data structure. Yet other
+      parsing may best be done by parsing small sections of a large document, and
+      reporting the results of subparsers as they are finished, via callbacks. Boost.Parser
+      accommodates all these ways of working, and even makes it possible to do callback-based
+      or non-callback-based parsing without rewriting any code (except by changing
+      the top-level call from <code class="computeroutput"><a class="link" href="doxygen/headers/namespaceboost_1_1parser_1ab68519dff2a5635d6a11296874fc154d.html" title="Function template parse">parse()</a></code>
+      to <code class="computeroutput"><a class="link" href="doxygen/headers/namespaceboost_1_1parser_1ab9e8e193ef875ca869f2d6d43fa61fc5.html" title="Function template callback_parse">callback_parse()</a></code>).
+    </p>
+<p>
+      All of Boost.Parser's public interfaces are sentinel- and range-friendly, just
+      like the interfaces in <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">ranges</span></code>.
+    </p>
+<p>
+      Boost.Parser is Unicode-aware through and through. When you parse ranges of
+      <code class="computeroutput"><span class="keyword">char</span></code>, Boost.Parser does not assume
+      any particular encoding — not Unicode or any other encoding. Parsing
+      of inputs <span class="bold"><strong>other than</strong></span> plain <code class="computeroutput"><span class="keyword">char</span></code>s
+      assumes that the input is Unicode. In the Unicode-aware code paths, all parsing
+      is done by matching code points. This means that you can feed UTF-8 strings
+      into Boost.Parser, both as input and within your parser, and the right sort
+      of matching occurs. For instance, if your parser is trying to match repetitions
+      of the <code class="computeroutput"><span class="keyword">char</span></code> <code class="computeroutput"><span class="char">'\xcc'</span></code>
+      (which is a lead byte from a UTF-8 sequence, and so is malformed UTF-8 if not
+      followed by an appropriate UTF-8 code unit), it will <span class="bold"><strong>not</strong></span>
+      match the start of <code class="computeroutput"><span class="string">"\xcc\x80"</span></code>
+      (UTF-8 for the code point U+0300). Boost.Parser knows that the matching must
+      be whole-code-point, and so it interprets the <code class="computeroutput"><span class="keyword">char</span></code>
+      <code class="computeroutput"><span class="char">'\xcc'</span></code> as the code point U+00CC.
+    </p>
+<p>
+      Error reporting is important to get right, and it is important to make errors
+      easy to understand, especially for end-users. Boost.Parser produces runtime
+      parse error messages that are very similar to the diagnostics that you get
+      when compiling with GCC and Clang (it even supports warnings that don't fail
+      the parse). The exact token associated with a diagnostic can be reported to
+      the user, with the containing line quoted, and with a marker pointing right
+      at the token. Boost.Parser takes care of this for you; your parser does not
+      need to include any special code to make this happen. Of course, you can also
+      replace the error handler entirely, if it doesn't fit your needs.
+    </p>
+<p>
+      Debugging complex parsers can be a real nightmare. Boost.Parser makes it trivial
+      to get a trace of your entire parse, with easy-to-read (and very verbose) indications
+      of where each part of the trace is within the parse, the state of values produced
+      by the parse, etc. Again, you don't need to write any code to make this happen
+      — you just pass a parameter to <code class="computeroutput"><a class="link" href="doxygen/headers/namespaceboost_1_1parser_1ab68519dff2a5635d6a11296874fc154d.html" title="Function template parse">parse()</a></code>.
+    </p>
+<p>
+      Dependencies are still a nightmare in C++, so Boost.Parser can be used as a
+      purely standalone library, independent of Boost.
+    </p>
+</div>
+</div>
+<div class="copyright-footer"></div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="auxiliary.html"><img src="../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="libraries.html"><img src="../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost_parser/configuration_and_optional_features.html"><img src="../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

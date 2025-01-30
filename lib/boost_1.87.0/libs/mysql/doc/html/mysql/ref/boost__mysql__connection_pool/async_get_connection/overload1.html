@@ -1,0 +1,185 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>connection_pool::async_get_connection (1 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../async_get_connection.html" title="connection_pool::async_get_connection">
+<link rel="prev" href="../async_get_connection.html" title="connection_pool::async_get_connection">
+<link rel="next" href="overload2.html" title="connection_pool::async_get_connection (2 of 2 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../async_get_connection.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../async_get_connection.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1"></a><a class="link" href="overload1.html" title="connection_pool::async_get_connection (1 of 2 overloads)">connection_pool::async_get_connection
+          (1 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Retrieves a connection from the pool.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.synopsis"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <a href="../../../../../../../../doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers" target="_top"><span class="emphasis"><em>CompletionToken</em></span></a> <span class="special">=</span> <a class="link" href="../../boost__mysql__with_diagnostics_t.html" title="with_diagnostics_t"><code class="literal">with_diagnostics_t</code></a><span class="special">&lt;</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred_t</span><span class="special">&gt;&gt;</span>
+<span class="keyword">auto</span>
+<span class="identifier">async_get_connection</span><span class="special">(</span>
+    <span class="identifier">CompletionToken</span><span class="special">&amp;&amp;</span> <span class="identifier">token</span> <span class="special">=</span> <span class="special">{});</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.description"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.description">Description</a>
+          </h6>
+<p>
+            Retrieves an idle connection from the pool to be used.
+          </p>
+<p>
+            If this function completes successfully (empty error code), the return
+            <a class="link" href="../../boost__mysql__pooled_connection.html" title="pooled_connection"><code class="computeroutput"><span class="identifier">pooled_connection</span></code></a> will have
+            <code class="computeroutput"><span class="identifier">valid</span><span class="special">()</span>
+            <span class="special">==</span> <span class="keyword">true</span></code>
+            and will be usable. If it completes with a non-empty error code, it will
+            have <code class="computeroutput"><span class="identifier">valid</span><span class="special">()</span>
+            <span class="special">==</span> <span class="keyword">false</span></code>.
+          </p>
+<p>
+            If a connection is idle when the operation is started, it will complete
+            immediately with that connection. Otherwise, it will wait for a connection
+            to become idle (possibly creating one in the process, if pool configuration
+            allows it), until the operation is cancelled (by emitting a cancellation
+            signal) or the pool is cancelled (by calling <a class="link" href="../cancel.html" title="connection_pool::cancel"><code class="computeroutput"><span class="identifier">connection_pool</span><span class="special">::</span><span class="identifier">cancel</span></code></a>). If the pool is not
+            running, the operation fails immediately.
+          </p>
+<p>
+            If the operation is cancelled, and the overload with <a class="link" href="../../boost__mysql__diagnostics.html" title="diagnostics"><code class="computeroutput"><span class="identifier">diagnostics</span></code></a> was used, the output
+            diagnostics will contain the most recent error generated by the connections
+            attempting to connect (via <a class="link" href="../../boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="computeroutput"><span class="identifier">any_connection</span><span class="special">::</span><span class="identifier">async_connect</span></code></a>), if any. In cases
+            where <a class="link" href="../async_get_connection.html" title="connection_pool::async_get_connection"><code class="computeroutput"><span class="identifier">async_get_connection</span></code></a> doesn't
+            complete because connections are unable to connect, this feature can
+            help figuring out where the problem is.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h2"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.preconditions"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.preconditions">Preconditions</a>
+          </h6>
+<p>
+            <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">valid</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">true</span></code>
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h3"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.object_lifetimes"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.object_lifetimes">Object
+            lifetimes</a>
+          </h6>
+<p>
+            While the operation is outstanding, the pool's internal data will be
+            kept alive. It is safe to destroy <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code> while the operation is outstanding.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h4"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.handler_signature"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.handler_signature">Handler
+            signature</a>
+          </h6>
+<p>
+            The handler signature for this operation is <code class="computeroutput"><span class="keyword">void</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">pooled_connection</span><span class="special">)</span></code>
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h5"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.executor"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.executor">Executor</a>
+          </h6>
+<p>
+            If the final handler has an associated immediate executor, and the operation
+            completes immediately, the final handler is dispatched to it. Otherwise,
+            the final handler is called as if it was submitted using <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">post</span></code>, and is never be called inline
+            from within this function. Immediate completions can only happen when
+            thread-safety is not enabled.
+          </p>
+<p>
+            The final handler is executed using <code class="computeroutput"><span class="identifier">token</span></code>'s
+            associated executor, or <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">get_executor</span><span class="special">()</span></code> if the token doesn't have an associated
+            executor.
+          </p>
+<p>
+            If the pool was constructed with thread-safety enabled, intermediate
+            completion handlers are executed using an internal strand that wraps
+            <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">get_executor</span><span class="special">()</span></code>.
+            Otherwise, intermediate handlers are executed using <code class="computeroutput"><span class="identifier">token</span></code>'s
+            associated executor if it has one, or <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">get_executor</span><span class="special">()</span></code> if it hasn't.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h6"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.per_operation_cancellation"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.per_operation_cancellation">Per-operation
+            cancellation</a>
+          </h6>
+<p>
+            This operation supports per-operation cancellation. Cancelling <code class="computeroutput"><span class="identifier">async_get_connection</span></code> has no observable
+            side effects. The following <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancellation_type_t</span></code>
+            values are supported:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancellation_type_t</span><span class="special">::</span><span class="identifier">terminal</span></code>
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancellation_type_t</span><span class="special">::</span><span class="identifier">partial</span></code>
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">cancellation_type_t</span><span class="special">::</span><span class="identifier">total</span></code>
+              </li>
+</ul></div>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h7"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.errors"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.errors">Errors</a>
+          </h6>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                <a class="link" href="../../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">no_connection_available</span></code></a>,
+                if the <code class="computeroutput"><span class="identifier">async_get_connection</span></code>
+                operation is cancelled before a connection becomes available.
+              </li>
+<li class="listitem">
+                <a class="link" href="../../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">pool_not_running</span></code></a>, if the
+                <code class="computeroutput"><span class="identifier">async_get_connection</span></code>
+                operation is cancelled before async_run is called.
+              </li>
+<li class="listitem">
+                <a class="link" href="../../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">pool_cancelled</span></code></a>, if the pool
+                is cancelled before the operation completes, or <code class="computeroutput"><span class="identifier">async_get_connection</span></code>
+                is called on a pool that has been cancelled.
+              </li>
+</ul></div>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.h8"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.thread_safety"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__connection_pool.async_get_connection.overload1.thread_safety">Thread-safety</a>
+          </h6>
+<p>
+            Reads the internal state handle. Mutates the pool state. If the pool
+            was built with thread-safety enabled, it can be called concurrently with
+            other functions that don't modify the state handle.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../async_get_connection.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../async_get_connection.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

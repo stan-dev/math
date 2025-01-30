@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template node_allocator</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.node__allocator_8hpp" title="Header &lt;boost/interprocess/allocators/node_allocator.hpp&gt;">
+<link rel="prev" href="cached__node__allocator_8hpp_1a58a5cf77d0a0344f24a4d8860c6371e6.html" title="Function template operator!=">
+<link rel="next" href="structboost_1_1interprocess_1_1node__allocator_1_1rebind.html" title="Struct template rebind">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cached__node__allocator_8hpp_1a58a5cf77d0a0344f24a4d8860c6371e6.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.node__allocator_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1interprocess_1_1node__allocator_1_1rebind.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template node_allocator</span></h2>
+<p>boost::interprocess::node_allocator</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.node__allocator_8hpp" title="Header &lt;boost/interprocess/allocators/node_allocator.hpp&gt;">boost/interprocess/allocators/node_allocator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> SegmentManager<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> NodesPerBlock<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span><span class="special">::</span><span class="identifier">segment_manager</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a85cd65f0b0698db256572add001fabd0"></a><span class="identifier">segment_manager</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">segment_manager</span><span class="special">::</span><span class="identifier">void_pointer</span>           <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aa8d0b8d102257ff648016c6d544728ca"></a><span class="identifier">void_pointer</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span><span class="special">::</span><span class="identifier">pointer</span>         <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1ad0df9abce18695756f303c8da6365b42"></a><span class="identifier">pointer</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span><span class="special">::</span><span class="identifier">const_pointer</span>   <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a5e2fa7c96db862d2478d7851d43b6681"></a><span class="identifier">const_pointer</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                                       <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aabd606fdae7f20bab587697d5a9c7f52"></a><span class="identifier">value_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                             <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aa6dfe9cd9fba15a237d0b8704522e0b3"></a><span class="identifier">reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                             <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a74637bd43cd4d24533d4adfe5af4ab6b"></a><span class="identifier">const_reference</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">segment_manager</span><span class="special">::</span><span class="identifier">size_type</span>              <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a90e80fbe771e9f3313341eb6586994b5"></a><span class="identifier">size_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">segment_manager</span><span class="special">::</span><span class="identifier">difference_type</span>        <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1ad6206d324841c9492dff63e104c90464"></a><span class="identifier">difference_type</span><span class="special">;</span>
+
+  <span class="comment">// member classes/structs/unions</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1interprocess_1_1node__allocator_1_1rebind.html" title="Struct template rebind">rebind</a> <span class="special">{</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span><span class="special">,</span> <span class="identifier">SegmentManager</span><span class="special">,</span> <span class="identifier">NodesPerBlock</span> <span class="special">&gt;</span> <a class="link" href="structboost_1_1interprocess_1_1node__allocator_1_1rebind.html#doxygen.boost_interprocess_header_reference.structboost_1_1interprocess_1_1node__allocator_1_1rebind_1a2dce657d8f655ad1690012da03512f2c"><span class="identifier">other</span></a><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1deque.html#id12-bb">private member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">,</span> <span class="keyword">typename</span> SegmentManager2<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> N2<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1ac4c79b69764859ae5073a6441603aeb9"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span><span class="special">,</span> <span class="identifier">SegmentManager2</span><span class="special">,</span> <span class="identifier">N2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1deque.html#id13-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a56d185f746adccb1af637a817b635b97"><span class="identifier">node_allocator</span></a><span class="special">(</span><span class="identifier">segment_manager</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a47c9d7ea06e1125ea393259cf0ca250c"><span class="identifier">node_allocator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a0b8ac2e0f000ac92205c40a02b4e13be"><span class="identifier">node_allocator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span><span class="special">,</span> <span class="identifier">SegmentManager</span><span class="special">,</span> <span class="identifier">NodesPerBlock</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a3f7278996cef40d3cd0a45bbcad23a43"><span class="special">~</span><span class="identifier">node_allocator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a8a3c6c96516d3e5fd4549eec2de2f2c7"><span class="identifier">get_node_pool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">segment_manager</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a7cb8d0b18eb95d586e014082d3942a6e"><span class="identifier">get_segment_manager</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a7ff881e2fb0a7413cbaa9f884f41e124"><span class="identifier">max_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aa730834357bfe3ded576c79f87bc38d8"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">cvoid_pointer</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a1d745b18b5873c8e84eef01a81877416"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a907074171cf50bb79e5455679041ff7f"><span class="identifier">deallocate_free_blocks</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a7b126986aebabf504d71a918a5447577"><span class="identifier">address</span></a><span class="special">(</span><span class="identifier">reference</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">const_pointer</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1af8be696bbf54948346dcc4b5ea3e2f04"><span class="identifier">address</span></a><span class="special">(</span><span class="identifier">const_reference</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aca9023ab79bc93aceb3dc6496cb8c963"><span class="identifier">construct</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">const_reference</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a85cbccc8db59933f53eb45932922d8b5"><span class="identifier">destroy</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a86a517f05a240cd50702a230be3a593b"><span class="identifier">size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a56f82482733a72ae141a9e03203c9873"><span class="identifier">allocation_command</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">interprocess</span><span class="special">::</span><span class="identifier">allocation_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> 
+                             <span class="identifier">size_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a6de85081e77a895b2cd3b5c2cd4b22f4"><span class="identifier">allocate_many</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a3843fbd3fca5e1a45023ba36a8d7fa9c"><span class="identifier">allocate_many</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">size_type</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a1bcfe522d3441fd152a962c2d91a4cf9"><span class="identifier">deallocate_many</span></a><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a28b197a5867e41ddeaacd0e1f4ca82cc"><span class="identifier">allocate_one</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a50b4449af18e9488aa3db33151eefae7"><span class="identifier">allocate_individual</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1adf58491c22dd049dc610c9d42a3d5a86"><span class="identifier">deallocate_one</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1acb2c642d3d920e5e42a35ae13cd8ffb8"><span class="identifier">deallocate_individual</span></a><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#id14-bb">friend functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a63777ee47c37b3f6817aa6fc57db0e0d"><span class="identifier">swap</span></a><span class="special">(</span><span class="identifier">self_t</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">self_t</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.6.4.4"></a><h2>Description</h2>
+<p>An STL node allocator that uses a segment manager as memory source. The internal pointer type will of the same type (raw, smart) as "typename SegmentManager::void_pointer" type. This allows placing the allocator in shared memory, memory mapped-files, etc... This node allocator shares a segregated storage between all instances of <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> with equal sizeof(T) placed in the same segment group. NodesPerBlock is the number of nodes allocated at once when the allocator runs out of nodes </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.6.4.4.3"></a><h3>
+<a name="id12-bb"></a><code class="computeroutput">node_allocator</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">,</span> <span class="keyword">typename</span> SegmentManager2<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> N2<span class="special">&gt;</span> 
+  <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> <span class="special">&amp;</span> 
+  <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1ac4c79b69764859ae5073a6441603aeb9"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span><span class="special">,</span> <span class="identifier">SegmentManager2</span><span class="special">,</span> <span class="identifier">N2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Not assignable from related <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.6.4.4.4"></a><h3>
+<a name="id13-bb"></a><code class="computeroutput">node_allocator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a56d185f746adccb1af637a817b635b97"></a><span class="identifier">node_allocator</span><span class="special">(</span><span class="identifier">segment_manager</span> <span class="special">*</span> segment_mngr<span class="special">)</span><span class="special">;</span></pre>
+<p>Not assignable from other <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> Constructor from a segment manager. If not present, constructs a node pool. Increments the reference count of the associated node pool. Can throw <a class="link" href="classboost_1_1interprocess_1_1bad__alloc.html" title="Class bad_alloc">boost::interprocess::bad_alloc</a> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a47c9d7ea06e1125ea393259cf0ca250c"></a><span class="identifier">node_allocator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy constructor from other <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a>. Increments the reference count of the associated node pool. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">&gt;</span> 
+  <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a0b8ac2e0f000ac92205c40a02b4e13be"></a><span class="identifier">node_allocator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span><span class="special">,</span> <span class="identifier">SegmentManager</span><span class="special">,</span> <span class="identifier">NodesPerBlock</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy constructor from related <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html" title="Class template node_allocator">node_allocator</a>. If not present, constructs a node pool. Increments the reference count of the associated node pool. Can throw <a class="link" href="classboost_1_1interprocess_1_1bad__alloc.html" title="Class bad_alloc">boost::interprocess::bad_alloc</a> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a3f7278996cef40d3cd0a45bbcad23a43"></a><span class="special">~</span><span class="identifier">node_allocator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destructor, removes node_pool_t from memory if its reference count reaches to zero. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a8a3c6c96516d3e5fd4549eec2de2f2c7"></a><span class="identifier">get_node_pool</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a pointer to the node pool. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">segment_manager</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a7cb8d0b18eb95d586e014082d3942a6e"></a><span class="identifier">get_segment_manager</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the segment manager. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a7ff881e2fb0a7413cbaa9f884f41e124"></a><span class="identifier">max_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the number of elements that could be allocated. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aa730834357bfe3ded576c79f87bc38d8"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <span class="identifier">cvoid_pointer</span> hint <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Allocate memory for an array of count elements. Throws <a class="link" href="classboost_1_1interprocess_1_1bad__alloc.html" title="Class bad_alloc">boost::interprocess::bad_alloc</a> if there is no enough memory </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a1d745b18b5873c8e84eef01a81877416"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span> ptr<span class="special">,</span> <span class="identifier">size_type</span> count<span class="special">)</span><span class="special">;</span></pre>
+<p>Deallocate allocated memory. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a907074171cf50bb79e5455679041ff7f"></a><span class="identifier">deallocate_free_blocks</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Deallocates all free blocks of the pool </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a7b126986aebabf504d71a918a5447577"></a><span class="identifier">address</span><span class="special">(</span><span class="identifier">reference</span> value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns address of mutable object. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_pointer</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1af8be696bbf54948346dcc4b5ea3e2f04"></a><span class="identifier">address</span><span class="special">(</span><span class="identifier">const_reference</span> value<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns address of non mutable object. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1aca9023ab79bc93aceb3dc6496cb8c963"></a><span class="identifier">construct</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span> ptr<span class="special">,</span> <span class="identifier">const_reference</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Copy construct an object. Throws if T's copy constructor throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a85cbccc8db59933f53eb45932922d8b5"></a><span class="identifier">destroy</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span> ptr<span class="special">)</span><span class="special">;</span></pre>
+<p>Destroys object. Throws if object's destructor throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a86a517f05a240cd50702a230be3a593b"></a><span class="identifier">size</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span> p<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns maximum the number of objects the previously allocated memory pointed by p can hold. This size only works for memory allocated with allocate, allocation_command and allocate_many. </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a56f82482733a72ae141a9e03203c9873"></a><span class="identifier">allocation_command</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">interprocess</span><span class="special">::</span><span class="identifier">allocation_type</span> command<span class="special">,</span> 
+                           <span class="identifier">size_type</span> limit_size<span class="special">,</span> 
+                           <span class="identifier">size_type</span> <span class="special">&amp;</span> prefer_in_recvd_out_size<span class="special">,</span> 
+                           <span class="identifier">pointer</span> <span class="special">&amp;</span> reuse<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a6de85081e77a895b2cd3b5c2cd4b22f4"></a><span class="identifier">allocate_many</span><span class="special">(</span><span class="identifier">size_type</span> elem_size<span class="special">,</span> <span class="identifier">size_type</span> num_elements<span class="special">,</span> 
+                   <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates many elements of size elem_size in a contiguous block of memory. The minimum number to be allocated is min_elements, the preferred and maximum number is preferred_elements. The number of actually allocated elements is will be assigned to received_size. The elements must be deallocated with deallocate(...) </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a3843fbd3fca5e1a45023ba36a8d7fa9c"></a><span class="identifier">allocate_many</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">size_type</span> <span class="special">*</span> elem_sizes<span class="special">,</span> <span class="identifier">size_type</span> n_elements<span class="special">,</span> 
+                   <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates n_elements elements, each one of size elem_sizes[i]in a contiguous block of memory. The elements must be deallocated </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a1bcfe522d3441fd152a962c2d91a4cf9"></a><span class="identifier">deallocate_many</span><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates many elements of size elem_size in a contiguous block of memory. The minimum number to be allocated is min_elements, the preferred and maximum number is preferred_elements. The number of actually allocated elements is will be assigned to received_size. The elements must be deallocated with deallocate(...) </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a28b197a5867e41ddeaacd0e1f4ca82cc"></a><span class="identifier">allocate_one</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates just one object. Memory allocated with this function must be deallocated only with <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1adf58491c22dd049dc610c9d42a3d5a86">deallocate_one()</a>. Throws <a class="link" href="classboost_1_1interprocess_1_1bad__alloc.html" title="Class bad_alloc">boost::interprocess::bad_alloc</a> if there is no enough memory </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a50b4449af18e9488aa3db33151eefae7"></a><span class="identifier">allocate_individual</span><span class="special">(</span><span class="identifier">size_type</span> num_elements<span class="special">,</span> 
+                         <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates many elements of size == 1 in a contiguous block of memory. The minimum number to be allocated is min_elements, the preferred and maximum number is preferred_elements. The number of actually allocated elements is will be assigned to received_size. Memory allocated with this function must be deallocated only with <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1adf58491c22dd049dc610c9d42a3d5a86">deallocate_one()</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1adf58491c22dd049dc610c9d42a3d5a86"></a><span class="identifier">deallocate_one</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">pointer</span> <span class="special">&amp;</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p>Deallocates memory previously allocated with <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a28b197a5867e41ddeaacd0e1f4ca82cc">allocate_one()</a>. You should never use deallocate_one to deallocate memory allocated with other functions different from <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a28b197a5867e41ddeaacd0e1f4ca82cc">allocate_one()</a>. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1acb2c642d3d920e5e42a35ae13cd8ffb8"></a><span class="identifier">deallocate_individual</span><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates many elements of size == 1 in a contiguous block of memory. The minimum number to be allocated is min_elements, the preferred and maximum number is preferred_elements. The number of actually allocated elements is will be assigned to received_size. Memory allocated with this function must be deallocated only with <a class="link" href="classboost_1_1interprocess_1_1node__allocator.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1adf58491c22dd049dc610c9d42a3d5a86">deallocate_one()</a>. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.6.4.4.5"></a><h3>
+<a name="id14-bb"></a><code class="computeroutput">node_allocator</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1node__allocator_1a63777ee47c37b3f6817aa6fc57db0e0d"></a><span class="identifier">swap</span><span class="special">(</span><span class="identifier">self_t</span> <span class="special">&amp;</span> alloc1<span class="special">,</span> <span class="identifier">self_t</span> <span class="special">&amp;</span> alloc2<span class="special">)</span><span class="special">;</span></pre>
+<p>Swaps allocators. Does not throw. If each allocator is placed in a different memory segment, the result is undefined. </p>
+</li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cached__node__allocator_8hpp_1a58a5cf77d0a0344f24a4d8860c6371e6.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.node__allocator_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1interprocess_1_1node__allocator_1_1rebind.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

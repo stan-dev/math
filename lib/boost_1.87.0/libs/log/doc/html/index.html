@@ -1,0 +1,335 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chapter 1. Boost.Log v2</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.Log v2">
+<link rel="next" href="log/installation.html" title="Installation and compatibility">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="log/installation.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+<div class="chapter">
+<div class="titlepage"><div>
+<div><h2 class="title">
+<a name="log"></a>Chapter 1. Boost.Log v2</h2></div>
+<div><div class="author"><h3 class="author">
+<span class="firstname">Andrey</span> <span class="surname">Semashev</span>
+</h3></div></div>
+<div><p class="copyright">Copyright © 2007-2024 Andrey Semashev</p></div>
+<div><div class="legalnotice">
+<a name="log.legal"></a><p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div></div>
+</div></div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl class="toc">
+<dt><span class="section"><a href="index.html#log.intro">Introduction</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="index.html#log.intro.moti">Motivation</a></span></dt>
+<dt><span class="section"><a href="index.html#log.intro.how_to_read">How to read the documentation</a></span></dt>
+<dt><span class="section"><a href="index.html#log.intro.defs">Definitions</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/installation.html">Installation and compatibility</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="log/installation.html#log.installation.supported_compilers">Supported compilers
+      and platforms</a></span></dt>
+<dt><span class="section"><a href="log/installation/config.html">Configuring and building the
+      library</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/design.html">Design overview</a></span></dt>
+<dt><span class="section"><a href="log/tutorial.html">Tutorial</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="log/tutorial.html#log.tutorial.trivial">Trivial logging</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/trivial_filtering.html">Trivial logging with
+      filters</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/sinks.html">Setting up sinks</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/sources.html">Creating loggers and writing logs</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/attributes.html">Adding more information to log:
+      Attributes</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/formatters.html">Log record formatting</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/advanced_filtering.html">Filtering revisited</a></span></dt>
+<dt><span class="section"><a href="log/tutorial/wide_char.html">Wide character logging</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/detailed.html">Detailed features description</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="log/detailed.html#log.detailed.core">Core facilities</a></span></dt>
+<dt><span class="section"><a href="log/detailed/sources.html">Logging sources</a></span></dt>
+<dt><span class="section"><a href="log/detailed/sink_frontends.html">Sink frontends</a></span></dt>
+<dt><span class="section"><a href="log/detailed/sink_backends.html">Sink backends</a></span></dt>
+<dt><span class="section"><a href="log/detailed/expressions.html">Lambda expressions</a></span></dt>
+<dt><span class="section"><a href="log/detailed/attributes.html">Attributes</a></span></dt>
+<dt><span class="section"><a href="log/detailed/utilities.html">Utilities</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/extension.html">Extending the library</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="log/extension.html#log.extension.sinks">Writing your own sinks</a></span></dt>
+<dt><span class="section"><a href="log/extension/sources.html">Writing your own sources</a></span></dt>
+<dt><span class="section"><a href="log/extension/attributes.html">Writing your own attributes</a></span></dt>
+<dt><span class="section"><a href="log/extension/settings.html">Extending library settings support</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/rationale.html">Rationale and FAQ</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="log/rationale.html#log.rationale.why_str_lit">Why string literals as scope
+      names?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/why_weak_scoped_attributes.html">Why scoped
+      attributes don't override existing attributes?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/why_weak_record_ordering.html">Why log records
+      are weakly ordered in a multithreaded application?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/why_attribute_manips_dont_affect_filters.html">Why
+      attributes set with stream manipulators do not participate in filtering?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/why_not_lazy_streaming.html">Why not using lazy
+      streaming?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/why_not_log4j.html">Why not using hierarchy
+      of loggers, like in log4j? Why not Boost.Log4j? Etc.</a></span></dt>
+<dt><span class="section"><a href="log/rationale/fork_support.html">Does Boost.Log support process
+      forking?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/init_term_support.html">Does Boost.Log support
+      logging at process initialization and termination?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/why_crash_on_term.html">Why my application crashes
+      on process termination when file sinks are used?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/namespace_mangling.html">Why my application
+      fails to link with Boost.Log? What's the fuss about library namespaces?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/msvc_link_fails_lnk1123.html">Why MSVC 2010
+      fails to link the library with error LNK1123: failure during conversion to
+      COFF: file invalid or corrupt?</a></span></dt>
+<dt><span class="section"><a href="log/rationale/how_to_use_in_libraries.html">How to use Boost.Log
+      in libraries?</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/reference.html">Reference</a></span></dt>
+<dd><dl>
+<dt><span class="section"><a href="log/reference.html#top_level_headers">Top level headers</a></span></dt>
+<dt><span class="section"><a href="core_components.html">Core components</a></span></dt>
+<dt><span class="section"><a href="attributes.html">Attributes</a></span></dt>
+<dt><span class="section"><a href="expressions.html">Expressions</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html">Logging sources</a></span></dt>
+<dt><span class="section"><a href="sinks.html">Sinks</a></span></dt>
+<dt><span class="section"><a href="utilities.html">Utilities</a></span></dt>
+<dt><span class="section"><a href="other_libraries_support_layer.html">Other libraries support layer</a></span></dt>
+</dl></dd>
+<dt><span class="section"><a href="log/changelog.html">Changelog</a></span></dt>
+<dt><span class="section"><a href="log/todo.html">TODO in future releases</a></span></dt>
+<dt><span class="section"><a href="log/acknowledgments.html">Acknowledgments</a></span></dt>
+</dl>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="log.intro"></a><a class="link" href="index.html#log.intro" title="Introduction">Introduction</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="index.html#log.intro.moti">Motivation</a></span></dt>
+<dt><span class="section"><a href="index.html#log.intro.how_to_read">How to read the documentation</a></span></dt>
+<dt><span class="section"><a href="index.html#log.intro.defs">Definitions</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="log.intro.moti"></a><a class="link" href="index.html#log.intro.moti" title="Motivation">Motivation</a>
+</h3></div></div></div>
+<p>
+        Today applications grow rapidly, becoming complicated and difficult to test
+        and debug. Most of the time applications run on a remote site, leaving the
+        developer little chance to monitor their execution and figure out the reasons
+        for their failure, once it should happen. Moreover, even the local debugging
+        may become problematic if the application behavior depends heavily on asynchronous
+        side events, such as a device feedback or another process activity.
+      </p>
+<p>
+        This is where logging can help. The application stores all essential information
+        about its execution to a log, and when something goes wrong this information
+        can be used to analyze the program behavior and make the necessary corrections.
+        There are other very useful applications of logging, such as gathering statistical
+        information and highlighting events (i.e. indicating that some situation
+        has occurred or that the application is experiencing some problems). These
+        tasks have proved to be vital for many real-world industrial applications.
+      </p>
+<p>
+        This library aims to make logging significantly easier for the application
+        developer. It provides a wide range of out-of-the-box tools along with public
+        interfaces for extending the library. The main goals of the library are:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Simplicity. A small example code snippet should be enough to get the
+            feel of the library and be ready to use its basic features.
+          </li>
+<li class="listitem">
+            Extensibility. A user should be able to extend functionality of the library
+            for collecting and storing information into logs.
+          </li>
+<li class="listitem">
+            Performance. The library should have as little performance impact on
+            the user's application as possible.
+          </li>
+</ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="log.intro.how_to_read"></a><a class="link" href="index.html#log.intro.how_to_read" title="How to read the documentation">How to read the documentation</a>
+</h3></div></div></div>
+<p>
+        The documentation is oriented to both new and experienced library users.
+        However, users are expected to be familiar with commonly used Boost components,
+        such as <code class="computeroutput"><span class="identifier">shared_ptr</span></code>, <code class="computeroutput"><span class="identifier">make_shared</span></code> (see <a href="https://www.boost.org/doc/libs/release/libs/smart_ptr/doc/html/smart_ptr.html" target="_top">Boost.SmartPtr</a>),
+        and <code class="computeroutput"><span class="identifier">function</span></code> (<a href="https://www.boost.org/doc/libs/release/doc/html/function.html" target="_top">Boost.Function</a>).
+        Some parts of the documentation will refer to other Boost libraries, as needed.
+      </p>
+<p>
+        If this is your first experience with the library, it is recommended to read
+        the <a class="link" href="log/design.html" title="Design overview">Design overview</a> section for a first
+        glance at the library's capabilities and architecture. The <a class="link" href="log/installation.html" title="Installation and compatibility">Installation</a>
+        and <a class="link" href="log/tutorial.html" title="Tutorial">Tutorial</a> sections will help to get
+        started experimenting with the library. The tutorial gives an overview of
+        the library features with sample code snippets. Some tutorial steps are presented
+        in two forms: simple and advanced. The simple form typically describes the
+        most common and easy way to do the task and it is being recommended to be
+        read by new users. The advanced form usually gives an expanded way to do
+        the same thing but with an in-depth explanation and the ability to do some
+        extra customization. This form may come in handy for more experienced users
+        and should generally be read if the easy way does not satisfy your needs.
+      </p>
+<p>
+        Besides the tutorial there is a <a class="link" href="log/detailed.html" title="Detailed features description">Detailed features
+        description</a> chapter. This part describes other tools provided by the
+        library that were not covered by the tutorial. This chapter is best read
+        on a case by case basis.
+      </p>
+<p>
+        Last, but not least, there is a <a class="link" href="log/reference.html" title="Reference">Reference</a>
+        section which gives the formal description of library component interfaces.
+      </p>
+<p>
+        To keep the code snippets in this documentation simple, the following namespace
+        aliases are assumed to be defined:
+      </p>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">logging</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">sinks</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">::</span><span class="identifier">sinks</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">src</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">::</span><span class="identifier">sources</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">expr</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">::</span><span class="identifier">expressions</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">attrs</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">::</span><span class="identifier">attributes</span><span class="special">;</span>
+<span class="keyword">namespace</span> <span class="identifier">keywords</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">log</span><span class="special">::</span><span class="identifier">keywords</span><span class="special">;</span>
+</pre>
+<p>
+        Note that most of the examples are followed by a link to a complete compilable
+        code sample, with all the necessary includes and auxiliary code, if any,
+        that was stripped from the documentation for brevity. Relevant includes are
+        also listed at the beginning of sections.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="log.intro.defs"></a><a class="link" href="index.html#log.intro.defs" title="Definitions">Definitions</a>
+</h3></div></div></div>
+<p>
+        Here are definitions of some terms that will be used widely throughout the
+        documentation:
+      </p>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl class="variablelist">
+<dt><span class="term">Log record</span></dt>
+<dd><p>
+              A single bundle of information, collected from the user's application,
+              that is a candidate to be put into the log. In a simple case the log
+              record will be represented as a line of text in the log file after
+              being processed by the logging library.
+            </p></dd>
+<dt><span class="term">Attribute</span></dt>
+<dd><p>
+              An "attribute" is a piece of meta-information that can be
+              used to specialize a log record. In Boost.Log, attributes are represented
+              by function objects with a specific interface, which return the actual
+              attribute value when invoked. Some example of attributes are a function
+              returning current clock time, a function returning a monotonously increading
+              log record counter, etc.
+            </p></dd>
+<dt><span class="term">Attribute value</span></dt>
+<dd><p>
+              Attribute values are the actual data acquired from attributes. This
+              data is attached to the specific log record and processed by the library.
+              Values can have different types (integers, strings and more complex,
+              including user defined types). Some examples of attribute values: current
+              time stamp value, file name, line number, current scope name, etc.
+              Attribute values are enveloped in a type erasing wrapper, so the actual
+              type of the attribute is not visible in the interface. The actual (erased)
+              type of the value is sometimes called the stored type.
+            </p></dd>
+<dt><span class="term">(Attribute) value visitation</span></dt>
+<dd><p>
+              A way of processing the attribute value. This approach involves a function
+              object (a visitor) which is applied to the attribute value. The visitor
+              should know the stored type of the attribute value in order to process
+              it.
+            </p></dd>
+<dt><span class="term">(Attribute) value extraction</span></dt>
+<dd><p>
+              A way of processing the attribute value when the caller attempts to
+              obtain a reference to the stored value. The caller should know the
+              stored type of the attribute value in order to be able to extract it.
+            </p></dd>
+<dt><span class="term">Log source</span></dt>
+<dd><p>
+              An entry point for the user's application to put log records to. In
+              a simple case it is an object (logger) which maintains a set of attributes
+              that will be used to form a log record upon the user's request. However,
+              one can surely create a source that would emit log records on some
+              side events (for example, by intercepting and parsing console output
+              of another application).
+            </p></dd>
+<dt><span class="term">Log sink</span></dt>
+<dd><p>
+              A target, to which all log records are fed after being collected from
+              the user's application. The sink defines where and how the log records
+              are going to be stored or processed.
+            </p></dd>
+<dt><span class="term">Log filter</span></dt>
+<dd><p>
+              A predicate that takes a log record and tells whether this record should
+              be passed through for further processing or discarded. The predicate
+              typically forms its decision based on the attribute values attached
+              to the record.
+            </p></dd>
+<dt><span class="term">Log formatter</span></dt>
+<dd><p>
+              A function object that generates the final textual output from a log
+              record. Some sinks, e.g. a binary logging sink, may not need it, although
+              almost any text-based sink would use a formatter to compose its output.
+            </p></dd>
+<dt><span class="term">Logging core</span></dt>
+<dd><p>
+              A global entity that maintains a list of sinks and applies filters
+              to records generated by log sources. In the user's application, it
+              is mainly used when the logging library is configured. There is only
+              one instance of the logging core in an application.
+            </p></dd>
+<dt><span class="term">i18n</span></dt>
+<dd><p>
+              Internationalization. The ability to manipulate wide characters.
+            </p></dd>
+<dt><span class="term">TLS</span></dt>
+<dd><p>
+              Thread-local storage. The concept of having a variable that has independent
+              values for each thread that attempts to access it.
+            </p></dd>
+<dt><span class="term">RTTI</span></dt>
+<dd><p>
+              Run-time type information. This is the C++ language support data structures
+              required for <code class="computeroutput"><span class="keyword">dynamic_cast</span></code>
+              and <code class="computeroutput"><span class="keyword">typeid</span></code> operators to
+              function properly.
+            </p></dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="copyright-footer"></div>
+<hr>
+<div class="spirit-nav"><a accesskey="n" href="log/installation.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a></div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+= Requirements
+
+== Libraries
+
+Boost.cobalt requires a C++20 compilers and directly depends on the following boost libraries:
+
+- boost.asio
+- boost.system
+- boost.circular_buffer
+- boost.intrusive
+- boost.smart_ptr
+- boost.container (for clang < 16)
+
+
+== Compiler
+
+This library is supported since Clang 14, Gcc 10 & MSVC 19.30 (Visual Studio 2022).
+
+IMPORTANT: Gcc versions 12.1 and 12.2 appear to have a bug for coroutines with out stack variables
+as can be seen [here](https://godbolt.org/z/6adGcqP1z) and should be avoided for coroutines.
+
+Clang only added `std::pmr` support in 16, so older clang versions use `boost::contianer::pmr` as a drop-in replacement.
+
+WARNING: Some if not all MSVC versions have a broken coroutine implementation,
+that this library needs to workaround. This may cause non-deterministic behaviour and overhead.
+
+A coroutine continuation may be done in the awaitable returned from a `final_suspend`, like this:
+
+[source,cpp]
+----
+// in promise
+auto final_suspend() noexcept
+{
+    struct final_awaitable
+    {
+      std::coroutine_handle<void> continuation{std::noop_coroutine()}; // <1>
+      bool await_ready() const noexcept;
+      std::coroutine_handle<void> await_suspend(std::coroutine_handle<void> h) noexcept
+      {
+        auto cc = continuation;
+        h.destroy(); // <2>
+        return cc;
+      }
+
+      void await_resume() noexcept {}
+    };
+    return final_awaitable{my_continuation};
+};
+----
+<1> The continuation
+<2> Self-destroying the coroutine before continuation
+
+The final_suspend does not properly suspend the coroutine on MSVC, so that the `h.destroy()` will cause
+double destruction of elements on the coroutine frame.
+Therefor, msvc will need to post the destruction, to do it out of line.
+This will cause overhead and make the actual freeing of memory not deterministic.
+

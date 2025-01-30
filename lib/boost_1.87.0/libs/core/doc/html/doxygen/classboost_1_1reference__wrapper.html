@@ -1,0 +1,202 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template reference_wrapper</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="up" href="../core/ref.html#doxygen.ref_8hpp" title="Header &lt;boost/core/ref.hpp&gt;">
+<link rel="prev" href="structboost_1_1is__reference__wrapper.html" title="Struct template is_reference_wrapper">
+<link rel="next" href="structboost_1_1unwrap__reference.html" title="Struct template unwrap_reference">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1is__reference__wrapper.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../core/ref.html#doxygen.ref_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1unwrap__reference.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1reference__wrapper"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template reference_wrapper</span></h2>
+<p>boost::reference_wrapper — Contains a reference to an object of type <code class="computeroutput">T</code>. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../core/ref.html#doxygen.ref_8hpp" title="Header &lt;boost/core/ref.hpp&gt;">boost/core/ref.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrappertypes">types</a></span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1a09937d51a1206c88bdcb9e6260f17925"><span class="identifier">type</span></a><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1reference__wrapper.html#id1-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1a6c723ac2d8d3289f7f7c7d42be20b073"><span class="identifier">reference_wrapper</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1a001039a2f8b18531d196f43327e594d8"><span class="identifier">reference_wrapper</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Y<span class="special">,</span> <span class="keyword">typename</span> <span class="special">=</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span><span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1abf4d5c78fecf56ceec0ef604f23f750f"><span class="identifier">reference_wrapper</span></a><span class="special">(</span><a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a><span class="special">&lt;</span> <span class="identifier">Y</span> <span class="special">&gt;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1adf6fcce787764dbd8e9aba48e2a0a191"><span class="keyword">operator</span> <span class="identifier">T</span><span class="special">&amp;</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">T</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1a7c5c01f7cd47daf4be5fbf6386ae033d"><span class="identifier">get</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">T</span> <span class="special">*</span> <a class="link" href="classboost_1_1reference__wrapper.html#doxygen.classboost_1_1reference__wrapper_1a56030bcab99dc10696fd6e720ac58554"><span class="identifier">get_pointer</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id14537"></a><h2>Description</h2>
+<p><code class="computeroutput"><a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a></code> is primarily used to "feed" references to function templates (algorithms) that take their parameter by value. It provides an implicit conversion to <code class="computeroutput">T&amp;</code>, which usually allows the function templates to work on references unmodified. </p>
+<div class="refsect2">
+<a name="id14543"></a><h3>
+<a name="doxygen.classboost_1_1reference__wrappertypes"></a><code class="computeroutput">reference_wrapper</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">T</span> <a name="doxygen.classboost_1_1reference__wrapper_1a09937d51a1206c88bdcb9e6260f17925"></a><span class="identifier">type</span><span class="special">;</span></p>
+<p>Type <code class="computeroutput">T</code>. </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id14557"></a><h3>
+<a name="id1-bb"></a><code class="computeroutput">reference_wrapper</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1reference__wrapper_1a6c723ac2d8d3289f7f7c7d42be20b073"></a><span class="identifier">reference_wrapper</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;</span> t<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Constructs a <code class="computeroutput"><a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a></code> object that stores a reference to <code class="computeroutput">t</code>.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Does not throw. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1reference__wrapper_1a001039a2f8b18531d196f43327e594d8"></a><span class="identifier">reference_wrapper</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> t<span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Construction from a temporary object is disabled. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Y<span class="special">,</span> <span class="keyword">typename</span> <span class="special">=</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span><span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1reference__wrapper_1abf4d5c78fecf56ceec0ef604f23f750f"></a><span class="identifier">reference_wrapper</span><span class="special">(</span><a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a><span class="special">&lt;</span> <span class="identifier">Y</span> <span class="special">&gt;</span> r<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Constructs a <code class="computeroutput"><a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a></code> object that stores the reference stored in the compatible <code class="computeroutput"><a class="link" href="classboost_1_1reference__wrapper.html" title="Class template reference_wrapper">reference_wrapper</a></code> <code class="computeroutput">r</code>.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Only enabled when <code class="computeroutput">Y*</code> is convertible to <code class="computeroutput">T*</code>. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Does not throw. </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1reference__wrapper_1adf6fcce787764dbd8e9aba48e2a0a191"></a><span class="keyword">operator</span> <span class="identifier">T</span><span class="special">&amp;</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Does not throw. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The stored reference. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">T</span> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1reference__wrapper_1a7c5c01f7cd47daf4be5fbf6386ae033d"></a><span class="identifier">get</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Does not throw. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The stored reference. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">T</span> <span class="special">*</span> <a name="doxygen.classboost_1_1reference__wrapper_1a56030bcab99dc10696fd6e720ac58554"></a><span class="identifier">get_pointer</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Does not throw. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A pointer to the object referenced by the stored reference. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2014 Peter Dimov<br>Copyright © 2014 Glen Fernandes<br>Copyright © 2014 Andrey Semashev<p>
+        Distributed under the <a href="http://boost.org/LICENSE_1_0.txt" target="_top">Boost
+        Software License, Version 1.0</a>.
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1is__reference__wrapper.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../core/ref.html#doxygen.ref_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1unwrap__reference.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,178 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "cmake-pedantic",
+      "hidden": true,
+      "warnings": {
+        "dev": true,
+        "deprecated": true,
+        "uninitialized": false,
+        "unusedCli": true,
+        "systemVars": false
+      },
+      "errors": {
+        "dev": true,
+        "deprecated": true
+      }
+    },
+    {
+      "name": "coverage",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/coverage",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Coverage",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra",
+        "CMAKE_CXX_FLAGS_COVERAGE": "-Og -g --coverage -fkeep-inline-functions -fkeep-static-functions",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_EXE_LINKER_FLAGS_COVERAGE": "--coverage",
+        "CMAKE_SHARED_LINKER_FLAGS_COVERAGE": "--coverage",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/coverage",
+        "COVERAGE_HTML_COMMAND": ""
+      }
+    },
+    {
+      "name": "g++-11",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/g++-11",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -fsanitize=address",
+        "CMAKE_CXX_COMPILER": "g++-11",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=address",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/g++-11"
+      }
+    },
+    {
+      "name": "g++-11-release",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/g++-11-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra",
+        "CMAKE_CXX_COMPILER": "g++-11",
+        "CMAKE_SHARED_LINKER_FLAGS": "",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/g++-11-release"
+      }
+    },
+    {
+      "name": "clang++-13",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/clang++-13",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -fsanitize=address",
+        "CMAKE_CXX_COMPILER": "clang++-13",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=address",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/clang++-13"
+      }
+    },
+    {
+      "name": "clang++-14",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/clang++-14",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -fsanitize=address",
+        "CMAKE_CXX_COMPILER": "clang++-14",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=address",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/clang++-14"
+      }
+    },
+    {
+      "name": "libc++-14-cpp17",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/libc++-14-cpp17",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -stdlib=libc++ -std=c++17",
+        "CMAKE_EXE_LINKER_FLAGS": "-lc++",
+        "CMAKE_CXX_COMPILER": "clang++-14",
+        "CMAKE_SHARED_LINKER_FLAGS": "",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/libc++-14-cpp17"
+      }
+    },
+    {
+      "name": "libc++-14-cpp20",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/libc++-14-cpp20",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -stdlib=libc++ -std=c++17",
+        "CMAKE_EXE_LINKER_FLAGS": "-lc++",
+        "CMAKE_CXX_COMPILER": "clang++-14",
+        "CMAKE_SHARED_LINKER_FLAGS": "",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/libc++-14-cpp20"
+      }
+    },
+    {
+      "name": "clang-tidy",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["g++-11"],
+      "binaryDir": "${sourceDir}/build/clang-tidy",
+      "cacheVariables": {
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--header-filter=${sourceDir}/include/*",
+        "CMAKE_CXX_STANDARD": "20"
+      }
+    }
+  ],
+  "buildPresets": [
+     { "name": "coverage", "configurePreset": "coverage" },
+     { "name": "g++-11", "configurePreset": "g++-11" },
+     { "name": "g++-11-release", "configurePreset": "g++-11-release" },
+     { "name": "clang++-13", "configurePreset": "clang++-13" },
+     { "name": "clang++-14", "configurePreset": "clang++-14" },
+     { "name": "libc++-14-cpp17", "configurePreset": "libc++-14-cpp17" },
+     { "name": "libc++-14-cpp20", "configurePreset": "libc++-14-cpp20" },
+     { "name": "clang-tidy", "configurePreset": "clang-tidy" }
+  ],
+  "testPresets": [
+     {
+       "name": "test",
+       "hidden": true,
+       "output": {"outputOnFailure": true},
+       "execution": {"noTestsAction": "error", "stopOnFailure": true}
+     },
+     { "name": "coverage",        "configurePreset": "coverage",         "inherits": ["test"] },
+     { "name": "g++-11",          "configurePreset": "g++-11",           "inherits": ["test"] },
+     { "name": "g++-11-release",  "configurePreset": "g++-11-release",   "inherits": ["test"] },
+     { "name": "clang++-13",      "configurePreset": "clang++-13",       "inherits": ["test"] },
+     { "name": "clang++-14",      "configurePreset": "clang++-14",       "inherits": ["test"] },
+     { "name": "libc++-14-cpp17", "configurePreset": "libc++-14-cpp17",  "inherits": ["test"] },
+     { "name": "libc++-14-cpp20", "configurePreset": "libc++-14-cpp20",  "inherits": ["test"] },
+     { "name": "clang-tidy",      "configurePreset": "clang-tidy",       "inherits": ["test"] }
+  ]
+}

@@ -1,0 +1,441 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>results</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__quoting_context.html" title="quoting_context">
+<link rel="next" href="boost__mysql__results/iterator.html" title="results::iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__quoting_context.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__results/iterator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__results"></a><a class="link" href="boost__mysql__results.html" title="results">results</a>
+</h4></div></div></div>
+<p>
+        Holds the results of a SQL query (dynamic interface).
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__results.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__results.synopsis"></a></span><a class="link" href="boost__mysql__results.html#mysql.ref.boost__mysql__results.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/results.hpp" target="_top">boost/mysql/results.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">results</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__results.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__results.types"></a></span><a class="link" href="boost__mysql__results.html#mysql.ref.boost__mysql__results.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/const_iterator.html" title="results::const_iterator">const_iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A random access iterator to an element.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/const_reference.html" title="results::const_reference">const_reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The reference type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/difference_type.html" title="results::difference_type">difference_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A signed integer type used to represent differences.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/iterator.html" title="results::iterator">iterator</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A random access iterator to an element.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/reference.html" title="results::reference">reference</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The reference type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/size_type.html" title="results::size_type">size_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  An unsigned integer type to represent sizes.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/value_type.html" title="results::value_type">value_type</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  A type that can hold elements in this collection with value semantics.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__results.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__results.member_functions"></a></span><a class="link" href="boost__mysql__results.html#mysql.ref.boost__mysql__results.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/affected_rows.html" title="results::affected_rows">affected_rows</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the number of rows affected by the executed SQL statement.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/at.html" title="results::at">at</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the i-th resultset or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/back.html" title="results::back">back</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the last resultset.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/begin.html" title="results::begin">begin</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns an iterator pointing to the first resultset that this object
+                  contains.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/empty.html" title="results::empty">empty</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether the collection contains any resultset.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/end.html" title="results::end">end</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns an iterator pointing to one-past-the-last resultset that
+                  this object contains.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/front.html" title="results::front">front</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the first resultset.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/has_value.html" title="results::has_value">has_value</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether the object holds a valid result.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/info.html" title="results::info">info</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns additional text information about the execution of the
+                  SQL statement.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/last_insert_id.html" title="results::last_insert_id">last_insert_id</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the last insert ID produced by the executed SQL statement.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/meta.html" title="results::meta">meta</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns metadata about the columns in the query.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/operator_eq_.html" title="results::operator=">operator=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Copy assignment. <br><span class="silver">—</span><br>Move assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/operator__lb__rb_.html" title="results::operator[]">operator[]</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the i-th resultset (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/out_params.html" title="results::out_params">out_params</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the output parameters of a stored procedure call.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/results.html" title="results::results">results</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Default constructor. <br><span class="silver">—</span><br>Copy
+                  constructor. <br><span class="silver">—</span><br>Move constructor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/rows.html" title="results::rows">rows</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the rows retrieved by the SQL query.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/size.html" title="results::size">size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the number of resultsets that this collection contains.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/warning_count.html" title="results::warning_count">warning_count</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the number of warnings produced by the executed SQL statement.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__results/_dtor_results.html" title="results::~results">~results</a> <span class="silver">[destructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destructor.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__results.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__results.description"></a></span><a class="link" href="boost__mysql__results.html#mysql.ref.boost__mysql__results.description">Description</a>
+      </h5>
+<p>
+        This object can store the results of single and multi resultset queries.
+        For the former, you use <a class="link" href="boost__mysql__results/meta.html" title="results::meta"><code class="computeroutput"><span class="identifier">meta</span></code></a>, <a class="link" href="boost__mysql__rows.html" title="rows"><code class="computeroutput"><span class="identifier">rows</span></code></a>, <a class="link" href="boost__mysql__results/affected_rows.html" title="results::affected_rows"><code class="computeroutput"><span class="identifier">affected_rows</span></code></a> and so on. For the
+        latter, this class is a random-access collection of <a class="link" href="boost__mysql__resultset.html" title="resultset"><code class="computeroutput"><span class="identifier">resultset</span></code></a> objects.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__results.h4"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__results.thread_safety"></a></span><a class="link" href="boost__mysql__results.html#mysql.ref.boost__mysql__results.thread_safety">Thread
+        safety</a>
+      </h5>
+<p>
+        Distinct objects: safe.
+      </p>
+<p>
+        Shared objects: unsafe.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__quoting_context.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__results/iterator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

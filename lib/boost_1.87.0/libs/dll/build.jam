@@ -1,0 +1,36 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/filesystem//boost_filesystem
+    /boost/function//boost_function
+    /boost/move//boost_move
+    /boost/predef//boost_predef
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/spirit//boost_spirit
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_index//boost_type_index
+    /boost/type_traits//boost_type_traits
+    /boost/winapi//boost_winapi ;
+
+project /boost/dll
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_dll : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_dll test ]
+    ;
+
+call-if : boost-library dll
+    ;
+

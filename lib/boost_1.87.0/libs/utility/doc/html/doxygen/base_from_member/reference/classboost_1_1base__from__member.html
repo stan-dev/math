@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template base_from_member</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.Utility">
+<link rel="up" href="../../../utility/utilities/base_from_member.html#doxygen.base_from_member.reference.base__from__member_8hpp" title="Header &lt;boost/utility/base_from_member.hpp&gt;">
+<link rel="prev" href="../../../utility/utilities/base_from_member.html" title="Base from Member">
+<link rel="next" href="classboost_1_1base__from__member_3_01MemberType_01_6_00_01UniqueID_01_4.html" title="Class template base_from_member&lt;MemberType &amp;, UniqueID&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../../utility/utilities/base_from_member.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../utility/utilities/base_from_member.html#doxygen.base_from_member.reference.base__from__member_8hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1base__from__member_3_01MemberType_01_6_00_01UniqueID_01_4.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.base_from_member.reference.classboost_1_1base__from__member"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template base_from_member</span></h2>
+<p>boost::base_from_member</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../../utility/utilities/base_from_member.html#doxygen.base_from_member.reference.base__from__member_8hpp" title="Header &lt;boost/utility/base_from_member.hpp&gt;">boost/utility/base_from_member.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MemberType<span class="special">,</span> <span class="keyword">int</span> UniqueID <span class="special">=</span> <span class="number">0</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1base__from__member.html" title="Class template base_from_member">base_from_member</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1base__from__member.html#id1-bb">protected member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="special">...</span> T<span class="special">,</span> <span class="keyword">typename</span> EnableIf <span class="special">=</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span><span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1base__from__member.html#doxygen.base_from_member.reference.classboost_1_1base__from__member_1abe153535f5425a5a3bc75a6cad7a3e52"><span class="identifier">base_from_member</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">BOOST_NOEXCEPT_EXPR</span><span class="special">(</span><span class="special">::</span><span class="keyword">new</span><span class="special">(</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">)</span> <span class="number">0</span><span class="special">)</span> <span class="identifier">MemberType</span><span class="special">(</span><span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&amp;&amp;</span> <span class="special">&gt;</span><span class="special">(</span><span class="identifier">x</span><span class="special">)</span><span class="special">...</span><span class="special">)</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id2649"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id2651"></a><h3>
+<a name="id1-bb"></a><code class="computeroutput">base_from_member</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="special">...</span> T<span class="special">,</span> <span class="keyword">typename</span> EnableIf <span class="special">=</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span><span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.base_from_member.reference.classboost_1_1base__from__member_1abe153535f5425a5a3bc75a6cad7a3e52"></a><span class="identifier">base_from_member</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">...</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">BOOST_NOEXCEPT_EXPR</span><span class="special">(</span><span class="special">::</span><span class="keyword">new</span><span class="special">(</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">)</span> <span class="number">0</span><span class="special">)</span> <span class="identifier">MemberType</span><span class="special">(</span><span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&amp;&amp;</span> <span class="special">&gt;</span><span class="special">(</span><span class="identifier">x</span><span class="special">)</span><span class="special">...</span><span class="special">)</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id2705"></a><h3>Specializations</h3>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a class="link" href="classboost_1_1base__from__member_3_01MemberType_01_6_00_01UniqueID_01_4.html" title="Class template base_from_member&lt;MemberType &amp;, UniqueID&gt;">Class template base_from_member&lt;MemberType &amp;, UniqueID&gt;</a></p></li></ul></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001 Beman Dawes<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../../utility/utilities/base_from_member.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../../utility/utilities/base_from_member.html#doxygen.base_from_member.reference.base__from__member_8hpp"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1base__from__member_3_01MemberType_01_6_00_01UniqueID_01_4.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

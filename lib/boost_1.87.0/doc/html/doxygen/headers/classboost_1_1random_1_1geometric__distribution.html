@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template geometric_distribution</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_random/reference.html#doxygen.headers.geometric__distribution_8hpp" title="Header &lt;boost/random/geometric_distribution.hpp&gt;">
+<link rel="prev" href="generate__canonical_8hpp_1a6dbc692ac6015449c7b5e240d8bf1db4.html" title="Function template generate_canonical">
+<link rel="next" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="generate__canonical_8hpp_1a6dbc692ac6015449c7b5e240d8bf1db4.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.geometric__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template geometric_distribution</span></h2>
+<p>boost::random::geometric_distribution</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_random/reference.html#doxygen.headers.geometric__distribution_8hpp" title="Header &lt;boost/random/geometric_distribution.hpp&gt;">boost/random/geometric_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntType <span class="special">=</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">typename</span> RealType <span class="special">=</span> <span class="keyword">double</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a155249820d546dbab3f1f967496c36e1"></a><span class="identifier">input_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">IntType</span>  <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ad2560a8e8a7970d4cb8ae98b00c63196"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1a58ad85228cc05214f3a5458041d5ce7b"><span class="identifier">distribution_type</span></a><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#id-1_3_34_5_6_17_1_1_1_3_2-bb">public member functions</a></span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1aa169bf0a0fda6ae2ea5e6fd016131730"><span class="identifier">param_type</span></a><span class="special">(</span><span class="identifier">RealType</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1a9baa8ddcad6fa6d59dedb83b1972b18a"><span class="identifier">p</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#id-1_3_34_5_6_17_1_1_1_3_3-bb">friend functions</a></span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1a36d2820c7e758fa1a94fdd5d74949e54"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+      <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+      <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1aa94ff75dd5871ee80a6fc0a095c75bd0"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1ae6f3b58e629ce7a54b5e18a4f05dbc5a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1_1param__type_1aa559d0d98e88e84417364a89b83cf5b2"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#id-1_3_34_5_6_17_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1af190cfe22775eeb3e8396a1fc2fd096d"><span class="identifier">geometric_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">RealType</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ac3f2bacb976b733d31bdba1dbc7953a2"><span class="identifier">geometric_distribution</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">RealType</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a77b445f20b6b357a1ff5ac54c92f7405"><span class="identifier">p</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">IntType</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a15b214a0e76e04e478143fe1c2a4dda4"><span class="identifier">min</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">IntType</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a686a3f499cdd9f96fcd11f5a5340a081"><span class="identifier">max</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a8184747bc10cc1d557c9d238365ed257"><span class="identifier">param</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1af7f5fae1a6055db216545b34d6c7299d"><span class="identifier">param</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ad57976d8e735dd491b172cc73e19d659"><span class="identifier">reset</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a1e9d62ae49bc73a002599cf6a6f17fc6"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> 
+    <span class="identifier">result_type</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a5118ad4603d0359a59f6077e77b6bb4e"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#id-1_3_34_5_6_17_1_1_1_7-bb">friend functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ab0d0a1e7e75f559ec5ac83bf852f3aaa"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+    <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1abaf4ccc211222c3f17f7293f6abae8be"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+               <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a0cf3832c962a60648b2c07a30acacf3a"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html#doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ae4bdc2d369dad611c8f549834caa47e0"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.34.5.6.16.3.4"></a><h2>Description</h2>
+<p>An instantiation of the class template <code class="computeroutput"><a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a></code> models a  <a class="link" href="../../boost_random/reference.html#boost_random.reference.concepts.random_distribution" title="Random Distribution">random distribution</a> . The distribution produces positive integers which are the number of bernoulli trials with probability <code class="computeroutput">p</code> required to get one that fails.</p>
+<p>For the geometric distribution, <span class="inlinemediaobject"><img src="../../images/random//form_14.png"></span>.</p>
+<p> </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>  This distribution has been updated to match the C++ standard. Its behavior has changed from the original boost::geometric_distribution. A backwards compatible wrapper is provided in namespace boost.  </p></td></tr>
+</table></div>
+<p>  </p>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.16.3.4.5"></a><h3>
+<a name="id-1_3_34_5_6_17_1_1_1_6-bb"></a><code class="computeroutput">geometric_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1af190cfe22775eeb3e8396a1fc2fd096d"></a><span class="identifier">geometric_distribution</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">RealType</span> <span class="special">&amp;</span> p <span class="special">=</span> <span class="number">0</span><span class="special">.</span><span class="number">5</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Contructs a new <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> with the paramter <code class="computeroutput">p</code>.</p>
+<p>Requires: 0 &lt; p &lt; 1 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ac3f2bacb976b733d31bdba1dbc7953a2"></a><span class="identifier">geometric_distribution</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructs a new <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> from its parameters. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">RealType</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a77b445f20b6b357a1ff5ac54c92f7405"></a><span class="identifier">p</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns: the distribution parameter <code class="computeroutput">p</code> <br>
+ </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">IntType</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a15b214a0e76e04e478143fe1c2a4dda4"></a><span class="identifier">min</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the smallest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">IntType</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a686a3f499cdd9f96fcd11f5a5340a081"></a><span class="identifier">max</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the largest value that the distribution can produce. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a8184747bc10cc1d557c9d238365ed257"></a><span class="identifier">param</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1af7f5fae1a6055db216545b34d6c7299d"></a><span class="identifier">param</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span><span class="special">;</span></pre>
+<p>Sets the parameters of the distribution. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ad57976d8e735dd491b172cc73e19d659"></a><span class="identifier">reset</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Effects: Subsequent uses of the distribution do not depend on values produced by any engine prior to invoking reset. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a1e9d62ae49bc73a002599cf6a6f17fc6"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span> eng<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Engine<span class="special">&gt;</span> 
+  <span class="identifier">result_type</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a5118ad4603d0359a59f6077e77b6bb4e"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Engine</span> <span class="special">&amp;</span> eng<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html" title="Class param_type">param_type</a> <span class="special">&amp;</span> param<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a random variate distributed according to the geometric distribution with parameters specified by param. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.34.5.6.16.3.4.6"></a><h3>
+<a name="id-1_3_34_5_6_17_1_1_1_7-bb"></a><code class="computeroutput">geometric_distribution</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ab0d0a1e7e75f559ec5ac83bf852f3aaa"></a><span class="keyword">operator</span><span class="special">&lt;&lt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_ostream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> os<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span> gd<span class="special">)</span><span class="special">;</span></pre>
+<p>Writes the distribution to a <code class="computeroutput">std::ostream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> Traits<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1abaf4ccc211222c3f17f7293f6abae8be"></a><span class="keyword">operator</span><span class="special">&gt;&gt;</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_istream</span><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">Traits</span> <span class="special">&gt;</span> <span class="special">&amp;</span> is<span class="special">,</span> 
+             <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span> gd<span class="special">)</span><span class="special">;</span></pre>
+<p>Reads the distribution from a <code class="computeroutput">std::istream</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1a0cf3832c962a60648b2c07a30acacf3a"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two distributions will produce identical sequences of values given equal generators. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.headers.classboost_1_1random_1_1geometric__distribution_1ae4bdc2d369dad611c8f549834caa47e0"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span> lhs<span class="special">,</span> 
+                <span class="keyword">const</span> <a class="link" href="classboost_1_1random_1_1geometric__distribution.html" title="Class template geometric_distribution">geometric_distribution</a> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns true if the two distributions may produce different sequences of values given equal generators. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2000-2005 Jens Maurer<br>Copyright © 2009, 2010 Steven Watanabe<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="generate__canonical_8hpp_1a6dbc692ac6015449c7b5e240d8bf1db4.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_random/reference.html#doxygen.headers.geometric__distribution_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1random_1_1geometric__distribution_1_1param__type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

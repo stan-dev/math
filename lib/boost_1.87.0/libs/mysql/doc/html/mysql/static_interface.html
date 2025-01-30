@@ -1,0 +1,817 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>The static interface</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="dynamic_interface.html" title="The dynamic interface">
+<link rel="next" href="multi_resultset.html" title="Multi-resultset: stored procedures and multi-queries">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="dynamic_interface.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="multi_resultset.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.static_interface"></a><a class="link" href="static_interface.html" title="The static interface">The static interface</a>
+</h2></div></div></div>
+<p>
+      To use the static interface, we must first define a data structure that describes
+      the shape of our rows. We have several options:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Use <a href="../../../../../libs/describe/index.html" target="_top">Boost.Describe</a>
+          to annotate a plain <code class="computeroutput"><span class="keyword">struct</span></code>
+          with <code class="computeroutput"><span class="identifier">BOOST_DESCRIBE_STRUCT</span></code>
+          to enable reflection on it.
+        </li>
+<li class="listitem">
+          Use <a href="../../../../../libs/pfr/index.html" target="_top">Boost.Pfr</a> and <a class="link" href="ref/boost__mysql__pfr_by_name.html" title="pfr_by_name"><code class="literal">pfr_by_name</code></a>
+          or <a class="link" href="ref/boost__mysql__pfr_by_position.html" title="pfr_by_position"><code class="literal">pfr_by_position</code></a>
+          to use PFR automatic reflection capabilities.
+        </li>
+<li class="listitem">
+          Use <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>.
+        </li>
+</ul></div>
+<p>
+      We will start with Boost.Describe and explain the other options later. For
+      a comparison, please refer to <a class="link" href="static_interface.html#mysql.static_interface.comparison">this
+      table</a>.
+    </p>
+<p>
+      For example, given the following table definition:
+    </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">table_definition</span> <span class="special">=</span> <span class="identifier">R</span><span class="string">"%(
+    CREATE TEMPORARY TABLE posts (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR (256) NOT NULL,
+        body TEXT NOT NULL
+    )
+)%"</span><span class="special">;</span>
+</pre>
+<p>
+      We can define our row type like this:
+    </p>
+<pre class="programlisting"><span class="comment">// We can use a plain struct with ints and strings to describe our rows.</span>
+<span class="comment">// This must be placed at the namespace level</span>
+<span class="keyword">struct</span> <span class="identifier">post</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">body</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="comment">// We use BOOST_DESCRIBE_STRUCT to add reflection capabilities to post.</span>
+<span class="comment">// We must list all the fields that should be populated by Boost.MySQL</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">post</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">title</span><span class="special">,</span> <span class="identifier">body</span><span class="special">))</span>
+</pre>
+<p>
+      And write the following to query our table:
+    </p>
+<pre class="programlisting"><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT id, title, body FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">post</span><span class="special">&amp;</span> <span class="identifier">p</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="comment">// Process the post as required</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Title: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">title</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">body</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Note that <a class="link" href="ref/boost__mysql__static_results/rows.html" title="static_results::rows"><code class="literal">static_results::rows</code></a>
+      returns a <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span></code> object, which is a C++11 backport of
+      <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">span</span></code>. The span points into memory owned by
+      the <code class="computeroutput"><span class="identifier">static_results</span></code> object.
+      Care must be taken not to use this view object after the <code class="computeroutput"><span class="identifier">static_results</span></code>
+      goes out of scope.
+    </p>
+<h4>
+<a name="mysql.static_interface.h0"></a>
+      <span class="phrase"><a name="mysql.static_interface.field_matching"></a></span><a class="link" href="static_interface.html#mysql.static_interface.field_matching">Field
+      matching</a>
+    </h4>
+<p>
+      Columns in the query are matched to fields in the struct by name. If a struct
+      field cannot be matched to any query column, an error is issued. Extra columns
+      in the query are ignored.
+    </p>
+<p>
+      If your query contains columns with names that don't qualify as C++ identifiers,
+      you can use SQL aliases. For example, given this struct:
+    </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">statistics</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">company</span><span class="special">;</span>
+    <span class="keyword">double</span> <span class="identifier">average</span><span class="special">;</span>
+    <span class="keyword">double</span> <span class="identifier">max_value</span><span class="special">;</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">statistics</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">company</span><span class="special">,</span> <span class="identifier">average</span><span class="special">,</span> <span class="identifier">max_value</span><span class="special">))</span>
+</pre>
+<p>
+      You can write your query as:
+    </p>
+<pre class="programlisting"><span class="comment">// Summing 0e0 is MySQL way to cast a DECIMAL field to DOUBLE</span>
+<span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">sql</span> <span class="special">=</span> <span class="identifier">R</span><span class="string">"%(
+    SELECT
+        IFNULL(AVG(salary), 0.0) + 0e0 AS average,
+        IFNULL(MAX(salary), 0.0) + 0e0 AS max_value,
+        company_id AS company
+    FROM employee
+    GROUP BY company_id
+)%"</span><span class="special">;</span>
+
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">statistics</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">sql</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<h4>
+<a name="mysql.static_interface.h1"></a>
+      <span class="phrase"><a name="mysql.static_interface.meta_checks"></a></span><a class="link" href="static_interface.html#mysql.static_interface.meta_checks">Metadata
+      checking</a>
+    </h4>
+<p>
+      The static interface will try to validate as soon as possible that the provided
+      row type is compatible with the schema returned by the server. This process
+      is known as <span class="bold"><strong>metadata checking</strong></span>, and is performed
+      before reading any data. The following checks are performed:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <span class="bold"><strong>Type compatibility</strong></span>: the C++ type must
+          be able to represent any value that the MySQL type can represent. For example,
+          <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int32_t</span></code> is compatible with <code class="computeroutput"><span class="identifier">TINYINT</span></code> (1 byte integer), but not with
+          <code class="computeroutput"><span class="identifier">BIGINT</span></code> (8 byte integer).
+          For a full list of allowable field types, <a class="link" href="static_interface.html#mysql.static_interface.readable_field_reference">refer
+          to this table</a>.
+        </li>
+<li class="listitem">
+          <span class="bold"><strong>Nullability</strong></span>: if MySQL reports that a column
+          can be <code class="computeroutput"><span class="identifier">NULL</span></code>, your type
+          must account for it. You can use <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> or <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> for these columns.
+        </li>
+</ul></div>
+<p>
+      For example, if your table is defined like this:
+    </p>
+<pre class="programlisting"><span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">table_definition</span> <span class="special">=</span> <span class="identifier">R</span><span class="string">"%(
+    CREATE TEMPORARY TABLE posts_v2 (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR (256) NOT NULL,
+        body TEXT
+    )
+)%"</span><span class="special">;</span>
+</pre>
+<p>
+      Using the <code class="computeroutput"><span class="identifier">post</span></code> type we defined
+      above will cause an error, because the <code class="computeroutput"><span class="identifier">body</span></code>
+      field may be <code class="computeroutput"><span class="identifier">NULL</span></code>, but our
+      type doesn't account for it. In this case, the correct definition would be:
+    </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">post_v2</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">body</span><span class="special">;</span>  <span class="comment">// body may be NULL</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">post_v2</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">title</span><span class="special">,</span> <span class="identifier">body</span><span class="special">))</span>
+</pre>
+<h4>
+<a name="mysql.static_interface.h2"></a>
+      <span class="phrase"><a name="mysql.static_interface.using_boost_pfr"></a></span><a class="link" href="static_interface.html#mysql.static_interface.using_boost_pfr">Using
+      Boost.PFR</a>
+    </h4>
+<p>
+      If you're using C++20 or above, you can use Boost.PFR to reflect types without
+      the <code class="computeroutput"><span class="identifier">BOOST_DESCRIBE_STRUCT</span></code> macro:
+    </p>
+<pre class="programlisting"><span class="comment">// post_v3 doesn't contain any metadata - we're not using BOOST_DESCRIBE_STRUCT here</span>
+<span class="keyword">struct</span> <span class="identifier">post_v3</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">body</span><span class="special">;</span>
+<span class="special">};</span>
+</pre>
+<p>
+      PFR reflection can be enabled in Boost.MySQL by using <a class="link" href="ref/boost__mysql__pfr_by_name.html" title="pfr_by_name"><code class="literal">pfr_by_name</code></a>:
+    </p>
+<pre class="programlisting"><span class="comment">// pfr_by_name is a marker type. It tells static_results to use</span>
+<span class="comment">// Boost.PFR for reflection, instead of Boost.Describe.</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">post_v3</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+
+<span class="comment">// As with Boost.Describe, query fields are matched to struct</span>
+<span class="comment">// members by name. This means that the fields in the query</span>
+<span class="comment">// may appear in any order.</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT body, id, title FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Note that result.rows() is a span of post_v3 objects,</span>
+<span class="comment">// rather than pfr_by_name&lt;post_v3&gt; objects. post_v3</span>
+<span class="comment">// is the underlying row type for pfr_by_name&lt;post_v3&gt;</span>
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">post_v3</span><span class="special">&amp;</span> <span class="identifier">p</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="comment">// Process the post as required</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Title: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">title</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">body</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Note that <a class="link" href="ref/boost__mysql__pfr_by_name.html" title="pfr_by_name"><code class="literal">pfr_by_name</code></a>
+      is what we call a <span class="emphasis"><em>marker type</em></span> - an empty type that tells
+      classes like <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>
+      how to reflect a type. If no marker type is used, Boost.Describe is used to
+      retrieve reflection data for struct types.
+    </p>
+<p>
+      <a class="link" href="ref/boost__mysql__pfr_by_position.html" title="pfr_by_position"><code class="literal">pfr_by_position</code></a>
+      is similar to <code class="computeroutput"><span class="identifier">pfr_by_name</span></code>,
+      but will match columns in the query to struct fields by position, rather than
+      name. It only requires C++14 to work. For instance:
+    </p>
+<pre class="programlisting"><span class="comment">// pfr_by_position is another marker type.</span>
+<span class="comment">// Fields in post_v3 must appear in the same order as in the query,</span>
+<span class="comment">// as matching will be done by position.</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">pfr_by_position</span><span class="special">&lt;</span><span class="identifier">post_v3</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT id, title, body FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// The underlying row type is post_v3</span>
+<span class="keyword">for</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">post_v3</span><span class="special">&amp;</span> <span class="identifier">p</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="comment">// Process the post as required</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Title: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">title</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span> <span class="special">&lt;&lt;</span> <span class="identifier">p</span><span class="special">.</span><span class="identifier">body</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Please refer to <a class="link" href="static_interface.html#mysql.static_interface.comparison">this table</a>
+      for a comparison with Boost.Describe.
+    </p>
+<h4>
+<a name="mysql.static_interface.h3"></a>
+      <span class="phrase"><a name="mysql.static_interface.using_tuples"></a></span><a class="link" href="static_interface.html#mysql.static_interface.using_tuples">Using
+      tuples</a>
+    </h4>
+<p>
+      You can also use <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>s as row types. This can be handy for
+      simple queries:
+    </p>
+<pre class="programlisting"><span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT COUNT(*) FROM employee"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Number of employees: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">get</span><span class="special">&lt;</span><span class="number">0</span><span class="special">&gt;(</span><span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">()[</span><span class="number">0</span><span class="special">])</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+</pre>
+<p>
+      Fields in tuples are matched to query columns by order. The query must return
+      as many columns as fields the tuple has, at least. Any extra trailing columns
+      in the query are ignored.
+    </p>
+<h4>
+<a name="mysql.static_interface.h4"></a>
+      <span class="phrase"><a name="mysql.static_interface.multi_resultset_and_multi_functi"></a></span><a class="link" href="static_interface.html#mysql.static_interface.multi_resultset_and_multi_functi">Multi-resultset
+      and multi-function operations</a>
+    </h4>
+<p>
+      You can use both with the dynamic interface. Please refer to the sections on
+      <a class="link" href="multi_resultset.html" title="Multi-resultset: stored procedures and multi-queries">multi-resultset operations</a> and
+      <a class="link" href="multi_function.html" title="Multi-function operations">multi-function operations</a> for more
+      information.
+    </p>
+<h4>
+<a name="mysql.static_interface.h5"></a>
+      <span class="phrase"><a name="mysql.static_interface.reflection_techniques_comparison"></a></span><a class="link" href="static_interface.html#mysql.static_interface.reflection_techniques_comparison">Reflection
+      techniques comparison</a>
+    </h4>
+<p>
+      Should I use Boost.Describe, Boost.PFR or tuples? Each one has its advantages
+      and drawbacks. This table may help you decide:
+    </p>
+<div class="informaltable">
+<a name="mysql.static_interface.comparison"></a><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Technique
+              </p>
+            </th>
+<th>
+              <p>
+                Sample code
+              </p>
+            </th>
+<th>
+              <p>
+                Minimum C++ standard
+              </p>
+            </th>
+<th>
+              <p>
+                Comments
+              </p>
+            </th>
+<th>
+              <p>
+                Feature test macro
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                Boost.Describe
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Definition should be at namespace scope</span>
+<span class="keyword">struct</span> <span class="identifier">post</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">body</span><span class="special">;</span>
+<span class="special">};</span>
+<span class="identifier">BOOST_DESCRIBE_STRUCT</span><span class="special">(</span><span class="identifier">post</span><span class="special">,</span> <span class="special">(),</span> <span class="special">(</span><span class="identifier">id</span><span class="special">,</span> <span class="identifier">title</span><span class="special">,</span> <span class="identifier">body</span><span class="special">))</span>
+</pre>
+              <p>
+                <br>
+              </p>
+<pre class="table-programlisting"><span class="comment">// Usage</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT title, body, id FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                C++14
+              </p>
+            </td>
+<td>
+              <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                    Requires adding metadata with <code class="computeroutput"><span class="identifier">BOOST_DESCRIBE_STRUCT</span></code>.<br>
+                  </li>
+<li class="listitem">
+                    Matches fields by name.<br>
+                  </li>
+<li class="listitem">
+                    No limitations placed on the row type (e.g. works for structs
+                    using inheritance).
+                  </li>
+</ul></div>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BOOST_MYSQL_CXX14</span></code>
+                is defined
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Boost.PFR using names
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Definition should be at namespace scope</span>
+<span class="keyword">struct</span> <span class="identifier">post</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">body</span><span class="special">;</span>
+<span class="special">};</span>
+</pre>
+              <p>
+                <br>
+              </p>
+<pre class="table-programlisting"><span class="comment">// Usage</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">pfr_by_name</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT title, body, id FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                C++20
+              </p>
+            </td>
+<td>
+              <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                    Doesn't require adding metadata to structs.<br>
+                  </li>
+<li class="listitem">
+                    Matches fields by name.<br>
+                  </li>
+<li class="listitem">
+                    Works for row types satisfying <a href="../../../../../doc/html/boost_pfr/limitations_and_configuration.html" target="_top"><code class="computeroutput"><span class="identifier">SimpleAggregate</span></code></a>.
+                  </li>
+</ul></div>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BOOST_PFR_CORE_NAME_ENABLED</span></code>
+                is defined and set to <code class="computeroutput"><span class="number">1</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Boost.PFR using field position
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="comment">// Definition should be at namespace scope</span>
+<span class="keyword">struct</span> <span class="identifier">post</span>
+<span class="special">{</span>
+    <span class="keyword">int</span> <span class="identifier">id</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">title</span><span class="special">;</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">body</span><span class="special">;</span>
+<span class="special">};</span>
+</pre>
+              <p>
+                <br>
+              </p>
+<pre class="table-programlisting"><span class="comment">// Usage</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">pfr_by_position</span><span class="special">&lt;</span><span class="identifier">post</span><span class="special">&gt;&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT id, title, body FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                C++17<br> C++14 with limitations
+              </p>
+            </td>
+<td>
+              <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                    Doesn't require adding metadata to structs.<br>
+                  </li>
+<li class="listitem">
+                    Matches fields by position.<br>
+                  </li>
+<li class="listitem">
+                    In C++17 mode, it works for row types satisfying <a href="../../../../../doc/html/boost_pfr/limitations_and_configuration.html" target="_top"><code class="computeroutput"><span class="identifier">SimpleAggregate</span></code></a>.
+                  </li>
+<li class="listitem">
+                    In C++14 mode, it may not work for rows containing certain field
+                    types, like strings. See <a href="../../../../../doc/html/boost_pfr/limitations_and_configuration.html" target="_top">Boost.PFR
+                    documentation</a> on C++14 limitations.
+                  </li>
+</ul></div>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BOOST_PFR_ENABLED</span></code>
+                is defined and set to <code class="computeroutput"><span class="number">1</span></code>.
+                <code class="computeroutput"><span class="identifier">BOOST_PFR_USE_CPP17</span></code>
+                is defined and set to <code class="computeroutput"><span class="number">1</span></code>
+                for C++17 mode.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                Standard tuples
+              </p>
+            </td>
+<td>
+<pre class="table-programlisting"><span class="keyword">using</span> <span class="identifier">tuple_t</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;;</span>
+<span class="identifier">static_results</span><span class="special">&lt;</span><span class="identifier">tuple_t</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT id, title, body FROM posts"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+            </td>
+<td>
+              <p>
+                C++14
+              </p>
+            </td>
+<td>
+              <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                    Should only be used for very simple queries.<br>
+                  </li>
+<li class="listitem">
+                    Matches fields by position.<br>
+                  </li>
+</ul></div>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BOOST_MYSQL_CXX14</span></code>
+                is defined
+              </p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>
+      Note that using the static interface always requires C++14, at least. The
+      <code class="computeroutput"><span class="identifier">BOOST_MYSQL_CXX14</span></code> test macro
+      is defined only if the static interface is supported. Including the static
+      interface headers on an unsupported compiler doesn't cause any error, but classes
+      like <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>
+      and <a class="link" href="ref/boost__mysql__static_execution_state.html" title="static_execution_state"><code class="literal">static_execution_state</code></a>
+      are not defined. The test macro is brought on scope by any of the static interface
+      headers.
+    </p>
+<h4>
+<a name="mysql.static_interface.h6"></a>
+      <span class="phrase"><a name="mysql.static_interface.allowed_field_types"></a></span><a class="link" href="static_interface.html#mysql.static_interface.allowed_field_types">Allowed
+      field types</a>
+    </h4>
+<p>
+      All the types used within your Describe structs or tuples must be within the
+      following table. A Describe struct or tuple composed of valid field types models
+      the <a class="link" href="ref/boost__mysql__StaticRow.html" title="StaticRow concept"><code class="literal">StaticRow</code></a>
+      concept.
+    </p>
+<p>
+      The following table is a reference of the C++ types that can be used in a
+      <code class="computeroutput"><span class="identifier">StaticRow</span></code> and their compatibility
+      with MySQL database types:
+    </p>
+<div class="informaltable">
+<a name="mysql.static_interface.readable_field_reference"></a><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                C++ type
+              </p>
+            </th>
+<th>
+              <p>
+                Compatible with...
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int8_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint8_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int16_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <br> <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint16_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code> <br> <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int32_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint32_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">BIGINT</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">BIGINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code><br>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/bit-type.html" target="_top"><code class="computeroutput"><span class="identifier">BIT</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">bool</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BOOL</span></code> or <code class="computeroutput"><span class="identifier">BOOLEAN</span></code> (alias for <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">float</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">FLOAT</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">double</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">FLOAT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">DOUBLE</span></code></a><br>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">date</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">DATE</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">datetime</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">DATETIME</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">TIMESTAMP</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">time</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/time.html" target="_top"><code class="computeroutput"><span class="identifier">TIME</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;,</span>
+                <span class="identifier">Allocator</span><span class="special">&gt;</span></code><br>
+                <br> The object must be default-constructible.
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html" target="_top"><code class="computeroutput"><span class="identifier">CHAR</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html" target="_top"><code class="computeroutput"><span class="identifier">VARCHAR</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/blob.html" target="_top"><code class="computeroutput"><span class="identifier">TEXT</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/enum.html" target="_top"><code class="computeroutput"><span class="identifier">ENUM</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/set.html" target="_top"><code class="computeroutput"><span class="identifier">SET</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/json.html" target="_top"><code class="computeroutput"><span class="identifier">JSON</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">DECIMAL</span></code></a>/<a href="https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">NUMERIC</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_vector</span><span class="special">&lt;</span><span class="keyword">unsigned</span> <span class="keyword">char</span><span class="special">,</span> <span class="identifier">Allocator</span><span class="special">&gt;</span></code><br> <br> The object must
+                be default-constructible.
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html" target="_top"><code class="computeroutput"><span class="identifier">BINARY</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html" target="_top"><code class="computeroutput"><span class="identifier">VARBINARY</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/blob.html" target="_top"><code class="computeroutput"><span class="identifier">BLOB</span></code></a><br> <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html" target="_top"><code class="computeroutput"><span class="identifier">GEOMETRY</span></code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code><br>
+                <br> <code class="computeroutput"><span class="identifier">T</span></code> must be
+                any of the types listed in this table.
+              </p>
+            </td>
+<td>
+              <p>
+                Any type compatible with <code class="computeroutput"><span class="identifier">T</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code><br>
+                <br> <code class="computeroutput"><span class="identifier">T</span></code> must be
+                any of the types listed in this table.
+              </p>
+            </td>
+<td>
+              <p>
+                Any type compatible with <code class="computeroutput"><span class="identifier">T</span></code>
+              </p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="dynamic_interface.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="multi_resultset.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

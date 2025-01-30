@@ -1,0 +1,1015 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Containers
+
+Three containers are provided for interacting with URLs:
+
+[cols="1,3"]
+|===
+// Headers
+|Name|Description
+
+// Row 1, Column 1
+|cpp:url[]
+// Row 1, Column 2
+|A valid, modifiable URL which performs dynamic memory allocation
+to store the character buffer.
+
+// Row 2, Column 1
+|cpp:url_view[]
+// Row 2, Column 2
+|A read-only reference to a character buffer containing a valid URL.
+The view does not retain ownership of the underlying character buffer;
+instead, it is managed by the caller.
+
+// Row 3, Column 1
+|cpp:static_url[]
+// Row 3, Column 2
+|A valid, modifiable URL which stores the character buffer
+inside the class itself. This is a class template, where
+the maximum buffer size is a non-type template parameter.
+
+|===
+
+Inheritance provides the observer and modifier public members; class
+cpp:url_view_base[]
+has all the observers, while class
+cpp:url_base[]
+has all the modifiers.
+Although the members are public, these base classes can only be constructed by the library as needed to support the implementation.
+The class hierarchy looks like this:
+
+image::ClassHierarchy.svg[]
+
+Throughout this documentation and especially below, when an observer is discussed, it is applicable to all three derived containers shown in the table above.
+When a modifier is discussed, it is relevant to the containers
+cpp:url[] and cpp:static_url[].
+The tables and exposition which follow describe the available observers and modifiers, along with notes relating important behaviors or special requirements.
+
+== Scheme
+
+The scheme is represented as a case-insensitive string, along with an enumeration constant which acts as a numeric indentifier when the string matches one of the well-known schemes: http, https, ws, wss, file, and ftp.
+Characters in the scheme are never escaped; only letters and numbers are allowed, and the first character must be a letter.
+
+These members are used to inspect and modify the scheme:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::has_scheme[has_scheme]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if a scheme is present.
+
+// Row 2, Column 1
+|cpp:url_view_base::scheme[scheme]
+// Row 2, Column 2
+|cpp:string_view[]
+// Row 2, Column 3
+|Return the scheme as a string, or the empty string if there is no scheme.
+
+// Row 3, Column 1
+|cpp:url_view_base::scheme_id[scheme_id]
+// Row 3, Column 2
+|cpp:scheme[]
+// Row 3, Column 3
+|Return the scheme as an enumerated constant, the value
+cpp:scheme::unknown[]
+if the scheme is not one of the well-known schemes, or the value
+cpp:scheme::none[]
+if there is no scheme.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_scheme[set_scheme]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the scheme to a string.
+
+// Row 2, Column 1
+|cpp:url_base::set_scheme_id[set_scheme_id]
+// Row 2, Column 2
+|cpp:scheme[]
+// Row 2, Column 3
+|Set the scheme to a well-known scheme constant.
+
+// Row 3, Column 1
+|cpp:url_base::remove_scheme[remove_scheme]
+// Row 3, Column 2
+|
+// Row 3, Column 3
+|Remove the scheme if present.
+This includes the trailing colon (":").
+
+|===
+
+== Authority
+
+The authority is an optional part whose presence is indicated by an unescaped double slash ("//") immediately following the scheme, or at the beginning if the scheme is not present.
+It contains three components: an optional userinfo, the host, and an optional port.
+The authority in this diagram has all three components:
+
+image:::AuthorityDiagram.svg[]
+
+An empty authority, corresponding to just a zero-length host component, is distinct from the absence of an authority.
+These members are used to inspect and modify the authority as a whole string:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::has_authority[has_authority]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if an authority is present.
+
+// Row 2, Column 1
+|cpp:url_view_base::authority[authority]
+// Row 2, Column 2
+|cpp:authority_view[]
+// Row 2, Column 3
+|Return the authority as a decoded string.
+
+// Row 3, Column 1
+|cpp:url_view_base::encoded_authority[encoded_authority]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|Return the authority as a read-only view.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_encoded_authority[set_encoded_authority]
+// Row 1, Column 2
+|cpp:pct_string_view[]
+// Row 1, Column 3
+|Set the authority to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 2, Column 1
+|cpp:url_base::remove_authority[remove_authority]
+// Row 2, Column 2
+|
+// Row 2, Column 3
+|Remove the authority if present.
+This includes the leading double slash ("//").
+
+|===
+
+The paragraphs and tables that follow describe how to interact with the individual parts of the authority.
+
+== Userinfo
+
+An authority may have an optional userinfo, which consists of a user and optional password.
+The presence of the userinfo is indicated by an unescaped at sign ("@") which comes afterwards.
+The password if present is prefixed by an unescaped colon (":").
+An empty password string is distinct from no password.
+This table shows various URLs with userinfos, and the corresponding user and password:
+
+[cols="a,a,a,a"]
+|===
+// Headers
+|URL|User|Password|Notes
+
+// Row 1, Column 1
+|cpp://user:pass@[]
+// Row 1, Column 2
+|"user"
+// Row 1, Column 3
+|"pass"
+// Row 1, Column 4
+|User and password
+
+// Row 2, Column 1
+|cpp://@[]
+// Row 2, Column 2
+|""
+// Row 2, Column 3
+|
+// Row 2, Column 4
+|Empty user, no password
+
+// Row 3, Column 1
+|cpp://user@[]
+// Row 3, Column 2
+|"user"
+// Row 3, Column 3
+|
+// Row 3, Column 4
+|No password
+
+// Row 4, Column 1
+|cpp://user:@[]
+// Row 4, Column 2
+|"user"
+// Row 4, Column 3
+|""
+// Row 4, Column 4
+|Empty password
+
+// Row 5, Column 1
+|cpp://:pass@[]
+// Row 5, Column 2
+|""
+// Row 5, Column 3
+|"pass"
+// Row 5, Column 4
+|Empty user
+
+// Row 6, Column 1
+|cpp://:@[]
+// Row 6, Column 2
+|""
+// Row 6, Column 3
+|""
+// Row 6, Column 4
+|Empty user and password
+
+|===
+
+[CAUTION]
+====
+Although the specification allows the format username:password, the password component is deprecated and should be avoided if possible or otherwise used with care.
+It is not recommended to transfer password data through URLs unless it is an empty string indicating no password.
+====
+
+These members are used to inspect and modify the userinfo:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::has_userinfo[has_userinfo]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if a userinfo is present.
+
+// Row 2, Column 1
+|cpp:url_view_base::has_password[has_password]
+// Row 2, Column 2
+|cpp:bool[]
+// Row 2, Column 3
+|Return cpp:true[] if a password is present.
+
+// Row 3, Column 1
+|cpp:url_view_base::user[user]
+// Row 3, Column 2
+|cpp:std::string[]
+// Row 3, Column 3
+|Return the user as a decoded string.
+
+// Row 4, Column 1
+|cpp:url_view_base::password[password]
+// Row 4, Column 2
+|cpp:std::string[]
+// Row 4, Column 3
+|Return the password as a decoded string.
+
+// Row 5, Column 1
+|cpp:url_view_base::userinfo[userinfo]
+// Row 5, Column 2
+|cpp:std::string[]
+// Row 5, Column 3
+|Return the userinfo as a decoded string.
+
+// Row 6, Column 1
+|cpp:url_view_base::encoded_user[encoded_user]
+// Row 6, Column 2
+|cpp:pct_string_view[]
+// Row 6, Column 3
+|Return the user.
+
+// Row 7, Column 1
+|cpp:url_view_base::encoded_password[encoded_password]
+// Row 7, Column 2
+|cpp:pct_string_view[]
+// Row 7, Column 3
+|Return the password, or an empty string if no password is present.
+
+// Row 8, Column 1
+|cpp:url_view_base::encoded_userinfo[encoded_userinfo]
+// Row 8, Column 2
+|cpp:pct_string_view[]
+// Row 8, Column 3
+|Return the userinfo.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_user[set_user]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the user to the string.
+Reserved characters are percent-escaped automatically.
+
+// Row 2, Column 1
+|cpp:url_base::set_password[set_password]
+// Row 2, Column 2
+|cpp:string_view[]
+// Row 2, Column 3
+|Set the password to the string.
+Reserved characters are percent-escaped automatically.
+
+// Row 3, Column 1
+|cpp:url_base::set_userinfo[set_userinfo]
+// Row 3, Column 2
+|cpp:string_view[]
+// Row 3, Column 3
+|Set the userinfo to the string.
+Reserved characters are percent-escaped automatically.
+
+// Row 4, Column 1
+|cpp:url_base::set_encoded_user[set_encoded_user]
+// Row 4, Column 2
+|cpp:pct_string_view[]
+// Row 4, Column 3
+|Set the user to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 5, Column 1
+|cpp:url_base::set_encoded_password[set_encoded_password]
+// Row 5, Column 2
+|cpp:pct_string_view[]
+// Row 5, Column 3
+|Set the password to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 6, Column 1
+|cpp:url_base::set_encoded_userinfo[set_encoded_userinfo]
+// Row 6, Column 2
+|cpp:pct_string_view[]
+// Row 6, Column 3
+|Set the userinfo to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 7, Column 1
+|cpp:url_base::remove_password[remove_password]
+// Row 7, Column 2
+|
+// Row 7, Column 3
+|Remove the password if present.
+This includes the password separator colon (":").
+
+// Row 8, Column 1
+|cpp:url_base::remove_userinfo[remove_userinfo]
+// Row 8, Column 2
+|
+// Row 8, Column 3
+|Remove the userinfo if present.
+This includes the user and password separator colon (":")
+and the trailing at sign ("@").
+
+|===
+
+== Host
+
+The host portion of the authority is a string which can be a host name, an IPv4 address, an IPv6 address, or an IPvFuture address depending on the contents.
+The host is always defined if an authority is present, even if the resulting host string would be zero length.
+
+These members are used to inspect and modify the host:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::host_type[host_type]
+// Row 1, Column 2
+|cpp:host_type[]
+// Row 1, Column 3
+|Return the host type enumeration constant.
+If there is no authority, this is the value
+cpp:host_type::none[].
+
+// Row 2, Column 1
+|cpp:url_view_base::host[host]
+// Row 2, Column 2
+|cpp:std::string[]
+// Row 2, Column 3
+|Return the host as a decoded string, or an empty string if there is
+no authority.
+
+// Row 3, Column 1
+|cpp:url_view_base::host_address[host_address]
+// Row 3, Column 2
+|cpp:std::string[]
+// Row 3, Column 3
+|Return the host as a decoded string.
+If the host type is
+cpp:host_type::ipv6[] or
+cpp:host_type::ipvfuture[],
+the enclosing brackets are removed.
+
+// Row 4, Column 1
+|cpp:url_view_base::host_name[host_name]
+// Row 4, Column 2
+|cpp:std::string[]
+// Row 4, Column 3
+|Return the host name as a decoded string, or the empty string if
+the host type is not
+cpp:host_type::name[].
+
+// Row 5, Column 1
+|cpp:url_view_base::host_ipv4_address[host_ipv4_address]
+// Row 5, Column 2
+|cpp:ipv4_address[]
+// Row 5, Column 3
+|Return the host as an cpp:ipv4_address[].
+If the host type is not
+cpp:host_type::ipv4[],
+a default-constructed value is returned.
+
+// Row 6, Column 1
+|cpp:url_view_base::host_ipv6_address[host_ipv6_address]
+// Row 6, Column 2
+|cpp:ipv6_address[]
+// Row 6, Column 3
+|Return the host as an cpp:ipv6_address[].
+If the host type is not
+cpp:host_type::ipv6[],
+a default-constructed value is returned.
+
+// Row 7, Column 1
+|cpp:url_view_base::host_ipvfuture[host_ipvfuture]
+// Row 7, Column 2
+|cpp:string_view[]
+// Row 7, Column 3
+|Return the host as a string without enclosing brackets if
+the host type is
+cpp:host_type::ipvfuture[],
+otherwise return an empty string.
+
+// Row 8, Column 1
+|cpp:url_view_base::encoded_host[encoded_host]
+// Row 8, Column 2
+|cpp:pct_string_view[]
+// Row 8, Column 3
+|Return the host, or an empty string if there is no authority.
+This includes enclosing brackets if the host type is
+cpp:host_type::ipv6[] or
+cpp:host_type::ipvfuture[].
+
+// Row 9, Column 1
+|cpp:url_view_base::encoded_host_address[encoded_host_address]
+// Row 9, Column 2
+|cpp:pct_string_view[]
+// Row 9, Column 3
+|Return the host.
+If the host type is
+cpp:host_type::ipv6[] or
+cpp:host_type::ipvfuture[],
+the enclosing brackets are removed.
+
+// Row 10, Column 1
+|cpp:url_view_base::encoded_host_name[encoded_host_name]
+// Row 10, Column 2
+|cpp:pct_string_view[]
+// Row 10, Column 3
+|Return the host name as a string. If the host type is not
+cpp:host_type::name[],
+an empty string is returned.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_host[set_host]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address
+enclosed in brackets, or a valid IPvFuture address enclosed
+in brackets then the resulting host type is
+cpp:host_type::ipv4[],
+cpp:host_type::ipv6[], or
+cpp:host_type::ipvfuture[]
+respectively. Otherwise, the host type is
+cpp:host_type::name[], and
+any reserved characters are percent-escaped automatically.
+
+// Row 2, Column 1
+|cpp:url_base::set_host_address[set_host_address]
+// Row 2, Column 2
+|cpp:string_view[]
+// Row 2, Column 3
+|Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address, or
+a valid IPvFuture address then the resulting host type is
+cpp:host_type::ipv4[],
+cpp:host_type::ipv6[], or
+cpp:host_type::ipvfuture[]
+respectively. Otherwise, the host type is
+cpp:host_type::name[], and
+any reserved characters are percent-escaped automatically.
+
+// Row 3, Column 1
+|cpp:url_base::set_host_ipv4[set_host_ipv4]
+// Row 3, Column 2
+|cpp:ipv4_address[]
+// Row 3, Column 3
+|Set the host to the IPv4 address. The host type is
+cpp:host_type::ipv4[].
+
+// Row 4, Column 1
+|cpp:url_base::set_host_ipv6[set_host_ipv6]
+// Row 4, Column 2
+|cpp:ipv6_address[]
+// Row 4, Column 3
+|Set the host to the IPv6 address. The host type is
+cpp:host_type::ipv6[].
+
+// Row 5, Column 1
+|cpp:url_base::set_host_ipvfuture[set_host_ipvfuture]
+// Row 5, Column 2
+|cpp:string_view[]
+// Row 5, Column 3
+|Set the host to the IPvFuture address, which should not include
+square brackets. The host type is
+cpp:host_type::ipvfuture[].
+If the string is not a valid IPvFuture address, an exception
+is thrown.
+
+// Row 6, Column 1
+|cpp:url_base::set_host_name[set_host_name]
+// Row 6, Column 2
+|cpp:string_view[]
+// Row 6, Column 3
+|Set the host to the string.
+Any reserved characters are percent-escaped automatically.
+The host type is
+cpp:host_type::name[].
+
+// Row 7, Column 1
+|cpp:url_base::set_encoded_host[set_encoded_host]
+// Row 7, Column 2
+|cpp:pct_string_view[]
+// Row 7, Column 3
+|Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address
+enclosed in brackets, or a valid IPvFuture address enclosed
+in brackets then the resulting host type is
+cpp:host_type::ipv4[],
+cpp:host_type::ipv6[], or
+cpp:host_type::ipvfuture[]
+respectively. Otherwise, the host type is
+cpp:host_type::name[], the
+string may contain percent escapes, and any reserved characters
+are percent-escaped automatically.
+
+// Row 8, Column 1
+|cpp:url_base::set_encoded_host_address[set_encoded_host_address]
+// Row 8, Column 2
+|cpp:pct_string_view[]
+// Row 8, Column 3
+|Set the host to the string, depending on the contents. If
+the string is a valid IPv4 address, a valid IPv6 address, or
+a valid IPvFuture address then the resulting host type is
+cpp:host_type::ipv4[],
+cpp:host_type::ipv6[], or
+cpp:host_type::ipvfuture[]
+respectively. Otherwise, the host type is
+cpp:host_type::name[], the
+string may contain percent escapes, and and
+any reserved characters are percent-escaped automatically.
+
+// Row 9, Column 1
+|cpp:url_base::set_encoded_host_name[set_encoded_host_name]
+// Row 9, Column 2
+|cpp:pct_string_view[]
+// Row 9, Column 3
+|Set the host to the string, which may contain percent escapes.
+Any reserved characters are percent-escaped automatically.
+The host type is
+cpp:host_type::name[].
+
+|===
+
+== Port
+
+The port is a string of digits, possibly of zero length.
+The presence of a port is indicated by a colon prefix (":") appearing after the host and userinfo.
+A zero length port string is distinct from the absence of a port.
+The library represents the port with both a decimal string and an unsigned 16-bit integer.
+If the numeric value of the string would exceed the range of the integer, then it is mapped to the number zero.
+
+These members are used to inspect and modify the port:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::has_port[has_port]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if a port is present.
+
+// Row 2, Column 1
+|cpp:url_view_base::port[port]
+// Row 2, Column 2
+|cpp:string_view[]
+// Row 2, Column 3
+|Return the port as a string, or an empty string if there is no port.
+
+// Row 3, Column 1
+|cpp:url_view_base::port_number[port_number]
+// Row 3, Column 2
+|cpp:std::uint16_t[]
+// Row 3, Column 3
+|Return the port as an unsigned integer. If the number would be
+greater than 65535, then zero is returned.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_port[set_port]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the port to a string.
+If the string contains any character which is not a digit,
+an exception is thrown.
+
+// Row 2, Column 1
+|cpp:url_base::set_port_number[set_port_number]
+// Row 2, Column 2
+|cpp:std::uint16_t[]
+// Row 2, Column 3
+|Set the port to a number.
+
+// Row 3, Column 1
+|cpp:url_base::remove_port[remove_port]
+// Row 3, Column 2
+|
+// Row 3, Column 3
+|Remove the port if present.
+This does not remove the authority.
+
+|===
+
+== Path
+
+Depending on the scheme, the path may be treated as a string, or as a hierarchically structured sequence of segments delimited by unescaped forward-slashes ("/").
+A path is __always__ defined for every URL, even if it is the empty string.
+
+These members are used to inspect and modify the path:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::is_path_absolute[is_path_absolute]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if the path starts with a forward slash ("/").
+
+// Row 2, Column 1
+|cpp:hurl_view_base::path[path]
+// Row 2, Column 2
+|cpp:std::string[]
+// Row 2, Column 3
+|Return the path as a decoded string.
+
+// Row 3, Column 1
+|cpp:url_view_base::encoded_path[encoded_path]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|Return the path.
+
+// Row 4, Column 1
+|cpp:url_view_base::segments[segments]
+// Row 4, Column 2
+|cpp:segments_view[]
+// Row 4, Column 3
+|Return the path as a range of decoded segments.
+
+// Row 5, Column 1
+|cpp:url_view_base::encoded_segments[encoded_segments]
+// Row 5, Column 2
+|cpp:segments_encoded_view[]
+// Row 5, Column 3
+|Return the path as a range of segments.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_path[set_path]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the path to the string.
+Reserved characters are percent-escaped automatically.
+
+// Row 2, Column 1
+|cpp:url_base::set_path_absolute[set_path_absolute]
+// Row 2, Column 2
+|cpp:bool[]
+// Row 2, Column 3
+|Set whether the path is absolute.
+
+// Row 3, Column 1
+|cpp:url_base::set_encoded_path[set_encoded_path]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|Set the path to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 4, Column 1
+|cpp:url_view_base::segments[segments]
+// Row 4, Column 2
+|cpp:segments_ref[]
+// Row 4, Column 3
+|Return the path as a modifiable range of decoded segments.
+
+// Row 5, Column 1
+|cpp:url_view_base::encoded_segments[encoded_segments]
+// Row 5, Column 2
+|cpp:segments_encoded_ref[]
+// Row 5, Column 3
+|Return the path as a modifiable range of segments.
+
+|===
+
+The segments-based containers
+cpp:segments_view[], cpp:segments_ref[],
+cpp:segments_encoded_view[], and cpp:segments_encoded_ref[]
+are discussed in a later section.
+
+== Query
+
+Depending on the scheme, the query may be treated as a string, or as a structured series of key-value pairs (called "params") separated by unescaped ampersands ("&").
+The query is optional; an empty query string is distinct from no query.
+
+These members are used to inspect and modify the query:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::has_query[has_query]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if a query is present.
+
+// Row 2, Column 1
+|cpp:url_view_base::query[query]
+// Row 2, Column 2
+|cpp:std::string[]
+// Row 2, Column 3
+|Return the query as a decoded string.
+
+// Row 3, Column 1
+|cpp:url_view_base::encoded_query[encoded_query]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|Return the query.
+
+// Row 4, Column 1
+|cpp:url_view_base::params[params]
+// Row 4, Column 2
+|cpp:params_view[]
+// Row 4, Column 3
+|Return the query as a read-only range of decoded params.
+
+// Row 5, Column 1
+|cpp:url_view_base::encoded_params[encoded_params]
+// Row 5, Column 2
+|cpp:params_encoded_view[]
+// Row 5, Column 3
+|Return the query as a read-only range of params.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_query[set_query]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the query to a string.
+Reserved characters are percent-escaped automatically.
+
+// Row 2, Column 1
+|cpp:url_base::set_encoded_query[set_encoded_query]
+// Row 2, Column 2
+|cpp:pct_string_view[]
+// Row 2, Column 3
+|Set the query to a string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 3, Column 1
+|cpp:url_view_base::params[params]
+// Row 3, Column 2
+|cpp:params_ref[]
+// Row 3, Column 3
+|Return the query as a modifiable range of decoded params.
+
+// Row 4, Column 1
+|cpp:url_view_base::encoded_params[encoded_params]
+// Row 4, Column 2
+|cpp:params_encoded_ref[]
+// Row 4, Column 3
+|Return the query as a modifiable range of params.
+
+// Row 5, Column 1
+|cpp:url_base::remove_query[remove_query]
+// Row 5, Column 2
+|
+// Row 5, Column 3
+|Remove the query.
+This also removes the leading question mark ("?") if present.
+
+|===
+
+The params-based containers
+cpp:params_view[], cpp:params_ref[],
+cpp:params_encoded_view[], and cpp:params_encoded_ref[]
+are discussed in a later section.
+
+== Fragment
+
+The fragment is treated as a string; there is no common, structured interpretation of the contents.
+
+These members are used to inspect and modify the fragment:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::has_fragment[has_fragment]
+// Row 1, Column 2
+|cpp:bool[]
+// Row 1, Column 3
+|Return cpp:true[] if a fragment is present.
+
+// Row 2, Column 1
+|cpp:url_view_base::fragment[fragment]
+// Row 2, Column 2
+|cpp:std::string[]
+// Row 2, Column 3
+|Return the fragment as a decoded string.
+
+// Row 3, Column 1
+|cpp:url_view_base::encoded_fragment[encoded_fragment]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|Return the fragment.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::set_fragment[set_fragment]
+// Row 1, Column 2
+|cpp:string_view[]
+// Row 1, Column 3
+|Set the fragment to the string.
+Reserved characters are percent-escaped automatically.
+
+// Row 2, Column 1
+|cpp:url_base::set_encoded_fragment[set_encoded_fragment]
+// Row 2, Column 2
+|cpp:pct_string_view[]
+// Row 2, Column 3
+|Set the fragment to the string, which may contain percent escapes.
+Reserved characters are percent-escaped automatically.
+
+// Row 3, Column 1
+|cpp:url_base::remove_fragment[remove_fragment]
+// Row 3, Column 2
+|
+// Row 3, Column 3
+|Remove the fragment.
+This also removes the leading pound sign ("#") if present.
+
+|===
+
+== Compound Fields
+
+For convenience, these observers and modifiers for aggregated subsets of the URL are provided:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Return Type|Description
+
+// Row 1, Column 1
+|cpp:url_view_base::encoded_host_and_port[encoded_host_and_port]
+// Row 1, Column 2
+|cpp:pct_string_view[]
+// Row 1, Column 3
+|Return the host and port as a string with percent escapes.
+
+// Row 2, Column 1
+|cpp:url_view_base::encoded_origin[encoded_origin]
+// Row 2, Column 2
+|cpp:pct_string_view[]
+// Row 2, Column 3
+|Return only the scheme and authority parts as an individual string.
+
+// Row 3, Column 1
+|cpp:url_view_base::encoded_resource[encoded_resource]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|Return only the path, query, and fragment parts as an individual string.
+
+// Row 4, Column 1
+|cpp:url_view_base::encoded_target[encoded_target]
+// Row 4, Column 2
+|cpp:pct_string_view[]
+// Row 4, Column 3
+|Return only the path and query parts as an individual string.
+
+|===
+
+[cols="1,1,3"]
+|===
+// Headers
+|Function|Parameters|Description
+
+// Row 1, Column 1
+|cpp:url_base::remove_origin[remove_origin]
+// Row 1, Column 2
+|
+// Row 1, Column 3
+|Remove the scheme and authority parts from the URL.
+
+|===
+
+
+

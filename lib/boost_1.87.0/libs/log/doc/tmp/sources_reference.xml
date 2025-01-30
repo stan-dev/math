@@ -1,0 +1,827 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="logging_sources"><title>Logging sources</title><header id="doxygen.logging_sources.basic__logger_8hpp" name="boost/log/sources/basic_logger.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>08.03.2007</para>
+
+The header contains implementation of a base class for loggers. Convenience macros for defining custom loggers are also provided. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger" name="basic_composite_logger"><template>
+      <template-type-parameter name="CharT"/>
+      <template-type-parameter name="FinalT"/>
+      <template-type-parameter name="ThreadingModelT"/>
+      <template-type-parameter name="FeaturesT"/>
+    </template><inherit access="public">inherit_features&lt; RootT, FeaturesT &gt;::type</inherit><purpose>A composite logger that inherits a number of features. </purpose><description><para>The composite logger is a helper class that simplifies feature composition into the final logger. The user's logger class is expected to derive from the composite logger class, instantiated with the character type, the user's logger class, the threading model and the list of the required features. The former three parameters are passed to the <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class template. The feature list must be an MPL type sequence, where each element is a unary MPL metafunction class, that upon applying on its argument results in a logging feature class that derives from the argument. Every logger feature provided by the library can participate in the feature list. </para></description><typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a0ab0ba4f272db398aedbc6a0c5a7face" name="threading_model"><purpose>Threading model being used. </purpose><type>base_type::threading_model</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1aca9852ccf41819d054a3d80294db6ed9" name="swap_lock"><purpose>Lock requirement for the swap_unlocked method. </purpose><type>base_type::swap_lock</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a0d00f55fb4dfc855d5fd41a3c1a4650d"><description><para>Default constructor (default-constructs all features) </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a9633a20a1de6a453f311e55ed42605d2"><parameter name="that"><paramtype><classname>basic_composite_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1ac16a1e7a82a8db0174a3cc46a06cf8b4" cv="noexcept(boost::is_nothrow_move_constructible&lt; base_type &gt;::value)"><parameter name="that"><paramtype>logger_base &amp;&amp;</paramtype></parameter><description><para>Move constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a44a3ead2c66728e4b3d552ba5791d7f3" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Constructor with named parameters </para></description></constructor>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1ad6149907b2ffea8e9ea7d1cc76861cc9" name="add_attribute"><type>std::pair&lt; attribute_set::iterator, bool &gt;</type><parameter name="name"><paramtype>attribute_name const &amp;</paramtype><description><para>The attribute name. </para></description></parameter><parameter name="attr"><paramtype>attribute const &amp;</paramtype><description><para>The attribute factory. </para></description></parameter><description><para>The method adds an attribute to the source-specific attribute set. The attribute will be implicitly added to every log record made with the current logger.</para><para>
+
+</para></description><returns><para>A pair of values. If the second member is <computeroutput>true</computeroutput>, then the attribute is added and the first member points to the attribute. Otherwise the attribute was not added and the first member points to the attribute that prevents addition. </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1ada864881a304ecefaf3402a5559fddb1" name="remove_attribute"><type>void</type><parameter name="it"><paramtype>attribute_set::iterator</paramtype><description><para>Iterator to the previously added attribute. </para></description></parameter><description><para>The method removes an attribute from the source-specific attribute set.</para><para>
+
+
+</para></description><requires><para>The attribute was added with the add_attribute call for this instance of the logger. </para>
+</requires><postconditions><para>The attribute is no longer registered as a source-specific attribute for this logger. The iterator is invalidated after removal.</para>
+</postconditions></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a59e6ad4cfd5e8096c052e71d79561eda" name="remove_all_attributes"><type>void</type><description><para>The method removes all attributes from the logger. All iterators and references to the removed attributes are invalidated. </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1ad537ffa1d8256efb63c62b85fc836534" name="get_attributes" cv="const"><type>attribute_set</type><description><para>The method retrieves a copy of a set with all attributes from the logger.</para><para>
+</para></description><returns><para>The copy of the attribute set. Attributes are shallow-copied. </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a55b1c01b111d9e0e74d110771beeea48" name="set_attributes"><type>void</type><parameter name="attrs"><paramtype>attribute_set const &amp;</paramtype><description><para>The set of attributes to install into the logger. Attributes are shallow-copied. </para></description></parameter><description><para>The method installs the whole attribute set into the logger. All iterators and references to elements of the previous set are invalidated. Iterators to the <emphasis>attrs</emphasis> set are not valid to be used with the logger (that is, the logger owns a copy of <emphasis>attrs</emphasis> after completion).</para><para>
+</para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a5f8eb9bc01a48e126cb44de394330ede" name="open_record"><type>record</type><description><para>The method opens a new log record in the logging core.</para><para>
+</para></description><returns><para>A valid record handle if the logging record is opened successfully, an invalid handle otherwise. </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a45fda906bf95f881c8844e7bce5477d6" name="open_record"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype><description><para>A set of additional named arguments. The parameter is ignored. </para></description></parameter><description><para>The method opens a new log record in the logging core.</para><para>
+
+</para></description><returns><para>A valid record handle if the logging record is opened successfully, an invalid handle otherwise. </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1ab632f9ee54f83619cc4bb5b8098ae7ac" name="push_record"><type>void</type><parameter name="rec"><paramtype>record &amp;&amp;</paramtype><description><para>The log record with the formatted message </para></description></parameter><description><para>The method pushes the constructed message to the logging core</para><para>
+</para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a2318768538db0e7f70559cf9fd8f2867" name="swap"><type>void</type><parameter name="that"><paramtype><classname>basic_composite_logger</classname> &amp;</paramtype></parameter><description><para>Thread-safe implementation of swap </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_1a7e0887fb01c9cebf1b6d724a13779aef" name="assign"><type>FinalT &amp;</type><parameter name="that"><paramtype>FinalT const &amp;</paramtype></parameter><description><para>Assignment for the final class. Threadsafe, provides strong exception guarantee. </para></description></method>
+</method-group>
+</class><class-specialization id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4" name="basic_composite_logger"><template>
+      <template-type-parameter name="CharT"/>
+      <template-type-parameter name="FinalT"/>
+      <template-type-parameter name="FeaturesT"/>
+    </template><specialization><template-arg>CharT</template-arg><template-arg>FinalT</template-arg><template-arg>single_thread_model</template-arg><template-arg>FeaturesT</template-arg></specialization><inherit access="public">inherit_features&lt; RootT, FeaturesT &gt;::type</inherit><purpose>An optimized composite logger version with no multithreading support. </purpose><typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a0ab0ba4f272db398aedbc6a0c5a7face" name="threading_model"><type>base_type::threading_model</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a0d00f55fb4dfc855d5fd41a3c1a4650d"/>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a9633a20a1de6a453f311e55ed42605d2"><parameter name="that"><paramtype><classname>basic_composite_logger</classname> const &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1ac16a1e7a82a8db0174a3cc46a06cf8b4" cv="noexcept(boost::is_nothrow_move_constructible&lt; base_type &gt;::value)"><parameter name="that"><paramtype><classname>logger_base</classname> &amp;&amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a44a3ead2c66728e4b3d552ba5791d7f3" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter></constructor>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1ad6149907b2ffea8e9ea7d1cc76861cc9" name="add_attribute"><type>std::pair&lt; attribute_set::iterator, bool &gt;</type><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="attr"><paramtype>attribute const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1ada864881a304ecefaf3402a5559fddb1" name="remove_attribute"><type>void</type><parameter name="it"><paramtype>attribute_set::iterator</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a59e6ad4cfd5e8096c052e71d79561eda" name="remove_all_attributes"><type>void</type></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1ad537ffa1d8256efb63c62b85fc836534" name="get_attributes" cv="const"><type>attribute_set</type></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a55b1c01b111d9e0e74d110771beeea48" name="set_attributes"><type>void</type><parameter name="attrs"><paramtype>attribute_set const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a5f8eb9bc01a48e126cb44de394330ede" name="open_record"><type>record</type></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a45fda906bf95f881c8844e7bce5477d6" name="open_record"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1ab632f9ee54f83619cc4bb5b8098ae7ac" name="push_record"><type>void</type><parameter name="rec"><paramtype>record &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a2318768538db0e7f70559cf9fd8f2867" name="swap"><type>void</type><parameter name="that"><paramtype><classname>basic_composite_logger</classname> &amp;</paramtype></parameter></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4_1a9dc33b237ffd1dfa61cdbd4a08dbf5b2" name="assign"><type>FinalT &amp;</type><parameter name="that"><paramtype>FinalT</paramtype></parameter></method>
+</method-group>
+</class-specialization><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger" name="basic_logger"><template>
+      <template-type-parameter name="CharT"/>
+      <template-type-parameter name="FinalT"/>
+      <template-type-parameter name="ThreadingModelT"/>
+    </template><inherit access="public">ThreadingModelT</inherit><purpose>Basic logger class. </purpose><description><para>The <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class template serves as a base class for all loggers provided by the library. It can also be used as a base for user-defined loggers. The template parameters are:</para><para><itemizedlist>
+<listitem><para><computeroutput>CharT</computeroutput> - logging character type </para>
+</listitem>
+<listitem><para><computeroutput>FinalT</computeroutput> - final type of the logger that eventually derives from the <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput>. There may be other classes in the hierarchy between the final class and <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput>. </para>
+</listitem>
+<listitem><para><computeroutput>ThreadingModelT</computeroutput> - threading model policy. Must provide methods of the Boost.Thread locking concept used in <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class and all its derivatives in the hierarchy up to the <computeroutput>FinalT</computeroutput> class. The <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class itself requires methods of the SharedLockable concept. The threading model policy must also be default and copy-constructible and support member function <computeroutput>swap</computeroutput>. There are currently two policies provided: <computeroutput><link linkend="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model">single_thread_model</link></computeroutput> and <computeroutput><link linkend="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model">multi_thread_model</link></computeroutput>.</para>
+</listitem>
+</itemizedlist>
+The logger implements fundamental facilities of loggers, such as storing source-specific attribute set and formatting log record messages. The basic logger interacts with the logging core in order to apply filtering and pass records to sinks. </para></description><typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a0a7d2bbe1bb9ca477acd6c9e16212ef6" name="final_type"><purpose>Final logger type. </purpose><type>FinalT</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1ac6b6dbbb42880d051ea3fbaa8e04b334" name="threading_model"><purpose>Threading model type. </purpose><type>ThreadingModelT</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1ac679312a18a5c91a34c3c46477f76dbc" name="swap_lock"><purpose>Lock requirement for the swap_unlocked method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a1e72e19adaba28faf7ea4c9f30623115" name="add_attribute_lock"><purpose>Lock requirement for the add_attribute_unlocked method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1acb378353b3dcaa58df8c191553587ea7" name="remove_attribute_lock"><purpose>Lock requirement for the remove_attribute_unlocked method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a522618b8be259deaa2ebe5c3d3c943c5" name="remove_all_attributes_lock"><purpose>Lock requirement for the remove_all_attributes_unlocked method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a86871025f5f98f07a578bf5b886c43a7" name="get_attributes_lock"><purpose>Lock requirement for the get_attributes method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a5487fe9be3c4bac09c8cf6a5cb84621c" name="open_record_lock"><purpose>Lock requirement for the open_record_unlocked method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1ab6f1699608c0b636344bcb45c4765f46" name="set_attributes_lock"><purpose>Lock requirement for the set_attributes method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a345b199a51bb19750319592004f3076a" name="push_record_lock"><purpose>Lock requirement for the push_record_unlocked method. </purpose><type>no_lock&lt; threading_model &gt;</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a75b080032283e7782731514fe30343b1"><description><para>Constructor. Initializes internal data structures of the basic logger class, acquires reference to the logging core. </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a98c331bca7edaae059a58c4b882f95a2"><parameter name="that"><paramtype><classname>basic_logger</classname> const &amp;</paramtype><description><para>Source logger </para></description></parameter><description><para>Copy constructor. Copies all attributes from the source logger.</para><para><note><para>Not thread-safe. The source logger must be locked in the final class before copying.</para>
+</note>
+
+</para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a201abf4b03ee85886ab38416ba38408d" cv="noexcept(boost::is_nothrow_move_constructible&lt; threading_model &gt;::value &amp;&amp;boost::is_nothrow_move_constructible&lt; core_ptr &gt;::value &amp;&amp;boost::is_nothrow_move_constructible&lt; attribute_set &gt;::value)"><parameter name="that"><paramtype><classname>basic_logger</classname> &amp;&amp;</paramtype><description><para>Source logger </para></description></parameter><description><para>Move constructor. Moves all attributes from the source logger.</para><para><note><para>Not thread-safe. The source logger must be locked in the final class before copying.</para>
+</note>
+
+</para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a547323827b3cf2d22e1c10bb40f03197" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name=""><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Constructor with named arguments. The constructor ignores all arguments. The result of construction is equivalent to default construction. </para></description></constructor>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a7297630aff7d31d173f1ec3be52450e1" name="core" cv="const"><type>core_ptr const &amp;</type><description><para>An accessor to the logging system pointer </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a02e11fa269ee21b1089a1fd774f6a544" name="attributes"><type>attribute_set &amp;</type><description><para>An accessor to the logger attributes </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a82a0faf1c0c86bcf54a422d08c2e74a0" name="attributes" cv="const"><type>attribute_set const &amp;</type><description><para>An accessor to the logger attributes </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a17b5c9444944e298be62f5fda4c240df" name="get_threading_model" cv="noexcept"><type>threading_model &amp;</type><description><para>An accessor to the threading model base </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a00fc4c1aa80af988f8585f58b5c47792" name="get_threading_model" cv="const noexcept"><type>threading_model const &amp;</type><description><para>An accessor to the threading model base </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a193730293a0da3b6e4280888e611ca0c" name="final_this" cv="noexcept"><type>final_type *</type><description><para>An accessor to the final logger </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a7b566caa5a8e91d30426c49ddc40a47b" name="final_this" cv="const noexcept"><type>final_type const *</type><description><para>An accessor to the final logger </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a7d29a02fc64a0704e266f2570b0e5f9b" name="swap_unlocked"><type>void</type><parameter name="that"><paramtype><classname>basic_logger</classname> &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>swap</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1ad11d39aff4661d899c6f4f3c67729a5e" name="add_attribute_unlocked"><type>std::pair&lt; attribute_set::iterator, bool &gt;</type><parameter name="name"><paramtype>attribute_name const &amp;</paramtype></parameter><parameter name="attr"><paramtype>attribute const &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>add_attribute</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a084132db84bc5a5e368f15b2f3e5938a" name="remove_attribute_unlocked"><type>void</type><parameter name="it"><paramtype>attribute_set::iterator</paramtype></parameter><description><para>Unlocked <computeroutput>remove_attribute</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1aa6193e59bdca8fbc726a17636c7b8ad8" name="remove_all_attributes_unlocked"><type>void</type><description><para>Unlocked <computeroutput>remove_all_attributes</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a482f149f52e44c080366256396da8e08" name="open_record_unlocked"><type>record</type><description><para>Unlocked <computeroutput>open_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a43242d05d75b3d5890e1bea536f28c8e" name="open_record_unlocked"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name=""><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>open_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a3d0f8c6c7213f67f385f8a0143e35272" name="push_record_unlocked"><type>void</type><parameter name="rec"><paramtype>record &amp;&amp;</paramtype></parameter><description><para>Unlocked <computeroutput>push_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1aa2a417847a55d590473aef82bc2c1707" name="get_attributes_unlocked" cv="const"><type>attribute_set</type><description><para>Unlocked <computeroutput>get_attributes</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1aec0b803bf95c06dca688cce417624f20" name="set_attributes_unlocked"><type>void</type><parameter name="attrs"><paramtype>attribute_set const &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>set_attributes</computeroutput> </para></description></method>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger_1a2c3d88a6495b11f5afefcc79c8700cec" cv="= delete"><type><classname>basic_logger</classname> &amp;</type><parameter name=""><paramtype><classname>basic_logger</classname> const &amp;</paramtype></parameter><purpose>Assignment is closed (should be implemented through copy and swap in the final class) </purpose></copy-assignment>
+</method-group>
+</class>
+
+<function id="doxygen.logging_sources.basic__logger_8hpp_1a02ff944c71752c681767cc722d146866" name="swap"><type>void</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="FinalT"/>
+          <template-type-parameter name="ThreadingModelT"/>
+        </template><parameter name="left"><paramtype><classname>basic_logger</classname>&lt; CharT, FinalT, ThreadingModelT &gt; &amp;</paramtype></parameter><parameter name="right"><paramtype><classname>basic_logger</classname>&lt; CharT, FinalT, ThreadingModelT &gt; &amp;</paramtype></parameter><description><para>Free-standing swap for all loggers </para></description></function>
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a2bf9e2352b8dae6da956fa36eb988907" name="BOOST_LOG_FORWARD_LOGGER_CONSTRUCTORS" kind="functionlike"><macro-parameter name="class_type"/></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a4a1cd5a4ad6a970ee250b63a8bb6f07f" name="BOOST_LOG_FORWARD_LOGGER_CONSTRUCTORS_TEMPLATE" kind="functionlike"><macro-parameter name="class_type"/></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1aede60fe3d966deea9321c6e2ed7e01c0" name="BOOST_LOG_FORWARD_LOGGER_ASSIGNMENT" kind="functionlike"><macro-parameter name="class_type"/></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a25676d4fc5f863deca3b0f7d76d82908" name="BOOST_LOG_FORWARD_LOGGER_ASSIGNMENT_TEMPLATE" kind="functionlike"><macro-parameter name="class_type"/></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a5e7b99cb8505007e328718b7b446fb20" name="BOOST_LOG_FORWARD_LOGGER_MEMBERS" kind="functionlike"><macro-parameter name="class_type"/></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1aa39ae6fe81ed76065aa621195ba2ec39" name="BOOST_LOG_FORWARD_LOGGER_MEMBERS_TEMPLATE" kind="functionlike"><macro-parameter name="class_type"/></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a4de026a34fdbc35b209ab31fda65d917" name="BOOST_LOG_DECLARE_LOGGER_TYPE" kind="functionlike"><macro-parameter name="type_name"><description><para>The name of the logger class to declare </para></description></macro-parameter><macro-parameter name="char_type"><description><para>The character type of the logger. Either char or wchar_t expected. </para></description></macro-parameter><macro-parameter name="base_seq"><description><para>A Boost.Preprocessor sequence of type identifiers of the base classes templates </para></description></macro-parameter><macro-parameter name="threading"><description><para>A threading model class </para></description></macro-parameter><purpose>The macro declares a logger class that inherits a number of base classes. </purpose><description><para>
+</para></description></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1ae3649a62f7be59c9863e7a8aca7fccf9" name="BOOST_LOG_DECLARE_LOGGER" kind="functionlike"><macro-parameter name="type_name"><description><para>The name of the logger class to declare </para></description></macro-parameter><macro-parameter name="base_seq"><description><para>A Boost.Preprocessor sequence of type identifiers of the base classes templates </para></description></macro-parameter><purpose>The macro declares a narrow-char logger class that inherits a number of base classes. </purpose><description><para>Equivalent to <link linkend="doxygen.logging_sources.basic__logger_8hpp_1a4de026a34fdbc35b209ab31fda65d917">BOOST_LOG_DECLARE_LOGGER_TYPE(type_name, char, base_seq, single_thread_model)</link></para><para>
+</para></description></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a8fb4ab8af1b52a0a829207295dd57a92" name="BOOST_LOG_DECLARE_LOGGER_MT" kind="functionlike"><macro-parameter name="type_name"><description><para>The name of the logger class to declare </para></description></macro-parameter><macro-parameter name="base_seq"><description><para>A Boost.Preprocessor sequence of type identifiers of the base classes templates </para></description></macro-parameter><purpose>The macro declares a narrow-char thread-safe logger class that inherits a number of base classes. </purpose><description><para>Equivalent to <computeroutput><link linkend="doxygen.logging_sources.basic__logger_8hpp_1a4de026a34fdbc35b209ab31fda65d917">BOOST_LOG_DECLARE_LOGGER_TYPE(type_name, char, base_seq, multi_thread_model&lt; shared_mutex &gt;)</link></computeroutput></para><para>
+</para></description></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a585ac3b030662fe5e820be095c983e2d" name="BOOST_LOG_DECLARE_WLOGGER" kind="functionlike"><macro-parameter name="type_name"><description><para>The name of the logger class to declare </para></description></macro-parameter><macro-parameter name="base_seq"><description><para>A Boost.Preprocessor sequence of type identifiers of the base classes templates </para></description></macro-parameter><purpose>The macro declares a wide-char logger class that inherits a number of base classes. </purpose><description><para>Equivalent to <link linkend="doxygen.logging_sources.basic__logger_8hpp_1a4de026a34fdbc35b209ab31fda65d917">BOOST_LOG_DECLARE_LOGGER_TYPE(type_name, wchar_t, base_seq, single_thread_model)</link></para><para>
+</para></description></macro>
+<macro id="doxygen.logging_sources.basic__logger_8hpp_1a0d7e5b0cdd9666df7e5304a51382410c" name="BOOST_LOG_DECLARE_WLOGGER_MT" kind="functionlike"><macro-parameter name="type_name"><description><para>The name of the logger class to declare </para></description></macro-parameter><macro-parameter name="base_seq"><description><para>A Boost.Preprocessor sequence of type identifiers of the base classes templates </para></description></macro-parameter><purpose>The macro declares a wide-char thread-safe logger class that inherits a number of base classes. </purpose><description><para>Equivalent to <computeroutput><link linkend="doxygen.logging_sources.basic__logger_8hpp_1a4de026a34fdbc35b209ab31fda65d917">BOOST_LOG_DECLARE_LOGGER_TYPE(type_name, wchar_t, base_seq, multi_thread_model&lt; shared_mutex &gt;)</link></computeroutput></para><para>
+</para></description></macro>
+</header>
+<header id="doxygen.logging_sources.channel__feature_8hpp" name="boost/log/sources/channel_feature.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>28.02.2008</para>
+
+The header contains implementation of a channel support feature. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger" name="basic_channel_logger"><template>
+      <template-type-parameter name="BaseT"/>
+      <template-type-parameter name="ChannelT"/>
+    </template><inherit access="public">BaseT</inherit><purpose>Channel feature implementation. </purpose><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1basic__channel__logger_1_1make__default__channel__name" name="make_default_channel_name"><purpose>Default channel name generator. </purpose><typedef id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1basic__channel__logger_1_1make__default__channel__name_1ad7b5130b36832a4d79bebcf24bf37787" name="result_type"><type>channel_type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1basic__channel__logger_1_1make__default__channel__name_1a1e14c6cd3702ba19fecfe52c496e382e" name="operator()" cv="const"><type>result_type</type></method>
+</method-group>
+</struct><typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a4e55d955b41f9824b1cba20c36c9d130" name="final_type"><purpose>Final type. </purpose><type>base_type::final_type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a0ab0ba4f272db398aedbc6a0c5a7face" name="threading_model"><purpose>Threading model being used. </purpose><type>base_type::threading_model</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a27925741aeabf31514d7af31e6c9cae2" name="channel_type"><purpose>Channel type. </purpose><type>ChannelT</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a10b077d44ce184549b435ed613c06a93" name="channel_attribute"><purpose>Channel attribute type. </purpose><type>attributes::mutable_constant&lt; channel_type &gt;</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1ac50dff66cc2ca56ccf7bbd0893bff494" name="open_record_lock"><purpose>Lock requirement for the <computeroutput>open_record_unlocked</computeroutput> method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a628349bf8ee3a8b3e70fab7a080f6690" name="swap_lock"><purpose>Lock requirement for the <computeroutput>swap_unlocked</computeroutput> method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1aa95a44f66c418f3184f3288d028578ab"><description><para>Default constructor. The constructed logger has the default-constructed channel name. </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a5e6fc37740425a74a53f0d0bfa7e2589"><parameter name="that"><paramtype><classname>basic_channel_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a0b30c8ce35b196cfdc5de1a230691311" cv="noexcept(boost::is_nothrow_move_constructible&lt; base_type &gt;::value &amp;&amp;boost::is_nothrow_move_constructible&lt; channel_attribute &gt;::value)"><parameter name="that"><paramtype><classname>basic_channel_logger</classname> &amp;&amp;</paramtype></parameter><description><para>Move constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a8393403287809016cfcbaebbb3bab081" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype><description><para>A set of named arguments. The following arguments are supported: <itemizedlist>
+<listitem><para><computeroutput>channel</computeroutput> - a string that represents the channel name </para>
+</listitem>
+</itemizedlist>
+</para></description></parameter><description><para>Constructor with arguments. Allows to register a channel name attribute on construction.</para><para>
+</para></description></constructor>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1af82605b7c5344a41721bece2dfd8fc19" name="channel" cv="const"><type>channel_type</type><description><para>The observer of the channel name</para><para>
+</para></description><returns><para>The channel name that was set by the logger </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a451e136b08b82e303f27b1ffa11b26e8" name="channel"><type>void</type><parameter name="ch"><paramtype>channel_type const &amp;</paramtype><description><para>The channel name to be set for the logger </para></description></parameter><description><para>The setter of the channel name</para><para>
+</para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a2ca379163df5198d6d5a282ba20da72f" name="get_channel_attribute" cv="const"><type>channel_attribute const &amp;</type><description><para>Channel attribute accessor </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a15f777d5fe534b3e808ce7f819afc0e7" name="open_record_unlocked"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>open_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1af5f3417a50fbb8e5c827ab4f31547f03" name="swap_unlocked"><type>void</type><parameter name="that"><paramtype><classname>basic_channel_logger</classname> &amp;</paramtype></parameter><description><para>Unlocked swap </para></description></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1a9ddad41402ef737c35b69193ed78893f" name="open_record_with_channel_unlocked"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><parameter name="ch"><paramtype>T const &amp;</paramtype></parameter><purpose>The <computeroutput>open_record</computeroutput> implementation for the case when the channel is specified in log statement. </purpose></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger_1af76fca0a022bd7aa65d547c4a53a687a" name="open_record_with_channel_unlocked"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><parameter name=""><paramtype>parameter::void_</paramtype></parameter><purpose>The <computeroutput>open_record</computeroutput> implementation for the case when the channel is not specified in log statement. </purpose></method>
+</method-group>
+</class><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1channel" name="channel"><template>
+      <template-type-parameter name="ChannelT"><default>std::string</default></template-type-parameter>
+    </template><purpose>Channel support feature. </purpose><description><para>The logger with this feature automatically registers an attribute with the specified on construction value, which is a channel name. The channel name can be modified through the logger life time, either by calling the <computeroutput>channel</computeroutput> method or by specifying the name in the logging statement.</para><para>The type of the channel name can be customized by providing it as a template parameter to the feature template. By default, a string will be used. </para></description><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1channel_1_1apply" name="apply"><template>
+      <template-type-parameter name="BaseT"/>
+    </template><typedef id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1channel_1_1apply_1aaa64bdb13509a94d9a578a3d71a39439" name="type"><type><classname>basic_channel_logger</classname>&lt; BaseT, ChannelT &gt;</type></typedef>
+</struct></struct>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.logging_sources.channel__feature_8hpp_1af88a622876b200fceeda2bfd43d69131" name="BOOST_LOG_STREAM_CHANNEL" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="chan"/><purpose>The macro allows to put a record with a specific channel name into log. </purpose></macro>
+<macro id="doxygen.logging_sources.channel__feature_8hpp_1acd22c675c840b37cb6a839f86b56bfb4" name="BOOST_LOG_CHANNEL" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="chan"/><purpose>An equivalent to <link linkend="doxygen.logging_sources.channel__feature_8hpp_1af88a622876b200fceeda2bfd43d69131">BOOST_LOG_STREAM_CHANNEL(logger, chan)</link> </purpose></macro>
+</header>
+<header id="doxygen.logging_sources.channel__logger_8hpp" name="boost/log/sources/channel_logger.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>28.02.2008</para>
+
+The header contains implementation of a logger with channel support. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger" name="channel_logger"><template>
+      <template-type-parameter name="ChannelT"><default>std::string</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; char, channel_logger&lt; std::string &gt;, single_thread_model, features&lt; channel&lt; std::string &gt; &gt; &gt;</inherit><purpose>Narrow-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>channel</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger_1ab0015d07508c9f93411d1dd6ef46a20b"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger_1a8a12c5648534a6788129a88d776eefe1"><parameter name="that"><paramtype><classname>channel_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger_1a235a4d1dce3951ff434935909874dad1" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger_1a1fe56b48fd9f530694b37c805dbbf507" specifiers="explicit"><parameter name="channel"><paramtype>ChannelT const &amp;</paramtype><description><para>The channel name </para></description></parameter><description><para>The constructor creates the logger with the specified channel name</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger_1aa1e9e2a1c3568f5b03cbaee296743f31"><type><classname>channel_logger</classname> &amp;</type><parameter name="that"><paramtype><classname>channel_logger</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger__mt" name="channel_logger_mt"><template>
+      <template-type-parameter name="ChannelT"><default>std::string</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; char, channel_logger_mt&lt; std::string &gt;, multi_thread_model&lt; implementation_defined &gt;, features&lt; channel&lt; std::string &gt; &gt; &gt;</inherit><purpose>Narrow-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>channel</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger__mt_1abac6841f7104f00516bb98c2fd905f4e"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger__mt_1a82563a601cf1319a86a14f0ee7f4dd48"><parameter name="that"><paramtype><classname>channel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger__mt_1a56523149a13e105ec9978e7232218d33" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger__mt_1afacfa015fa2d9346a6490904b8dfc238" specifiers="explicit"><parameter name="channel"><paramtype>ChannelT const &amp;</paramtype><description><para>The channel name </para></description></parameter><description><para>The constructor creates the logger with the specified channel name</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1channel__logger__mt_1a95e4d83a0124bfe35b2ad32d5e379823"><type><classname>channel_logger_mt</classname> &amp;</type><parameter name="that"><paramtype><classname>channel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger" name="wchannel_logger"><template>
+      <template-type-parameter name="ChannelT"><default>std::wstring</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; wchar_t, wchannel_logger&lt; std::wstring &gt;, single_thread_model, features&lt; channel&lt; std::wstring &gt; &gt; &gt;</inherit><purpose>Wide-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>channel</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger_1ac76baec9cd7d54f8d69637c22f16fb5a"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger_1ac7319a2f27cd1812826db00241156dc3"><parameter name="that"><paramtype><classname>wchannel_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger_1a41934029364a433f743b02481c1d046f" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger_1a5c541d5299a244d003364cc9c065fe03" specifiers="explicit"><parameter name="channel"><paramtype>ChannelT const &amp;</paramtype><description><para>The channel name </para></description></parameter><description><para>The constructor creates the logger with the specified channel name</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger_1afcf6e7d814ad1df855e910294049675c"><type><classname>wchannel_logger</classname> &amp;</type><parameter name="that"><paramtype><classname>wchannel_logger</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger__mt" name="wchannel_logger_mt"><template>
+      <template-type-parameter name="ChannelT"><default>std::wstring</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; wchar_t, wchannel_logger&lt; std::wstring &gt;, multi_thread_model&lt; implementation_defined &gt;, features&lt; channel&lt; std::wstring &gt; &gt; &gt;</inherit><purpose>Wide-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>channel</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger__mt_1ad912c551a35cb389f48c7da2640ed203"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger__mt_1a4272f1f829a106d8eafe9145d71bbfe1"><parameter name="that"><paramtype><classname>wchannel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger__mt_1a2fd3a712e75ed728f68457f9f46e54d9" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger__mt_1a4dcaf48c837b756cfaede120f93789f4" specifiers="explicit"><parameter name="channel"><paramtype>ChannelT const &amp;</paramtype><description><para>The channel name </para></description></parameter><description><para>The constructor creates the logger with the specified channel name</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wchannel__logger__mt_1a5339b97a1597dafddaa69bf3778879fa"><type><classname>wchannel_logger_mt</classname> &amp;</type><parameter name="that"><paramtype><classname>wchannel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.logging_sources.exception__handler__feature_8hpp" name="boost/log/sources/exception_handler_feature.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>17.07.2009</para>
+
+The header contains implementation of an exception handler support feature. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger" name="basic_exception_handler_logger"><template>
+      <template-type-parameter name="BaseT"/>
+    </template><inherit access="public">BaseT</inherit><purpose>Exception handler feature implementation. </purpose><typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a0ab0ba4f272db398aedbc6a0c5a7face" name="threading_model"><purpose>Threading model being used. </purpose><type>base_type::threading_model</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a4e55d955b41f9824b1cba20c36c9d130" name="final_type"><purpose>Final logger type. </purpose><type>base_type::final_type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a32af3fdd05a92ab2837c3095539f9583" name="exception_handler_type"><purpose>Exception handler function type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1ae826c74c21cb7c799737cf30980d062c" name="open_record_lock"><purpose>Lock requirement for the open_record_unlocked method. </purpose><type>strictest_lock&lt; typenamebase_type::open_record_lock, no_lock&lt; threading_model &gt; &gt;::type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1aa1faae262e1b7483a8e8ffe2bd7b012e" name="push_record_lock"><purpose>Lock requirement for the push_record_unlocked method. </purpose><type>strictest_lock&lt; typenamebase_type::push_record_lock, no_lock&lt; threading_model &gt; &gt;::type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a628349bf8ee3a8b3e70fab7a080f6690" name="swap_lock"><purpose>Lock requirement for the swap_unlocked method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a56b7f1465dfe1f128c7223267ecba462"><description><para>Default constructor. The constructed logger does not have an exception handler. </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a4f94aa569f0ed6e17cbe4d614eb1b2e5"><parameter name="that"><paramtype><classname>basic_exception_handler_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a39e85526409fa8ab7c4bdcde0cbcd9bf" cv="noexcept(boost::is_nothrow_move_constructible&lt; base_type &gt;::value &amp;&amp;boost::is_nothrow_move_constructible&lt; exception_handler_type &gt;::value)"><parameter name="that"><paramtype><classname>basic_exception_handler_logger</classname> &amp;&amp;</paramtype></parameter><description><para>Move constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a3a49223f2ebc95fd9beadf1ada6fd520" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Constructor with arguments. Passes arguments to other features. </para></description></constructor>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1af8283c5261d25d82dad5cab36c995690" name="set_exception_handler"><type>void</type><template>
+          <template-type-parameter name="HandlerT"/>
+        </template><parameter name="handler"><paramtype>HandlerT const &amp;</paramtype><description><para>Exception handling function</para></description></parameter><description><para>The method sets exception handler function. The function will be called with no arguments in case if an exception occurs during either <computeroutput>open_record</computeroutput> or <computeroutput>push_record</computeroutput> method execution. Since exception handler is called from a <computeroutput>catch</computeroutput> statement, the exception can be rethrown in order to determine its type.</para><para>By default no handler is installed, thus any exception is propagated as usual.</para><para><formalpara><title>See Also:</title><para><computeroutput>utility/exception_handler.hpp</computeroutput> </para>
+</formalpara>
+
+<note><para>The exception handler can be invoked in several threads concurrently.</para>
+</note>
+<note><para>Thread interruptions are not affected by exception handlers. </para>
+</note>
+</para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a15f777d5fe534b3e808ce7f819afc0e7" name="open_record_unlocked"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>open_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1a3d0f8c6c7213f67f385f8a0143e35272" name="push_record_unlocked"><type>void</type><parameter name="rec"><paramtype>record &amp;&amp;</paramtype></parameter><description><para>Unlocked <computeroutput>push_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__exception__handler__logger_1ac3af5b1dfce0081ed03988cffbc795a4" name="swap_unlocked"><type>void</type><parameter name="that"><paramtype><classname>basic_exception_handler_logger</classname> &amp;</paramtype></parameter><description><para>Unlocked swap </para></description></method>
+</method-group>
+</class><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1exception__handler" name="exception_handler"><purpose>Exception handler support feature. </purpose><description><para>The logger with this feature will provide an additional method to install an exception handler functional object. This functional object will be called if during either opening or pushing a record an exception is thrown from the logging core. </para></description><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1exception__handler_1_1apply" name="apply"><template>
+      <template-type-parameter name="BaseT"/>
+    </template><typedef id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1exception__handler_1_1apply_1aabf82573e078e4df1e17fd8fcddb5538" name="type"><type><classname>basic_exception_handler_logger</classname>&lt; BaseT &gt;</type></typedef>
+</struct></struct>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.logging_sources.features_8hpp" name="boost/log/sources/features.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>17.07.2009</para>
+
+The header contains definition of a features list class template. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1features" name="features"><template>
+      <template-nontype-parameter name="FeaturesT"><type>typename...</type></template-nontype-parameter>
+    </template><purpose>A type sequence of logger features. </purpose><description><para>This class template can be used to specify logger features in a <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__composite__logger">basic_composite_logger</link></computeroutput> instantiation. </para></description></struct>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.logging_sources.global__logger__storage_8hpp" name="boost/log/sources/global_logger_storage.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>21.04.2008</para>
+
+The header contains implementation of facilities to declare global loggers. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1aaf4792e83d8810b2182dc40fbb9b0971" name="BOOST_LOG_GLOBAL_LOGGER" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><purpose>The macro forward-declares a global logger with a custom initialization. </purpose></macro>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1ac3d73b4fb68e12ee0a523c99a3ddaeca" name="BOOST_LOG_GLOBAL_LOGGER_INIT" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><purpose>The macro defines a global logger initialization routine. </purpose></macro>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1add4dade7fe622b4bd6608e69e3abed84" name="BOOST_LOG_GLOBAL_LOGGER_DEFAULT" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><purpose>The macro defines a global logger initializer that will default-construct the logger. </purpose></macro>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1a73d962e61a78c43894b9abd2bdd93c1a" name="BOOST_LOG_GLOBAL_LOGGER_CTOR_ARGS" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><macro-parameter name="args"/><purpose>The macro defines a global logger initializer that will construct the logger with the specified constructor arguments. </purpose></macro>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1a232634829527b256b222acde0b897134" name="BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><purpose>The macro declares a global logger with a custom initialization. </purpose></macro>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1a8ec0a191e0873253f997240e5c3fa9ee" name="BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><purpose>The macro declares a global logger that will be default-constructed. </purpose></macro>
+<macro id="doxygen.logging_sources.global__logger__storage_8hpp_1aba2c2695faac93c42134ce35e7b0c1c2" name="BOOST_LOG_INLINE_GLOBAL_LOGGER_CTOR_ARGS" kind="functionlike"><macro-parameter name="tag_name"/><macro-parameter name="logger"/><macro-parameter name="args"/><purpose>The macro declares a global logger that will be constructed with the specified arguments. </purpose></macro>
+</header>
+<header id="doxygen.logging_sources.logger_8hpp" name="boost/log/sources/logger.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>08.03.2007</para>
+
+The header contains implementation of a simplistic logger with no features. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1logger" name="logger"><inherit access="public">basic_composite_logger&lt; char, logger, single_thread_model, features&lt; &gt; &gt;</inherit><purpose>Narrow-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput>. </purpose><description><para>See <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class template for a more detailed description. </para></description></class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1logger__mt" name="logger_mt"><purpose>Narrow-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput>. </purpose><description><para>See <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class template for a more detailed description. </para></description></class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wlogger" name="wlogger"><inherit access="public">basic_composite_logger&lt; wchar_t, wlogger, single_thread_model, features&lt; &gt; &gt;</inherit><purpose>Wide-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput>. </purpose><description><para>See <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class template for a more detailed description. </para></description></class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wlogger__mt" name="wlogger_mt"><purpose>Wide-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput>. </purpose><description><para>See <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__logger">basic_logger</link></computeroutput> class template for a more detailed description. </para></description></class>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.logging_sources.record__ostream_8hpp" name="boost/log/sources/record_ostream.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>09.03.2009</para>
+
+This header contains a wrapper class around a logging record that allows to compose the record message with a streaming expression. </para><namespace name="boost">
+<namespace name="log">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream" name="basic_record_ostream"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">basic_formatting_ostream&lt; CharT &gt;</inherit><purpose>Logging record adapter with a streaming capability. </purpose><description><para>This class allows to compose the logging record message by streaming operations. It aggregates the log record and provides the standard output stream interface. </para></description><typedef id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ac300472e15c13f0e7c25cec82c665240" name="char_type"><purpose>Character type. </purpose><type>CharT</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a881bde00510e3840918efc9a3058056c" name="string_type"><purpose>String type to be used as a message text holder. </purpose><type>std::basic_string&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a3e4bb2e0bef42bcf2817780dc9bb37fd" name="stream_type"><purpose>Stream type. </purpose><type>std::basic_ostream&lt; char_type &gt;</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a037c4f399426e381a09d7584d9d97da0" name="traits_type"><purpose>Character traits. </purpose><type>base_type::traits_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a53c8af0e4aacf99100d1eb8434f1a264" cv="noexcept"><description><para>Default constructor. Creates an empty record that is equivalent to the invalid record handle. The stream capability is not available after construction.</para><para>
+</para></description><postconditions><para><computeroutput>!*this == true</computeroutput> </para>
+</postconditions></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1aea407b474a13610f6e6f59b1f8620631" specifiers="explicit"><parameter name="rec"><paramtype>record &amp;</paramtype><description><para>The record handle being attached to </para></description></parameter><description><para>Constructor from a record object. Attaches to the provided record.</para><para>
+
+
+</para></description><requires><para><computeroutput>!!rec == true</computeroutput> </para>
+</requires><postconditions><para><computeroutput>&amp;this-&gt;<link linkend="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a518b9b991304ac26c0a66b956d428573">get_record()</link> == &amp;rec</computeroutput> </para>
+</postconditions></constructor>
+<destructor id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a9960fc8e0864544e231fcf18e7c62e06" cv="noexcept"><description><para>Destructor. Destroys the record, releases any sinks and attribute values that were involved in processing this record. </para></description></destructor>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a420e60e9788bfa3b52aa3aab72ea3a5e" name="conversion-operator" cv="const noexcept" specifiers="explicit"><type>bool</type><description><para>Conversion to an unspecified boolean type</para><para>
+</para></description><returns><para><computeroutput>true</computeroutput>, if stream is valid and ready for formatting, <computeroutput>false</computeroutput>, if the stream is not valid. The latter also applies to the case when the stream is not attached to a log record. </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1aa781ac6ac5a122ef2e89325c84d51f5a" name="operator!" cv="const noexcept"><type>bool</type><description><para>Inverted conversion to an unspecified boolean type</para><para>
+</para></description><returns><para><computeroutput>false</computeroutput>, if stream is valid and ready for formatting, <computeroutput>true</computeroutput>, if the stream is not valid. The latter also applies to the case when the stream is not attached to a log record. </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a518b9b991304ac26c0a66b956d428573" name="get_record"><type>record &amp;</type><description><para>Flushes internal buffers to complete all pending formatting operations and returns the aggregated log record</para><para>
+</para></description><returns><para>The aggregated record object </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ace199c30e7e5af6547f8dcdc5e0105c2" name="get_record" cv="const"><type>record const &amp;</type><description><para>Flushes internal buffers to complete all pending formatting operations and returns the aggregated log record</para><para>
+</para></description><returns><para>The aggregated record object </para>
+</returns></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a0ca90c06b6671be0ad7900276d553345" name="attach_record"><type>void</type><parameter name="rec"><paramtype>record &amp;</paramtype><description><para>New log record to attach to </para></description></parameter><description><para>If the stream is attached to a log record, flushes internal buffers to complete all pending formatting operations. Then reattaches the stream to another log record.</para><para>
+</para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a98bc117509eb60b7eaca9cf2dea8313e" name="detach_from_record" cv="noexcept"><type>void</type><purpose>The function resets the stream into a detached (default initialized) state. </purpose></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ae46c1af04f6522c6e8178df7fe085178" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="manip"><paramtype>typename base_type::ios_base_manip</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1aea83ddc0b4f0858b799ff8773b17eb15" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="manip"><paramtype>typename base_type::basic_ios_manip</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1aa15fd03ef727ac8c28863fbe1e6edbcb" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="manip"><paramtype>typename base_type::stream_manip</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a00353c7dde309f458521aee57918da37" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="c"><paramtype>char</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ab335b8c2c54d29bb7c42f8434bf1ab71" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="p"><paramtype>const char *</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ad38a99c5d2d22b32d89c99dc4ee211b5" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="c"><paramtype>wchar_t</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a087f404ba639d3fd667e09decede24f0" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="p"><paramtype>const wchar_t *</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ab75e06f9d97fd8da3112833cbb062aa0" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="c"><paramtype>char16_t</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a4e041e88c738fefb5f73f4f9de4de682" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="p"><paramtype>const char16_t *</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a1619615c01a84130a81abfeaafad435a" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="c"><paramtype>char32_t</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a33251b93581e47c64b974e9eb24e1693" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="p"><paramtype>const char32_t *</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1af21fa95b3bcbb300d26668d5b0c8e6b2" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>bool</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ad0eb16ebae7c5cd10d315b06814967be" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>signed char</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a483bd2b753b3a2d141b8339a7b894dba" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>unsigned char</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1aba1bc25a9b938af3ddbe7cefb62f7692" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>short</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ae130e3eb7f76a8dba8aa479b3dcf9341" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>unsigned short</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1afe4541714586f04664a2cd6170c18069" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a9606a8d08364c7f8ac77e28ae3b61dd3" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>unsigned int</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a5bf7640bdef8a7d5e13b56a462311bc4" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>long</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ab387fca6b18252889a01f9b1a822c869" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>unsigned long</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1aff87019af10483b87be36cba227ec63e" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>long long</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1abc231fce228a8c9acb0720aba9be4f87" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>unsigned long long</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1ae0b9ca36b1b91e6a56d5fd5c76d87d6e" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>float</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a37db2c22d6ed9716032eac7c5c7f48d8" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>double</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a52cd4d9cf2a1d33d0ba135ffc0849fd1" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="value"><paramtype>long double</paramtype></parameter></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a66e773ad3c009127981a5d9b06bd74e4" name="operator&lt;&lt;"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name="buf"><paramtype>std::basic_streambuf&lt; char_type, traits_type &gt; *</paramtype></parameter></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a236ffa4b3537bb6977ed6acf52fac5c3" name="init_stream"><type>void</type><purpose>The function initializes the stream and the stream buffer. </purpose></method>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a58ac562eac530742664e44a6ff765799" cv="= delete"><parameter name=""><paramtype><classname>basic_record_ostream</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1basic__record__ostream_1a359a1220a188a50fea47c55e78f7f405" cv="= delete"><type><classname>basic_record_ostream</classname> &amp;</type><parameter name=""><paramtype><classname>basic_record_ostream</classname> const &amp;</paramtype></parameter></copy-assignment>
+</method-group>
+</class><typedef id="doxygen.logging_sources.record__ostream_8hpp_1a674a20d04104ee880472988af8f6d242" name="record_ostream"><purpose>Convenience typedef for narrow-character logging. </purpose><type><classname>basic_record_ostream</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.logging_sources.record__ostream_8hpp_1a5a34ff61361e8774ebe6ddf10decd657" name="wrecord_ostream"><purpose>Convenience typedef for wide-character logging. </purpose><type><classname>basic_record_ostream</classname>&lt; wchar_t &gt;</type></typedef>
+<function id="doxygen.logging_sources.record__ostream_8hpp_1ac4df57bc51a08bd29959994e819cb80e" name="operator&lt;&lt;"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="StreamT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="strm"><paramtype>StreamT &amp;</paramtype></parameter><parameter name="value"><paramtype>T</paramtype></parameter></function>
+<function id="doxygen.logging_sources.record__ostream_8hpp_1afb9c94308b2bdb151f192ce6f8f0fe29" name="operator&lt;&lt;"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="StreamT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="strm"><paramtype>StreamT &amp;</paramtype></parameter><parameter name="value"><paramtype>T const &amp;</paramtype></parameter></function>
+<function id="doxygen.logging_sources.record__ostream_8hpp_1af6257687aec019d71ffde19f1e5d0e84" name="operator&lt;&lt;"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="StreamT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="strm"><paramtype>StreamT &amp;</paramtype></parameter><parameter name="value"><paramtype>T &amp;</paramtype></parameter></function>
+<function id="doxygen.logging_sources.record__ostream_8hpp_1a9361f18ca24a475b384d42e970ece60a" name="operator&lt;&lt;"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="StreamT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="strm"><paramtype>StreamT &amp;&amp;</paramtype></parameter><parameter name="value"><paramtype>T</paramtype></parameter></function>
+<function id="doxygen.logging_sources.record__ostream_8hpp_1ab8c780590927582e83b8cb60e25c0576" name="operator&lt;&lt;"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="StreamT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="strm"><paramtype>StreamT &amp;&amp;</paramtype></parameter><parameter name="value"><paramtype>T const &amp;</paramtype></parameter></function>
+<function id="doxygen.logging_sources.record__ostream_8hpp_1a395439ad87147b1fb65d1ba1687d48c4" name="operator&lt;&lt;"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="StreamT"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="strm"><paramtype>StreamT &amp;&amp;</paramtype></parameter><parameter name="value"><paramtype>T &amp;</paramtype></parameter></function>
+</namespace>
+</namespace>
+<macro id="doxygen.logging_sources.record__ostream_8hpp_1a6e8e7693aca519bfc255b9c80c440dbd" name="BOOST_LOG_STREAM" kind="functionlike"><macro-parameter name="logger"/><purpose>The macro writes a record to the log. </purpose></macro>
+<macro id="doxygen.logging_sources.record__ostream_8hpp_1ab4699f6df5da1c0b90999ef08b18b19c" name="BOOST_LOG_STREAM_WITH_PARAMS" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="params_seq"/><purpose>The macro writes a record to the log and allows to pass additional named arguments to the logger. </purpose></macro>
+<macro id="doxygen.logging_sources.record__ostream_8hpp_1af81e49d02468d89cbce61713a12ec92a" name="BOOST_LOG" kind="functionlike"><macro-parameter name="logger"/><purpose>An equivalent to <link linkend="doxygen.logging_sources.record__ostream_8hpp_1a6e8e7693aca519bfc255b9c80c440dbd">BOOST_LOG_STREAM(logger)</link> </purpose></macro>
+<macro id="doxygen.logging_sources.record__ostream_8hpp_1ab350e09162e46b0a16ec6d4dab613c8e" name="BOOST_LOG_WITH_PARAMS" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="params_seq"/><purpose>An equivalent to <link linkend="doxygen.logging_sources.record__ostream_8hpp_1ab4699f6df5da1c0b90999ef08b18b19c">BOOST_LOG_STREAM_WITH_PARAMS(logger, params_seq)</link> </purpose></macro>
+</header>
+<header id="doxygen.logging_sources.severity__channel__logger_8hpp" name="boost/log/sources/severity_channel_logger.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>28.02.2008</para>
+
+The header contains implementation of a logger with severity level and channel support. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger" name="severity_channel_logger"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+      <template-type-parameter name="ChannelT"><default>std::string</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; char, severity_channel_logger&lt; int, std::string &gt;, single_thread_model, features&lt; severity&lt; int &gt;, channel&lt; std::string &gt; &gt; &gt;</inherit><purpose>Narrow-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput> and <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> and <computeroutput>channel</computeroutput> class templates for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger_1ac71af6cd752a9559692c3ef1464b126c"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger_1ad10b4dbc858d8b2bed52d0ae5a34ba9e"><parameter name="that"><paramtype><classname>severity_channel_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger_1a8af4299c5b777fa616631d55f3e81dee" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger_1ad61ec0cc0a7f745d09495f83dee5fa64"><type><classname>severity_channel_logger</classname> &amp;</type><parameter name="that"><paramtype><classname>severity_channel_logger</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger__mt" name="severity_channel_logger_mt"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+      <template-type-parameter name="ChannelT"><default>std::string</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; char, severity_channel_logger_mt&lt; int, std::string &gt;, multi_thread_model&lt; implementation_defined &gt;, features&lt; severity&lt; int &gt;, channel&lt; std::string &gt; &gt; &gt;</inherit><purpose>Narrow-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput> and <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> and <computeroutput>channel</computeroutput> class templates for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger__mt_1ac04581a7480a869f24d9d0d9b2f67d19"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger__mt_1a4f12058acc4467bc9d9a23f54a869dbf"><parameter name="that"><paramtype><classname>severity_channel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger__mt_1ac0be75675b873bd0c97d74680ba6e8da" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__channel__logger__mt_1aa927f91dfd3b9684f7d4279b06436025"><type><classname>severity_channel_logger_mt</classname> &amp;</type><parameter name="that"><paramtype><classname>severity_channel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger" name="wseverity_channel_logger"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+      <template-type-parameter name="ChannelT"><default>std::wstring</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; wchar_t, wseverity_channel_logger&lt; int, std::wstring &gt;, single_thread_model, features&lt; severity&lt; int &gt;, channel&lt; std::wstring &gt; &gt; &gt;</inherit><purpose>Wide-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput> and <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> and <computeroutput>channel</computeroutput> class templates for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger_1ad5d9c97863be85408613db5ead732238"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger_1a9703b6d3f237a028f30d4d7bf0681f1a"><parameter name="that"><paramtype><classname>wseverity_channel_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger_1a4cb5bd1d469dc7c9b1ab431ca46db2df" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger_1a6e5bfa5ec65e4313a2d7e158a3fa4047"><type><classname>wseverity_channel_logger</classname> &amp;</type><parameter name="that"><paramtype><classname>wseverity_channel_logger</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger__mt" name="wseverity_channel_logger_mt"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+      <template-type-parameter name="ChannelT"><default>std::wstring</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; wchar_t, wseverity_channel_logger_mt&lt; int, std::wstring &gt;, multi_thread_model&lt; implementation_defined &gt;, features&lt; severity&lt; int &gt;, channel&lt; std::wstring &gt; &gt; &gt;</inherit><purpose>Wide-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput> and <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__channel__logger">basic_channel_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> and <computeroutput>channel</computeroutput> class templates for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger__mt_1a6c4bddf2e859ce981e57c7122d012587"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger__mt_1a0fe2b1c906e7cf3e609e24eada2e80e8"><parameter name="that"><paramtype><classname>wseverity_channel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger__mt_1a2272d1ef6ef2bc9fcd78628b97ad2d12" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__channel__logger__mt_1ad0973ed8f22a05b6d5b3011e114184ed"><type><classname>wseverity_channel_logger_mt</classname> &amp;</type><parameter name="that"><paramtype><classname>wseverity_channel_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.logging_sources.severity__channel__logger_8hpp_1acd2d134d5db0b9572d1739190f5651b7" name="BOOST_LOG_STREAM_CHANNEL_SEV" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="chan"/><macro-parameter name="lvl"/><purpose>The macro allows to put a record with a specific channel name into log. </purpose></macro>
+<macro id="doxygen.logging_sources.severity__channel__logger_8hpp_1ae6db663e758e2799641204963a05512b" name="BOOST_LOG_CHANNEL_SEV" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="chan"/><macro-parameter name="lvl"/><purpose>An equivalent to <link linkend="doxygen.logging_sources.severity__channel__logger_8hpp_1acd2d134d5db0b9572d1739190f5651b7">BOOST_LOG_STREAM_CHANNEL_SEV(logger, chan, lvl)</link> </purpose></macro>
+</header>
+<header id="doxygen.logging_sources.severity__feature_8hpp" name="boost/log/sources/severity_feature.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>08.03.2007</para>
+
+The header contains implementation of a severity level support feature. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger" name="basic_severity_logger"><template>
+      <template-type-parameter name="BaseT"/>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">BaseT</inherit><purpose>Severity level feature implementation. </purpose><typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1af20a9965bfb788c1b76d2e9d180542c1" name="char_type"><purpose>Character type. </purpose><type>base_type::char_type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a4e55d955b41f9824b1cba20c36c9d130" name="final_type"><purpose>Final type. </purpose><type>base_type::final_type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a0ab0ba4f272db398aedbc6a0c5a7face" name="threading_model"><purpose>Threading model being used. </purpose><type>base_type::threading_model</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a62174eae4c3e3c59fa03fcad4b342334" name="severity_level"><purpose>Severity level type. </purpose><type>LevelT</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1af041e5480a6001e01448d8c21becc911" name="severity_attribute"><purpose>Severity attribute type. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1ae826c74c21cb7c799737cf30980d062c" name="open_record_lock"><purpose>Lock requirement for the <computeroutput>open_record_unlocked</computeroutput> method. </purpose><type>strictest_lock&lt; typenamebase_type::open_record_lock, no_lock&lt; threading_model &gt; &gt;::type</type></typedef>
+<typedef id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a628349bf8ee3a8b3e70fab7a080f6690" name="swap_lock"><purpose>Lock requirement for the <computeroutput>swap_unlocked</computeroutput> method. </purpose><type><emphasis>unspecified</emphasis></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1aef6ebb9255a7c4bfa7b4cba356e9981d"><description><para>Default constructor. The constructed logger will have a severity attribute registered. The default level for log records will be 0. </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a6a680504e978330c081b004f43a8c05f"><parameter name="that"><paramtype><classname>basic_severity_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1aaf2844edf3e47ad1393739b6cc6867cf" cv="noexcept(boost::is_nothrow_move_constructible&lt; base_type &gt;::value &amp;&amp;boost::is_nothrow_move_constructible&lt; severity_level &gt;::value &amp;&amp;boost::is_nothrow_move_constructible&lt; severity_attribute &gt;::value)"><parameter name="that"><paramtype><classname>basic_severity_logger</classname> &amp;&amp;</paramtype></parameter><description><para>Move constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a447becb3a7f2e4777a8fee04fe570be7" specifiers="explicit"><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype><description><para>A set of named arguments. The following arguments are supported: <itemizedlist>
+<listitem><para><computeroutput>severity</computeroutput> - default severity value </para>
+</listitem>
+</itemizedlist>
+</para></description></parameter><description><para>Constructor with named arguments. Allows to setup the default level for log records.</para><para>
+</para></description></constructor>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1ac6431beb3c3cc2857e15922242f908a1" name="default_severity" cv="const"><type>severity_level</type><description><para>Default severity value getter </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a2a1888ad6576e56d13b231e65ec75c9f" name="get_severity_attribute" cv="const"><type>severity_attribute const &amp;</type><description><para>Severity attribute accessor </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1a15f777d5fe534b3e808ce7f819afc0e7" name="open_record_unlocked"><type>record</type><template>
+          <template-type-parameter name="ArgsT"/>
+        </template><parameter name="args"><paramtype>ArgsT const &amp;</paramtype></parameter><description><para>Unlocked <computeroutput>open_record</computeroutput> </para></description></method>
+<method id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger_1afb0c7a20f57dc3f54a7aaeee8e4592d4" name="swap_unlocked"><type>void</type><parameter name="that"><paramtype><classname>basic_severity_logger</classname> &amp;</paramtype></parameter><purpose>Unlocked <computeroutput>swap</computeroutput>. </purpose></method>
+</method-group>
+</class><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1severity" name="severity"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+    </template><purpose>Severity level support feature. </purpose><description><para>The logger with this feature registers a special attribute with an integral value type on construction. This attribute will provide severity level for each log record being made through the logger. The severity level can be omitted on logging record construction, in which case the default level will be used. The default level can also be customized by passing it to the logger constructor.</para><para>The type of the severity level attribute can be specified as a template parameter for the feature template. By default, <computeroutput>int</computeroutput> will be used. </para></description><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1severity_1_1apply" name="apply"><template>
+      <template-type-parameter name="BaseT"/>
+    </template><typedef id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1severity_1_1apply_1a1aed2989f4076df4827fb5240166713b" name="type"><type><classname>basic_severity_logger</classname>&lt; BaseT, LevelT &gt;</type></typedef>
+</struct></struct>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.logging_sources.severity__feature_8hpp_1a86ddf0c58672251f366a903016aadf5b" name="BOOST_LOG_STREAM_SEV" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="lvl"/><purpose>The macro allows to put a record with a specific severity level into log. </purpose></macro>
+<macro id="doxygen.logging_sources.severity__feature_8hpp_1af172a32347cbf8f7dc34d9e0c1e55ab1" name="BOOST_LOG_SEV" kind="functionlike"><macro-parameter name="logger"/><macro-parameter name="lvl"/><purpose>An equivalent to <link linkend="doxygen.logging_sources.severity__feature_8hpp_1a86ddf0c58672251f366a903016aadf5b">BOOST_LOG_STREAM_SEV(logger, lvl)</link> </purpose></macro>
+</header>
+<header id="doxygen.logging_sources.severity__logger_8hpp" name="boost/log/sources/severity_logger.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>08.03.2007</para>
+
+The header contains implementation of a logger with severity level support. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger" name="severity_logger"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; char, severity_logger&lt; int &gt;, single_thread_model, features&lt; severity&lt; int &gt; &gt; &gt;</inherit><purpose>Narrow-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger_1adced8c53d1790220f491a10ccacefdc4"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger_1ad8511ef6e0ac562e0dd9c63414d976f5"><parameter name="that"><paramtype><classname>severity_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger_1a8c815f63d159b80c54351ac9398d80fa" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger_1a941c186c7dcd58e4d53af3ee270c0226" specifiers="explicit"><parameter name="level"><paramtype>LevelT</paramtype><description><para>The default severity level </para></description></parameter><description><para>The constructor creates the logger with the specified default severity level</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger_1ac4e987cbedf51843d00ca5fc21f5816a"><type><classname>severity_logger</classname> &amp;</type><parameter name="that"><paramtype><classname>severity_logger</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger__mt" name="severity_logger_mt"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; char, severity_logger_mt&lt; int &gt;, multi_thread_model&lt; implementation_defined &gt;, features&lt; severity&lt; int &gt; &gt; &gt;</inherit><purpose>Narrow-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger__mt_1a427ce7377911511d3b880070474473ca"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger__mt_1a87e644a8fc4bb6c823a7e4e2d427eb3f"><parameter name="that"><paramtype><classname>severity_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger__mt_1a36b93e0c9467309244fac3e46bc8fc6f" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger__mt_1a29927580b8e97500accfbf7c9ebd2352" specifiers="explicit"><parameter name="level"><paramtype>LevelT</paramtype><description><para>The default severity level </para></description></parameter><description><para>The constructor creates the logger with the specified default severity level</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1severity__logger__mt_1a629554de0e2e5ba0dedd0107515299cf"><type><classname>severity_logger_mt</classname> &amp;</type><parameter name="that"><paramtype><classname>severity_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger" name="wseverity_logger"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; wchar_t, wseverity_logger&lt; int &gt;, single_thread_model, features&lt; severity&lt; int &gt; &gt; &gt;</inherit><purpose>Wide-char logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger_1a0f4c736b9b1b7675dc0ec82e82b80ee0"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger_1a3c7946b4fdfd822f9258ebf1b39ab6d3"><parameter name="that"><paramtype><classname>wseverity_logger</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger_1a2fc5531775d38e6a55768a8c9b9d521b" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger_1ac9f18e5689158dc718b158a58a0b279a" specifiers="explicit"><parameter name="level"><paramtype>LevelT</paramtype><description><para>The default severity level </para></description></parameter><description><para>The constructor creates the logger with the specified default severity level</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger_1a276b51e89744ecca2bcd506acfef4a74"><type><classname>wseverity_logger</classname> &amp;</type><parameter name="that"><paramtype><classname>wseverity_logger</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class><class id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger__mt" name="wseverity_logger_mt"><template>
+      <template-type-parameter name="LevelT"><default>int</default></template-type-parameter>
+    </template><inherit access="public">boost::log::sources::basic_composite_logger&lt; wchar_t, wseverity_logger_mt&lt; int &gt;, multi_thread_model&lt; implementation_defined &gt;, features&lt; severity&lt; int &gt; &gt; &gt;</inherit><purpose>Wide-char thread-safe logger. Functionally equivalent to <computeroutput><link linkend="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1basic__severity__logger">basic_severity_logger</link></computeroutput>. </purpose><description><para>See <computeroutput>severity</computeroutput> class template for a more detailed description </para></description><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger__mt_1a435f19b3496975509b50c0ba80cfe7a9"><description><para>Default constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger__mt_1a7ca8e1ab5f0dbb3e4fdc37b08cb0f0c6"><parameter name="that"><paramtype><classname>wseverity_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Copy constructor </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger__mt_1a22b469a4d23cbb95a2ffab9efe2828fd" specifiers="explicit"><template>
+          <template-nontype-parameter name="ArgsT"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>ArgsT... const &amp;</paramtype></parameter><description><para>Constructor with named arguments </para></description></constructor>
+<constructor id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger__mt_1a6cca5ae39e6d40166e3d1e148423f94c" specifiers="explicit"><parameter name="level"><paramtype>LevelT</paramtype><description><para>The default severity level </para></description></parameter><description><para>The constructor creates the logger with the specified default severity level</para><para>
+</para></description></constructor>
+<copy-assignment id="doxygen.logging_sources.classboost_1_1log_1_1sources_1_1wseverity__logger__mt_1a71cbaa0d787e81f6724b9f8ef5622ef9"><type><classname>wseverity_logger_mt</classname> &amp;</type><parameter name="that"><paramtype><classname>wseverity_logger_mt</classname> const &amp;</paramtype></parameter><description><para>Assignment operator</para><para>Swaps two loggers </para></description></copy-assignment>
+</method-group>
+</class>
+
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.logging_sources.threading__models_8hpp" name="boost/log/sources/threading_models.hpp">
+<para><para>Andrey Semashev </para>
+
+<para>04.10.2008</para>
+
+The header contains definition of threading models that can be used in loggers. The header also provides a number of tags that can be used to express lock requirements on a function callee. </para><namespace name="boost">
+<namespace name="log">
+<namespace name="sources">
+<struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model" name="multi_thread_model"><template>
+      <template-type-parameter name="MutexT"/>
+    </template><purpose>Multi-thread locking model with maximum locking capabilities. </purpose><method-group name="public member functions">
+<constructor id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a6c375c5d750df9cdf2f4b581a6185c22" cv="noexcept(boost::has_nothrow_constructor&lt; MutexT &gt;::value)"/>
+<constructor id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1aa9985c04f95903ffd666672767a43a05" cv="noexcept(boost::has_nothrow_constructor&lt; MutexT &gt;::value)"><parameter name=""><paramtype><classname>multi_thread_model</classname> const &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a950fdc6f46169dacd495f546f68bc193" cv="noexcept"><type><classname>multi_thread_model</classname> &amp;</type><parameter name=""><paramtype><classname>multi_thread_model</classname> const &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a499b596142bf2736f23034ed386b4bcf" cv="noexcept(boost::has_nothrow_constructor&lt; MutexT &gt;::value)"><parameter name=""><paramtype><classname>multi_thread_model</classname> &amp;&amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a589cb2b9dd2d6fad59bccb75b0fce56c" cv="noexcept"><type><classname>multi_thread_model</classname> &amp;</type><parameter name=""><paramtype><classname>multi_thread_model</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1ab077661a07f229cb7557ba9261fbbada" name="lock_shared" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a25d2312cd42d4e11226371c282d37ec4" name="try_lock_shared" cv="const"><type>bool</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1abca024f5b389aa080b9763d1fd7b76b2" name="timed_lock_shared" cv="const"><type>bool</type><template>
+          <template-type-parameter name="TimeT"/>
+        </template><parameter name="t"><paramtype>TimeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1ac3de2b683069b0dc228b4070b3708f9d" name="unlock_shared" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a0af0c6e3920cd67025211889c98807db" name="lock" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a998de5f0658a4aa32f23b63fb4f6b65a" name="try_lock" cv="const"><type>bool</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1ab982ee63e7358a8cf81e29002be20672" name="timed_lock" cv="const"><type>bool</type><template>
+          <template-type-parameter name="TimeT"/>
+        </template><parameter name="t"><paramtype>TimeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1aa44501403afbec5f12d7874dc2ee0ead" name="unlock" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a10132c74928daecb70b8b7175fac9074" name="lock_upgrade" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a7ccc85cfc76a3b11da0796976dcbe569" name="try_lock_upgrade" cv="const"><type>bool</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1af39168861ec273b753a215c3f3f4f12d" name="timed_lock_upgrade" cv="const"><type>bool</type><template>
+          <template-type-parameter name="TimeT"/>
+        </template><parameter name="t"><paramtype>TimeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1aad9f82f2be352560d70d57fb33eb29e1" name="unlock_upgrade" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a0489557bc0971e4f257947eaee0798b6" name="unlock_upgrade_and_lock" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1ae221caf36a1e60bb592de16864a610f6" name="unlock_and_lock_upgrade" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a27c7ca85deaf0d5d71903903c72f064e" name="unlock_and_lock_shared" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a97a7bd4b7fdf165800d96dadfe45db71" name="unlock_upgrade_and_lock_shared" cv="const"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1multi__thread__model_1a77c06be6c657bda77401c6dc35d5d138" name="swap" cv="noexcept"><type>void</type><parameter name=""><paramtype><classname>multi_thread_model</classname> &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model" name="single_thread_model"><purpose>Single thread locking model. </purpose><method-group name="public member functions">
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a06e2e9040d875a93c98b467f3e2bb50a" name="lock_shared" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a52c5f54da68d14c5a486692212bde79e" name="try_lock_shared" cv="const noexcept"><type>bool</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a8a60679c10bd5e39bc6f70d2797f7d18" name="timed_lock_shared" cv="const noexcept"><type>bool</type><template>
+          <template-type-parameter name="TimeT"/>
+        </template><parameter name=""><paramtype>TimeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1ac3de2b683069b0dc228b4070b3708f9d" name="unlock_shared" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a52038a0254215587b5c0b6d8b3c8f148" name="lock" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1aad5e0d790892051fce85ff6c3bc461dd" name="try_lock" cv="const noexcept"><type>bool</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a909f048f23e0b723917b2136543803c9" name="timed_lock" cv="const noexcept"><type>bool</type><template>
+          <template-type-parameter name="TimeT"/>
+        </template><parameter name=""><paramtype>TimeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1aa44501403afbec5f12d7874dc2ee0ead" name="unlock" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a97b51e5c0095cbb51112198004491421" name="lock_upgrade" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a1fb4dad0cda3bdc809d317b6a005a530" name="try_lock_upgrade" cv="const noexcept"><type>bool</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a9fefc8b71380d933b4158b1a73effffc" name="timed_lock_upgrade" cv="const noexcept"><type>bool</type><template>
+          <template-type-parameter name="TimeT"/>
+        </template><parameter name=""><paramtype>TimeT const &amp;</paramtype></parameter></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1aad9f82f2be352560d70d57fb33eb29e1" name="unlock_upgrade" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a560bfd8766a872302a3c1e9695ca36ce" name="unlock_upgrade_and_lock" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a8ef57893e0747c91e65933c08dbc8ad4" name="unlock_and_lock_upgrade" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a1aa39446e01ca691c0d7d22274e5ccbf" name="unlock_and_lock_shared" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a1469b3e39651a1d62a36f23a2cac2808" name="unlock_upgrade_and_lock_shared" cv="const noexcept"><type>void</type></method>
+<method id="doxygen.logging_sources.structboost_1_1log_1_1sources_1_1single__thread__model_1a72478f005019dddb7c89927a973196e0" name="swap" cv="noexcept"><type>void</type><parameter name=""><paramtype><classname>single_thread_model</classname> &amp;</paramtype></parameter></method>
+</method-group>
+</struct><function id="doxygen.logging_sources.threading__models_8hpp_1a2d5bf0f4926854c235a3646c1da69dcc" name="swap"><type>void</type><parameter name=""><paramtype><classname>single_thread_model</classname> &amp;</paramtype></parameter><parameter name=""><paramtype><classname>single_thread_model</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.logging_sources.threading__models_8hpp_1a7c62c95768b702db92402925f26b6cba" name="swap"><type>void</type><template>
+          <template-type-parameter name="MutexT"/>
+        </template><parameter name=""><paramtype><classname>multi_thread_model</classname>&lt; MutexT &gt; &amp;</paramtype></parameter><parameter name=""><paramtype><classname>multi_thread_model</classname>&lt; MutexT &gt; &amp;</paramtype></parameter></function>
+
+</namespace>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

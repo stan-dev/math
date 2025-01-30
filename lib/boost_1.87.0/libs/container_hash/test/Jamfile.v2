@@ -1,0 +1,138 @@
+# Copyright 2005-2012 Daniel James.
+# Copyright 2022 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+import testing ;
+
+local gcc-flags = -Wunused-parameter -Wconversion -Wsign-conversion -Wfloat-equal -Wshadow -Wno-variadic-macros ;
+local clang-flags = $(gcc-flags) -Wno-c99-extensions ;
+
+project hash-tests
+    : requirements
+        <library>/boost/container_hash//boost_container_hash
+        <library>/boost/core//boost_core
+        <library>/boost/type_traits//boost_type_traits
+
+        <warnings>pedantic
+        <toolset>intel:<warnings>on
+        <toolset>gcc:<cxxflags>$(gcc-flags)
+        <toolset>darwin:<cxxflags>$(gcc-flags)
+        <toolset>clang:<cxxflags>$(clang-flags)
+        <toolset>msvc:<warnings-as-errors>on
+        <toolset>gcc:<warnings-as-errors>on
+        <toolset>clang:<warnings-as-errors>on
+    ;
+
+run hash_info.cpp : : : <test-info>always_show_run_output ;
+compile check_float_funcs.cpp ;
+run hash_fwd_test_1.cpp ;
+run hash_fwd_test_2.cpp ;
+run hash_number_test.cpp ;
+run hash_enum_test.cpp ;
+run hash_pointer_test.cpp ;
+run hash_function_pointer_test.cpp ;
+run hash_float_test.cpp ;
+run hash_long_double_test.cpp ;
+run hash_string_test.cpp ;
+run hash_range_test.cpp ;
+run hash_custom_test.cpp ;
+run hash_global_namespace_test.cpp ;
+run hash_friend_test.cpp ;
+run hash_built_in_array_test.cpp ;
+run hash_value_array_test.cpp ;
+run hash_vector_test.cpp ;
+run hash_list_test.cpp ;
+run hash_deque_test.cpp ;
+run hash_set_test.cpp ;
+run hash_map_test.cpp ;
+run hash_complex_test.cpp ;
+run hash_optional_test.cpp ;
+run hash_variant_test.cpp ;
+run hash_type_index_test.cpp ;
+run hash_system_error_test.cpp ;
+run hash_std_array_test.cpp ;
+run hash_std_tuple_test.cpp ;
+run hash_std_smart_ptr_test.cpp ;
+run link_test.cpp link_test_2.cpp ;
+run link_ext_test.cpp link_no_ext_test.cpp ;
+run extensions_hpp_test.cpp ;
+compile-fail namespace_fail_test.cpp ;
+run implicit_test.cpp ;
+run hash_no_ext_macro_1.cpp ;
+run hash_no_ext_macro_2.cpp ;
+
+build-project ../examples ;
+
+run hash_reference_values.cpp ;
+
+run is_range_test.cpp ;
+run is_contiguous_range_test.cpp ;
+run is_unordered_range_test.cpp ;
+
+run hash_forward_list_test.cpp ;
+
+run quick.cpp ;
+
+run hash_number_test2.cpp ;
+run hash_integral_test.cpp ;
+run hash_string_test2.cpp
+  /boost/utility//boost_utility ;
+
+# for gcc-4.8
+local fs-path-req = <library>/boost/filesystem//boost_filesystem/<warnings>off "-<toolset>gcc:<cxxflags>-Wshadow" "-<toolset>gcc:<cxxflags>-Wconversion" <toolset>gcc-4.7:<build>no <undefined-sanitizer>norecover:<link>static ;
+
+run hash_fs_path_test.cpp : : : $(fs-path-req) <toolset>msvc-14.0,<cxxstd>latest:<build>no ;
+
+run is_range_test2.cpp : : : $(fs-path-req) ;
+
+run hash_container_test.cpp ;
+
+run hash_vector_test2.cpp ;
+
+run hash_string_test3.cpp ;
+run hash_string_test4.cpp ;
+
+run hash_multiset_test.cpp ;
+run hash_multimap_test.cpp ;
+
+run hash_unordered_range_test.cpp ;
+
+run hash_unordered_multiset_test.cpp ;
+run hash_unordered_multimap_test.cpp ;
+
+run hash_unordered_set_test.cpp ;
+run hash_unordered_map_test.cpp ;
+
+run is_range_test3.cpp ;
+run is_contiguous_range_test2.cpp ;
+run is_unordered_range_test2.cpp ;
+run is_contiguous_range_test3.cpp ;
+
+run is_described_class_test.cpp
+  : : : <warnings>extra ;
+run is_described_class_test2.cpp
+  : : : <warnings>extra ;
+run is_described_class_test3.cpp
+  : : : <warnings>extra ;
+
+run described_class_test.cpp
+  : : : <warnings>extra ;
+
+run hash_is_avalanching_test.cpp
+  /boost/unordered//boost_unordered ;
+run hash_is_avalanching_test2.cpp
+  /boost/unordered//boost_unordered ;
+
+run hash_integral_test2.cpp ;
+
+run hash_nullptr_test.cpp ;
+
+run is_tuple_like_test.cpp ;
+
+run hash_tuple_like_test.cpp ;
+run hash_tuple_like_test2.cpp
+  : : : <warnings>extra ;
+
+run is_range_test4.cpp ;
+run hash_container_test2.cpp ;

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Ranges :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/grammar/range.html">
+    <link rel="prev" href="combinators.html">
+    <link rel="next" href="rfc3986.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="combinators.html">Compound Rules</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">Customization</a></li>
+    <li><a href="range.html">Ranges</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="combinators.html"><span class="material-symbols-outlined" title="Previous: Compound Rules">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: Customization">arrow_upward</span></a>
+    <a accesskey="p" href="rfc3986.html"><span class="material-symbols-outlined" title="Next: RFC 3986">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Ranges</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Thus far the rules we have examined have one thing in common; the values they produce are fixed in size and known at compile-time.
+However, grammars can specify the repetition of elements.
+For example consider the following grammar (loosely adapted from
+<a href="https://datatracker.ietf.org/doc/html/rfc7230#section-4.1.1" target="blank_">rfc7230</a>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">chunk-ext      = *( ";" token )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The star operator in BNF notation means a repetition.
+In this case, zero or more of the expression in parenthesis.
+This production can be expressed using the function <code><a href="../reference/boost/urls/grammar/range_rule.html" class="xref page">range_rule</a></code>, which returns a rule allowing for a prescribed number of repetitions of a specified rule.
+The following rule matches the grammar for <em>chunk-ext</em>
+defined above:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr auto chunk_ext_rule = range_rule(
+    tuple_rule( squelch( delim_rule( ';' ) ), token_rule( alnum_chars ) ) );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This rule produces a <code><a href="../reference/boost/urls/grammar/range.html" class="xref page">range</a></code>, a <em>ForwardRange</em> whose value type is the same as the value type of the rule passed to the function.
+In this case, the type is <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code> because the tuple has one unsquelched element, the <code><a href="../reference/boost/urls/grammar/token_rule.html" class="xref page">token_rule</a></code>.
+The range can be iterated to produce results, without allocating memory for each element.
+The following code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">system::result&lt; range&lt; core::string_view &gt; &gt; rv = parse( ";johndoe;janedoe;end", chunk_ext_rule );
+
+for( auto s : rv.value() )
+    std::cout &lt;&lt; s &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>produces this output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">johndoe
+janedoe
+end</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sometimes a repetition is not so easily expressed using a single rule.
+Take for example the following grammar for a comma delimited list of tokens, which must contain at least one element:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">token-list    = token *( "," token )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can express this using the overload of <code><a href="../reference/boost/urls/grammar/range_rule.html" class="xref page">range_rule</a></code> which accepts two parameters: the rule to use when performing the first match, and the rule to use for performing every subsequent match.
+Both overloads of the function have additional, optional parameters for specifying the minimum number of repetitions, or both the minimum and maximum number of repetitions.
+Since our list may not be empty, the following rule perfectly captures the <em>token-list</em> grammar:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr auto token_list_rule = range_rule(
+    token_rule( alnum_chars ),
+    tuple_rule( squelch( delim_rule( ',' ) ), token_rule( alnum_chars ) ),
+    1 );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">system::result&lt; range&lt; core::string_view &gt; &gt; rv = parse( "johndoe,janedoe,end", token_list_rule );
+
+for( auto s : rv.value() )
+    std::cout &lt;&lt; s &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>produces this output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">johndoe
+janedoe
+end</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the next section we discuss the available rules which are specific to <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_more"><a class="anchor" href="#_more"></a>More</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These are the rules and compound rules provided by the library.
+For more details please see the corresponding reference sections.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/dec_octet_rule.html" class="xref page">dec_octet_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match an integer from 0 and 255.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/delim_rule.html" class="xref page">delim_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a character literal.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>literal_rule</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a character string exactly.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/not_empty_rule.html" class="xref page">not_empty_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Make a matching empty string into an error instead.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/optional_rule.html" class="xref page">optional_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ignore a rule if parsing fails, leaving
+the input pointer unchanged.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/range_rule.html" class="xref page">range_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a repeating number of elements.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/token_rule.html" class="xref page">token_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a string of characters from a character set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/tuple_rule.html" class="xref page">tuple_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match a sequence of specified rules, in order.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/unsigned_rule.html" class="xref page">unsigned_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match an unsigned integer in decimal form.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/grammar/variant_rule.html" class="xref page">variant_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match one of a set of alternatives specified by rules.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/grammar/range.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="combinators.html">Compound Rules</a></span>
+        <span class="next"><a href="rfc3986.html">RFC 3986</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

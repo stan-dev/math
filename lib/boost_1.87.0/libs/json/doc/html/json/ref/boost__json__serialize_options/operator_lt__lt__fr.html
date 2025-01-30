@@ -1,0 +1,140 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>serialize_options::operator&lt;&lt;</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../boost__json__serialize_options.html" title="serialize_options">
+<link rel="prev" href="allow_infinity_and_nan.html" title="serialize_options::allow_infinity_and_nan">
+<link rel="next" href="../boost__json__serializer.html" title="serializer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="allow_infinity_and_nan.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__json__serialize_options.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost__json__serializer.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr"></a><a class="link" href="operator_lt__lt__fr.html" title="serialize_options::operator&lt;&lt;">serialize_options::operator&lt;&lt;</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id36695"></a>
+Set JSON serialization options on input
+          stream.
+        </p>
+<h6>
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.h0"></a>
+          <span class="phrase"><a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.synopsis"></a></span><a class="link" href="operator_lt__lt__fr.html#json.ref.boost__json__serialize_options.operator_lt__lt__fr.synopsis">Synopsis</a>
+        </h6>
+<p>
+          Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/json/blob/master/include/boost/json/serialize_options.hpp" target="_top">boost/json/serialize_options.hpp</a>&gt;</code>
+        </p>
+<pre class="programlisting"><a href="https://en.cppreference.com/w/cpp/io/basic_ostream" target="_top"><code class="literal">std::ostream</code></a><span class="special">&amp;</span>
+<span class="keyword">operator</span><span class="special">&lt;&lt;(</span>
+    <a href="https://en.cppreference.com/w/cpp/io/basic_ostream" target="_top"><code class="literal">std::ostream</code></a><span class="special">&amp;</span> <span class="identifier">os</span><span class="special">,</span>
+    <a class="link" href="../boost__json__serialize_options.html" title="serialize_options"><code class="literal">serialize_options</code></a> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">opts</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.h1"></a>
+          <span class="phrase"><a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.description"></a></span><a class="link" href="operator_lt__lt__fr.html#json.ref.boost__json__serialize_options.operator_lt__lt__fr.description">Description</a>
+        </h6>
+<p>
+          The function stores serialization options in the private storage of the
+          stream. If the stream fails to allocate necessary private storage, <code class="computeroutput"><span class="identifier">badbit</span></code> will be set on it.
+        </p>
+<h6>
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.h2"></a>
+          <span class="phrase"><a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.return_value"></a></span><a class="link" href="operator_lt__lt__fr.html#json.ref.boost__json__serialize_options.operator_lt__lt__fr.return_value">Return
+          Value</a>
+        </h6>
+<p>
+          Reference to <code class="computeroutput"><span class="identifier">os</span></code>.
+        </p>
+<h6>
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.h3"></a>
+          <span class="phrase"><a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.complexity"></a></span><a class="link" href="operator_lt__lt__fr.html#json.ref.boost__json__serialize_options.operator_lt__lt__fr.complexity">Complexity</a>
+        </h6>
+<p>
+          Amortized constant (due to potential memory allocation by the stream).
+        </p>
+<h6>
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.h4"></a>
+          <span class="phrase"><a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.exception_safety"></a></span><a class="link" href="operator_lt__lt__fr.html#json.ref.boost__json__serialize_options.operator_lt__lt__fr.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Strong guarantee. The stream may throw as configured by <a href="https://en.cppreference.com/w/cpp/io/basic_ios/exceptions" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">ios</span><span class="special">::</span><span class="identifier">exceptions</span></code></a>.
+        </p>
+<h6>
+<a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.h5"></a>
+          <span class="phrase"><a name="json.ref.boost__json__serialize_options.operator_lt__lt__fr.parameters"></a></span><a class="link" href="operator_lt__lt__fr.html#json.ref.boost__json__serialize_options.operator_lt__lt__fr.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">os</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The output stream.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">opts</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The options to store.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+          Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/json/blob/master/include/boost/json.hpp" target="_top">boost/json.hpp</a>&gt;</code>
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="allow_infinity_and_nan.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__json__serialize_options.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost__json__serializer.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

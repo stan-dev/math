@@ -1,0 +1,1916 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.any_8hpp" name="boost/type_erasure/any.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<class id="doxygen.classboost_1_1type__erasure_1_1any" name="any"><template>
+      <template-type-parameter name="Concept"><purpose><para>The  <link linkend="boost_typeerasure.conceptdef">Concept</link> that the stored type should model. </para></purpose></template-type-parameter>
+      <template-type-parameter name="T"><default>_self</default><purpose><para>A <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link> specifying which type this is.</para></purpose></template-type-parameter>
+    </template><description><para>The class template <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> can store any object that models a specific  <link linkend="boost_typeerasure.conceptdef">Concept</link>. It dispatches all the functions defined by the  <link linkend="boost_typeerasure.conceptdef">Concept</link> to the contained type at runtime.</para><para>
+<formalpara><title>See Also:</title><para><link linkend="doxygen.structboost_1_1type__erasure_1_1concept__of">concept_of</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder__of">placeholder_of</link>,  <functionname alt="boost::type_erasure::any_cast">any_cast</functionname>,  <functionname alt="boost::type_erasure::is_empty">is_empty</functionname>,  <functionname alt="boost::type_erasure::binding_of">binding_of</functionname>,  <functionname alt="boost::type_erasure::typeid_of">typeid_of</functionname> </para>
+</formalpara>
+</para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1afb119be36d051c2344f7126d32ad50f2"><description><para>Constructs an empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>Except as otherwise noted, all operations on an empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> result in a <link linkend="doxygen.classboost_1_1type__erasure_1_1bad__function__call">bad_function_call</link> exception. The copy-constructor of an empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> creates another null <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. The destructor of an empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> is a no-op. Comparison operators treat all empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">anys</link> as equal.  <functionname alt="boost::type_erasure::typeid_of">typeid_of</functionname> applied to an empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> returns <computeroutput>typeid(void)</computeroutput>.</para><para>An <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> which does not include <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> in its  <link linkend="boost_typeerasure.conceptdef">Concept</link> can never be null.</para><para>
+
+<formalpara><title>See Also:</title><para> <functionname alt="boost::type_erasure::is_empty">is_empty</functionname> </para>
+</formalpara>
+</para></description><requires><para><link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> must be in <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1af5b16c5418fb098b2c6b1b5389a3bf65"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="data"><paramtype>U &amp;&amp;</paramtype><description><para>The object to store in the <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> to hold a copy of <computeroutput>data</computeroutput>. The <computeroutput>Concept</computeroutput> will be instantiated with the placeholder <computeroutput>T</computeroutput> bound to U.</para><para>
+
+
+
+
+<note><para>This constructor never matches if the argument is an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>, <link linkend="doxygen.classboost_1_1type__erasure_1_1binding">binding</link>, or <link linkend="doxygen.structboost_1_1type__erasure_1_1static__binding">static_binding</link>. </para>
+</note>
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>U</computeroutput> must be <ulink url="../../doc/html/CopyConstructible.html">CopyConstructible</ulink>. </para>
+</requires><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> or whatever that the copy constructor of <computeroutput>U</computeroutput> throws.</simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1a1c2c74ad72d1edd946c359edb017fbc0"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="data"><paramtype>U &amp;&amp;</paramtype><description><para>The object to store in the <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the types that all the placeholders should bind to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> to hold a copy of <computeroutput>data</computeroutput> with explicitly specified placeholder bindings.</para><para>
+
+
+
+
+
+<note><para>This constructor never matches if the argument is an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para>
+</note>
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>U</computeroutput> must be <ulink url="../../doc/html/CopyConstructible.html">CopyConstructible</ulink>. </para>
+</requires><requires><para><computeroutput>Map</computeroutput> is an MPL map with an entry for every non-deduced placeholder referred to by <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput><computeroutput>T</computeroutput> must</computeroutput> map to <computeroutput>U</computeroutput> in <computeroutput>Map</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> or whatever that the copy constructor of <computeroutput>U</computeroutput> throws.</simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1ac42811610dbe84df0fa0c6139fb7b92d"><parameter name="other"><paramtype>const <classname>any</classname> &amp;</paramtype><description><para>The object to make a copy of.</para></description></parameter><description><para>Copies an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must contain <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible&lt;T(const T&amp;)&gt;</link>. (This is included in <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible&lt;T&gt;</link>)</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> or whatever that the copy constructor of the contained type throws. </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1a0622052492f22433cabbce37c4e54839"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to make a copy of.</para></description></parameter><description><para>Upcasts from an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> with stricter requirements to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> with weaker requirements.</para><para>
+
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must contain <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible&lt;T(const T&amp;)&gt;</link>. </para>
+</requires><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>. </para>
+</requires><requires><para>After substituting <computeroutput>T</computeroutput> for <computeroutput>Tag2</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> or whatever that the copy constructor of the contained type throws. </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1aefc063cbcad75f75569db7daee4b4805"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to make a copy of. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the mapping between the placeholders used by the two concepts.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must contain <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible&lt;T(const T&amp;)&gt;</link>. </para>
+</requires><requires><para><computeroutput>Map</computeroutput> must be an MPL map with keys for all the non-deduced placeholders used by <computeroutput>Concept</computeroutput> and values for the corresponding placeholders in <computeroutput>Concept2</computeroutput>. </para>
+</requires><requires><para>After substituting placeholders according to <computeroutput>Map</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> or whatever that the copy constructor of the contained type throws. </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1a43c3200a3d998a02e6d1a350f9577de6"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to make a copy of. </para></description></parameter><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+
+<warning><para>This constructor is potentially dangerous, as it cannot check at compile time whether the arguments match. </para>
+</warning>
+</para></description><requires><para><computeroutput>Concept</computeroutput> must contain <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible&lt;T(const T&amp;)&gt;</link>. </para>
+</requires><requires><para>The type stored in <computeroutput>other</computeroutput> must match the type expected by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>std::bad_alloc</classname> or whatever that the copy constructor of the contained type throws.</simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1a868ce5de3415e641a281888a1b7fbbc6" specifiers="explicit"><template>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="arg"><paramtype>U &amp;&amp;...</paramtype><description><para>The arguments to be passed to the underlying constructor.</para></description></parameter><description><para>Calls a constructor of the contained type. The bindings will be deduced from the arguments.</para><para>
+
+
+
+
+<note><para>This constructor is never chosen if any other constructor can be called instead. </para>
+</note>
+</para></description><requires><para><computeroutput>Concept</computeroutput> must contain an instance of <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible</link> which can be called with these arguments. </para>
+</requires><requires><para>At least one of the arguments must by an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> with the same <computeroutput>Concept</computeroutput> as this. </para>
+</requires><requires><para>The bindings of all the arguments that are <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>'s, must be the same.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> or whatever that the constructor of the contained type throws.</simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_1ab014610a81459974056c07c533de738f" specifiers="explicit"><template>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types. </para></description></parameter><parameter name="arg"><paramtype>U &amp;&amp;...</paramtype><description><para>The arguments to be passed to the underlying constructor.</para></description></parameter><description><para>Calls a constructor of the contained type.</para><para>
+
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must contain a matching instance of <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible</link>. </para>
+</requires><requires><para>The contained type of every argument that is an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>, must be the same as that specified by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>std::bad_alloc</classname> or whatever that the constructor of the contained type throws. </simpara>
+</throws></constructor>
+<copy-assignment id="doxygen.classboost_1_1type__erasure_1_1any_1aba2d6138070211ffaa972aaa0d859cb0"><type><classname>any</classname> &amp;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="other"><paramtype>U &amp;&amp;</paramtype></parameter><description><para>Assigns to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>If an appropriate overload of <link linkend="doxygen.structboost_1_1type__erasure_1_1assignable">assignable</link> is not available and <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>, falls back on constructing from <computeroutput>other</computeroutput>.</para><para><note><para>If <computeroutput>U</computeroutput> is an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>, then this can decide dynamically whether to use construction based on the type stored in other.</para>
+</note>
+
+</para></description><throws><simpara><classname>Whatever</classname> the assignment operator of the contained type throws. When falling back on construction, throws <computeroutput>std::bad_alloc</computeroutput> or whatever the move (or copy) constructor of the contained type throws. In this case move assignment provides the strong exception guarantee. When calling a (move) assignment operator of the contained type, the exception guarantee is whatever the contained type provides. </simpara>
+</throws></copy-assignment>
+<destructor id="doxygen.classboost_1_1type__erasure_1_1any_1aa15bee790d39378c62e952c135965907"><description><para>
+</para></description><requires><para><computeroutput>Concept</computeroutput> includes <link linkend="doxygen.structboost_1_1type__erasure_1_1destructible">destructible&lt;T&gt;</link>. </para>
+</requires></destructor>
+</method-group>
+</class><class-specialization id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4" name="any"><template>
+      <template-type-parameter name="Concept"/>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>Concept</template-arg><template-arg>const T &amp;</template-arg></specialization><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a64161360f07b97f409574796b358e4cf"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="arg"><paramtype>const U &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from a reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a5898e1377de5b54668c001d49f8dca6f"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="arg"><paramtype>const U &amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the actual types that all the placeholders should bind to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from a reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>Map</computeroutput> is an MPL map with an entry for every non-deduced placeholder referred to by <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a5adbca9dc1d5341dfa6d06e26461d9a6"><parameter name="other"><paramtype>const <classname>any</classname> &amp;</paramtype><description><para>The reference to copy.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a66c728844dbb6bd1a8fd797806570023"><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept, T &amp; &gt; &amp;</paramtype><description><para>The reference to copy.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a0efeace6351d4f4747b4086cf5ce7825"><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept, T &gt; &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a31950f4c4ab1077bc54f138cad73c4e1"><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept, T &amp;&amp; &gt; &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1ae32eb7c211c6a790815322526687e109"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>. </para>
+</requires><requires><para>After substituting <computeroutput>T</computeroutput> for <computeroutput>Tag2</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1aa34b735cdbf5e99d9d881dcdaa556688"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the mapping between the two concepts.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with keys for all the non-deduced placeholders used by <computeroutput>Concept</computeroutput> and values for the corresponding placeholders in <computeroutput>Concept2</computeroutput>. </para>
+</requires><requires><para>After substituting placeholders according to <computeroutput>Map</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1ad4ec861a7b16806bf633641da9aef004"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para>The type stored in <computeroutput>other</computeroutput> must match the type expected by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<copy-assignment id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a6cf603197e6e9cd6cd393d34fdc8f8a9"><type><classname>any</classname> &amp;</type><parameter name="other"><paramtype>const <classname>any</classname> &amp;</paramtype></parameter><description><para>Assigns to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><requires><para><link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></copy-assignment>
+<copy-assignment id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01const_01T_01_6_01_4_1a610d0a2226524b1ffb07fb0c6caba41e"><type><classname>any</classname> &amp;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="other"><paramtype>const U &amp;</paramtype></parameter><description><para>Assigns to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><requires><para><link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc.</classname> Provides the strong exception guarantee. </simpara>
+</throws></copy-assignment>
+</method-group>
+</class-specialization><class-specialization id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4" name="any"><template>
+      <template-type-parameter name="Concept"/>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>Concept</template-arg><template-arg>T &amp;</template-arg></specialization><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a78734ecabbf3aa4de89b4c5efe222023"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="arg"><paramtype>U &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from a reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a681653538a9447d7f6c2e385368e7599"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="arg"><paramtype>U &amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the actual types that all the placeholders should bind to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from a reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>Map</computeroutput> is an MPL map with an entry for every non-deduced placeholder referred to by <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a5112ce7eca466476a615e2ff19a9ed3b"><parameter name="other"><paramtype>const <classname>any</classname> &amp;</paramtype><description><para>The reference to copy.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another reference.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a82fbef40e55786d14e564b3767c81bf9"><parameter name="other"><paramtype><classname>any</classname>&lt; Concept, T &gt; &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+</para></description><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a540116e33f2aaeda9fdf8ee1ef939955"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &amp; &gt; &amp;</paramtype><description><para>The reference to copy.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>. </para>
+</requires><requires><para>After substituting <computeroutput>T</computeroutput> for <computeroutput>Tag2</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a45dba8318dd3d6892847504e9096fa10"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>. </para>
+</requires><requires><para>After substituting <computeroutput>T</computeroutput> for <computeroutput>Tag2</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1aca12a701c3527ca8742211aaff509c8f"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &amp; &gt; &amp;</paramtype><description><para>The reference to copy. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the mapping between the two concepts.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with keys for all the non-deduced placeholders used by <computeroutput>Concept</computeroutput> and values for the corresponding placeholders in <computeroutput>Concept2</computeroutput>. </para>
+</requires><requires><para>After substituting placeholders according to <computeroutput>Map</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a28e3042dc388bceba457bf98f8ea118b"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the mapping between the two concepts.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with keys for all the non-deduced placeholders used by <computeroutput>Concept</computeroutput> and values for the corresponding placeholders in <computeroutput>Concept2</computeroutput>. </para>
+</requires><requires><para>After substituting placeholders according to <computeroutput>Map</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a979a0fb1a4a185d8fdf362368ddc610b"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &amp; &gt; &amp;</paramtype><description><para>The reference to copy. </para></description></parameter><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another reference.</para><para>
+
+
+
+</para></description><requires><para>The type stored in <computeroutput>other</computeroutput> must match the type expected by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1aeb67defde2fa8278f40233274a00908a"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para>The type stored in <computeroutput>other</computeroutput> must match the type expected by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<copy-assignment id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_01_4_1a5548a3290a23c9da2f187f8feb3cb0c8"><type><classname>any</classname> &amp;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="other"><paramtype>U &amp;&amp;</paramtype></parameter><description><para>Assigns to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>If an appropriate overload of <link linkend="doxygen.structboost_1_1type__erasure_1_1assignable">assignable</link> is not available and <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>, falls back on constructing from <computeroutput>other</computeroutput>.</para><para>
+</para></description><throws><simpara><classname>Whatever</classname> the assignment operator of the contained type throws. When falling back on construction, can only throw <computeroutput>std::bad_alloc</computeroutput> if <computeroutput>U</computeroutput> is an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> that uses a different <computeroutput>Concept</computeroutput>. In this case assignment provides the strong exception guarantee. When calling the assignment operator of the contained type, the exception guarantee is whatever the contained type provides. </simpara>
+</throws></copy-assignment>
+</method-group>
+</class-specialization><class-specialization id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4" name="any"><template>
+      <template-type-parameter name="Concept"/>
+      <template-type-parameter name="T"/>
+    </template><specialization><template-arg>Concept</template-arg><template-arg>T &amp;&amp;</template-arg></specialization><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1a412e871a14c040392805257e3808f26d"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="arg"><paramtype>U &amp;&amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from a reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1a346cf8190842e22205df5aca3e4f87d7"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="arg"><paramtype>U &amp;&amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the actual types that all the placeholders should bind to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from a reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>U</computeroutput> is a model of <computeroutput>Concept</computeroutput>. </para>
+</requires><requires><para><computeroutput>Map</computeroutput> is an MPL map with an entry for every non-deduced placeholder referred to by <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1a5af1c993431435d6ef03f45db9c35684"><parameter name="other"><paramtype><classname>any</classname>&lt; Concept, T &gt; &amp;&amp;</paramtype><description><para>The reference to copy.</para></description><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another rvalue reference.</para><para>
+
+
+
+</para></description><throws><simpara><classname>Nothing.</classname> Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</simpara>
+<simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1a5e1192589edf88b31a04a9662a2dfee5"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &amp;&amp; &gt; &amp;&amp;</paramtype><description><para>The reference to copy.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another rvalue reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>. </para>
+</requires><requires><para>After substituting <computeroutput>T</computeroutput> for <computeroutput>Tag2</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1ad79f61f609e67ea862203cd588ffe065"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;&amp;</paramtype><description><para>The object to bind the reference to.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> must not refer to any non-deduced placeholder besides <computeroutput>T</computeroutput>. </para>
+</requires><requires><para>After substituting <computeroutput>T</computeroutput> for <computeroutput>Tag2</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1a3061ea20ab7e5bd5fb9b4a90dc424a0d"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &amp;&amp; &gt; &amp;</paramtype><description><para>The reference to copy. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the mapping between the two concepts.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another reference.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with keys for all the non-deduced placeholders used by <computeroutput>Concept</computeroutput> and values for the corresponding placeholders in <computeroutput>Concept2</computeroutput>. </para>
+</requires><requires><para>After substituting placeholders according to <computeroutput>Map</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1a2b7126cc07d47d58d1c7163fd3d93cfe"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;&amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype><description><para>Specifies the mapping between the two concepts.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with keys for all the non-deduced placeholders used by <computeroutput>Concept</computeroutput> and values for the corresponding placeholders in <computeroutput>Concept2</computeroutput>. </para>
+</requires><requires><para>After substituting placeholders according to <computeroutput>Map</computeroutput>, the requirements of <computeroutput>Concept2</computeroutput> must be a superset of the requirements of <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1aa1dced85d1fa081ce0ecacf22947d803"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype>const <classname>any</classname>&lt; Concept2, Tag2 &amp;&amp; &gt; &amp;</paramtype><description><para>The reference to copy. </para></description></parameter><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another rvalue reference.</para><para>
+
+
+
+</para></description><requires><para>The type stored in <computeroutput>other</computeroutput> must match the type expected by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1aff779daf4c93a70ef12726894e299b2e"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Tag2"/>
+        </template><parameter name="other"><paramtype><classname>any</classname>&lt; Concept2, Tag2 &gt; &amp;&amp;</paramtype><description><para>The object to bind the reference to. </para></description></parameter><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype><description><para>Specifies the bindings of placeholders to actual types.</para></description></parameter><description><para>Constructs an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> from another <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+
+</para></description><requires><para>The type stored in <computeroutput>other</computeroutput> must match the type expected by <computeroutput>binding</computeroutput>.</para>
+</requires><postconditions><para>binding_of(*this) == <computeroutput>binding</computeroutput> </para>
+</postconditions><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<copy-assignment id="doxygen.classboost_1_1type__erasure_1_1any_3_01Concept_00_01T_01_6_6_01_4_1af525f3afceb2afb294b3a42cedcbe575"><type><classname>any</classname> &amp;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="other"><paramtype>U &amp;&amp;</paramtype></parameter><description><para>Assigns to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>If an appropriate overload of <link linkend="doxygen.structboost_1_1type__erasure_1_1assignable">assignable</link> is not available and <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>, falls back on constructing from <computeroutput>other</computeroutput>.</para><para>
+</para></description><throws><simpara><classname>Whatever</classname> the assignment operator of the contained type throws. When falling back on construction, can only throw <computeroutput>std::bad_alloc</computeroutput> if <computeroutput>U</computeroutput> is an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> that uses a different <computeroutput>Concept</computeroutput>. In this case assignment provides the strong exception guarantee. When calling the assignment operator of the contained type, the exception guarantee is whatever the contained type provides. </simpara>
+</throws></copy-assignment>
+</method-group>
+</class-specialization><typedef id="doxygen.any_8hpp_1a450551c9531f95f98a97c8193164ac43" name="any_ref"><type><classname>any</classname>&lt; Concept, T &amp; &gt;</type></typedef>
+<typedef id="doxygen.any_8hpp_1ad242b4c6e512f2789fb869e3e889e2ca" name="any_cref"><type><classname>any</classname>&lt; Concept, const T &amp; &gt;</type></typedef>
+<typedef id="doxygen.any_8hpp_1a1da185f45ab7217e818f404b77038b44" name="any_rvref"><type><classname>any</classname>&lt; Concept, T &amp;&amp; &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.any__cast_8hpp" name="boost/type_erasure/any_cast.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<overloaded-function id="doxygen.any__cast_8hpp_1af5fce4e0a865de41e533821e363e548f" name="any_cast"><signature><type>T</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Tag"/>
+        </template><parameter name="arg"><paramtype><classname>any</classname>&lt; Concept, Tag &gt; &amp;</paramtype></parameter></signature><signature><type>T</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Tag"/>
+        </template><parameter name="arg"><paramtype>const <classname>any</classname>&lt; Concept, Tag &gt; &amp;</paramtype></parameter></signature><signature><type>T</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Tag"/>
+        </template><parameter name="arg"><paramtype><classname>any</classname>&lt; Concept, Tag &gt; *</paramtype></parameter></signature><signature><type>T</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Tag"/>
+        </template><parameter name="arg"><paramtype>const <classname>any</classname>&lt; Concept, Tag &gt; *</paramtype></parameter></signature><description><para>Attempts to extract the object that <computeroutput>arg</computeroutput> holds. If casting to a pointer fails,  <functionname alt="boost::type_erasure::any_cast">any_cast</functionname> returns a null pointer. Casting to <computeroutput>void*</computeroutput> always succeeds and returns the address of stored object.</para><para><programlisting language="c++"><link linkend="doxygen.classboost_1_1type__erasure_1_1any">any&lt;mpl::vector&lt;typeid_&lt;&gt;</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible&lt;&gt;</link> &gt; &gt; x(1);
+any_cast&lt;int&gt;(x);      // returns 1
+any_cast&lt;int&amp;&gt;(x);     // returns a reference to the contents of x
+any_cast&lt;double&gt;(x);   // throws bad_any_cast
+any_cast&lt;int*&gt;(&amp;x);    // returns a pointer to the contents of x
+any_cast&lt;void*&gt;(&amp;x);   // returns a pointer to the contents of x
+any_cast&lt;double*&gt;(&amp;x); // returns NULL
+</programlisting></para><para>
+
+
+</para></description><requires><para>if <computeroutput>arg</computeroutput> is a pointer, <computeroutput>T</computeroutput> must be a pointer type. </para>
+</requires><requires><para><computeroutput>Concept</computeroutput> must contain <link linkend="doxygen.structboost_1_1type__erasure_1_1typeid__">typeid_&lt;Tag&gt;</link>.</para>
+</requires><throws><simpara><classname>bad_any_cast</classname> if <computeroutput>arg</computeroutput> doesn't contain an object of type <computeroutput>T</computeroutput> and we're casting to a value or reference. </simpara>
+</throws></overloaded-function>
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.binding_8hpp" name="boost/type_erasure/binding.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<class id="doxygen.classboost_1_1type__erasure_1_1binding" name="binding"><template>
+      <template-type-parameter name="Concept"/>
+    </template><description><para>Stores the binding of a <computeroutput>Concept</computeroutput> to a set of actual types. <computeroutput>Concept</computeroutput> is interpreted in the same way as with <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para></description><method-group name="friend functions">
+<method id="doxygen.classboost_1_1type__erasure_1_1binding_1ac49c3ec6d26f88c0436a5b0396303b77" name="operator=="><type>bool</type><parameter name="lhs"><paramtype>const <classname>binding</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>binding</classname> &amp;</paramtype></parameter><description><para>
+
+</para></description><returns><para>true iff the sets of types that the placeholders bind to are the same for both arguments.</para>
+</returns><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1type__erasure_1_1binding_1a12f0ddf15295cb935b306163b59b7bc8" name="operator!="><type>bool</type><parameter name="lhs"><paramtype>const <classname>binding</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>binding</classname> &amp;</paramtype></parameter><description><para>
+
+</para></description><returns><para>true iff the arguments do not map to identical sets of types.</para>
+</returns><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></method>
+</method-group>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1binding_1acd095d0d0741329384c990ba53fe2442"><description><para>
+
+</para></description><requires><para><link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> must be in <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1binding_1a213a415606f4badea8581315d3504eb6" specifiers="explicit"><template>
+          <template-type-parameter name="Map"/>
+        </template><parameter name=""><paramtype>const Map &amp;</paramtype></parameter><description><para>
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with an entry for each placeholder referred to by <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1binding_1a248e56ff2bebd11181020d6b6bfac1be"><template>
+          <template-type-parameter name="Map"/>
+        </template><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter><description><para>
+
+</para></description><requires><para><computeroutput>Map</computeroutput> must be an MPL map with an entry for each placeholder referred to by <computeroutput>Concept</computeroutput>.</para>
+</requires><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1binding_1a62e7be63cde4d216a565e0fa236e4af8"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>binding</classname>&lt; Concept2 &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>const Map &amp;</paramtype></parameter><description><para>Converts from another set of bindings.</para><para>
+
+</para></description><requires><para>Map must be an MPL map with an entry for each placeholder referred to by <computeroutput>Concept</computeroutput>. The mapped type should be the corresponding placeholder in Concept2.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1binding_1a29d233d696715ae83197d7af39996b09"><template>
+          <template-type-parameter name="Concept2"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>binding</classname>&lt; Concept2 &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter><description><para>Converts from another set of bindings.</para><para>
+
+</para></description><requires><para>Map must be an MPL map with an entry for each placeholder referred to by <computeroutput>Concept</computeroutput>. The mapped type should be the corresponding placeholder in Concept2.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+</throws></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1binding_1ae774fc9a0e6aded708aedc6ec6375f1d"><template>
+          <template-type-parameter name="Placeholders"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>dynamic_binding</classname>&lt; Placeholders &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter><description><para>Converts from another set of bindings.</para><para>
+
+</para></description><requires><para>Map must be an MPL map with an entry for each placeholder referred to by <computeroutput>Concept</computeroutput>. The mapped type should be the corresponding placeholder in Concept2.</para>
+</requires><throws><simpara><classname>std::bad_alloc</classname> </simpara>
+<simpara><classname>std::bad_any_cast</classname> </simpara>
+</throws></constructor>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.binding__of_8hpp" name="boost/type_erasure/binding_of.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.binding__of_8hpp_1a15c13d0013a0f85d3d56a682d33cac6b" name="binding_of"><type>const <classname>binding</classname>&lt; Concept &gt; &amp;</type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="arg"><paramtype>const <classname>any</classname>&lt; Concept, T &gt; &amp;</paramtype></parameter><description><para>
+
+</para></description><returns><para>The type bindings of an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para>
+</returns><throws><simpara><classname>Nothing.</classname> </simpara>
+</throws></function>
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.builtin_8hpp" name="boost/type_erasure/builtin.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1assignable" name="assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>const T&amp;</default></template-type-parameter>
+    </template><description><para>Enables assignment of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> types. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1assignable_1a6f9279e6e074dd6b8159b6aee38d132a" name="apply" specifiers="static"><type>void</type><parameter name="dst"><paramtype>T &amp;</paramtype></parameter><parameter name="src"><paramtype>U</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1copy__constructible" name="copy_constructible"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><inherit access="public">boost::mpl::vector&lt; constructible&lt; _self(const _self &amp;)&gt;, destructible&lt; _self &gt; &gt;</inherit><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible</link> concept allows objects to be copied and destroyed.</para><para><note><para>This concept is defined to match C++ 2003, [lib.copyconstructible]. It is not equivalent to the concept of the same name in C++11. </para>
+</note>
+</para></description></struct><struct id="doxygen.structboost_1_1type__erasure_1_1destructible" name="destructible"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1destructible">destructible</link> concept enables forwarding to the destructor of the contained type. This is required whenever an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> is created by value.</para><para><note><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1destructible">destructible</link> concept rarely needs to be specified explicitly, because it is included in the <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible</link> concept.</para>
+</note>
+<note><para><link linkend="doxygen.structboost_1_1type__erasure_1_1destructible">destructible</link> may not be specialized and may not be passed to  <functionname alt="boost::type_erasure::call">call</functionname> as it depends on the implementation details of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para>
+</note>
+</para></description><method-group name="public static functions">
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1typeid__" name="typeid_"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><description><para>Enables runtime type information. This is required if you want to use  <functionname alt="boost::type_erasure::any_cast">any_cast</functionname> or  <functionname alt="boost::type_erasure::typeid_of">typeid_of</functionname>.</para><para><note><para><link linkend="doxygen.structboost_1_1type__erasure_1_1typeid__">typeid_</link> cannot be specialized because several library components including  <functionname alt="boost::type_erasure::any_cast">any_cast</functionname> would not work correctly if its behavior changed. There is no need to specialize it anyway, since it works for all types. <link linkend="doxygen.structboost_1_1type__erasure_1_1typeid__">typeid_</link> also cannot be passed to  <functionname alt="boost::type_erasure::call">call</functionname>. To access it, use  <functionname alt="boost::type_erasure::typeid_of">typeid_of</functionname>. </para>
+</note>
+</para></description><method-group name="public static functions">
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.call_8hpp" name="boost/type_erasure/call.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<overloaded-function id="doxygen.call_8hpp_1ada936200580091243a2b990891c80739" name="call"><signature><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Op"/>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>const Op &amp;</paramtype></parameter><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter></signature><signature><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Op"/>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype>const Op &amp;</paramtype></parameter><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter></signature><description><para>Dispatches a type erased function.</para><para><computeroutput>Op</computeroutput> must be a primitive concept which is present in <computeroutput>Concept</computeroutput>. Its signature determines how the arguments of  <functionname alt="boost::type_erasure::call">call</functionname> are handled. If the argument is a <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link>,  <functionname alt="boost::type_erasure::call">call</functionname> expects an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> using that <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link>. This <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> is unwrapped by  <functionname alt="boost::type_erasure::call">call</functionname>. The type that it stores must be the same type specified by <computeroutput>binding</computeroutput>. Any arguments that are not placeholders in the signature of <computeroutput>Op</computeroutput> are passed through unchanged.</para><para>If <computeroutput>binding</computeroutput> is not specified, it will be deduced from the arguments. Naturally this requires at least one argument to be an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. In this case, all <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> arguments must have the same <link linkend="doxygen.classboost_1_1type__erasure_1_1binding">binding</link>.</para><para>
+
+Example:</para><para><programlisting language="c++">typedef mpl::vector&lt;
+  <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible&lt;_b&gt;</link>,
+  <link linkend="doxygen.structboost_1_1type__erasure_1_1addable">addable&lt;_a, int, _b&gt;</link> &gt; concept;
+<link linkend="doxygen.classboost_1_1type__erasure_1_1any">any&lt;concept, _a&gt;</link> a = ...;
+<link linkend="doxygen.classboost_1_1type__erasure_1_1any">any&lt;concept, _b&gt;</link> b(call(<link linkend="doxygen.structboost_1_1type__erasure_1_1addable">addable&lt;_a, int, _b&gt;</link>(), a, 10));
+</programlisting></para><para>The signature of <link linkend="doxygen.structboost_1_1type__erasure_1_1addable">addable</link> is <computeroutput>_b(const _a&amp;, const int&amp;)</computeroutput> </para></description><returns><para>The result of the operation. If the result type of the signature of <computeroutput>Op</computeroutput> is a placeholder, the result will be converted to the appropriate <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> type.</para>
+</returns><throws><simpara><classname>bad_function_call</classname> if <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput> and there is a type mismatch.</simpara>
+</throws></overloaded-function>
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.callable_8hpp" name="boost/type_erasure/callable.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1callable" name="callable"><template>
+      <template-type-parameter name="Sig"/>
+      <template-type-parameter name="F"><default>_self</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1callable">callable</link> concept allows an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> to hold function objects. <computeroutput>Sig</computeroutput> is interpreted in the same way as for Boost.Function, except that the arguments and return type are allowed to be placeholders. <computeroutput>F</computeroutput> must be a <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link>.</para><para>Multiple instances of <link linkend="doxygen.structboost_1_1type__erasure_1_1callable">callable</link> can be used simultaneously. Overload resolution works normally. Note that unlike Boost.Function, <link linkend="doxygen.structboost_1_1type__erasure_1_1callable">callable</link> does not provide result_type. It does, however, support <computeroutput>boost::result_of</computeroutput>. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1callable_1ad5b8792bd8465820ec047663b7cd2ec9" name="apply" specifiers="static"><type>R</type><parameter name="f"><paramtype>F &amp;</paramtype></parameter><parameter name="arg"><paramtype>T...</paramtype></parameter><description><para><computeroutput>R</computeroutput> is the result type of <computeroutput>Sig</computeroutput> and <computeroutput>T</computeroutput> is the argument types of <computeroutput>Sig</computeroutput>. </para></description></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.check__match_8hpp" name="boost/type_erasure/check_match.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+
+
+
+<overloaded-function id="doxygen.check__match_8hpp_1a632bc800fa4527dc4a61b532a9c7380a" name="check_match"><signature><type>bool</type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Op"/>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype></parameter><parameter name="f"><paramtype>const Op &amp;</paramtype></parameter><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter></signature><signature><type>bool</type><template>
+          <template-type-parameter name="Op"/>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="f"><paramtype>const Op &amp;</paramtype></parameter><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter></signature><description><para>If <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>, checks whether the arguments to <computeroutput>f</computeroutput> match the types specified by <computeroutput>binding</computeroutput>. If <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is not in <computeroutput>Concept</computeroutput>, returns true. If <computeroutput>binding</computeroutput> is not specified, it will be deduced from the arguments. </para></description></overloaded-function>
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.concept__interface_8hpp" name="boost/type_erasure/concept_interface.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1concept__interface" name="concept_interface"><template>
+      <template-type-parameter name="Concept"><purpose><para>The concept that we're specializing <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> for. One of its placeholders should be <computeroutput>ID</computeroutput>. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Base"><purpose><para>The base of this class. Specializations of <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> must inherit publicly from this type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="ID"><purpose><para>The placeholder representing this type. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Enable"><default>void</default><purpose><para>A dummy parameter that can be used for SFINAE.</para></purpose></template-type-parameter>
+    </template><inherit access="public">Base</inherit><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> class can be specialized to add behavior to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. An <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> inherits from all the relevant specializations of <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link>.</para><para><link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> can be specialized for either primitive or composite concepts. If a concept <computeroutput>C1</computeroutput> contains another concept <computeroutput>C2</computeroutput>, then the library guarantees that the specialization of <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> for <computeroutput>C2</computeroutput> is a base class of the specialization for <computeroutput>C1</computeroutput>. This means that <computeroutput>C1</computeroutput> can safely override members of <computeroutput>C2</computeroutput>.</para><para><link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> may only be specialized for user-defined concepts. The library owns the specializations of its own built in concepts.</para><para>
+The metafunctions <link linkend="doxygen.structboost_1_1type__erasure_1_1derived">derived</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1rebind__any">rebind_any</link>, and <link linkend="doxygen.structboost_1_1type__erasure_1_1as__param">as_param</link> (which can be applied to <computeroutput>Base</computeroutput>) are useful for determining the argument and return types of functions defined in <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link>.</para><para>For dispatching the function use  <functionname alt="boost::type_erasure::call">call</functionname>. </para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.concept__of_8hpp" name="boost/type_erasure/concept_of.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1concept__of" name="concept_of"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>A metafunction returning the concept corresponding to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. It will also work for all bases of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>, so it can be applied to the <computeroutput>Base</computeroutput> parameter of <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link>. </para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1concept__of_1a8d3e9af5e685e419894f34c8aca36533" name="type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><typedef id="doxygen.concept__of_8hpp_1a0d5eb8e33f41ffe7f1e826d8d0fd8d58" name="concept_of_t"><type>typename <classname>::boost::type_erasure::concept_of</classname>&lt; T &gt;::type</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.config_8hpp" name="boost/type_erasure/config.hpp">
+<macro id="doxygen.config_8hpp_1a665e0eef084a3e7c90f4d6c5c1a42964" name="BOOST_TYPE_ERASURE_MAX_FUNCTIONS"><description><para>The maximum number of functions that an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> can have. </para></description></macro>
+<macro id="doxygen.config_8hpp_1a34ab31cd3762182244bd35b936fc33b5" name="BOOST_TYPE_ERASURE_MAX_ARITY"><description><para>The maximum number of arguments that functions in the library support. </para></description></macro>
+<macro id="doxygen.config_8hpp_1ab11c539ab49b362a67a0b5ed01df6fe0" name="BOOST_TYPE_ERASURE_MAX_TUPLE_SIZE"><description><para>The maximum number of elements in a <link linkend="doxygen.classboost_1_1type__erasure_1_1tuple">tuple</link>. </para></description></macro>
+</header>
+<header id="doxygen.constructible_8hpp" name="boost/type_erasure/constructible.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1constructible" name="constructible"><template>
+      <template-type-parameter name="Sig"/>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible</link> concept enables calling the constructor of a type contained by an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. <computeroutput>Sig</computeroutput> should be a function signature. The return type is the placeholder specifying the type to be constructed. The arguments are the argument types of the constructor. The arguments of <computeroutput>Sig</computeroutput> may be placeholders.</para><para><note><para><link linkend="doxygen.structboost_1_1type__erasure_1_1constructible">constructible</link> may not be specialized and may not be passed to  <functionname alt="boost::type_erasure::call">call</functionname> as it depends on the implementation details of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para>
+</note>
+</para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.deduced_8hpp" name="boost/type_erasure/deduced.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1deduced" name="deduced"><template>
+      <template-type-parameter name="Metafunction"/>
+    </template><inherit access="public">boost::type_erasure::placeholder</inherit><description><para>A placeholder for an associated type. The type corresponding to this placeholder is deduced by substituting placeholders in the arguments of the metafunction and then evaluating it.</para><para>When using <link linkend="doxygen.structboost_1_1type__erasure_1_1deduced">deduced</link> in a template context, if it is possible for Metafunction to contain no placeholders at all, use the nested type, to automatically evaluate it early as needed. </para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1deduced_1a69f52f1876bf1a46fa1debf0a405b762" name="type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.derived_8hpp" name="boost/type_erasure/derived.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1derived" name="derived"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>A metafunction which returns the full <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> type, when given any of its base classes. This is primarily intended to be used when implementing <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link>.</para><para><formalpara><title>See Also:</title><para><link linkend="doxygen.structboost_1_1type__erasure_1_1rebind__any">rebind_any</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1as__param">as_param</link> </para>
+</formalpara>
+</para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1derived_1acc3630c98f72adf804e8ff00f527c4b6" name="type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><typedef id="doxygen.derived_8hpp_1a69d6e2a1e00ad579898034f969cea0f5" name="derived_t"><type>typename T::_boost_type_erasure_derived_type</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.dynamic__any__cast_8hpp" name="boost/type_erasure/dynamic_any_cast.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+
+<overloaded-function id="doxygen.dynamic__any__cast_8hpp_1a1c580f0f07a66a57885dbb5881602cb3" name="dynamic_any_cast"><signature><type>R</type><template>
+          <template-type-parameter name="R"/>
+          <template-type-parameter name="Any"/>
+        </template><parameter name="arg"><paramtype>Any &amp;&amp;</paramtype></parameter></signature><signature><type>R</type><template>
+          <template-type-parameter name="R"/>
+          <template-type-parameter name="Any"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="arg"><paramtype>Any &amp;&amp;</paramtype></parameter><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter></signature><description><para>Downcasts or crosscasts an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>
+
+
+The single argument form can only be used when <computeroutput>R</computeroutput> uses a single non-deduced placeholder.</para><para>
+Example: <programlisting language="c++">// Assume that typeid_&lt;&gt;, copy_constructible&lt;&gt;, and incrementable&lt;&gt;
+// have all been registered for int.
+<link linkend="doxygen.classboost_1_1type__erasure_1_1any">any&lt;mpl::vector&lt;typeid_&lt;&gt;</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible&lt;&gt;</link> &gt; &gt; x(1);
+typedef <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>&lt;
+    mpl::vector&lt;
+        <link linkend="doxygen.structboost_1_1type__erasure_1_1typeid__">typeid_&lt;&gt;</link>,
+        <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible&lt;&gt;</link>,
+        <link linkend="doxygen.structboost_1_1type__erasure_1_1incrementable">incrementable&lt;&gt;</link>
+    &gt;
+&gt; incrementable_any;
+auto y = dynamic_any_cast&lt;incrementable_any&gt;(x);
+++y;
+assert(any_cast&lt;int&gt;(y) == 2);
+</programlisting> </para></description><requires><para><computeroutput>R</computeroutput> and <computeroutput>Any</computeroutput> must both be specializations of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para>
+</requires><requires><para>PlaceholderMap must be an MPL map with a key for every non-deduced placeholder used by R. The value associated with each key should be the corresponding placeholder in Any. </para>
+</requires><requires><para>The concept of Any must include <link linkend="doxygen.structboost_1_1type__erasure_1_1typeid__">typeid_</link>, for every <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link> which is used by R.</para>
+</requires><throws><simpara><classname>bad_any_cast</classname> if the concepts used by R were not previously registered via a call to  <functionname alt="boost::type_erasure::register_binding">register_binding</functionname>.</simpara>
+</throws></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.dynamic__binding_8hpp" name="boost/type_erasure/dynamic_binding.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<class id="doxygen.classboost_1_1type__erasure_1_1dynamic__binding" name="dynamic_binding"><template>
+      <template-type-parameter name="PlaceholderList"/>
+    </template><description><para>Maps a set of placeholders to actual types. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1dynamic__binding_1a087e3bdde3f948d44ef45bc5404b1cf0"><template>
+          <template-type-parameter name="Map"/>
+        </template><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1dynamic__binding_1a0522f7d0332020e6031fc39f4d69a639"><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name="other"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter></constructor>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.exception_8hpp" name="boost/type_erasure/exception.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<class id="doxygen.classboost_1_1type__erasure_1_1bad__any__cast" name="bad_any_cast"><inherit access="public">std::bad_cast</inherit><description><para>Exception thrown when an  <functionname alt="boost::type_erasure::any_cast">any_cast</functionname> to a reference or value fails. </para></description></class><class id="doxygen.classboost_1_1type__erasure_1_1bad__function__call" name="bad_function_call"><inherit access="public">std::invalid_argument</inherit><description><para>Exception thrown when the arguments to a primitive concept are incorrect.</para><para><formalpara><title>See Also:</title><para> <functionname alt="boost::type_erasure::call">call</functionname>,  <functionname alt="boost::type_erasure::require_match">require_match</functionname> </para>
+</formalpara>
+</para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1bad__function__call_1a29bcb2c87b613903e2688004a66f3f8d"/>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.free_8hpp" name="boost/type_erasure/free.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+<macro id="doxygen.free_8hpp_1ae806ba32fcd0eb7693b7f7607656b4a5" name="BOOST_TYPE_ERASURE_FREE" kind="functionlike"><macro-parameter name="concept_name"><description><para>is the name of the concept to declare. If it is omitted it defaults to <computeroutput>has_ ## function_name</computeroutput> </para></description></macro-parameter><macro-parameter name="function_name"><description><para>is the name of the function.</para></description></macro-parameter><purpose>Defines a primitive concept for a free function. </purpose><description><para>
+The declaration of the concept is <programlisting language="c++">template&lt;class Sig&gt;
+struct concept_name;
+</programlisting> where Sig is a function type giving the signature of the function.</para><para>This macro can only be used at namespace scope.</para><para>Example:</para><para><programlisting language="c++">BOOST_TYPE_ERASURE_FREE(to_string)
+typedef has_to_string&lt;std::string(_self const&amp;)&gt; to_string_concept;
+</programlisting></para><para>In C++03, the macro can only be used in the global namespace and is defined as:</para><para><programlisting language="c++">#define BOOST_TYPE_ERASURE_FREE(qualified_name, function_name, N)
+</programlisting></para><para>Example:</para><para><programlisting language="c++">BOOST_TYPE_ERASURE_FREE((boost)(has_to_string), to_string, 1)
+</programlisting></para><para>For backwards compatibility, this form is always accepted. </para></description></macro>
+</header>
+<header id="doxygen.is__empty_8hpp" name="boost/type_erasure/is_empty.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+
+
+<function id="doxygen.is__empty_8hpp_1a7fa6d1cf45480824810168c57b31d6b4" name="is_empty"><type>bool</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="arg"><paramtype>const T &amp;</paramtype></parameter><description><para>Returns true for an empty <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.is__placeholder_8hpp" name="boost/type_erasure/is_placeholder.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1is__placeholder" name="is_placeholder"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>A metafunction that indicates whether a type is a <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link>. </para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.is__subconcept_8hpp" name="boost/type_erasure/is_subconcept.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1is__subconcept" name="is_subconcept"><template>
+      <template-type-parameter name="Sub"><purpose><para>The sub concept </para></purpose></template-type-parameter>
+      <template-type-parameter name="Super"><purpose><para>The super concept </para></purpose></template-type-parameter>
+      <template-type-parameter name="PlaceholderMap"><default>void</default><purpose><para>(optional) An MPL map with keys for every non-deduced placeholder in Sub. The associated value of each key is the corresponding placeholder in Super. If <computeroutput>PlaceholderMap</computeroutput> is omitted, <computeroutput>Super</computeroutput> and <computeroutput>Sub</computeroutput> are presumed to use the same set of placeholders. </para></purpose></template-type-parameter>
+    </template><inherit access="public">boost::mpl::and_::type</inherit><description><para><link linkend="doxygen.structboost_1_1type__erasure_1_1is__subconcept">is_subconcept</link> is a boolean metafunction that determines whether one concept is a sub-concept of another.</para><para><programlisting language="c++">is_subconcept&lt;incrementable&lt;&gt;, incrementable&lt;&gt; &gt;             -&gt; true
+is_subconcept&lt;incrementable&lt;&gt;, addable&lt;&gt; &gt;                   -&gt; false
+is_subconcept&lt;incrementable&lt;_a&gt;, forward_iterator&lt;_iter&gt;,
+  mpl::map&lt;mpl::pair&lt;_a, _iter&gt; &gt; &gt;                          -&gt; true
+</programlisting></para><para>
+</para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.iterator_8hpp" name="boost/type_erasure/iterator.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1bidirectional__iterator" name="bidirectional_iterator"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="Reference"><default>boost::use_default</default></template-type-parameter>
+      <template-type-parameter name="DifferenceType"><default>std::ptrdiff_t</default></template-type-parameter>
+    </template><inherit access="public">boost::type_erasure::iterator&lt; boost::bidirectional_traversal_tag, _self, boost::use_default, std::ptrdiff_t &gt;</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1forward__iterator" name="forward_iterator"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="Reference"><default>boost::use_default</default></template-type-parameter>
+      <template-type-parameter name="DifferenceType"><default>std::ptrdiff_t</default></template-type-parameter>
+    </template><inherit access="public">boost::type_erasure::iterator&lt; boost::forward_traversal_tag, _self, boost::use_default, std::ptrdiff_t &gt;</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1iterator" name="iterator"><template>
+      <template-type-parameter name="Traversal"><purpose><para>must be one of <computeroutput>boost::incrementable_traversal_tag</computeroutput>, <computeroutput>boost::single_pass_traversal_tag</computeroutput>, <computeroutput>boost::forward_traversal_tag</computeroutput>, <computeroutput>boost::bidirectional_traversal_tag</computeroutput>, and <computeroutput>boost::random_access_traversal_tag</computeroutput>. </para></purpose></template-type-parameter>
+      <template-type-parameter name="T"><default>_self</default><purpose><para>The placeholder representing the iterator. </para></purpose></template-type-parameter>
+      <template-type-parameter name="Reference"><default>boost::use_default</default><purpose><para>The reference type. If it is boost::use_default, then reference will be value_type&amp;. </para></purpose></template-type-parameter>
+      <template-type-parameter name="DifferenceType"><default>std::ptrdiff_t</default><purpose><para>The iterator's difference type.</para></purpose></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1iterator">iterator</link> concept can be used for any iterator category.</para><para>
+The value_type of the iterator is deduced. To force it to be a specific type, use the <link linkend="doxygen.structboost_1_1type__erasure_1_1same__type">same_type</link> concept.</para><para>Example:</para><para><programlisting language="c++">mpl::vector&lt;
+  iterator&lt;boost::forward_traversal_tag&gt;,
+  same_type&lt;iterator&lt;boost::forward_traversal_tag&gt;::value_type, int&gt; &gt; int_it;
+</programlisting> </para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1iterator_1a1ab454eff9d428f75797c28d84c9acf2" name="value_type"><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.structboost_1_1type__erasure_1_1iterator_1a5b6f51b8c58277a18b91d1c941b5ba9e" name="reference"><type>Reference</type></typedef>
+<typedef id="doxygen.structboost_1_1type__erasure_1_1iterator_1a0fcadfa5bd6a454924da50dffaaf8e4e" name="difference_type"><type>DifferenceType</type></typedef>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1random__access__iterator" name="random_access_iterator"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="Reference"><default>boost::use_default</default></template-type-parameter>
+      <template-type-parameter name="DifferenceType"><default>std::ptrdiff_t</default></template-type-parameter>
+    </template><inherit access="public">boost::type_erasure::iterator&lt; boost::random_access_traversal_tag, _self, boost::use_default, std::ptrdiff_t &gt;</inherit></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.member_8hpp" name="boost/type_erasure/member.hpp">
+<macro id="doxygen.member_8hpp_1a771e65c5691af968398c9c6c5842475a" name="BOOST_TYPE_ERASURE_MEMBER" kind="functionlike"><macro-parameter name="concept_name"><description><para>is the name of the concept to declare. If it is omitted it defaults to <computeroutput>has_ ## member</computeroutput> </para></description></macro-parameter><macro-parameter name="member"><description><para>is the name of the member function.</para></description></macro-parameter><purpose>Defines a primitive concept for a member function. </purpose><description><para>
+The declaration of the concept is <programlisting language="c++">template&lt;class Sig, class T = _self&gt;
+struct concept_name;
+</programlisting> where <computeroutput>Sig</computeroutput> is a function type giving the signature of the member function, and <computeroutput>T</computeroutput> is the object type. <computeroutput>T</computeroutput> may be const-qualified for const member functions. <computeroutput>concept_name&lt;R(A...) const, T&gt;</computeroutput> is an alias for <computeroutput>concept_name&lt;R(A...), const T&gt;</computeroutput>.</para><para>This macro can only be used at namespace scope.</para><para>Example:</para><para><programlisting language="c++">namespace boost {
+BOOST_TYPE_ERASURE_MEMBER(push_back)
+}
+typedef boost::has_push_back&lt;void(int)&gt; push_back_concept;
+</programlisting></para><para>The concept defined by this function may be specialized to provide a concept_map. The class object will be passed by reference as the first parameter.</para><para><programlisting language="c++">template&lt;&gt;
+struct has_push_back&lt;void(int), std::list&lt;int&gt; &gt; {
+  static void apply(std::list&lt;int&gt;&amp; l, int i) { l.push_back(i); }
+};
+</programlisting></para><para>In C++03, the macro can only be used in the global namespace and is defined as:</para><para><programlisting language="c++">#define BOOST_TYPE_ERASURE_MEMBER(qualified_name, member, N)
+</programlisting></para><para>Example:</para><para><programlisting language="c++">BOOST_TYPE_ERASURE_MEMBER((boost)(has_push_back), push_back, 1)
+typedef boost::has_push_back&lt;void(int), _self&gt; push_back_concept;
+</programlisting></para><para>For backwards compatibility, this form is always accepted. </para></description></macro>
+</header>
+<header id="doxygen.operators_8hpp" name="boost/type_erasure/operators.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1add__assignable" name="add_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1add__assignable_1a4a7029fc55c2b100487d8cf52190106c" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1addable" name="addable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1addable_1a4cb254e01c0d8e70d292c8e02bcae59a" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1bitand__assignable" name="bitand_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1bitand__assignable_1a822c059e1da998adfd6d443843311924" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1bitandable" name="bitandable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1bitandable_1a2e272df07411010333de7cf48b3fe2cd" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1bitor__assignable" name="bitor_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1bitor__assignable_1ae7ce260d2275c67864fd40b28b871e6c" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1bitorable" name="bitorable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1bitorable_1a7844694049c5b35ee5c7a02545fcd8fc" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1bitxor__assignable" name="bitxor_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1bitxor__assignable_1afd6ccd7da906884ad949c9dcd6546b0d" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1bitxorable" name="bitxorable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1bitxorable_1ac7852166a6328902ce2bc19fa6634e52" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1complementable" name="complementable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1complementable">complementable</link> concept allow use of the bitwise complement operator on an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1complementable_1a90fee3ca36f97315b7b3609f2381d2bb" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1decrementable" name="decrementable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1decrementable">decrementable</link> concept allow pre and post decrement on an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. The contained type must provide a pre-decrement operator. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1decrementable_1a934610c9b0007f88ba5d16a1b923f80d" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1dereferenceable" name="dereferenceable"><template>
+      <template-type-parameter name="R"/>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1dereferenceable_1a246891ee08c5adc9863be5189d9367a3" name="apply" specifiers="static"><type>R</type><parameter name="arg"><paramtype>const T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1dividable" name="dividable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1dividable_1a38cbb1b509b3d47406645574c9e0efc1" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1divide__assignable" name="divide_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1divide__assignable_1a5e888cfa5a9ae19e72ab51c2cbfe0aef" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1equality__comparable" name="equality_comparable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1equality__comparable_1ad0836004b294509539115c2d41780814" name="apply" specifiers="static"><type>bool</type><parameter name="lhs"><paramtype>const T &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1incrementable" name="incrementable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1incrementable">incrementable</link> concept allow pre and post increment on an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. The contained type must provide a pre-increment operator. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1incrementable_1af99f43456b734a8f2e0e5fa795b639ec" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1istreamable" name="istreamable"><template>
+      <template-type-parameter name="Is"><default>std::istream</default></template-type-parameter>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1istreamable">istreamable</link> concept allows an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> to be read from a <computeroutput>std::istream</computeroutput>. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1istreamable_1afcc272905faee96af13c5bdeb13e9e16" name="apply" specifiers="static"><type>void</type><parameter name="out"><paramtype>Is &amp;</paramtype></parameter><parameter name="arg"><paramtype>T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1left__shift__assignable" name="left_shift_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1left__shift__assignable_1a42086113b441f9f718108d4b42a4fbb1" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1left__shiftable" name="left_shiftable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1left__shiftable_1a9d5a188113ec8b4c7bd7285e324abf6a" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1less__than__comparable" name="less_than_comparable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1less__than__comparable_1aedd3faec7c318794406b6102bce82421" name="apply" specifiers="static"><type>bool</type><parameter name="lhs"><paramtype>const T &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1mod__assignable" name="mod_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1mod__assignable_1a2dbce7f53ae96e5a5f334fa48a614abb" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1modable" name="modable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1modable_1ad10c2c15fc0db66aa50fd5e914cabb3c" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1multipliable" name="multipliable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1multipliable_1a74683be2da169bfec85cb40dd6d068bc" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1multiply__assignable" name="multiply_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1multiply__assignable_1a8185867ec961a41ab3646bc8851ff4ff" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1negatable" name="negatable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1negatable">negatable</link> concept allow use of the unary minus operator on an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1negatable_1af4cbf20af9d546d7b7592bc300daf40a" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1ostreamable" name="ostreamable"><template>
+      <template-type-parameter name="Os"><default>std::ostream</default></template-type-parameter>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+    </template><description><para>The <link linkend="doxygen.structboost_1_1type__erasure_1_1ostreamable">ostreamable</link> concept allows an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> to be written to a <computeroutput>std::ostream</computeroutput>. </para></description><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1ostreamable_1a53df3cb43cf6e0dedbf8f96774cfa08a" name="apply" specifiers="static"><type>void</type><parameter name="out"><paramtype>Os &amp;</paramtype></parameter><parameter name="arg"><paramtype>const T &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1right__shift__assignable" name="right_shift_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1right__shift__assignable_1a2c0f34bb9f2222a9c0ae3265d67a3145" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1right__shiftable" name="right_shiftable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1right__shiftable_1a18cf287d981c9eccfeff997f64f4389e" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1subscriptable" name="subscriptable"><template>
+      <template-type-parameter name="R"/>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="N"><default>std::ptrdiff_t</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1subscriptable_1a83a20faaa91a8815bccf43db4a2a82bc" name="apply" specifiers="static"><type>R</type><parameter name="arg"><paramtype>T &amp;</paramtype></parameter><parameter name="index"><paramtype>const N &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1subtract__assignable" name="subtract_assignable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1subtract__assignable_1a877ea92cd30ca6efb44a7ae87c6f5951" name="apply" specifiers="static"><type>void</type><parameter name=""><paramtype>T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.structboost_1_1type__erasure_1_1subtractable" name="subtractable"><template>
+      <template-type-parameter name="T"><default>_self</default></template-type-parameter>
+      <template-type-parameter name="U"><default>T</default></template-type-parameter>
+      <template-type-parameter name="R"><default>T</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.structboost_1_1type__erasure_1_1subtractable_1a54531cc9a456eb25f5a15161bfc56ef4" name="apply" specifiers="static"><type>R</type><parameter name=""><paramtype>const T &amp;</paramtype></parameter><parameter name=""><paramtype>const U &amp;</paramtype></parameter></method>
+</method-group>
+</struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.param_8hpp" name="boost/type_erasure/param.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1as__param" name="as_param"><template>
+      <template-type-parameter name="Any"/>
+      <template-type-parameter name="T"/>
+    </template><purpose>Metafunction that creates a <link linkend="doxygen.classboost_1_1type__erasure_1_1param">param</link>. </purpose><description><para>If <computeroutput>T</computeroutput> is a (cv/reference qualified) placeholder, returns <link linkend="doxygen.classboost_1_1type__erasure_1_1param">param</link>&lt;<link linkend="doxygen.structboost_1_1type__erasure_1_1concept__of">concept_of&lt;Any&gt;::type</link>, T&gt;, otherwise, returns T. This metafunction is intended to be used for function arguments in specializations of <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link>.</para><para><formalpara><title>See Also:</title><para><link linkend="doxygen.structboost_1_1type__erasure_1_1derived">derived</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1rebind__any">rebind_any</link> </para>
+</formalpara>
+</para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1as__param_1ab2a1350b84fc07106f1714a33c837516" name="type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><class id="doxygen.classboost_1_1type__erasure_1_1param" name="param"><template>
+      <template-type-parameter name="Concept"/>
+      <template-type-parameter name="T"/>
+    </template><purpose>A wrapper to help with overload resolution for functions operating on an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </purpose><description><para>The template arguments are interpreted in the same way as <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>A parameter of type <link linkend="doxygen.classboost_1_1type__erasure_1_1param">param</link> can be initialized with an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> that has the same <computeroutput>Concept</computeroutput> and base placeholder when there exists a corresponding standard conversion for the placeholder. A conversion sequence from <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any&lt;C, P&gt;</link> to <link linkend="doxygen.classboost_1_1type__erasure_1_1param">param&lt;C, P1&gt;</link> is a better conversion sequence than <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any&lt;C, P&gt;</link> to <link linkend="doxygen.classboost_1_1type__erasure_1_1param">param&lt;C, P2&gt;</link> iff the corresponding placeholder standard conversion sequence from P to P1 is a better conversion sequence than P to P2.</para><para><note><para>Overloading based on cv-qualifiers and rvalue-ness is only supported in C++11. In C++03, all conversion sequences from <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> to <link linkend="doxygen.classboost_1_1type__erasure_1_1param">param</link> have the same rank.</para>
+</note>
+Example:</para><para><programlisting language="c++">void f(param&lt;C, _a&amp;&gt;);
+void f(param&lt;C, const _a&amp;&gt;);
+void g(param&lt;C, const _a&amp;&gt;);
+void g(param&lt;C, _a&amp;&amp;&gt;);
+
+any&lt;C, _a&gt; a;
+f(any&lt;C, _a&gt;()); // calls void f(param&lt;C, const _a&amp;&gt;);
+f(a);            // calls void f(param&lt;C, _a&amp;&gt;); (ambiguous in C++03)
+g(any&lt;C, _a&gt;()); // calls void g(param&lt;C, _a&amp;&amp;&gt;); (ambiguous in C++03)
+g(a);            // calls void g(param&lt;C, const _a&amp;&gt;);
+</programlisting> </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1param_1a76885554008c4474ba6bed0d40d7d1c5"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="a"><paramtype><classname>any</classname>&lt; Concept, U &gt; &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1param_1ab7cb7526ce743e111ee95c9764bbe9ce"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="a"><paramtype>const <classname>any</classname>&lt; Concept, U &gt; &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.classboost_1_1type__erasure_1_1param_1a0d587c967d17b98794f55233d9d265f0"><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="a"><paramtype><classname>any</classname>&lt; Concept, U &gt; &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1type__erasure_1_1param_1a94bf58ed13cab6509966c38802446b57" name="get" cv="const"><type><classname>any</classname>&lt; Concept, T &gt;</type><description><para>Returns the stored <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. </para></description></method>
+</method-group>
+</class><typedef id="doxygen.param_8hpp_1a5d5acc083b3f15b3d0fc3659d145341c" name="as_param_t"><type>typename <classname>::boost::type_erasure::as_param</classname>&lt; Any, T &gt;::type</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.placeholder_8hpp" name="boost/type_erasure/placeholder.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1__a" name="_a"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__b" name="_b"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__c" name="_c"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__d" name="_d"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__e" name="_e"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__f" name="_f"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__g" name="_g"><inherit access="public">boost::type_erasure::placeholder</inherit></struct><struct id="doxygen.structboost_1_1type__erasure_1_1__self" name="_self"><inherit access="public">boost::type_erasure::placeholder</inherit><purpose>The default placeholder. </purpose><description><para><link linkend="doxygen.structboost_1_1type__erasure_1_1__self">_self</link> is the default <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link> used by <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. It should be used as a default by most concepts, so using concepts with no explicit arguments will "just work" as much as possible. </para></description></struct><struct id="doxygen.structboost_1_1type__erasure_1_1placeholder" name="placeholder"><description><para>Placeholders are used heavily throughout the library. Every placeholder must derive from <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link>. The library provides a number of placeholders, out of the box, but you are welcome to define your own, if you want more descriptive names. The placeholder <link linkend="doxygen.structboost_1_1type__erasure_1_1__self">_self</link> is special in that it is used as the default wherever possible.</para><para>What exactly is a placeholder? Placeholders act as a substitute for template parameters in concepts. The library automatically replaces all the placeholders used in a concept with the actual types involved when it stores an object in an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>For example, in the following,</para><para><programlisting language="c++">any&lt;copy_constructible&lt;_a&gt;, _a&gt; x(1);
+</programlisting></para><para>The library sees that we're constructing an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> that uses the <link linkend="doxygen.structboost_1_1type__erasure_1_1__a">_a</link> placeholder with an <computeroutput>int</computeroutput>. Thus it binds <link linkend="doxygen.structboost_1_1type__erasure_1_1__a">_a</link> to int and instantiates <link linkend="doxygen.structboost_1_1type__erasure_1_1copy__constructible">copy_constructible&lt;int&gt;</link>.</para><para>When there are multiple placeholders involved, you will have to use <link linkend="doxygen.classboost_1_1type__erasure_1_1tuple">tuple</link>, or pass the bindings explicitly, but the substitution still works the same way. </para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.placeholder__of_8hpp" name="boost/type_erasure/placeholder_of.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1placeholder__of" name="placeholder_of"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>A metafunction returning the (const/reference qualified) placeholder corresponding to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. It will also work for all bases of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>, so it can be applied to the <computeroutput>Base</computeroutput> parameter of <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link>. </para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1placeholder__of_1a62adf4c8ad00165e8f22d5baa950dd54" name="type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><typedef id="doxygen.placeholder__of_8hpp_1acabdc71b95b878c3a8a2488f6b1d6af5" name="placeholder_of_t"><type>typename <classname>::boost::type_erasure::placeholder_of</classname>&lt; T &gt;::type</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.rebind__any_8hpp" name="boost/type_erasure/rebind_any.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1rebind__any" name="rebind_any"><template>
+      <template-type-parameter name="Any"/>
+      <template-type-parameter name="T"/>
+    </template><description><para>A metafunction that changes the <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link> of an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. If <computeroutput>T</computeroutput> is not a placeholder, returns <computeroutput>T</computeroutput> unchanged. This class is intended to be used in <link linkend="doxygen.structboost_1_1type__erasure_1_1concept__interface">concept_interface</link> to deduce the argument types from the arguments of the concept.</para><para>
+<programlisting language="c++">rebind_any&lt;any&lt;Concept&gt;, _a&gt;::type -&gt; any&lt;Concept, _a&gt;
+rebind_any&lt;any&lt;Concept&gt;, _b&amp;&gt;::type -&gt; any&lt;Concept, _b&amp;&gt;
+rebind_any&lt;any&lt;Concept&gt;, _c&amp;&amp;&gt;::type -&gt; any&lt;Concept, _c&amp;&amp;&gt;
+rebind_any&lt;any&lt;Concept&gt;, int&gt;::type -&gt; int
+</programlisting></para><para><formalpara><title>See Also:</title><para><link linkend="doxygen.structboost_1_1type__erasure_1_1derived">derived</link>, <link linkend="doxygen.structboost_1_1type__erasure_1_1as__param">as_param</link> </para>
+</formalpara>
+</para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1rebind__any_1abfed0e99e6a41f2ad24afca51421c362" name="type"><type><emphasis>unspecified</emphasis></type></typedef>
+</struct><typedef id="doxygen.rebind__any_8hpp_1aef5b97826270ae1fbf43d0da62666b82" name="rebind_any_t"><type>typename <classname>::boost::type_erasure::rebind_any</classname>&lt; Any, T &gt;::type</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.register__binding_8hpp" name="boost/type_erasure/register_binding.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+
+
+<overloaded-function id="doxygen.register__binding_8hpp_1aaea65e5d0c0b9908a16d4ebc0ef1e3ae" name="register_binding"><signature><type>void</type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Map"/>
+        </template><parameter name=""><paramtype>const <classname>static_binding</classname>&lt; Map &gt; &amp;</paramtype></parameter></signature><signature><type>void</type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="T"/>
+        </template></signature><description><para>Registers a model of a concept to allow downcasting <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> via  <functionname alt="boost::type_erasure::dynamic_any_cast">dynamic_any_cast</functionname>. </para></description></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.relaxed_8hpp" name="boost/type_erasure/relaxed.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1is__relaxed" name="is_relaxed"><template>
+      <template-type-parameter name="Concept"/>
+    </template><inherit access="public">boost::mpl::eval_if::type</inherit><description><para>A metafunction indicating whether <computeroutput>Concept</computeroutput> includes <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link>. </para></description></struct><struct id="doxygen.structboost_1_1type__erasure_1_1relaxed" name="relaxed"><inherit access="public">boost::mpl::vector0&lt;&gt;</inherit><description><para>This special concept enables various useful default behavior that makes <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> act like an ordinary object. By default <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> forwards all operations to the underlying type, and provides only the operations that are specified in its <computeroutput>Concept</computeroutput>.</para><para>In detail, <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> enables the following:<itemizedlist>
+<listitem><para>A raw value can be assigned to an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. This will replace the value stored by the <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>. (But note that if <link linkend="doxygen.structboost_1_1type__erasure_1_1assignable">assignable</link> is present, it takes priority.)</para>
+</listitem><listitem><para>assignment of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> uses the constructor if it can't use <link linkend="doxygen.structboost_1_1type__erasure_1_1assignable">assignable</link> (either because <link linkend="doxygen.structboost_1_1type__erasure_1_1assignable">assignable</link> is missing, or because the stored types do not match).</para>
+</listitem><listitem><para>default construction of <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> is allowed and creates a null any.</para>
+</listitem><listitem><para><link linkend="doxygen.structboost_1_1type__erasure_1_1equality__comparable">equality_comparable</link>: If the types do not match, it will return false.</para>
+</listitem><listitem><para><link linkend="doxygen.structboost_1_1type__erasure_1_1less__than__comparable">less_than_comparable</link>: If the types do not match, the ordering will be according to <computeroutput>std::type_info::before</computeroutput>.</para>
+</listitem><listitem><para>if the arguments to any other function do not match, it will throw a <link linkend="doxygen.classboost_1_1type__erasure_1_1bad__function__call">bad_function_call</link> exception instead of having undefined behavior. </para>
+</listitem></itemizedlist>
+</para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.require__match_8hpp" name="boost/type_erasure/require_match.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+
+
+
+
+
+<overloaded-function id="doxygen.require__match_8hpp_1a82e677bf045fb0860fd6e311029cc467" name="require_match"><signature><type>void</type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="Op"/>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype></parameter><parameter name="f"><paramtype>const Op &amp;</paramtype></parameter><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter></signature><signature><type>void</type><template>
+          <template-type-parameter name="Op"/>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="f"><paramtype>const Op &amp;</paramtype></parameter><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter></signature><description><para>Checks that the actual types stored in all the <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> arguments match the types specified by <computeroutput>binding</computeroutput>. If they do not match then,<itemizedlist>
+<listitem><para>If <link linkend="doxygen.structboost_1_1type__erasure_1_1relaxed">relaxed</link> is in <computeroutput>Concept</computeroutput>, throws <link linkend="doxygen.classboost_1_1type__erasure_1_1bad__function__call">bad_function_call</link>.</para>
+</listitem><listitem><para>Otherwise the behavior is undefined.</para>
+</listitem></itemizedlist>
+</para><para>If <computeroutput>binding</computeroutput> is not specified, it will be deduced from the arguments.</para><para>
+</para></description><postconditions><para> <functionname alt="boost::type_erasure::call">call</functionname><computeroutput>(binding, f, args...)</computeroutput> is valid. </para>
+</postconditions></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.same__type_8hpp" name="boost/type_erasure/same_type.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1same__type" name="same_type"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="U"/>
+    </template><description><para>A built in concept that indicates that two types are the same. Either T or U or both can be placeholders.</para><para><warning><para>Any number of instances of <link linkend="doxygen.structboost_1_1type__erasure_1_1deduced">deduced</link> can be connected with <link linkend="doxygen.structboost_1_1type__erasure_1_1same__type">same_type</link>, but there should be at most one regular placeholder in the group. same_type&lt;_a, _b&gt; is not allowed. The reason for this is that the library needs to normalize all the placeholders, and in this context there is no way to decide whether to use <link linkend="doxygen.structboost_1_1type__erasure_1_1__a">_a</link> or <link linkend="doxygen.structboost_1_1type__erasure_1_1__b">_b</link>. </para>
+</warning>
+</para></description></struct>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.static__binding_8hpp" name="boost/type_erasure/static_binding.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<struct id="doxygen.structboost_1_1type__erasure_1_1static__binding" name="static_binding"><template>
+      <template-type-parameter name="Map"/>
+    </template><description><para>Represents a mapping from placeholders to the actual types that they bind to.</para><para>
+</para></description><typedef id="doxygen.structboost_1_1type__erasure_1_1static__binding_1a1f17edf004387a345472204edb8ccebd" name="map_type"><type>Map</type></typedef>
+</struct>
+
+
+
+<function id="doxygen.static__binding_8hpp_1ad9a09602519794ce3b9eaaa2904d8483" name="make_binding"><type><classname>static_binding</classname>&lt; Map &gt;</type><template>
+          <template-type-parameter name="Map"/>
+        </template><description><para>A convenience function to prevent constructor calls from being parsed as function declarations. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.tuple_8hpp" name="boost/type_erasure/tuple.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<class id="doxygen.classboost_1_1type__erasure_1_1tuple" name="tuple"><template>
+      <template-type-parameter name="Concept"/>
+      <template-nontype-parameter name="T"><type>class...</type></template-nontype-parameter>
+    </template><description><para><link linkend="doxygen.classboost_1_1type__erasure_1_1tuple">tuple</link> is a Boost.Fusion Random Access Sequence containing <link linkend="doxygen.classboost_1_1type__erasure_1_1any">anys</link>. <computeroutput>Concept</computeroutput> specifies the  <link linkend="boost_typeerasure.conceptdef">Concept</link> for each of the elements. The remaining arguments must be (possibly const and/or reference qualified) placeholders, which are the <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholders</link> of the elements. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1type__erasure_1_1tuple_1aadc3d889825ace65738deef54369d3a1" specifiers="explicit"><template>
+          <template-nontype-parameter name="U"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>U &amp;&amp;...</paramtype></parameter><description><para>Constructs a tuple. Each element of <computeroutput>args</computeroutput> will be used to initialize the corresponding <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> member. The <link linkend="doxygen.classboost_1_1type__erasure_1_1binding">binding</link> for the tuple elements is determined by mapping the placeholders in <computeroutput>T</computeroutput> to the corresponding types in <computeroutput>U</computeroutput>. </para></description></constructor>
+</method-group>
+</class>
+
+<overloaded-function id="doxygen.tuple_8hpp_1aa17abe19ad3f218c8d22f7c00aa09ac5" name="get"><signature><type><classname>any</classname>&lt; Concept, TN &gt; &amp;</type><template>
+          <template-nontype-parameter name="N"><type>int</type></template-nontype-parameter>
+          <template-type-parameter name="Concept"/>
+          <template-nontype-parameter name="T"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="arg"><paramtype><classname>tuple</classname>&lt; Concept, T... &gt; &amp;</paramtype></parameter></signature><signature><type>const <classname>any</classname>&lt; Concept, TN &gt; &amp;</type><template>
+          <template-nontype-parameter name="N"><type>int</type></template-nontype-parameter>
+          <template-type-parameter name="Concept"/>
+          <template-nontype-parameter name="T"><type>class...</type></template-nontype-parameter>
+        </template><parameter name="arg"><paramtype>const <classname>tuple</classname>&lt; Concept, T... &gt; &amp;</paramtype></parameter></signature><description><para>Returns the Nth <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link> in the tuple. </para></description></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.typeid__of_8hpp" name="boost/type_erasure/typeid_of.hpp">
+<namespace name="boost">
+<namespace name="type_erasure">
+<overloaded-function id="doxygen.typeid__of_8hpp_1ab78e80ef4c5cde5f1b978093811c67ad" name="typeid_of"><signature><type>const std::type_info &amp;</type><template>
+          <template-type-parameter name="Concept"/>
+          <template-type-parameter name="T"/>
+        </template><parameter name="arg"><paramtype>const <classname>any</classname>&lt; Concept, T &gt; &amp;</paramtype></parameter></signature><signature><type>const std::type_info &amp;</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Concept"/>
+        </template><parameter name="binding"><paramtype>const <classname>binding</classname>&lt; Concept &gt; &amp;</paramtype></parameter></signature><description><para>The first form returns the type currently stored in an <link linkend="doxygen.classboost_1_1type__erasure_1_1any">any</link>.</para><para>The second form returns the type corresponding to a placeholder in <computeroutput>binding</computeroutput>.</para><para>
+
+</para></description><requires><para><computeroutput>Concept</computeroutput> includes <link linkend="doxygen.structboost_1_1type__erasure_1_1typeid__">typeid_&lt;T&gt;</link>. </para>
+</requires><requires><para><computeroutput>T</computeroutput> is a non-reference, CV-unqualified <link linkend="doxygen.structboost_1_1type__erasure_1_1placeholder">placeholder</link>. </para>
+</requires></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

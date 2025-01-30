@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="cgs_base_units_reference"><title>CGS Base Units Reference</title><header id="doxygen.cgs_base_units_reference.biot_8hpp" name="boost/units/base_units/cgs/biot.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_base_units_reference.namespaceboost_1_1units_1_1cgs_1a70ac872a927642246bccff9781edcfeb" name="biot_base_unit"><type>scaled_base_unit&lt; boost::units::si::ampere_base_unit, scale&lt; 10, static_rational&lt;+1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_base_units_reference.centimeter_8hpp" name="boost/units/base_units/cgs/centimeter.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<typedef id="doxygen.cgs_base_units_reference.namespaceboost_1_1units_1_1cgs_1af1b0a02aab9dcc03453f0831b12dedbe" name="centimeter_base_unit"><type>scaled_base_unit&lt; boost::units::si::meter_base_unit, scale&lt; 10, static_rational&lt;-2 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.cgs_base_units_reference.gram_8hpp" name="boost/units/base_units/cgs/gram.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="cgs">
+<struct id="doxygen.cgs_base_units_reference.structboost_1_1units_1_1cgs_1_1gram__base__unit" name="gram_base_unit"><inherit access="public">base_unit&lt; gram_base_unit, mass_dimension, -8 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.cgs_base_units_reference.structboost_1_1units_1_1cgs_1_1gram__base__unit_1a57f22a2c9ff7d365231f282e82230ecf" name="name" specifiers="static"><type>std::string</type></method>
+<method id="doxygen.cgs_base_units_reference.structboost_1_1units_1_1cgs_1_1gram__base__unit_1aa675ef59586b7340f7b4b2ba39a08bf6" name="symbol" specifiers="static"><type>std::string</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

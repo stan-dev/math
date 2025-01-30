@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Finicky :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/examples/finicky.html">
+    <link rel="prev" href="qrcode.html">
+    <link rel="next" href="mailto.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="qrcode.html">QR Code</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Examples</li>
+    <li><a href="finicky.html">Finicky</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="qrcode.html"><span class="material-symbols-outlined" title="Previous: QR Code">arrow_back</span></a>
+    <a accesskey="p" href="mailto.html"><span class="material-symbols-outlined" title="Next: mailto URLs">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Finicky</h1>
+  <div class="paragraph">
+<p>This example shows how to classify URLs according to a set of rules.
+It is inspired by <a href="https://github.com/johnste/finicky" target="blank_">Finicky</a> application.</p>
+</div>
+<div class="paragraph">
+<p>The URLs are classified and redirected to a browser according to their category.
+See the example <code>config.json</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">/*
+    This example shows how to classify URLs
+    according to a set of rules. This example is
+    inspired by Finicky. The URLs are classified
+    and redirected to a browser according to their
+    category. See the example config.json file.
+    https://github.com/johnste/finicky
+*/
+
+#include &lt;boost/url/url.hpp&gt;
+#include &lt;boost/url/parse.hpp&gt;
+#include &lt;boost/system/result.hpp&gt;
+#include &lt;boost/json/stream_parser.hpp&gt;
+#include &lt;boost/core/detail/string_view.hpp&gt;
+#include &lt;boost/regex.hpp&gt;
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+
+namespace urls = boost::urls;
+namespace json = boost::json;
+namespace core = boost::core;
+
+json::value
+read_json( std::istream&amp; is, json::error_code&amp; ec )
+{
+    json::parse_options opt;
+    opt.allow_comments = true;
+    json::stream_parser p(json::storage_ptr(), opt);
+    std::string line;
+    while( std::getline( is, line ) )
+    {
+        p.write( line, ec );
+        if( ec )
+            return nullptr;
+    }
+    p.finish( ec );
+    if( ec )
+        return nullptr;
+    return p.release();
+}
+
+bool
+glob_match(
+    core::string_view pattern,
+    core::string_view str)
+{
+    // regex
+    if (str.starts_with("/") &amp;&amp;
+        str.ends_with("/"))
+    {
+        const boost::regex pr(pattern.begin() + 1, pattern.end() - 1);
+        return boost::regex_match(std::string(str), pr);
+    }
+
+    // literal
+    if (!pattern.contains('*'))
+    {
+        return pattern == str;
+    }
+
+    // glob
+    std::string p = pattern;
+    std::size_t i = p.find('*');
+    while (i != std::string::npos)
+    {
+        auto e = std::min(p.find_first_not_of('*', i), p.size());
+        std::size_t n = e - i;
+        if (n == 1)
+        {
+            p.replace(i, e, "[^/]*");
+            i += 5;
+        }
+        else
+        {
+            p.replace(i, e, ".*");
+            i += 2;
+        }
+        i = p.find('*', i);
+    }
+    const boost::regex pr(p);
+    return boost::regex_match(std::string(str), pr);
+}
+
+bool
+url_match(
+    json::value&amp; mv,
+    urls::url const&amp; u)
+{
+    if (mv.is_string())
+    {
+        json::string&amp; p = mv.as_string();
+        return glob_match(u.buffer(), p);
+    }
+    else if (mv.is_array())
+    {
+        json::array&amp; m = mv.as_array();
+        for (auto&amp; mi: m)
+        {
+            if (!mi.is_string())
+                throw std::invalid_argument(
+                    "handle match is not a string");
+            if (glob_match(mi.as_string(), u.buffer()))
+                return true;
+        }
+    }
+    else if (mv.is_object())
+    {
+        json::object&amp; m = mv.as_object();
+        std::pair&lt;core::string_view, core::string_view&gt;
+            field_values[] = {
+                {"protocol",  u.scheme()},
+                {"authority", u.encoded_authority()},
+                {"username",  u.encoded_user()},
+                {"user",      u.encoded_user()},
+                {"password",  u.encoded_password()},
+                {"userinfo",  u.encoded_userinfo()},
+                {"host",      u.encoded_host()},
+                {"port",      u.port()},
+                {"path",      u.encoded_path()},
+                {"pathname",  u.encoded_path()},
+                {"query",     u.encoded_query()},
+                {"search",    u.encoded_query()},
+                {"fragment",  u.encoded_fragment()},
+                {"hash",      u.encoded_fragment()},
+            };
+        for (auto&amp; p: field_values)
+        {
+            auto it = m.find(p.first);
+            if (it != m.end())
+            {
+                if (!it-&gt;value().is_string())
+                    throw std::invalid_argument(
+                        "match fields should be a strings");
+                if (glob_match(p.second, p.first))
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
+#define CHECK(c, msg)             \
+    if (!(c))                     \
+    {                             \
+        std::cerr &lt;&lt; msg &lt;&lt; "\n"; \
+        return EXIT_FAILURE;      \
+    }
+
+int main(int argc, char** argv)
+{
+    if (argc &lt; 3) {
+        std::cout &lt;&lt; argv[0] &lt;&lt; "\n";
+        std::cout &lt;&lt; "Usage: finicky &lt;config&gt; &lt;url&gt;\n"
+                     "options:\n"
+                     "    &lt;config&gt;: Configuration file\n"
+                     "    &lt;url&gt;:    The url to open\n"
+                     "examples:\n"
+                     "    finicky config.json \"http://www.example.com\"\n";
+        return EXIT_FAILURE;
+    }
+
+    // Parse url
+    boost::system::result&lt;urls::url&gt; ru = urls::parse_uri(argv[2]);
+    CHECK(ru, "Invalid URL");
+    urls::url u = *ru;
+
+    // Open config file
+    std::fstream fin(argv[1]);
+    CHECK(fin.good(), "Cannot open configuration file");
+    json::error_code ec;
+    json::value c = read_json(fin, ec);
+    CHECK(!ec.failed(), "Cannot parse configuration file");
+    CHECK(c.is_object(), "Configuration file is not an object");
+    json::object&amp; o = c.as_object();
+
+    // Set initial browser
+    auto bit = o.find("defaultBrowser");
+    CHECK(
+        bit != o.end(),
+        "Configuration file has no defaultBrowser");
+    CHECK(
+        bit-&gt;value().is_string(),
+        "defaultBrowser should be a string");
+    json::string&amp; browser = bit-&gt;value().as_string();
+
+    // Apply rewrites to the input string
+    auto rsit = o.find("rewrite");
+    if (rsit != o.end())
+    {
+        CHECK(
+            rsit-&gt;value().is_array(),
+            "rewrite rules should be an array");
+        auto&amp; rs = rsit-&gt;value().as_array();
+        for (auto&amp; rv: rs)
+        {
+            CHECK(
+                rv.is_object(),
+                "individual rewrite rule should be an object");
+            json::object&amp; r = rv.as_object();
+
+            // Look for match
+            auto mit = r.find("match");
+            CHECK(
+                mit != r.end(),
+                "rewrite rule should have a match field");
+            CHECK(
+                mit-&gt;value().is_object() || mit-&gt;value().is_string(),
+                "rewrite match field is not an object");
+            if (!url_match(mit-&gt;value(), u))
+                continue;
+
+            // Apply replacement rule
+            auto uit = r.find("url");
+            CHECK(
+                uit != r.end(),
+                "rewrite rule should have a url field");
+            CHECK(
+                uit-&gt;value().is_object() ||
+                uit-&gt;value().is_string(),
+                "url field must be an object or string");
+
+            if (uit-&gt;value().is_string())
+            {
+                json::string&amp; uo = uit-&gt;value().as_string();
+                auto ru1 = urls::parse_uri(uo);
+                CHECK(ru1, "url " &lt;&lt; uo.c_str() &lt;&lt; " is invalid");
+                u = *ru;
+            }
+            else
+            {
+                json::object&amp; uo = uit-&gt;value().as_object();
+                auto it = uo.find("protocol");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "protocol field should be a string");
+                    u.set_scheme(it-&gt;value().as_string());
+                }
+
+                it = uo.find("authority");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "authority field should be a string");
+                    u.set_encoded_authority(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("username");
+                if (it == uo.end())
+                    it = uo.find("user");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "username field should be a string");
+                    u.set_encoded_user(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("password");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "password field should be a string");
+                    u.set_encoded_password(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("userinfo");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "userinfo field should be a string");
+                    u.set_encoded_userinfo(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("host");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "host field should be a string");
+                    u.set_encoded_host(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("port");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "port field should be a string");
+                    u.set_port(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("path");
+                if (it == uo.end())
+                    it = uo.find("pathname");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "path field should be a string");
+                    u.set_encoded_path(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("query");
+                if (it == uo.end())
+                    it = uo.find("search");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "query field should be a string");
+                    u.set_encoded_query(
+                        it-&gt;value().as_string().subview());
+                }
+
+                it = uo.find("fragment");
+                if (it == uo.end())
+                    it = uo.find("hash");
+                if (it != uo.end())
+                {
+                    CHECK(
+                        it-&gt;value().is_string(),
+                        "fragment field should be a string");
+                    u.set_encoded_fragment(
+                        it-&gt;value().as_string().subview());
+                }
+            }
+        }
+    }
+
+    // Determine which browser should handle the url
+    auto hsit = o.find("handlers");
+    if (hsit != o.end())
+    {
+        CHECK(
+            hsit-&gt;value().is_array(),
+            "handler rules should be an array");
+        auto&amp; hs = hsit-&gt;value().as_array();
+        for (auto&amp; hv: hs)
+        {
+            CHECK(
+                hv.is_object(),
+                "individual handlers should be an object");
+            json::object&amp; h = hv.as_object();
+
+            auto mit = h.find("match");
+            CHECK(
+                mit != h.end(),
+                "handle rule should have a match field");
+            CHECK(
+                mit-&gt;value().is_string() || mit-&gt;value().is_array(),
+                "handle match field must be an array or a string");
+
+            auto hbit = h.find("browser");
+            CHECK(
+                hbit != h.end(),
+                "handle rule should have a browser field");
+            CHECK(
+                hbit-&gt;value().is_string(),
+                "browser field is not a string");
+
+            // Look for match and change browser
+            if (url_match(mit-&gt;value(), u))
+            {
+                browser = hbit-&gt;value().as_string().subview();
+                break;
+            }
+        }
+    }
+
+    // Print command finicky would run
+    std::cout &lt;&lt; "\"" &lt;&lt; browser.c_str() &lt;&lt; "\" " &lt;&lt; u &lt;&lt; '\n';
+
+    return EXIT_SUCCESS;
+}</code></pre>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/examples/finicky.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="qrcode.html">QR Code</a></span>
+        <span class="next"><a href="mailto.html">mailto URLs</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

@@ -1,0 +1,324 @@
+{#
+Copyright (c) 2024 Dmitry Arkhipov (grisumbras@yandex.ru)
+
+Distributed under the Boost Software License, Version 1.0. (See accompanying
+file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+Official repository: https://github.com/boostorg/json
+
+
+This template produces API reference in QuickBook format
+
+The template expects its context to contain an `entities` variable, which is a
+mapping from entity reference to an object of class Entity (see below). Some
+properties of entities are objects of formatting classes, which represent a
+formatting hierarchy very similar to that of HTML.
+
+The template also expects a Config global dictionary that contains
+configuration parameters from the merged JSON config files passed to the docca
+program. By default the dictionary looks like this:
+{
+    "include_private": False
+}
+In adition:
+* It uses "default_namespace" Config key to only output entities in a specific
+    namespace.
+* It uses "link_prefix" Config key as prefix for every generated cross-link.
+* It uses "convenience_header" Config key for "Convenience Header" subsections.
+* It uses "show_defaulted" Config key to determine whether to display if a
+  function was explicitly defaulted (`= default`).
+* It uses "replace_strings" Config key to replace certain text strings. E.g.
+  "replace_strings": { "__see_below__": "``['see-below]``" } replaces all
+  occurances of the string "__see_below__" with the string "``['see-below]``"
+  (which is QuickBook markup to temporally exit codeblock environment, write
+  "see-below" using italic font type, then enter codeblock environment again).
+
+  Another example: "replace_strings": {"class InputIt":
+  "class ``[@https://en.cppreference.com/w/cpp/named_req/InputIterator [^InputIt]]``"}.
+  This wraps any occurance of "class InputIt" with a link to C++ named
+  requirement LegacyInputIterator on the C++ Reference wiki.
+
+The template also expects to have these classes (not their intances!)
+as globals:
+
+class Access:
+    public = 'public'
+    protected = 'protected'
+    private = 'private'
+
+class FunctionKind:
+    static = 'static'
+    nonstatic = 'nonstatic'
+    friend = 'friend'
+    free = 'free'
+
+class VirtualKind:
+    nonvirtual = 'non-virtual'
+    purevirtual = 'pure-virtual'
+    virtual = 'virtual'
+
+Formatting class hierarchy:
+
+class Phrase(): # phrasing content without particluar semantics
+                # similar to HTML <span>
+    text -> str # all text with formatting removed
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> Linebreak|Phrase|str # parts of this phrase
+
+class Linebreak(): # linebreak, similar to HTML <br>
+    pass
+
+class Emphasised(Phrase): # emphasised text, similar to HTML <em>
+    pass
+
+class Strong(Phrase): # strongly emphasised text, similar to HTML <strong>
+    pass
+
+class Monospaced(Phrase): # monospaced text, similar to HTML <tt>
+    pass
+
+class EntityRef(Phrase): # text with associated entity
+    entity -> Entity
+
+class UrlLink(Phrase): # a direct full or relative link, similar to HTML <a>
+    url -> str
+
+class Block(): # A single block or hierarchy of blocks
+    pass
+
+class Paragraph(Block): # A single text paragraph
+    def __len__(self): -> int
+    def __getitem__(self, pos) -> Phrase|Linebreak|str
+
+class List(Block):
+    is_ordered -> bool
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> ListItem
+
+class ListItem(Block):
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> Block
+
+class Section(Block): # A sequence of blocks with an optional title
+    See = 'see'
+    Returns = 'return'
+    Author = 'author'
+    Authors = 'authors'
+    Version = 'version'
+    Since = 'since'
+    Date = 'date'
+    Note = 'note'
+    Warning = 'warning'
+    Preconditions = 'pre'
+    Postconditions = 'post'
+    Copyright = 'copyright'
+    Invariants = 'invariant'
+    Remarks = 'remark'
+    Attention = 'attention'
+    Custom = 'par'
+    RCS = 'rcs'
+
+    kind -> str # some sections are special
+    title -> Paragraph|None
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> Block
+
+class ParameterList(Block):
+    parameters = 'param'
+    return_values = 'retval'
+    exceptions = 'exception'
+    template_parameters = 'templateparam'
+
+    self.kind -> str # 'param', 'templateparam', etc
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> ParameterDescription
+
+class ParameterDescription(Block):
+    self.description = [Block]
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> ParameterItem
+
+class ParameterItem(Block):
+    self.type -> Phrase
+    self.name -> Phrase
+    self.direction -> str # 'in', 'out', or 'inout'
+    is_in -> bool
+    is_out -> bool
+
+class CodeBlock(Block): # A block of code; effectively a sequence of code lines
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> [str]
+
+class Table(Block): # A table
+    cols -> int
+    width = None|str
+    caption = None|Paragraph
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> [[Cell]]
+
+class Cell(Block): # A table cell
+    col_span -> int
+    row_span -> int
+    is_header -> bool
+    horizontal_align -> str
+    vertical_align -> str
+    width -> None|str
+    role -> None|str
+
+    def __len__(self) -> int
+    def __getitem__(self, pos) -> [Block]
+
+
+Entity class hierarchy:
+
+class Location():
+    file -> None|str
+    line -> None|int
+    column -> Nonw|int
+
+class Entity():
+    id -> str # equal to the entity's key in the top entities mapping
+    name -> str
+    access -> str # access specifier
+    scope -> Scope
+
+    brief -> [Block]
+    description -> [Block]
+
+    location -> Location
+    fully_qualified_name -> str
+    path -> [str] # list of names of parent scopes starting from the topmost
+                  # and ending with the entity's name itself
+
+    def __lt__(self, other) -> bool # entities are ordered by their name
+
+class Templatable(Entity):
+    template_parameters = [Parameter]
+    is_specialization -> bool
+
+class Type(Templatable):
+    declarator -> str # 'class', 'enum', etc.
+    objects -> [Variable]
+
+class Scope(Entity):
+    members -> dict[str, Entity|OverloadSet]
+
+class Namespace(Scope):
+    declarator = 'namespace' -> str
+
+class TypeAlias(Type):
+    declarator = 'using' -> str
+    aliased -> Phrase # type aliased by this one
+
+class Class(Scope, Type):
+    declarator = 'class' -> str
+    bases -> [Generalization]
+
+class Struct(Class):
+    declarator = 'struct' -> str
+
+class Union(Class):
+    declarator = 'union' -> str
+
+class Enum(Scope, Type):
+    declarator -> str # 'enum class' if is_scoped, otherwise 'enum'
+    is_scoped -> bool
+    underlying_type -> Phrase
+
+class Value(Templatable):
+    is_static -> bool
+    is_constexpr -> bool
+    is_volatile -> bool
+    is_const -> bool
+    is_inline -> bool
+
+class Variable(Value):
+    type -> Phrase
+    value -> Value
+
+class Function(Value):
+    is_explicit -> bool
+    is_noexcept -> bool
+    is_friend -> bool
+    is_free -> bool
+    is_constructor -> bool
+    is_destructor -> bool
+    is_sole_overload -> bool
+    is_deleted -> bool
+    is_defaulted -> bool
+    refqual -> str|None # 'lvalue', 'rvalue', or None
+    virtual_kind -> str # 'virtual', 'non-virtual', or 'pure-virtual'
+    overload_set -> OverloadSet
+    return_type -> Phrase
+    parameters -> [Parameter]
+    noexcept_condition -> str|None
+
+    overload_index -> int # -1 if is_sole_overload, otherwise the overload's
+                          # index in the overload set
+
+    kind -> str # 'static', 'nonstatic', 'friend', or 'free'
+
+    def __lt__(self, other) -> bool # overloads from the same overload set are
+                                    # ordered by overload_index;
+                                    # functions from different scopes are
+                                    # ordered by scope;
+                                    # for functions in different overload sets
+                                    # of the same scope:
+                                    # constructors are ordered first;
+                                    # destructors are ordered second;
+                                    # other functions are ordered by name.
+
+class OverloadSet():
+    def __len__(self) -> int               # OverloadSet is a sequence
+    def __getitem__(self, pos) -> Function # of Functions
+
+    def __lt__(self, other) -> bool # overload sets are ordered by their
+                                    # first functions
+
+    def __getattr__(self, name) # OverloadSet acts as a proxy to its first
+                                # function
+
+class Parameter():
+    name -> str
+    type -> Phrase
+    array -> Phrase
+    default_value -> Phrase
+    brief = [Block]
+
+class Generalization():
+    is_virtual -> bool
+    access -> str
+    base -> Phrase # EntityRef if the base is documented
+
+For each of these classes the template environment contains a corrsponding
+test, so that objects can be tested for being instances of those classes,
+e.g. `obj is Enum`. In addition, the class Section is available as a global
+for its constants.
+
+The context also contains the Python module re as "re" global.
+
+Finally, Jinja extensions "jinja2.ext.do", and "jinja2.ext.loopcontrols"
+are enabled.
+
+#}
+
+
+{% import "docca/quickbook/components.jinja2" as comps -%}
+
+{% for entity in entities.values() -%}
+    {% if entity is not Namespace -%}
+        {% continue %}
+    {%- endif -%}
+    {% if Config.get('default_namespace')
+        and entity.fully_qualified_name != Config.default_namespace -%}
+        {% continue %}
+    {%- endif -%}
+
+    {{ comps.write_namespace(entity) }}
+{%- endfor %}

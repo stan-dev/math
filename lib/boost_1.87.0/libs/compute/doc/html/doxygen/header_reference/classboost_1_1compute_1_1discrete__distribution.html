@@ -1,0 +1,109 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template discrete_distribution</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.discrete__distribution_8hpp" title="Header &lt;boost/compute/random/discrete_distribution.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1bernoulli__distribution.html" title="Class template bernoulli_distribution">
+<link rel="next" href="classboost_1_1compute_1_1linear__congruential__engine.html" title="Class template linear_congruential_engine">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1bernoulli__distribution.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.discrete__distribution_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1linear__congruential__engine.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template discrete_distribution</span></h2>
+<p>boost::compute::discrete_distribution — Produces random integers on the interval [0, n), where probability of each integer is given by the weight of the ith integer divided by the sum of all weights. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.discrete__distribution_8hpp" title="Header &lt;boost/compute/random/discrete_distribution.hpp&gt;">boost/compute/random/discrete_distribution.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> IntType <span class="special">=</span> <span class="identifier">uint_</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html" title="Class template discrete_distribution">discrete_distribution</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">IntType</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a49114f5b24eb97cdce900cefe7e77d77"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#id75-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1af583a4c6a1df475bea5c84d921b5cb18"><span class="identifier">discrete_distribution</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InputIterator<span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1acdd9c33f6008bb10d0be6ac09fbabe8c"><span class="identifier">discrete_distribution</span></a><span class="special">(</span><span class="identifier">InputIterator</span><span class="special">,</span> <span class="identifier">InputIterator</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1acc0d9a5e28531e6d057d802c803804a4"><span class="special">~</span><span class="identifier">discrete_distribution</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">::</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="keyword">double</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a14085d34e641eaece16416f1adfe466d"><span class="identifier">probabilities</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <span class="identifier">min</span> <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a768260ca4ad3a1d916e022c56e364c5b"><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <span class="identifier">max</span> <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a9ccff7aa557bc4ce7d29bfa103a939c9"><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">,</span> <span class="keyword">typename</span> Generator<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a2b4c9ccfcc986e698c4ef1cc93e4086b"><span class="identifier">generate</span></a><span class="special">(</span><span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">OutputIterator</span><span class="special">,</span> <span class="identifier">Generator</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#id76-bb">private member functions</a></span>
+   <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html#doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1ae219407396ca418b015bf940772c71b8"><span class="identifier">BOOST_STATIC_ASSERT_MSG</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_integral</span><span class="special">&lt;</span> <span class="identifier">IntType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> 
+                           <span class="string">"Template argument must be integral"</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id35917"></a><h2>Description</h2>
+<p>The following example shows how to setup a discrete distribution to produce 0 and 1 with equal probability</p>
+<pre class="programlisting"></pre>
+<p> </p>
+<div class="refsect2">
+<a name="id35922"></a><h3>
+<a name="id75-bb"></a><code class="computeroutput">discrete_distribution</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1af583a4c6a1df475bea5c84d921b5cb18"></a><span class="identifier">discrete_distribution</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new discrete distribution with a single weight p = { 1 }. This distribution produces only zeroes. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InputIterator<span class="special">&gt;</span> 
+  <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1acdd9c33f6008bb10d0be6ac09fbabe8c"></a><span class="identifier">discrete_distribution</span><span class="special">(</span><span class="identifier">InputIterator</span> first<span class="special">,</span> <span class="identifier">InputIterator</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new discrete distribution with weights given by the range [<code class="computeroutput">first</code>, <code class="computeroutput">last</code>). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1acc0d9a5e28531e6d057d802c803804a4"></a><span class="special">~</span><span class="identifier">discrete_distribution</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the <a class="link" href="classboost_1_1compute_1_1discrete__distribution.html" title="Class template discrete_distribution">discrete_distribution</a> object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="special">::</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="keyword">double</span> <span class="special">&gt;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a14085d34e641eaece16416f1adfe466d"></a><span class="identifier">probabilities</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the probabilities. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <span class="identifier">min</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a768260ca4ad3a1d916e022c56e364c5b"></a><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the minimum potentially generated value. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">result_type</span> <span class="identifier">max</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a9ccff7aa557bc4ce7d29bfa103a939c9"></a><span class="identifier">BOOST_PREVENT_MACRO_SUBSTITUTION</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the maximum potentially generated value. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> OutputIterator<span class="special">,</span> <span class="keyword">typename</span> Generator<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1a2b4c9ccfcc986e698c4ef1cc93e4086b"></a><span class="identifier">generate</span><span class="special">(</span><span class="identifier">OutputIterator</span> first<span class="special">,</span> <span class="identifier">OutputIterator</span> last<span class="special">,</span> 
+                <span class="identifier">Generator</span> <span class="special">&amp;</span> generator<span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre>
+<p>Generates uniformly distributed integers and stores them to the range [<code class="computeroutput">first</code>, <code class="computeroutput">last</code>). </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id36029"></a><h3>
+<a name="id76-bb"></a><code class="computeroutput">discrete_distribution</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"> <a name="doxygen.header_reference.classboost_1_1compute_1_1discrete__distribution_1ae219407396ca418b015bf940772c71b8"></a><span class="identifier">BOOST_STATIC_ASSERT_MSG</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_integral</span><span class="special">&lt;</span> <span class="identifier">IntType</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> 
+                         <span class="string">"Template argument must be integral"</span><span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1bernoulli__distribution.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.discrete__distribution_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1linear__congruential__engine.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Macro BOOST_CONTRACT_BASE_TYPES</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Contract 1.0.0">
+<link rel="up" href="../../reference.html#doxygen.reference.base__types_8hpp" title="Header &lt;boost/contract/base_types.hpp&gt;">
+<link rel="prev" href="assert_8hpp_1a7307c58ac849a68b216a876a60f9aabc.html" title="Macro BOOST_CONTRACT_ASSERT_AXIOM">
+<link rel="next" href="structboost_1_1contract_1_1call__if__statement.html" title="Struct template call_if_statement">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="assert_8hpp_1a7307c58ac849a68b216a876a60f9aabc.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.base__types_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1contract_1_1call__if__statement.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference.base__types_8hpp_1a084692eafa31120a150c79bd0178383f"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Macro BOOST_CONTRACT_BASE_TYPES</span></h2>
+<p>BOOST_CONTRACT_BASE_TYPES — Used to program the <code class="computeroutput">typedef</code> that lists the bases of a derived class. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference.html#doxygen.reference.base__types_8hpp" title="Header &lt;boost/contract/base_types.hpp&gt;">boost/contract/base_types.hpp</a>&gt;
+
+</span>BOOST_CONTRACT_BASE_TYPES(...)</pre></div>
+<div class="refsect1">
+<a name="id35741"></a><h2>Description</h2>
+<p>In order to support subcontracting, a derived class that specifies contracts for one or more overriding public functions must declare a <code class="computeroutput">typedef</code> named <code class="computeroutput">base_types</code> (or  <code class="computeroutput"><a class="link" href="config_8hpp_1a25403805359610408446a1e236146592.html" title="Macro BOOST_CONTRACT_BASES_TYPEDEF">BOOST_CONTRACT_BASES_TYPEDEF</a></code>) using this macro: @code
+    class u
+        #define BASES public b, protected virtual w1, private w2
+        : BASES
+    {
+        friend class boost::contract:access;
+
+        typedef BOOST_CONTRACT_BASE_TYPES(BASES) base_types;
+        #undef BASES
+
+        ...
+    };
+@endcode
+ This <code class="computeroutput">typedef</code> must be <code class="computeroutput">public</code> unless  <code class="computeroutput"><a class="link" href="classboost_1_1contract_1_1access.html" title="Class access">boost::contract::access</a></code> is used.</p>
+<p><b>See Also: </b> <a class="link" href="../../boost_contract/tutorial.html#boost_contract.tutorial.base_classes__subcontracting_" title="Base Classes (Subcontracting)"> Base Classes</a></p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">...</code></span></p></td>
+<td><p>Comma separated list of base classes. Each base must explicitly specify its access specifier <code class="computeroutput">public</code>, <code class="computeroutput">protected</code>, or <code class="computeroutput">private</code>, and also <code class="computeroutput">virtual</code> when present (this not always required in C++ instead). There is a limit of about 20 maximum bases that can be listed (because of similar limits in Boost.MPL internally used by this library). This is a variadic macro parameter, on compilers that do not support variadic macros, the <code class="computeroutput">typedef</code> for base classes can be programmed manually without using this macro (see  <a class="link" href="../../boost_contract/extras.html#boost_contract.extras.no_macros__and_no_variadic_macros_" title="No Macros (and No Variadic Macros)"> No Macros</a>). </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2019 Lorenzo Caminiti<p>
+        Distributed under the Boost Software License, Version 1.0 (see accompanying
+        file LICENSE_1_0.txt or a copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="assert_8hpp_1a7307c58ac849a68b216a876a60f9aabc.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.base__types_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1contract_1_1call__if__statement.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

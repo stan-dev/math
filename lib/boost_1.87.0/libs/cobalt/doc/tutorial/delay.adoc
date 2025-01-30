@@ -1,0 +1,30 @@
+== delay
+Let's start with the simplest example possible: a simple delay.
+
+.example/delay.cpp
+[example]
+[source,cpp]
+----
+include::../../example/delay.cpp[tag=timer_example]
+----
+<1> The <<main, co_main>> function defines an implicit `main` when used
+and is the easiest way to set up an environment to run asynchronous code.
+<2> Take the executor from the current coroutine promise.
+<3> Use an argument to set the timeout
+<4> Perform the wait by using <<use_op, cobalt::use_op>>.
+<5> Return a value that gets returned from the implicit main.
+
+In this example we use the <<main>> header, which provides us with a main coroutine if `co_main`
+is defined as above. This has a few advantages:
+
+ - The environment get set up correctly (`executor` & `memory`)
+ - asio is signaled that the context is single threaded
+ - an `asio::signal_set` with `SIGINT` & `SIGTERM` is automatically connected to cancellations (i.e. `Ctrl+C` causes cancellations)
+
+This coroutine then has an executor in its promise (the promise the C++ name for a coroutine state.
+Not to be confused with <<promise>>) which we can obtain through the dummy-<<awaitable, awaitable>>s in
+the <<this_coro, this_coro>> namespace.
+
+We can then construct a timer and initiate the `async_wait` with <<use_op>>.
+`cobalt` provides multiple ways to `co_await` to interact with asio, of which <<use_op>> is the easiest.
+

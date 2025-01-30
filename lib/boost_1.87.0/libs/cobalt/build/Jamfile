@@ -1,0 +1,92 @@
+# Copyright (c) 2023 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+
+import os ;
+import-search /boost/config/checks ;
+import config : requires ;
+import-search /boost/cobalt ;
+import boost-cobalt ;
+
+
+project : requirements
+  <define>BOOST_ASIO_NO_DEPRECATED
+  <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+  <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE
+  <toolset>msvc:<cxxflags>/bigobj
+  <target-os>windows:<define>WIN32_LEAN_AND_MEAN
+  <target-os>linux:<linkflags>-lpthread
+  : source-location ../src
+  : common-requirements <library>$(boost_dependencies)
+;
+
+
+local config-binding = [ modules.binding config ] ;
+config-binding ?= "" ;
+
+alias cobalt_sources
+   : detail/exception.cpp
+     detail/util.cpp
+     channel.cpp
+     error.cpp
+     main.cpp
+     this_thread.cpp
+     thread.cpp
+   ;
+
+explicit cobalt_sources ;
+
+lib boost_cobalt
+   : cobalt_sources
+   : requirements <define>BOOST_COBALT_SOURCE=1
+     <link>shared:<define>BOOST_COBALT_DYN_LINK=1
+     [ requires
+        cxx20_hdr_concepts
+     ]
+     <boost.cobalt.pmr>boost-container:<library>/boost/container//boost_container
+      [ check-target-builds
+          $(config-binding:D)//cpp_lib_memory_resource
+          cpp_lib_memory_resource
+      : <conditional>@set-pmr-std
+      : <conditional>@set-pmr-boost
+      ]
+
+   : usage-requirements
+     <boost.cobalt.pmr>boost-container:<library>/boost/container//boost_container
+     <link>shared:<define>BOOST_COBALT_DYN_LINK=1
+     <define>BOOST_COBALT_NO_LINK=1
+      [ check-target-builds
+          $(config-binding:D)//cpp_lib_memory_resource
+          cpp_lib_memory_resource
+      : <conditional>@set-pmr-std
+      : <conditional>@set-pmr-boost
+      ]
+  ;
+
+rule set-pmr-boost ( props * )
+{
+    if ! <boost.cobalt.pmr> in $(props:G)
+    {
+        return <boost.cobalt.pmr>boost-container ;
+    }
+
+    if <boost.cobalt.pmr>boost-container in $(props)
+    {
+        return <boost.cobalt.pmr>boost-container ;
+    }
+}
+
+rule set-pmr-std ( props * )
+{
+    if ! <boost.cobalt.pmr> in $(props:G)
+    {
+        return <boost.cobalt.pmr>std ;
+    }
+
+    if <boost.cobalt.pmr>std in $(props)
+    {
+        return <boost.cobalt.pmr>std ;
+    }
+}

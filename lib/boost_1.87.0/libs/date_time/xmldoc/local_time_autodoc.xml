@@ -1,0 +1,373 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="local_time_reference"><title>Local Time Reference</title><header id="doxygen.local_time_reference.conversion_8hpp" name="boost/date_time/local_time/conversion.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.local_time_reference.conversion_8hpp_1aede8dd87d61f13291ee6460c1616134b" name="to_tm"><type>std::tm</type><parameter name="lt"><paramtype>const <classname>local_date_time</classname> &amp;</paramtype></parameter><purpose>Function that creates a tm struct from a local_date_time. </purpose></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.custom__time__zone_8hpp" name="boost/date_time/local_time/custom_time_zone.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<class id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base" name="custom_time_zone_base"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">date_time::time_zone_base&lt; posix_time::ptime, CharT &gt;</inherit><purpose>A real time zone. </purpose><typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a9a86c8833188bcd41e809b56e8e0622d" name="time_duration_type"><type>boost::posix_time::time_duration</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1ac032643fe596e24719256c0c9c27ec80" name="base_type"><type>date_time::time_zone_base&lt; posix_time::ptime, CharT &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a9a6e7e2128a721da3ade8bba6f3a25a8" name="string_type"><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a40b3bb41880d10237e35c77ff93773b6" name="stringstream_type"><type>base_type::stringstream_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1af3aac1eca2f7193a14a55f3e0a943422" name="time_zone_names"><type>date_time::time_zone_names_base&lt; CharT &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a93282362a61b8b8e0d729a2b5270607a" name="char_type"><type>CharT</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1ace6ad6d500c53a14cb6516c64f77e972"><parameter name="zone_names"><paramtype>const time_zone_names &amp;</paramtype></parameter><parameter name="utc_offset"><paramtype>const time_duration_type &amp;</paramtype></parameter><parameter name="dst_shift"><paramtype>const dst_adjustment_offsets &amp;</paramtype></parameter><parameter name="calc_rule"><paramtype>boost::shared_ptr&lt; dst_calc_rule &gt;</paramtype></parameter></constructor>
+<destructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1ad5f01cec435708fc3ab37cf3e4780518" specifiers="virtual"/>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a77517b3f3d22a44878045441e5583c3e" name="dst_zone_abbrev" cv="const" specifiers="virtual"><type>string_type</type></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1aaac858edf5e68419d8656739096d595c" name="std_zone_abbrev" cv="const" specifiers="virtual"><type>string_type</type></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a0b9eaa0affcadea84da11c7accee0885" name="dst_zone_name" cv="const" specifiers="virtual"><type>string_type</type></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a7143aa5fb5339aac87973773b2316919" name="std_zone_name" cv="const" specifiers="virtual"><type>string_type</type></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a31188394706b596949c91fe84d7b74eb" name="has_dst" cv="const" specifiers="virtual"><type>bool</type><purpose>True if zone uses daylight savings adjustments. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a2aed2699515b7c124916138c4ae80deb" name="dst_local_start_time" cv="const" specifiers="virtual"><type>posix_time::ptime</type><parameter name="y"><paramtype>gregorian::greg_year</paramtype></parameter><purpose>Local time that DST starts – NADT if has_dst is false. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a1cd740ef2ef29b957d33cc9ae58e8aa3" name="dst_local_end_time" cv="const" specifiers="virtual"><type>posix_time::ptime</type><parameter name="y"><paramtype>gregorian::greg_year</paramtype></parameter><purpose>Local time that DST ends – NADT if has_dst is false. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1afba3b5d01f111b933d6fd3c81aa7f63f" name="base_utc_offset" cv="const" specifiers="virtual"><type>time_duration_type</type><purpose>Base offset from UTC for zone (eg: -07:30:00) </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a20e73d7b99e9906d4ce21d253a28395f" name="dst_offset" cv="const" specifiers="virtual"><type>time_duration_type</type><purpose>Adjustment forward or back made while DST is in effect. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1custom__time__zone__base_1a95c966b20df6ada7c303bb5bfa60f99c" name="to_posix_string" cv="const" specifiers="virtual"><type>string_type</type><purpose>Returns a POSIX time_zone string for this object. </purpose></method>
+</method-group>
+</class><typedef id="doxygen.local_time_reference.custom__time__zone_8hpp_1aeaa8f0c2016a3dc42e8a2795af2fcbe1" name="dst_calc_rule_ptr"><type>boost::shared_ptr&lt; dst_calc_rule &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.custom__time__zone_8hpp_1a1aa91f7a472ef22fc678108c99a8de60" name="custom_time_zone"><type><classname>custom_time_zone_base</classname>&lt; char &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.date__duration__operators_8hpp" name="boost/date_time/local_time/date_duration_operators.hpp">
+<para>Operators for local_date_time and optional gregorian types. Operators use snap-to-end-of-month behavior. Further details on this behavior can be found in reference for date_time/date_duration_types.hpp and documentation for month and year iterators. </para><namespace name="boost">
+<namespace name="local_time">
+
+
+
+
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1af3fb7c9584f5679496bbc6a0ab9a7826" name="operator+"><type><classname>local_date_time</classname></type><parameter name="t"><paramtype>const <classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Adds a months object and a local_date_time. Result will be same day-of-month as local_date_time unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1a9736dd3271ee77eec8579450923ec342" name="operator+="><type><classname>local_date_time</classname></type><parameter name="t"><paramtype><classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Adds a months object to a local_date_time. Result will be same day-of-month as local_date_time unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1a6b70e6d19dab4e2ec7a3000b41216f3b" name="operator-"><type><classname>local_date_time</classname></type><parameter name="t"><paramtype>const <classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Subtracts a months object and a local_date_time. Result will be same day-of-month as local_date_time unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1a92dc07c8bae7df73005e7d0e9938b0bf" name="operator-="><type><classname>local_date_time</classname></type><parameter name="t"><paramtype><classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="m"><paramtype>const boost::gregorian::months &amp;</paramtype></parameter><description><para>Subtracts a months object from a local_date_time. Result will be same day-of-month as local_date_time unless original day was the last day of month. see date_time::months_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1a8727a8a648a4af4ce2534b6b180f8b69" name="operator+"><type><classname>local_date_time</classname></type><parameter name="t"><paramtype>const <classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Adds a years object and a local_date_time. Result will be same month and day-of-month as local_date_time unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1a38b72ed67d542983a39b9859e0685d86" name="operator+="><type><classname>local_date_time</classname></type><parameter name="t"><paramtype><classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Adds a years object to a local_date_time. Result will be same month and day-of-month as local_date_time unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1ae8269f0f4a4ab6106bca25a3519a2f61" name="operator-"><type><classname>local_date_time</classname></type><parameter name="t"><paramtype>const <classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Subtracts a years object and a local_date_time. Result will be same month and day-of-month as local_date_time unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+<function id="doxygen.local_time_reference.date__duration__operators_8hpp_1ab4102a430913f02e922ec50ae82e0432" name="operator-="><type><classname>local_date_time</classname></type><parameter name="t"><paramtype><classname>local_date_time</classname> &amp;</paramtype></parameter><parameter name="y"><paramtype>const boost::gregorian::years &amp;</paramtype></parameter><description><para>Subtracts a years object from a local_date_time. Result will be same month and day-of-month as local_date_time unless original day was the last day of month. see date_time::years_duration for more details </para></description></function>
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.dst__transition__day__rules_8hpp" name="boost/date_time/local_time/dst_transition_day_rules.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1first__last__rule__spec" name="first_last_rule_spec"><typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1first__last__rule__spec_1a957610d7a4ef89c76d1ce0d867134522" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1first__last__rule__spec_1a73d1166ec1698571d70b9e81511c06fb" name="start_rule"><type>gregorian::first_kday_of_month</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1first__last__rule__spec_1a0b47b7ee1d5c2688783bce6e35ccad09" name="end_rule"><type>gregorian::last_kday_of_month</type></typedef>
+</struct><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1last__last__rule__spec" name="last_last_rule_spec"><typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1last__last__rule__spec_1ac66898821854292f5319cd75569f026e" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1last__last__rule__spec_1ae774f58c9bd77e0a59b6df6ff30ba0e9" name="start_rule"><type>gregorian::last_kday_of_month</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1last__last__rule__spec_1a6bdc6e5eba5299760f9ad43eafa5abad" name="end_rule"><type>gregorian::last_kday_of_month</type></typedef>
+</struct><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__kday__rule__spec" name="nth_kday_rule_spec"><typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__kday__rule__spec_1aa8127b6180cf1c29e835847f31ff6a47" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__kday__rule__spec_1a157c67ef60ccde1b92da62d82bce9bb9" name="start_rule"><type>gregorian::nth_kday_of_month</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__kday__rule__spec_1a8f5b9e4e82b5fca29ba477d005b213f3" name="end_rule"><type>gregorian::nth_kday_of_month</type></typedef>
+</struct><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__last__rule__spec" name="nth_last_rule_spec"><typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__last__rule__spec_1a428ebae6ef97f1a6e90d5d8e90fa1993" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__last__rule__spec_1ac1312f302399e5ec2d2a690ed6b2425d" name="start_rule"><type>gregorian::nth_kday_of_month</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1nth__last__rule__spec_1a699ea703d0872a5db4d6f83a065457d2" name="end_rule"><type>gregorian::last_kday_of_month</type></typedef>
+</struct><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1partial__date__rule__spec" name="partial_date_rule_spec"><typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1partial__date__rule__spec_1ae813fcce5d31404f85afe26d0af29aae" name="date_type"><type>gregorian::date</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1partial__date__rule__spec_1a8227781bb882e3d7d6f2b6442ed446c5" name="start_rule"><type>gregorian::partial_date</type></typedef>
+<typedef id="doxygen.local_time_reference.structboost_1_1local__time_1_1partial__date__rule__spec_1a764c66a700ae15799015f49bf4afa804" name="end_rule"><type>gregorian::partial_date</type></typedef>
+</struct><typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1aa9326f0a5a6fdd87a0861a3eac0e5bd9" name="dst_calc_rule"><purpose>Provides rule of the form starting Apr 30 ending Oct 21. </purpose><type>date_time::dst_day_calc_rule&lt; gregorian::date &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1a5b71377b9c5e78b2a559f0b4ba491e1d" name="partial_date_dst_rule"><purpose>Provides rule of the form first Sunday in April, last Saturday in Oct. </purpose><type>date_time::day_calc_dst_rule&lt; <classname>partial_date_rule_spec</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1aa771c954c2a1c27cec3a3d578c17e458" name="first_last_dst_rule"><purpose>Provides rule of the form first Sunday in April, last Saturday in Oct. </purpose><type>date_time::day_calc_dst_rule&lt; <classname>first_last_rule_spec</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1a58ddf7f88307c8978cd5957ee0657f65" name="last_last_dst_rule"><purpose>Provides rule of the form last Sunday in April, last Saturday in Oct. </purpose><type>date_time::day_calc_dst_rule&lt; <classname>last_last_rule_spec</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1a314a7b92c607bf4b7ba93f586ad42c2b" name="nth_last_dst_rule"><purpose>Provides rule in form of [1st|2nd|3rd|4th] Sunday in April, last Sunday in Oct. </purpose><type>date_time::day_calc_dst_rule&lt; <classname>nth_last_rule_spec</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1aaad3108a67e5d86d55950540fa4b44d5" name="nth_kday_dst_rule"><purpose>Provides rule in form of [1st|2nd|3rd|4th] Sunday in April/October. </purpose><type>date_time::day_calc_dst_rule&lt; <classname>nth_kday_rule_spec</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.dst__transition__day__rules_8hpp_1adaf69e18a03184be8cdaf04999cb24a3" name="nth_day_of_the_week_in_month_dst_rule"><purpose>Provides rule in form of [1st|2nd|3rd|4th] Sunday in April/October. </purpose><type>date_time::day_calc_dst_rule&lt; <classname>nth_kday_rule_spec</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.local__date__time_8hpp" name="boost/date_time/local_time/local_date_time.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1ambiguous__result" name="ambiguous_result"><inherit access="public">std::logic_error</inherit><purpose>simple exception for reporting when STD or DST cannot be determined </purpose><method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.structboost_1_1local__time_1_1ambiguous__result_1afe1a0f6c636638a6c30d7cad7f638f06"><parameter name="msg"><paramtype>std::string const &amp;</paramtype><default>std::string()</default></parameter></constructor>
+</method-group>
+</struct><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1dst__not__valid" name="dst_not_valid"><inherit access="public">std::logic_error</inherit><method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.structboost_1_1local__time_1_1dst__not__valid_1a61b492df0789fc171580a59d618a1637"><parameter name="msg"><paramtype>std::string const &amp;</paramtype><default>std::string()</default></parameter></constructor>
+</method-group>
+</struct><class id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base" name="local_date_time_base"><template>
+      <template-type-parameter name="utc_time_"><default>posix_time::ptime</default></template-type-parameter>
+      <template-type-parameter name="tz_type"><default>date_time::time_zone_base&lt;utc_time_,char&gt;</default></template-type-parameter>
+    </template><inherit access="public">date_time::base_time&lt; posix_time::ptime, boost::posix_time::posix_time_system &gt;</inherit><purpose>Representation of "wall-clock" time in a particular time zone. </purpose><description><para>Representation of "wall-clock" time in a particular time zone Local_date_time_base holds a time value (date and time offset from 00:00) along with a time zone. The time value is stored as UTC and conversions to wall clock time are made as needed. This approach allows for operations between wall-clock times in different time zones, and daylight savings time considerations, to be made. Time zones are required to be in the form of a boost::shared_ptr&lt;time_zone_base&gt;. </para></description><enum id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a34507db3610ab26fa794176f00df9211" name="DST_CALC_OPTIONS"><enumvalue id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a34507db3610ab26fa794176f00df9211a0d87aa6641bceeef49a13a9229f18f56" name="EXCEPTION_ON_ERROR"/><enumvalue id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a34507db3610ab26fa794176f00df9211af600e111596a3097846eb7757708c5b1" name="NOT_DATE_TIME_ON_ERROR"/></enum>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a7d2ae9d8b3d8992b394dfd53f91f373c" name="utc_time_type"><type>utc_time_</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a40734ddea58de64c48d34eb378876add" name="time_duration_type"><type>utc_time_type::time_duration_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a402398db29778e74776d342d9ea159ed" name="date_type"><type>utc_time_type::date_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1ac394044f9f57d5859dd1640b78610aba" name="date_duration_type"><type>date_type::duration_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a0ccd3d95b9c8788b1245006f8cdcfefa" name="time_system_type"><type>utc_time_type::time_system_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a46713d12c6734f6820a0332e512c10ce"><parameter name="t"><paramtype>utc_time_type</paramtype><description><para>A UTC time </para></description></parameter><parameter name="tz"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype><description><para>Timezone for to adjust the UTC time to. </para></description></parameter><description><para>This constructor interprets the passed time as a UTC time. So, for example, if the passed timezone is UTC-5 then the time will be adjusted back 5 hours. The time zone allows for automatic calculation of whether the particular time is adjusted for daylight savings, etc. If the time zone shared pointer is null then time stays unadjusted. 
+</para></description></constructor>
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1acb240aba290a1c724a743913f6f7e38d"><parameter name="d"><paramtype>date_type</paramtype></parameter><parameter name="td"><paramtype>time_duration_type</paramtype></parameter><parameter name="tz"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype></parameter><parameter name="dst_flag"><paramtype>bool</paramtype></parameter><description><para>This constructs a local time – the passed time information understood to be in the passed tz. The DST flag must be passed to indicate whether the time is in daylight savings or not. 
+</para></description><throws><simpara><classname>--</classname> <link linkend="doxygen.local_time_reference.structboost_1_1local__time_1_1time__label__invalid">time_label_invalid</link> if the time passed does not exist in the given locale. The non-existent case occurs typically during the shift-back from daylight savings time. When the clock is shifted forward a range of times (2 am to 3 am in the US) is skipped and hence is invalid. </simpara>
+<simpara><classname>--</classname> <link linkend="doxygen.local_time_reference.structboost_1_1local__time_1_1dst__not__valid">dst_not_valid</link> if the DST flag is passed for a period where DST is not active. </simpara>
+</throws></constructor>
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a83e658347ce1e14d299152b56cf59100"><parameter name="d"><paramtype>date_type</paramtype></parameter><parameter name="td"><paramtype>time_duration_type</paramtype></parameter><parameter name="tz"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype></parameter><parameter name="calc_option"><paramtype>DST_CALC_OPTIONS</paramtype></parameter><description><para>This constructs a local time – the passed time information understood to be in the passed tz. The DST flag is calculated according to the specified rule. </para></description></constructor>
+<destructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a62e89b4438f63b122d5d0788a3b1cf02"><purpose>Simple destructor, releases time zone if last referrer. </purpose></destructor>
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a13ce6669b7bb4627c764962facf64d05"><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Copy constructor. </purpose></constructor>
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a3157cea39c5c63ec7caa61fa90cf1495" specifiers="explicit"><parameter name="sv"><paramtype>const boost::date_time::special_values</paramtype></parameter><parameter name="tz"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype><default>boost::shared_ptr&lt; tz_type &gt;()</default></parameter><purpose>Special values constructor. </purpose></constructor>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a0dd5c63b8e5c790a99c5b52d45e1b9ae" name="zone" cv="const"><type>boost::shared_ptr&lt; tz_type &gt;</type><purpose>returns time zone associated with calling instance </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a7150a21b2084342cbb5b4e5c0459e0b5" name="is_dst" cv="const"><type>bool</type><purpose>returns false is time_zone is NULL and if time value is a special_value </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a9b868a6c310a469b9904554ab0a37f37" name="utc_time" cv="const"><type>utc_time_type</type><purpose>Returns object's time value as a utc representation. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a219242cb4d1d67300989abc12eb7b848" name="local_time" cv="const"><type>utc_time_type</type><purpose>Returns object's time value as a local representation. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1aab7a8c693d8ca80fa51f8e86df675e24" name="to_string" cv="const"><type>std::string</type><purpose>Returns string in the form "2003-Aug-20 05:00:00 EDT". </purpose><description><para>Returns string in the form "2003-Aug-20 05:00:00 EDT". If time_zone is NULL the time zone abbreviation will be "UTC". The time zone abbrev will not be included if calling object is a special_value </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a18579544b414f0b73a6b2f0602e25bab" name="local_time_in" cv="const"><type><classname>local_date_time_base</classname></type><parameter name="new_tz"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype></parameter><parameter name="td"><paramtype>time_duration_type</paramtype><default>time_duration_type(0, 0, 0)</default></parameter><description><para>returns a <link linkend="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base">local_date_time_base</link> in the given time zone with the optional time_duration added. </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a60f65d829094bb25cb69e5de3be59222" name="zone_name" cv="const"><type>std::string</type><parameter name="as_offset"><paramtype>bool</paramtype><default>false</default></parameter><purpose>Returns name of associated time zone or "Coordinated Universal Time". </purpose><description><para>Optional bool parameter will return time zone as an offset (ie "+07:00" extended ISO 8601 format). Empty string is returned for classes that do not use a time_zone </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a610695ba1e8f335b9c5f42f94a884b2f" name="zone_abbrev" cv="const"><type>std::string</type><parameter name="as_offset"><paramtype>bool</paramtype><default>false</default></parameter><purpose>Returns abbreviation of associated time zone or "UTC". </purpose><description><para>Optional bool parameter will return time zone as an offset (ie "+0700" ISO 8601 format). Empty string is returned for classes that do not use a time_zone </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a39c22505b10c1028cc862445a03b6d8e" name="zone_as_posix_string" cv="const"><type>std::string</type><purpose>returns a posix_time_zone string for the associated time_zone. If no time_zone, "UTC+00" is returned. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a7d71cd1a9d7c23babbfac85bd99a60d2" name="operator==" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Equality comparison operator. </purpose><description><para>Equality comparison operator </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a3b6000779e99a8b63a78de77c57b7bbc" name="operator!=" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Non-Equality comparison operator. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a28c9de148d506f4f6038de6befd8d20f" name="operator&lt;" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Less than comparison operator. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a8c730b98e84181db30c80cdba516cfaf" name="operator&lt;=" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Less than or equal to comparison operator. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a41d67e9f0b607fde10939f7ef39734b4" name="operator&gt;" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Greater than comparison operator. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1aebb1622c384b9099629fffc518f2011c" name="operator&gt;=" cv="const"><type>bool</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>Greater than or equal to comparison operator. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1afd44c2f9d97193f4dca292a8208cb86e" name="operator+" cv="const"><type><classname>local_date_time_base</classname></type><parameter name="dd"><paramtype>const date_duration_type &amp;</paramtype></parameter><purpose>Local_date_time + date_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a066ad3c996651e583717c56045799c80" name="operator+="><type><classname>local_date_time_base</classname></type><parameter name="dd"><paramtype>const date_duration_type &amp;</paramtype></parameter><purpose>Local_date_time += date_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1aa38fe6e3a1b052a1d767cd529a63db75" name="operator-" cv="const"><type><classname>local_date_time_base</classname></type><parameter name="dd"><paramtype>const date_duration_type &amp;</paramtype></parameter><purpose>Local_date_time - date_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a0bb134871cca888f58959136a68ab2fd" name="operator-="><type><classname>local_date_time_base</classname></type><parameter name="dd"><paramtype>const date_duration_type &amp;</paramtype></parameter><purpose>Local_date_time -= date_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a9442e4536cb967a972bdb0902073051e" name="operator+" cv="const"><type><classname>local_date_time_base</classname></type><parameter name="td"><paramtype>const time_duration_type &amp;</paramtype></parameter><purpose>Local_date_time + time_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1af5a07a2e9cb81653a9fbdf881d17962b" name="operator+="><type><classname>local_date_time_base</classname></type><parameter name="td"><paramtype>const time_duration_type &amp;</paramtype></parameter><purpose>Local_date_time += time_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a1a148c4524e25cc73fc861ed78b523cd" name="operator-" cv="const"><type><classname>local_date_time_base</classname></type><parameter name="td"><paramtype>const time_duration_type &amp;</paramtype></parameter><purpose>Local_date_time - time_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1ae7d27a00c93c0a78f1cd2ca5d2cbf62b" name="operator-="><type><classname>local_date_time_base</classname></type><parameter name="td"><paramtype>const time_duration_type &amp;</paramtype></parameter><purpose>Local_date_time -= time_duration. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a2482741616bca3dfd6f2da12205cdf6f" name="operator-" cv="const"><type>time_duration_type</type><parameter name="rhs"><paramtype>const <classname>local_date_time_base</classname> &amp;</paramtype></parameter><purpose>local_date_time -= local_date_time --&gt; time_duration_type </purpose></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a69c4262bd7850f227c24283f2ef87760" name="check_dst" specifiers="static"><type>time_is_dst_result</type><parameter name="d"><paramtype>date_type</paramtype></parameter><parameter name="td"><paramtype>time_duration_type</paramtype></parameter><parameter name="tz"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype></parameter><purpose>Determines if given time label is in daylight savings for given zone. </purpose><description><para>Determines if given time label is in daylight savings for given zone. Takes a date and time_duration representing a local time, along with time zone, and returns a time_is_dst_result object as result. </para></description></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1aaa467285eeb951599fab7735f8b84445" name="construction_adjustment"><type>utc_time_type</type><parameter name="t"><paramtype>utc_time_type</paramtype></parameter><parameter name="z"><paramtype>boost::shared_ptr&lt; tz_type &gt;</paramtype></parameter><parameter name="dst_flag"><paramtype>bool</paramtype></parameter><description><para>Adjust the passed in time to UTC? </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1local__date__time__base_1a0e3e384c871a1d616ba8f30c62178fb1" name="zone_as_offset" cv="const"><type>std::string</type><parameter name="td"><paramtype>const time_duration_type &amp;</paramtype></parameter><parameter name="separator"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Simple formatting code – todo remove this? </para></description></method>
+</method-group>
+</class><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1time__label__invalid" name="time_label_invalid"><inherit access="public">std::logic_error</inherit><purpose>simple exception for when time label given cannot exist </purpose><method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.structboost_1_1local__time_1_1time__label__invalid_1a9b5b62221f4dc915fa57252adc1dd3b4"><parameter name="msg"><paramtype>std::string const &amp;</paramtype><default>std::string()</default></parameter></constructor>
+</method-group>
+</struct><typedef id="doxygen.local_time_reference.local__date__time_8hpp_1abbef22cb7413eeaa4bceb5c7249cfd3f" name="local_date_time"><purpose>Use the default parameters to define local_date_time. </purpose><type><classname>local_date_time_base</classname></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.local__time_8hpp" name="boost/date_time/local_time/local_time.hpp">
+</header>
+<header id="doxygen.local_time_reference.local__time__io_8hpp" name="boost/date_time/local_time/local_time_io.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<typedef id="doxygen.local_time_reference.local__time__io_8hpp_1a78a8ee7ae04a44d8f21b32342f2104cd" name="wlocal_time_facet"><type>boost::date_time::time_facet&lt; <classname>local_date_time</classname>, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__io_8hpp_1a2ad3d1c9fb4b250322dea6f43f85ef0a" name="local_time_facet"><type>boost::date_time::time_facet&lt; <classname>local_date_time</classname>, char &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__io_8hpp_1a7e0ca9497f21ec34b07e6bd6ff5a221a" name="wlocal_time_input_facet"><type>boost::date_time::time_input_facet&lt; local_date_time::utc_time_type, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__io_8hpp_1a94569641eedd4d43026c41689d006357" name="local_time_input_facet"><type>boost::date_time::time_input_facet&lt; local_date_time::utc_time_type, char &gt;</type></typedef>
+<function id="doxygen.local_time_reference.local__time__io_8hpp_1ac6b5e3d578a2f69863bebefcafe177e8" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="ldt"><paramtype>const <classname>local_date_time</classname> &amp;</paramtype></parameter><purpose>operator&lt;&lt; for local_date_time - see local_time docs for formatting details </purpose></function>
+<function id="doxygen.local_time_reference.local__time__io_8hpp_1ac5b4081d4e5e03169b9e32525934f88e" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="ldt"><paramtype><classname>local_date_time</classname> &amp;</paramtype></parameter><purpose>input operator for local_date_time </purpose></function>
+<function id="doxygen.local_time_reference.local__time__io_8hpp_1a7d712ff298e3da3c05ed1c52c2a8649f" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="p"><paramtype>const boost::local_time::local_time_period &amp;</paramtype></parameter><purpose>output operator for local_time_period </purpose></function>
+<function id="doxygen.local_time_reference.local__time__io_8hpp_1a6f995d5306cc5709ac9373d16c73f372" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="tp"><paramtype>boost::local_time::local_time_period &amp;</paramtype></parameter><purpose>input operator for local_time_period </purpose></function>
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.local__time__types_8hpp" name="boost/date_time/local_time/local_time_types.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1a7cfd48f31c2f74a78aaea1227924c9ea" name="local_time_period"><type>boost::date_time::period&lt; <classname>local_date_time</classname>, boost::posix_time::time_duration &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1ac2dbdde960fe1b228af4c8ab3e30de06" name="local_time_iterator"><type>date_time::time_itr&lt; <classname>local_date_time</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1aeab6ac63b7b2dc830d5e235b9db3a5d3" name="local_sec_clock"><type>date_time::second_clock&lt; <classname>local_date_time</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1af9448e236ca193403f273dfe78512f5c" name="local_microsec_clock"><type>date_time::microsec_clock&lt; <classname>local_date_time</classname> &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1a5571a8fc2b57cfed59be29169b853f2f" name="time_zone"><type>date_time::time_zone_base&lt; posix_time::ptime, char &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1af61d23a87ff2aaaca63e86dbd71c1229" name="wtime_zone"><type>date_time::time_zone_base&lt; posix_time::ptime, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1ad9052b8c65509acc5fa05ec77601334c" name="time_zone_ptr"><purpose>Shared Pointer for custom_time_zone and posix_time_zone objects. </purpose><type>boost::shared_ptr&lt; time_zone &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1a5d72ec42d8a133adefc89ed2908f232a" name="wtime_zone_ptr"><type>boost::shared_ptr&lt; wtime_zone &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1add71bf52827f4626f985280286437dbe" name="time_zone_names"><type>date_time::time_zone_names_base&lt; char &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.local__time__types_8hpp_1a7db44d9b8db7b5867b733f3296b5245d" name="wtime_zone_names"><type>date_time::time_zone_names_base&lt; wchar_t &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.posix__time__zone_8hpp" name="boost/date_time/local_time/posix_time_zone.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1bad__adjustment" name="bad_adjustment"><inherit access="public">std::out_of_range</inherit><purpose>simple exception for UTC daylight savings adjustment </purpose><method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.structboost_1_1local__time_1_1bad__adjustment_1a277fd5ebc4e66d108a99bfc55e929de2"><parameter name="msg"><paramtype>std::string const &amp;</paramtype><default>std::string()</default></parameter></constructor>
+</method-group>
+</struct><struct id="doxygen.local_time_reference.structboost_1_1local__time_1_1bad__offset" name="bad_offset"><inherit access="public">std::out_of_range</inherit><purpose>simple exception for UTC and Daylight savings start/end offsets </purpose><method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.structboost_1_1local__time_1_1bad__offset_1a578c5253d41537117f5f17c0ab8682d5"><parameter name="msg"><paramtype>std::string const &amp;</paramtype><default>std::string()</default></parameter></constructor>
+</method-group>
+</struct><class id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base" name="posix_time_zone_base"><template>
+      <template-type-parameter name="CharT"/>
+    </template><inherit access="public">date_time::time_zone_base&lt; posix_time::ptime, CharT &gt;</inherit><purpose>A time zone class constructed from a POSIX time zone string. </purpose><description><para>A POSIX time zone string takes the form of:<sbr/>
+ "std offset dst [offset],start[/time],end[/time]" (w/no spaces) 'std' specifies the abbrev of the time zone.<sbr/>
+ 'offset' is the offset from UTC.<sbr/>
+ 'dst' specifies the abbrev of the time zone during daylight savings time.<sbr/>
+ The second offset is how many hours changed during DST. Default=1<sbr/>
+ 'start' and'end' are the dates when DST goes into (and out of) effect.<sbr/>
+ 'offset' takes the form of: [+|-]hh[:mm[:ss]] {h=0-23, m/s=0-59}<sbr/>
+ 'time' and 'offset' take the same form. Time defaults=02:00:00<sbr/>
+ 'start' and 'end' can be one of three forms:<sbr/>
+ Mm.w.d {month=1-12, week=1-5 (5 is always last), day=0-6}<sbr/>
+ Jn {n=1-365 Feb29 is never counted}<sbr/>
+ n {n=0-365 Feb29 is counted in leap years}<sbr/>
+ Example "PST-5PDT01:00:00,M4.1.0/02:00:00,M10.1.0/02:00:00" <sbr/>
+ Exceptions will be thrown under these conditions:<sbr/>
+ An invalid date spec (see date class)<sbr/>
+ A <link linkend="doxygen.local_time_reference.structboost_1_1local__time_1_1bad__offset">boost::local_time::bad_offset</link> exception will be thrown for:<sbr/>
+ A DST start or end offset that is negative or more than 24 hours<sbr/>
+ A UTC zone that is greater than +14 or less than -12 hours<sbr/>
+ A <link linkend="doxygen.local_time_reference.structboost_1_1local__time_1_1bad__adjustment">boost::local_time::bad_adjustment</link> exception will be thrown for:<sbr/>
+ A DST adjustment that is 24 hours or more (positive or negative)<sbr/>
+</para><para>Note that UTC zone offsets can be greater than +12: <ulink url="http://www.worldtimezone.com/utc/utc+1200.html">http://www.worldtimezone.com/utc/utc+1200.html</ulink> </para></description><typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ae75a8735d4829cbe7d106665ab49ce46" name="time_duration_type"><type>boost::posix_time::time_duration</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a547c61a1424b5efddb54a70f3e9171c3" name="time_zone_names"><type>date_time::time_zone_names_base&lt; CharT &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ae63fea3117cf80e5918f605928987037" name="base_type"><type>date_time::time_zone_base&lt; posix_time::ptime, CharT &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1aba1ca63899fd77ef0d33c3f1d2daf4ca" name="string_type"><type>base_type::string_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a3da92ee20cf3bafec41e68c4fad148ae" name="char_type"><type>CharT</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a65aa94e26da68aaf3b3ee47d2a8b7feb" name="stringstream_type"><type>base_type::stringstream_type</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a22025e888b107de3d64b21d02b944ddb" name="char_separator_type"><type>boost::char_separator&lt; char_type, std::char_traits&lt; char_type &gt; &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ae53b1294236b9fbfd8fc368f9ae31a75" name="tokenizer_type"><type>boost::tokenizer&lt; char_separator_type, typename string_type::const_iterator, string_type &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a7afc09dae8312329f5e192de205c8945" name="tokenizer_iterator_type"><type>tokenizer_type::iterator</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a514be41199040a763e811a31bb95ec79"><parameter name="s"><paramtype>const string_type &amp;</paramtype></parameter><purpose>Construct from a POSIX time zone string. </purpose></constructor>
+<destructor id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a576d520e79c4d6f2798b0f2518408fb8" specifiers="virtual"/>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a6588a2daabdc88b57609fa3d84d6d7e1" name="std_zone_abbrev" cv="const" specifiers="virtual"><type>string_type</type><purpose>String for the zone when not in daylight savings (eg: EST) </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a783af3319e6c07628d520c62de0cf99f" name="dst_zone_abbrev" cv="const" specifiers="virtual"><type>string_type</type><purpose>String for the timezone when in daylight savings (eg: EDT) </purpose><description><para>For those time zones that have no DST, an empty string is used </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a50d29a3dde134a8d7d1888fa88e98fc0" name="std_zone_name" cv="const" specifiers="virtual"><type>string_type</type><purpose>String for the zone when not in daylight savings (eg: Eastern Standard Time) </purpose><description><para>The full STD name is not extracted from the posix time zone string. Therefore, the STD abbreviation is used in it's place </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ab526d1cc83df6da228ea1ea401af45e8" name="dst_zone_name" cv="const" specifiers="virtual"><type>string_type</type><purpose>String for the timezone when in daylight savings (eg: Eastern Daylight Time) </purpose><description><para>The full DST name is not extracted from the posix time zone string. Therefore, the STD abbreviation is used in it's place. For time zones that have no DST, an empty string is used </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a4f2ef9ed7e429a67d8b26dad7f2dfd81" name="has_dst" cv="const" specifiers="virtual"><type>bool</type><purpose>True if zone uses daylight savings adjustments otherwise false. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a471e6da0c9d82dd6e80302cec837d048" name="dst_local_start_time" cv="const" specifiers="virtual"><type>posix_time::ptime</type><parameter name="y"><paramtype>gregorian::greg_year</paramtype></parameter><purpose>Local time that DST starts – NADT if has_dst is false. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ade062d0af2da34944fe4ede50fa7bea8" name="dst_local_end_time" cv="const" specifiers="virtual"><type>posix_time::ptime</type><parameter name="y"><paramtype>gregorian::greg_year</paramtype></parameter><purpose>Local time that DST ends – NADT if has_dst is false. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ae36e829f64f6594bd7163ee891b196fc" name="base_utc_offset" cv="const" specifiers="virtual"><type>time_duration_type</type><purpose>Base offset from UTC for zone (eg: -07:30:00) </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1acf075644508c49bf525484c746da389d" name="dst_offset" cv="const" specifiers="virtual"><type>time_duration_type</type><purpose>Adjustment forward or back made while DST is in effect. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a44e84bd4c8667cf16fe91fc6f8565580" name="to_posix_string" cv="const" specifiers="virtual"><type>string_type</type><purpose>Returns a POSIX time_zone string for this object. </purpose></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a7fb62690cd58cea22bf89301c6c7aafe" name="calc_zone"><type>void</type><parameter name="obj"><paramtype>const string_type &amp;</paramtype></parameter><description><para>Extract time zone abbreviations for STD &amp; DST as well as the offsets for the time shift that occurs and how much of a shift. At this time full time zone names are NOT extracted so the abbreviations are used in their place </para></description></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ac8487811b90f147560a090173563f725" name="calc_rules"><type>void</type><parameter name="start"><paramtype>const string_type &amp;</paramtype></parameter><parameter name="end"><paramtype>const string_type &amp;</paramtype></parameter></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a251eaa2d53d35f30302ef9bdf7a1dbf2" name="M_func"><type>void</type><parameter name="s"><paramtype>const string_type &amp;</paramtype></parameter><parameter name="e"><paramtype>const string_type &amp;</paramtype></parameter></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1ab2cd7083a61a3efe4b3a1c82ec0b863c" name="julian_no_leap"><type>void</type><parameter name="s"><paramtype>const string_type &amp;</paramtype></parameter><parameter name="e"><paramtype>const string_type &amp;</paramtype></parameter><purpose>Julian day. Feb29 is never counted, even in leap years. </purpose></method>
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a9e8bd052fd74f7da290a0e94cc3d3775" name="julian_day"><type>void</type><parameter name="s"><paramtype>const string_type &amp;</paramtype></parameter><parameter name="e"><paramtype>const string_type &amp;</paramtype></parameter><purpose>Julian day. Feb29 is always counted, but exception thrown in non-leap years. </purpose></method>
+</method-group>
+<method-group name="private static functions">
+<method id="doxygen.local_time_reference.classboost_1_1local__time_1_1posix__time__zone__base_1a21dd8e4acf5d15631599ba407f571ad9" name="td_as_string" specifiers="static"><type>std::string</type><parameter name="td"><paramtype>const time_duration_type &amp;</paramtype></parameter><purpose>helper function used when throwing exceptions </purpose></method>
+</method-group>
+</class><typedef id="doxygen.local_time_reference.posix__time__zone_8hpp_1a5c525cd83bc652709cca34254640f397" name="dst_adjustment_offsets"><type>boost::date_time::dst_adjustment_offsets&lt; boost::posix_time::time_duration &gt;</type></typedef>
+<typedef id="doxygen.local_time_reference.posix__time__zone_8hpp_1ac414b0ea893d38d18954e572a48d42dc" name="posix_time_zone"><type><classname>posix_time_zone_base</classname>&lt; char &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.local_time_reference.tz__database_8hpp" name="boost/date_time/local_time/tz_database.hpp">
+<namespace name="boost">
+<namespace name="local_time">
+<typedef id="doxygen.local_time_reference.tz__database_8hpp_1a052308b3397c24f7a376496b7f5b1bad" name="tz_database"><purpose>Object populated with boost::shared_ptr&lt;time_zone_base&gt; objects. </purpose><description><para>Object populated with boost::shared_ptr&lt;time_zone_base&gt; objects Database is populated from specs stored in external csv file. See date_time::tz_db_base for greater detail </para></description><type>date_time::tz_db_base&lt; <classname>custom_time_zone</classname>, nth_kday_dst_rule &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

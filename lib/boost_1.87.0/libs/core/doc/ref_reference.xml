@@ -1,0 +1,77 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.ref_8hpp" name="boost/core/ref.hpp">
+<namespace name="boost">
+<struct id="doxygen.structboost_1_1is__reference__wrapper" name="is_reference_wrapper"><template>
+      <template-type-parameter name="T"/>
+    </template><purpose>Determine if a type <computeroutput>T</computeroutput> is an instantiation of <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput>. </purpose><description><para>The value static constant will be true if the type <computeroutput>T</computeroutput> is a specialization of <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput>. </para></description><data-member id="doxygen.structboost_1_1is__reference__wrapper_1af6dfb2553981465851ff980333953cb7" name="value" specifiers="static"><type>constexpr bool</type></data-member>
+</struct><class id="doxygen.classboost_1_1reference__wrapper" name="reference_wrapper"><template>
+      <template-type-parameter name="T"/>
+    </template><purpose>Contains a reference to an object of type <computeroutput>T</computeroutput>. </purpose><description><para><computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput> is primarily used to "feed" references to function templates (algorithms) that take their parameter by value. It provides an implicit conversion to <computeroutput>T&amp;</computeroutput>, which usually allows the function templates to work on references unmodified. </para></description><typedef id="doxygen.classboost_1_1reference__wrapper_1a09937d51a1206c88bdcb9e6260f17925" name="type"><description><para>Type <computeroutput>T</computeroutput>. </para></description><type>T</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1reference__wrapper_1a6c723ac2d8d3289f7f7c7d42be20b073" specifiers="explicit" cv="noexcept"><parameter name="t"><paramtype>T &amp;</paramtype></parameter><description><para>Constructs a <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput> object that stores a reference to <computeroutput>t</computeroutput>.</para><para><note><para>Does not throw. </para>
+</note>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1reference__wrapper_1a001039a2f8b18531d196f43327e594d8" cv="= delete"><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter><description><para><note><para>Construction from a temporary object is disabled. </para>
+</note>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1reference__wrapper_1abf4d5c78fecf56ceec0ef604f23f750f" cv="noexcept"><template>
+          <template-type-parameter name="Y"/>
+          <template-type-parameter name=""><default><emphasis>unspecified</emphasis></default></template-type-parameter>
+        </template><parameter name="r"><paramtype><classname>reference_wrapper</classname>&lt; Y &gt;</paramtype></parameter><description><para>Constructs a <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput> object that stores the reference stored in the compatible <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput> <computeroutput>r</computeroutput>.</para><para><note><para>Only enabled when <computeroutput>Y*</computeroutput> is convertible to <computeroutput>T*</computeroutput>. </para>
+</note>
+<note><para>Does not throw. </para>
+</note>
+</para></description></constructor>
+<method id="doxygen.classboost_1_1reference__wrapper_1adf6fcce787764dbd8e9aba48e2a0a191" name="conversion-operator" cv="const noexcept"><type>T&amp;</type><description><para>
+<note><para>Does not throw. </para>
+</note>
+</para></description><returns><para>The stored reference. </para>
+</returns></method>
+<method id="doxygen.classboost_1_1reference__wrapper_1a7c5c01f7cd47daf4be5fbf6386ae033d" name="get" cv="const noexcept"><type>T &amp;</type><description><para>
+<note><para>Does not throw. </para>
+</note>
+</para></description><returns><para>The stored reference. </para>
+</returns></method>
+<method id="doxygen.classboost_1_1reference__wrapper_1a56030bcab99dc10696fd6e720ac58554" name="get_pointer" cv="const noexcept"><type>T *</type><description><para>
+<note><para>Does not throw. </para>
+</note>
+</para></description><returns><para>A pointer to the object referenced by the stored reference. </para>
+</returns></method>
+</method-group>
+</class><struct id="doxygen.structboost_1_1unwrap__reference" name="unwrap_reference"><template>
+      <template-type-parameter name="T"/>
+    </template><purpose>Find the type in a <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput>. </purpose><description><para>The <computeroutput>typedef</computeroutput> type is <computeroutput>T::type</computeroutput> if <computeroutput>T</computeroutput> is a <computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link></computeroutput>, <computeroutput>T</computeroutput> otherwise. </para></description><typedef id="doxygen.structboost_1_1unwrap__reference_1ab08ae8c86bbb2c7c6d0f3ab71b7983c2" name="type"><type>T</type></typedef>
+</struct><function id="doxygen.namespaceboost_1a7457ea50052046d737fc0b3ba32d8ed6" name="ref"><type><classname>reference_wrapper</classname>&lt; T &gt; const</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="t"><paramtype>T &amp;</paramtype></parameter><description><para>
+<note><para>Does not throw. </para>
+</note>
+</para></description><returns><para><computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link>&lt;T&gt;(t)</computeroutput> </para>
+</returns></function>
+<function id="doxygen.namespaceboost_1ae0a6728711580e61f56cb6790ed1d0c3" name="cref"><type><classname>reference_wrapper</classname>&lt; T const &gt; const</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="t"><paramtype>T const &amp;</paramtype></parameter><description><para>
+<note><para>Does not throw. </para>
+</note>
+</para></description><returns><para><computeroutput><link linkend="doxygen.classboost_1_1reference__wrapper">reference_wrapper</link>&lt;T const&gt;(t)</computeroutput> </para>
+</returns></function>
+<function id="doxygen.namespaceboost_1a388478cc7d5f7e1a61d51494346e8db5" name="ref"><type>void</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name=""><paramtype>T const &amp;&amp;</paramtype></parameter><description><para><note><para>Construction from a temporary object is disabled. </para>
+</note>
+</para></description></function>
+<function id="doxygen.namespaceboost_1a400d005bb4867e5d59ed99a5f8c5cd03" name="cref"><type>void</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name=""><paramtype>T const &amp;&amp;</paramtype></parameter><description><para><note><para>Construction from a temporary object is disabled. </para>
+</note>
+</para></description></function>
+<function id="doxygen.namespaceboost_1a3b2c79f37b22e236d26cae1f248e19ed" name="unwrap_ref"><type><classname>unwrap_reference</classname>&lt; T &gt;::type &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="t"><paramtype>T &amp;</paramtype></parameter><description><para>
+<note><para>Does not throw. </para>
+</note>
+</para></description><returns><para><computeroutput><link linkend="doxygen.structboost_1_1unwrap__reference">unwrap_reference</link>&lt;T&gt;::type&amp;(t)</computeroutput> </para>
+</returns></function>
+</namespace>
+</header>
+</library-reference>

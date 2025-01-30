@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template format_terminal</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../expressions.html#doxygen.expressions.format_8hpp" title="Header &lt;boost/log/expressions/formatters/format.hpp&gt;">
+<link rel="prev" href="date__time_8hpp_1ad4f26a69eabd9b9f214caddd5d6cd7c2.html" title="Function template format_date_time">
+<link rel="next" href="format_8hpp_1a58a59f21be70dbd66a9542deb4489331.html" title="Function template format">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="date__time_8hpp_1ad4f26a69eabd9b9f214caddd5d6cd7c2.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.format_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="format_8hpp_1a58a59f21be70dbd66a9542deb4489331.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template format_terminal</span></h2>
+<p>boost::log::expressions::format_terminal — Template expressions terminal node with Boost.Format-like formatter. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../expressions.html#doxygen.expressions.format_8hpp" title="Header &lt;boost/log/expressions/formatters/format.hpp&gt;">boost/log/expressions/formatters/format.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__terminal.html" title="Class template format_terminal">format_terminal</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">CharT</span>                          <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ac300472e15c13f0e7c25cec82c665240"></a><span class="identifier">char_type</span><span class="special">;</span>    <span class="comment">// Character type. </span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                    <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ad0d101ef35df3ce54aa2fd0561b39dd9"></a><span class="identifier">format_type</span><span class="special">;</span>  <span class="comment">// Boost.Format formatter type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a881bde00510e3840918efc9a3058056c"></a><span class="identifier">string_type</span><span class="special">;</span>  <span class="comment">// String type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">format_type</span><span class="special">::</span><span class="identifier">pump</span>              <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a64453247ff25fa5df69ef3be3f4bb2cd"></a><span class="identifier">result_type</span><span class="special">;</span>  <span class="comment">// Terminal result type. </span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1expressions_1_1format__terminal.html#id77-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a4b67a73f2707d513f08e9d3ca9a0e6a8"><span class="identifier">format_terminal</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContextT<span class="special">&gt;</span> <span class="identifier">result_type</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1format__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a109902b29c52db15c0e9092bcb38d5d9"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">ContextT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1expressions_1_1format__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ad875ce9c57ef3342e9dbd6329b8c0682"><span class="identifier">format_terminal</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id46902"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id46904"></a><h3>
+<a name="id77-bb"></a><code class="computeroutput">format_terminal</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a4b67a73f2707d513f08e9d3ca9a0e6a8"></a><span class="identifier">format_terminal</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span> format<span class="special">)</span><span class="special">;</span></pre>Initializing constructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContextT<span class="special">&gt;</span> <span class="identifier">result_type</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1a109902b29c52db15c0e9092bcb38d5d9"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">ContextT</span> <span class="keyword">const</span> <span class="special">&amp;</span> ctx<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Invokation operator. </li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1format__terminal_1ad875ce9c57ef3342e9dbd6329b8c0682"></a><span class="identifier">format_terminal</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="date__time_8hpp_1ad4f26a69eabd9b9f214caddd5d6cd7c2.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.format_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="format_8hpp_1a58a59f21be70dbd66a9542deb4489331.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

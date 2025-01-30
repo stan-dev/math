@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template period_parser</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../date_time/doxy.html#doxygen.date_time_reference.period__parser_8hpp" title="Header &lt;boost/date_time/period_parser.hpp&gt;">
+<link rel="prev" href="classboost_1_1date__time_1_1period__formatter.html" title="Class template period_formatter">
+<link rel="next" href="classboost_1_1date__time_1_1special__values__formatter.html" title="Class template special_values_formatter">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1period__formatter.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.period__parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1date__time_1_1special__values__formatter.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template period_parser</span></h2>
+<p>boost::date_time::period_parser — Not a facet, but a class used to specify and control period parsing. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../date_time/doxy.html#doxygen.date_time_reference.period__parser_8hpp" title="Header &lt;boost/date_time/period_parser.hpp&gt;">boost/date_time/period_parser.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> date_type<span class="special">,</span> <span class="keyword">typename</span> CharT<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html" title="Class template period_parser">period_parser</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">&gt;</span>                <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1aecf8084bbffdacfe78b2360e10a4bcf3"></a><span class="identifier">string_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="identifier">CharT</span>                                     <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a0807785596dc47367b83a2586fce17cb"></a><span class="identifier">char_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">istreambuf_iterator</span><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">&gt;</span>         <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a0e8894082d1d48d112a071b00d632062"></a><span class="identifier">stream_itr_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1date__time_1_1string__parse__tree.html" title="Struct template string_parse_tree">string_parse_tree</a><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">&gt;</span>                <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ad708692adbf7fd2712d6ead0a2d125d9"></a><span class="identifier">parse_tree_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> parse_tree_type::parse_match_result_type  <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a47d195943a935e0aa75e8e033c2d7ff0"></a><span class="identifier">match_results</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span> <span class="identifier">CharT</span> <span class="special">&gt;</span> <span class="special">&gt;</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a18ee3b816d55c00e6a32b9d4bebd0950"></a><span class="identifier">collection_type</span><span class="special">;</span>
+
+  <span class="keyword">enum</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a930609b6368c1687ca48adb35ab33136"></a>period_range_option <span class="special">{</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a930609b6368c1687ca48adb35ab33136aec1156e864c0940dab2da897349da281"></a>AS_OPEN_RANGE, <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a930609b6368c1687ca48adb35ab33136a078d6d7b21012b0f427d1192448f2269"></a>AS_CLOSED_RANGE <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1period__parser.html#id-1_3_12_15_3_38_1_1_1_15-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a9c5648a95538836f8123f676344352ae"><span class="identifier">period_parser</span></a><span class="special">(</span><span class="identifier">period_range_option</span> <span class="special">=</span> <span class="identifier">AS_CLOSED_RANGE</span><span class="special">,</span> 
+                <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> <span class="special">=</span> <span class="identifier">default_period_separator</span><span class="special">,</span> 
+                <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> <span class="special">=</span> <span class="identifier">default_period_start_delimeter</span><span class="special">,</span> 
+                <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> <span class="special">=</span> <span class="identifier">default_period_open_range_end_delimeter</span><span class="special">,</span> 
+                <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> <span class="special">=</span> <span class="identifier">default_period_closed_range_end_delimeter</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">period_range_option</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a355ed4e8b5bddb83c106ac239413c0e8"><span class="identifier">range_option</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ae82efc98897181c1c18d44a790e52d28"><span class="identifier">range_option</span></a><span class="special">(</span><span class="identifier">period_range_option</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">collection_type</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ac6c04b0a1e0ab7be2160c18ae8cf90a5"><span class="identifier">delimiter_strings</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a17697b80a9a356c4bf45a9dccbbe34a5"><span class="identifier">delimiter_strings</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> period_type<span class="special">,</span> <span class="keyword">typename</span> duration_type<span class="special">,</span> <span class="keyword">typename</span> facet_type<span class="special">&gt;</span> 
+    <span class="identifier">period_type</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ac1f822028bc3d6f625b0dc788e217a0d"><span class="identifier">get_period</span></a><span class="special">(</span><span class="identifier">stream_itr_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">stream_itr_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                           <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">period_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                           <span class="keyword">const</span> <span class="identifier">duration_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">facet_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1date__time_1_1period__parser.html#id-1_3_12_15_3_38_1_1_1_16-bb">private member functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1date__time_1_1period__parser.html#doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a787e3be068fb5b0c9d178abb8ee2951b"><span class="identifier">consume_delim</span></a><span class="special">(</span><span class="identifier">stream_itr_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">stream_itr_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                     <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="identifier">default_period_separator</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="identifier">default_period_start_delimeter</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="identifier">default_period_open_range_end_delimeter</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="identifier">default_period_closed_range_end_delimeter</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.12.15.3.37.3.4"></a><h2>Description</h2>
+<p>Provides settings for the following:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>period_separator – default '/'</p></li>
+<li class="listitem"><p>period_open_start_delimeter – default '['</p></li>
+<li class="listitem"><p>period_open_range_end_delimeter – default ')'</p></li>
+<li class="listitem"><p>period_closed_range_end_delimeter – default ']'</p></li>
+<li class="listitem"><p>display_as_open_range, display_as_closed_range – default closed_range</p></li>
+</ul></div>
+<p>
+</p>
+<p>For a typical date_period, the contents of the input stream would be </p>
+<pre class="programlisting"><span class="special">[</span><span class="number">2004</span><span class="special">-</span><span class="identifier">Jan</span><span class="special">-</span><span class="number">04</span><span class="special">/</span><span class="number">2004</span><span class="special">-</span><span class="identifier">Feb</span><span class="special">-</span><span class="number">01</span><span class="special">]</span>
+</pre>
+<p> where the date format is controlled by the date facet </p>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.37.3.4.4"></a><h3>
+<a name="id-1_3_12_15_3_38_1_1_1_15-bb"></a><code class="computeroutput">period_parser</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a9c5648a95538836f8123f676344352ae"></a><span class="identifier">period_parser</span><span class="special">(</span><span class="identifier">period_range_option</span> range_opt <span class="special">=</span> <span class="identifier">AS_CLOSED_RANGE</span><span class="special">,</span> 
+              <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> period_separator <span class="special">=</span> <span class="identifier">default_period_separator</span><span class="special">,</span> 
+              <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> period_start_delimeter <span class="special">=</span> <span class="identifier">default_period_start_delimeter</span><span class="special">,</span> 
+              <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> period_open_range_end_delimeter <span class="special">=</span> <span class="identifier">default_period_open_range_end_delimeter</span><span class="special">,</span> 
+              <span class="keyword">const</span> <span class="identifier">char_type</span> <span class="special">*</span><span class="keyword">const</span> period_closed_range_end_delimeter <span class="special">=</span> <span class="identifier">default_period_closed_range_end_delimeter</span><span class="special">)</span><span class="special">;</span></pre>Constructor that sets up period parser options. </li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">period_range_option</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a355ed4e8b5bddb83c106ac239413c0e8"></a><span class="identifier">range_option</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ae82efc98897181c1c18d44a790e52d28"></a><span class="identifier">range_option</span><span class="special">(</span><span class="identifier">period_range_option</span> option<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">collection_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ac6c04b0a1e0ab7be2160c18ae8cf90a5"></a><span class="identifier">delimiter_strings</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a17697b80a9a356c4bf45a9dccbbe34a5"></a><span class="identifier">delimiter_strings</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span> separator<span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span> start_delim<span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span> open_end_delim<span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span> closed_end_delim<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> period_type<span class="special">,</span> <span class="keyword">typename</span> duration_type<span class="special">,</span> <span class="keyword">typename</span> facet_type<span class="special">&gt;</span> 
+  <span class="identifier">period_type</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1ac1f822028bc3d6f625b0dc788e217a0d"></a><span class="identifier">get_period</span><span class="special">(</span><span class="identifier">stream_itr_type</span> <span class="special">&amp;</span> sitr<span class="special">,</span> <span class="identifier">stream_itr_type</span> <span class="special">&amp;</span> stream_end<span class="special">,</span> 
+                         <span class="identifier">std</span><span class="special">::</span><span class="identifier">ios_base</span> <span class="special">&amp;</span> a_ios<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">period_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">duration_type</span> <span class="special">&amp;</span> dur_unit<span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">facet_type</span> <span class="special">&amp;</span> facet<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Generic code to parse a period – no matter the period type. <p>This generic code will parse any period using a facet to to get the 'elements'. For example, in the case of a date_period the elements will be instances of a date which will be parsed according the to setup in the passed facet parameter.</p>
+<p>The steps for parsing a period are always the same:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>consume the start delimiter</p></li>
+<li class="listitem"><p>get start element</p></li>
+<li class="listitem"><p>consume the separator</p></li>
+<li class="listitem"><p>get either last or end element depending on range settings</p></li>
+<li class="listitem"><p>consume the end delimeter depending on range settings</p></li>
+</ul></div>
+<p>
+</p>
+<p>Thus for a typical date period the contents of the input stream might look like this: </p>
+<pre class="programlisting"><span class="special">[</span><span class="identifier">March</span> <span class="number">01</span><span class="special">,</span> <span class="number">2004</span><span class="special">/</span><span class="identifier">June</span> <span class="number">07</span><span class="special">,</span> <span class="number">2004</span><span class="special">]</span>   <span class="special">&lt;</span><span class="special">--</span> <span class="identifier">closed</span> <span class="identifier">range</span>
+<span class="special">[</span><span class="identifier">March</span> <span class="number">01</span><span class="special">,</span> <span class="number">2004</span><span class="special">/</span><span class="identifier">June</span> <span class="number">08</span><span class="special">,</span> <span class="number">2004</span><span class="special">)</span>   <span class="special">&lt;</span><span class="special">--</span> <span class="identifier">open</span> <span class="identifier">range</span>
+</pre>
+<p> </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.12.15.3.37.3.4.5"></a><h3>
+<a name="id-1_3_12_15_3_38_1_1_1_16-bb"></a><code class="computeroutput">period_parser</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.date_time_reference.classboost_1_1date__time_1_1period__parser_1a787e3be068fb5b0c9d178abb8ee2951b"></a><span class="identifier">consume_delim</span><span class="special">(</span><span class="identifier">stream_itr_type</span> <span class="special">&amp;</span> sitr<span class="special">,</span> <span class="identifier">stream_itr_type</span> <span class="special">&amp;</span> stream_end<span class="special">,</span> 
+                   <span class="keyword">const</span> <span class="identifier">string_type</span> <span class="special">&amp;</span> delim<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>throws ios_base::failure if delimiter and parsed data do not match </li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2005 CrystalClear Software, Inc<p>Subject to the Boost Software License, Version 1.0. (See accompanying file
+    <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1date__time_1_1period__formatter.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.date_time_reference.period__parser_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1date__time_1_1special__values__formatter.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

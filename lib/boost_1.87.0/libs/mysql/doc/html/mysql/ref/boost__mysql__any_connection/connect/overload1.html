@@ -1,0 +1,125 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_connection::connect (1 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../connect.html" title="any_connection::connect">
+<link rel="prev" href="../connect.html" title="any_connection::connect">
+<link rel="next" href="overload2.html" title="any_connection::connect (2 of 2 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../connect.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../connect.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__any_connection.connect.overload1"></a><a class="link" href="overload1.html" title="any_connection::connect (1 of 2 overloads)">any_connection::connect
+          (1 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Establishes a connection to a MySQL server.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.connect.overload1.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.connect.overload1.synopsis"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__any_connection.connect.overload1.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">connect</span><span class="special">(</span>
+    <span class="keyword">const</span> <a class="link" href="../../boost__mysql__connect_params.html" title="connect_params"><code class="literal">connect_params</code></a><span class="special">&amp;</span> <span class="identifier">params</span><span class="special">,</span>
+    <a class="link" href="../../boost__mysql__error_code.html" title="error_code"><code class="literal">error_code</code></a><span class="special">&amp;</span> <span class="identifier">ec</span><span class="special">,</span>
+    <a class="link" href="../../boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a><span class="special">&amp;</span> <span class="identifier">diag</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.connect.overload1.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.connect.overload1.description"></a></span><a class="link" href="overload1.html#mysql.ref.boost__mysql__any_connection.connect.overload1.description">Description</a>
+          </h6>
+<p>
+            This function performs the following:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                If a connection has already been established (by a previous call
+                to <a class="link" href="../connect.html" title="any_connection::connect"><code class="computeroutput"><span class="identifier">connect</span></code></a> or <a class="link" href="../async_connect.html" title="any_connection::async_connect"><code class="computeroutput"><span class="identifier">async_connect</span></code></a>), closes it
+                at the transport layer (by closing any underlying socket) and discards
+                any protocol state associated to it. (If you require a clean close,
+                call <a class="link" href="../close.html" title="any_connection::close"><code class="computeroutput"><span class="identifier">close</span></code></a> or <a class="link" href="../async_close.html" title="any_connection::async_close"><code class="computeroutput"><span class="identifier">async_close</span></code></a> before using
+                this function).
+              </li>
+<li class="listitem">
+                If the connection is configured to use TCP (<code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">type</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">address_type</span><span class="special">::</span><span class="identifier">host_and_port</span></code>), resolves the passed
+                hostname to a set of endpoints. An empty hostname is equivalent to
+                <code class="computeroutput"><span class="string">"localhost"</span></code>.
+              </li>
+<li class="listitem">
+                Establishes the physical connection (performing the TCP or UNIX socket
+                connect).
+              </li>
+<li class="listitem">
+                Performs the MySQL handshake to establish a session. If the connection
+                is configured to use TLS, the TLS handshake is performed as part
+                of this step.
+              </li>
+<li class="listitem">
+                If any of the above steps fail, the TCP or UNIX socket connection
+                is closed.
+              </li>
+</ul></div>
+<p>
+            You can configure some options using the <a class="link" href="../../boost__mysql__connect_params.html" title="connect_params"><code class="computeroutput"><span class="identifier">connect_params</span></code></a> struct.
+          </p>
+<p>
+            The decision to use TLS or not is performed using the following:
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                If the transport is not TCP (<code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">server_address</span><span class="special">.</span><span class="identifier">type</span><span class="special">()</span> <span class="special">!=</span> <span class="identifier">address_type</span><span class="special">::</span><span class="identifier">host_and_port</span></code>), the connection
+                will never use TLS.
+              </li>
+<li class="listitem">
+                If the transport is TCP, and <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">ssl</span>
+                <span class="special">==</span> <span class="identifier">ssl_mode</span><span class="special">::</span><span class="identifier">disable</span></code>,
+                the connection will not use TLS.
+              </li>
+<li class="listitem">
+                If the transport is TCP, and <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">ssl</span>
+                <span class="special">==</span> <span class="identifier">ssl_mode</span><span class="special">::</span><span class="identifier">enable</span></code>,
+                the connection will use TLS only if the server supports it.
+              </li>
+<li class="listitem">
+                If the transport is TCP, and <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">ssl</span>
+                <span class="special">==</span> <span class="identifier">ssl_mode</span><span class="special">::</span><span class="identifier">require</span></code>,
+                the connection will always use TLS. If the server doesn't support
+                it, the operation will fail with <a class="link" href="../../boost__mysql__client_errc.html" title="client_errc"><code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">server_doesnt_support_ssl</span></code></a>.
+              </li>
+</ul></div>
+<p>
+            If <code class="computeroutput"><span class="identifier">params</span><span class="special">.</span><span class="identifier">connection_collation</span></code> is within a set
+            of well-known collations, this function sets the current character set,
+            such that <a class="link" href="../current_character_set.html" title="any_connection::current_character_set"><code class="computeroutput"><span class="identifier">current_character_set</span></code></a> returns
+            a non-null value. The default collation (<code class="computeroutput"><span class="identifier">utf8mb4_general_ci</span></code>)
+            is the only one guaranteed to be in the set of well-known collations.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../connect.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../connect.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

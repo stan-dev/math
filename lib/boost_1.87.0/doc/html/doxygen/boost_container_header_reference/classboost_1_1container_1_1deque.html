@@ -1,0 +1,701 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template deque</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.deque_8hpp" title="Header &lt;boost/container/deque.hpp&gt;">
+<link rel="prev" href="container__fwd_8hpp_1ac1cf57eb8a50c6330153e86be09a56a4.html" title="Global default_init">
+<link rel="next" href="structboost_1_1container_1_1pmr_1_1deque__of.html" title="Struct template deque_of">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="container__fwd_8hpp_1ac1cf57eb8a50c6330153e86be09a56a4.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.deque_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1container_1_1pmr_1_1deque__of.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template deque</span></h2>
+<p>boost::container::deque</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.deque_8hpp" title="Header &lt;boost/container/deque.hpp&gt;">boost/container/deque.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> Allocator <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span> <span class="keyword">typename</span> Options <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">:</span> <span class="keyword">protected</span> <span class="identifier">deque_base</span><span class="special">&lt;</span> <span class="identifier">real_allocator</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="keyword">void</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> <span class="keyword">void</span> <span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                                                                     <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1adbd6084f288f80315a6d0bd7a6a7928d"></a><span class="identifier">value_type</span><span class="special">;</span>            
+  <span class="keyword">typedef</span> <span class="identifier">ValAllocator</span>                                                          <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a86c2ba634136cc50495c67a950ce691d"></a><span class="identifier">allocator_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> ::boost::container::allocator_traits<span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">pointer</span>         <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aa8fde2d263bf61369525c4700dbfb8ef"></a><span class="identifier">pointer</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> ::boost::container::allocator_traits<span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_pointer</span>   <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab9352225b1b3a51eb745917055cc38ba"></a><span class="identifier">const_pointer</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> ::boost::container::allocator_traits<span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">reference</span>       <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0229ef4318614c288ead8c45120a074e"></a><span class="identifier">reference</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> ::boost::container::allocator_traits<span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1abe472481e7a0dc622c8d9163afb20dac"></a><span class="identifier">const_reference</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> ::boost::container::allocator_traits<span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">size_type</span>       <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a5f5383b029325a5201cc0bd83c2d2c2d"></a><span class="identifier">size_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> ::boost::container::allocator_traits<span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">difference_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af50b0ba4531530cfd686c4bacd5d1aef"></a><span class="identifier">difference_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                                                <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af7cae28c9f0822ea353f49a382809f90"></a><span class="identifier">stored_allocator_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                                                <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a8cffd2cba3cedb030049800938148c18"></a><span class="identifier">iterator</span><span class="special">;</span>              
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                                                <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ad49bc472bb13fd2bd0b11b4e9a95bf28"></a><span class="identifier">const_iterator</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                                                <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a34212dd6d840ee5bad6bbd911417401d"></a><span class="identifier">reverse_iterator</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span>                                                <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aa0b34cb6a06f69952a2e544a5f34bdf6"></a><span class="identifier">const_reverse_iterator</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1deque.html#id12-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab31e3cf1359379400c825a8047f7a11d"><span class="identifier">deque</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_default_constructible</span><span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a78c4480f3d6eb28860ac3a24f1b230c3"><span class="identifier">deque</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ace33a3f2b6b61cc07c64f9233a496cb3"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ad0dcb8fbced358e6f9a7cae1ade5ac9c"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aaed6ae7834e4eb504c6036a62313d4db"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ac50247271ebac3112a2e36c3291f4e1a"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1adb375ebe74303bbfe5be1010ca10a144"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a81cc6b0b4d028c654ed2376b16e29625"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aa24eee80c57da64a8c077d7b719924a2"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">InIt</span><span class="special">,</span> <span class="identifier">InIt</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aeb1b7f11121dba88b764a1009f6abf9d"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">InIt</span><span class="special">,</span> <span class="identifier">InIt</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af1dd20dcbf3ac98ad0d4523379c56a56"><span class="identifier">deque</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">,</span> 
+        <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a3a16b1e1a014cf772d848b8081a8afbf"><span class="identifier">deque</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af9207018a08b726e02ef77f515339514"><span class="identifier">deque</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ac4ed3e9d7667d556f19854f6c34f11ee"><span class="identifier">deque</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af1737ddb38fd2512527c937568192a79"><span class="identifier">deque</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a09c82430e0c87b6f162a700e4620243c"><span class="special">~</span><span class="identifier">deque</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aeb949a67a1cbeca2049b6520d72b6603"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aad4e3aa15bd1c9ff5f2163a63d54fbf8"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">propagate_on_container_move_assignment</span><span class="special">::</span><span class="identifier">value</span><span class="special">||</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">is_always_equal</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a81ab52d10e2251d79f92c18ec990d3fa"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a482470393c5c122ae410578f91e233e1"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2f88947d19549860fb861c778c1e298f"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">InIt</span><span class="special">,</span> <span class="identifier">InIt</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a4fb2ef483bfdab7a2fe7874cd9252e96"><span class="identifier">assign</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">allocator_type</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a10e4341f9beb3556bf9470d89f611ffc"><span class="identifier">get_allocator</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">stored_allocator_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab768f9b79e96ef78c25a9475fe9a1802"><span class="identifier">get_stored_allocator</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">stored_allocator_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2096eb3560b62923e2eff92746a4f137"><span class="identifier">get_stored_allocator</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1add112de85e00a75fcaea3a24d3e9df0e"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0705a26454582df127fa8a884b4cef36"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a5171faae725f8aacae49643fbe7cf0ae"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a384d60619fb85d010ba68b3af46cecf6"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a91b4794b529ac4bc750400998875acd2"><span class="identifier">rbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a220b702d2b20b050af03e7fe4e0399c5"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a261c250c979a875435f04e18097a042e"><span class="identifier">rend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a320f6be0a36c341400f26ff0f42a3ea7"><span class="identifier">cbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a3a20cbce2918a5959d70fdb7182f518d"><span class="identifier">cend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0c64b1e5e542da19d727a84cd786f5c0"><span class="identifier">crbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reverse_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a90c0e9f5108b96c9431cb96ffeb07039"><span class="identifier">crend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a4c12e52a6cb1cd86074a4acbde4e391e"><span class="identifier">empty</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a44179435c296011d564a5d44c470db6b"><span class="identifier">max_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a6f520b6813d46071936903b527f4e0c9"><span class="identifier">resize</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a6f1a13cfa98887e39473bbd80504609e"><span class="identifier">resize</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a415af326d2e102d8733bb4f8345f0997"><span class="identifier">resize</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a571a1ebd439c33f1f113a7d4085bcd6f"><span class="identifier">shrink_to_fit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab788832410aec3eb172baa5ea010d8c1"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a32c8e5b597d498601a4d650b3d6584ca"><span class="identifier">front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a44405cad37ae73a33acc76269f6a424f"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aac5fe0749158424f48b6fca1a7d2e5cf"><span class="identifier">back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae0776eb7f0a4370ccad45bafb519db40"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aaea9864c1a994731b2a4e80bd827df6b"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a7073b3e19f93ece2fd68b369c6c0e220"><span class="identifier">nth</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a120491aaef66d07706b72a061b967e4f"><span class="identifier">nth</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a902a054a083e51c5f0c4d792ebb2ecfb"><span class="identifier">index_of</span></a><span class="special">(</span><span class="identifier">iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a1c7caa5c1f258ac28214f02ec8a3d16c"><span class="identifier">index_of</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a7559532bc4d772315c64165f0626171a"><span class="identifier">at</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2e9a915e012e48002917e24d8fe44675"><span class="identifier">at</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a44a54253630314d94626c84ef9a44456"><span class="identifier">emplace_front</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">reference</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae8f574b514b6e09fc6d13a9a6e0d7c3f"><span class="identifier">emplace_back</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a225d300e4bce4ccfdf2f44de9afaac85"><span class="identifier">emplace</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a3eda1e06b2fa3c4d657af95cb3b95fac"><span class="identifier">push_front</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a496ed71734410dba2589f59d0b6ea816"><span class="identifier">push_front</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab3a60b1a80ab59f7cf46efb174248748"><span class="identifier">push_back</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1acff6f99249944b56fe1e0a998f73b474"><span class="identifier">push_back</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0c951ef72bd3d0542e345c75a3e253ee"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a4edde910e4e5682aa2af4957328301db"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a7c75c12c4fdf7e31c97983d7be068b9f"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aa6765ebb3f1e6e3b9cf3de221a87b76e"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">InIt</span><span class="special">,</span> <span class="identifier">InIt</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a8b821f0bd77401f693c63205349aae19"><span class="identifier">insert</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a395a46b9ebe10fb793d183b02de1be53"><span class="identifier">pop_front</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0ab389dbc76ae7f27c8e7166535dc740"><span class="identifier">pop_back</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a1bf95e7f8d5468898788d1ac81538e55"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab31585c0de78ec0581d09850ceee2131"><span class="identifier">erase</span></a><span class="special">(</span><span class="identifier">const_iterator</span><span class="special">,</span> <span class="identifier">const_iterator</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab71258407a1443080f1b5b93ffc5e6cd"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">propagate_on_container_swap</span><span class="special">::</span><span class="identifier">value</span><span class="special">||</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">is_always_equal</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a8b0918f7356781626028d4dc2ca41135"><span class="identifier">clear</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1deque.html#id13-bb">friend functions</a></span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a231d653119ac632ce95499cb154842cc"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1afc83d22e093416929a36995b35180d8b"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a79c789f3fbe4a5cf8c000d3d879ebaf6"><span class="keyword">operator</span><span class="special">&lt;</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aaec95e21289b19edfcc12fa7de60fdaa"><span class="keyword">operator</span><span class="special">&gt;</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2cf85b41cdd9403a348d603b8859685c"><span class="keyword">operator</span><span class="special">&lt;=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a54b7520fae1c8db2bbbd9cebe3ba4093"><span class="keyword">operator</span><span class="special">&gt;=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a017facd32989bdb41f6587cf8af40872"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">x</span><span class="special">.</span><span class="identifier">swap</span><span class="special">(</span><span class="identifier">y</span><span class="special">)</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.9.14.6.3.4"></a><h2>Description</h2>
+<p>A double-ended queue is a sequence that supports random access to elements, constant time insertion and removal of elements at the end of the sequence, and linear time insertion and removal of elements in the middle.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.9.14.6.3.4.4"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> T</pre>
+<p>The type of object that is stored in the deque </p>
+</li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">typename</span> Allocator <span class="special">=</span> <span class="keyword">void</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Options <span class="special">=</span> <span class="keyword">void</span></pre>
+<p>A type produced from <code class="computeroutput"><a class="link" href="structboost_1_1container_1_1deque__options.html" title="Struct template deque_options">boost::container::deque_options</a></code>. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.6.3.4.5"></a><h3>
+<a name="id12-bb"></a><code class="computeroutput">deque</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab31e3cf1359379400c825a8047f7a11d"></a><span class="identifier">deque</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">is_nothrow_default_constructible</span><span class="special">&lt;</span> <span class="identifier">ValAllocator</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Default constructors a deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a78c4480f3d6eb28860ac3a24f1b230c3"></a><span class="identifier">deque</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque taking the allocator as parameter.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ace33a3f2b6b61cc07c64f9233a496cb3"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque and inserts n value initialized values.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's value initialization throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ad0dcb8fbced358e6f9a7cae1ade5ac9c"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque and inserts n default initialized values.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's default initialization or copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aaed6ae7834e4eb504c6036a62313d4db"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts n value initialized values.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's value initialization throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ac50247271ebac3112a2e36c3291f4e1a"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts n default initialized values.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's default initialization or copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1adb375ebe74303bbfe5be1010ca10a144"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts n copies of value.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a81cc6b0b4d028c654ed2376b16e29625"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts n copies of value.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aa24eee80c57da64a8c077d7b719924a2"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">InIt</span> first<span class="special">,</span> <span class="identifier">InIt</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts a copy of the range [first, last) in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's constructor taking a dereferenced InIt throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the range [first, last). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aeb1b7f11121dba88b764a1009f6abf9d"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">InIt</span> first<span class="special">,</span> <span class="identifier">InIt</span> last<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts a copy of the range [first, last) in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's constructor taking a dereferenced InIt throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the range [first, last). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af1dd20dcbf3ac98ad0d4523379c56a56"></a><span class="identifier">deque</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">,</span> 
+      <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a <span class="special">=</span> <span class="identifier">allocator_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a deque that will use a copy of allocator a and inserts a copy of the range [il.begin(), il.end()) in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's default constructor throws or T's constructor taking a dereferenced std::initializer_list iterator throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the range [il.begin(), il.end()). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a3a16b1e1a014cf772d848b8081a8afbf"></a><span class="identifier">deque</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Copy constructs a deque.</p>
+<p><span class="bold"><strong>Postcondition</strong></span>: x == *this.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the elements x contains. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af9207018a08b726e02ef77f515339514"></a><span class="identifier">deque</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;&amp;</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Move constructor. Moves x's resources to *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_type's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ac4ed3e9d7667d556f19854f6c34f11ee"></a><span class="identifier">deque</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Copy constructs a vector using the specified allocator.</p>
+<p><span class="bold"><strong>Postcondition</strong></span>: x == *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the elements x contains. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1af1737ddb38fd2512527c937568192a79"></a><span class="identifier">deque</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">allocator_type</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Move constructor using the specified allocator. Moves x's resources to *this if a == allocator_type(). Otherwise copies values from x to *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocation or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant if a == x.get_allocator(), linear otherwise. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a09c82430e0c87b6f162a700e4620243c"></a><span class="special">~</span><span class="identifier">deque</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Destroys the deque. All stored values are destroyed and used memory is deallocated.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aeb949a67a1cbeca2049b6520d72b6603"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Makes *this contain the same elements as x.</p>
+<p><span class="bold"><strong>Postcondition</strong></span>: this-&gt;<a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> == x.size(). *this contains a copy of each of x's elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in x. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aad4e3aa15bd1c9ff5f2163a63d54fbf8"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;&amp;</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">propagate_on_container_move_assignment</span><span class="special">::</span><span class="identifier">value</span><span class="special">||</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">is_always_equal</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Move assignment. All x's values are transferred to *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator_traits_type::propagate_on_container_move_assignment is false and (allocation throws or value_type's move constructor throws)</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant if allocator_traits_type:: propagate_on_container_move_assignment is true or this-&gt;get&gt;allocator() == x.get_allocator(). Linear otherwise. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a81ab52d10e2251d79f92c18ec990d3fa"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Makes *this contain the same elements as il.</p>
+<p><span class="bold"><strong>Postcondition</strong></span>: this-&gt;<a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> == il.size(). *this contains a copy of each of x's elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in il. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a482470393c5c122ae410578f91e233e1"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> val<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Assigns the n copies of val to *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2f88947d19549860fb861c778c1e298f"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">InIt</span> first<span class="special">,</span> <span class="identifier">InIt</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Assigns the the range [first, last) to *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's constructor from dereferencing InIt throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a4fb2ef483bfdab7a2fe7874cd9252e96"></a><span class="identifier">assign</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Assigns the the range [il.begin(), il.end()) to *this.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's constructor from dereferencing std::initializer_list iterator throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to il.size(). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">allocator_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a10e4341f9beb3556bf9470d89f611ffc"></a><span class="identifier">get_allocator</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a copy of the internal allocator.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If allocator's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">stored_allocator_type</span> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab768f9b79e96ef78c25a9475fe9a1802"></a><span class="identifier">get_stored_allocator</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the internal allocator.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">stored_allocator_type</span> <span class="special">&amp;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2096eb3560b62923e2eff92746a4f137"></a><span class="identifier">get_stored_allocator</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the internal allocator.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1add112de85e00a75fcaea3a24d3e9df0e"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an iterator to the first element contained in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0705a26454582df127fa8a884b4cef36"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the first element contained in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an iterator to the end of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a5171faae725f8aacae49643fbe7cf0ae"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the end of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a384d60619fb85d010ba68b3af46cecf6"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reverse_iterator pointing to the beginning of the reversed deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a91b4794b529ac4bc750400998875acd2"></a><span class="identifier">rbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the beginning of the reversed deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a220b702d2b20b050af03e7fe4e0399c5"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reverse_iterator pointing to the end of the reversed deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a261c250c979a875435f04e18097a042e"></a><span class="identifier">rend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the end of the reversed deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a320f6be0a36c341400f26ff0f42a3ea7"></a><span class="identifier">cbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the first element contained in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a3a20cbce2918a5959d70fdb7182f518d"></a><span class="identifier">cend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the end of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0c64b1e5e542da19d727a84cd786f5c0"></a><span class="identifier">crbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the beginning of the reversed deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reverse_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a90c0e9f5108b96c9431cb96ffeb07039"></a><span class="identifier">crend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_reverse_iterator pointing to the end of the reversed deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a4c12e52a6cb1cd86074a4acbde4e391e"></a><span class="identifier">empty</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if the deque contains no elements.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the number of the elements contained in the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a44179435c296011d564a5d44c470db6b"></a><span class="identifier">max_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the largest possible size of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a6f520b6813d46071936903b527f4e0c9"></a><span class="identifier">resize</span><span class="special">(</span><span class="identifier">size_type</span> new_size<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts or erases elements at the end such that the size becomes n. New elements are value initialized.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws, or T's constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the difference between <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> and new_size. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a6f1a13cfa98887e39473bbd80504609e"></a><span class="identifier">resize</span><span class="special">(</span><span class="identifier">size_type</span> new_size<span class="special">,</span> <a class="link" href="structboost_1_1container_1_1default__init__t.html" title="Struct default_init_t">default_init_t</a><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts or erases elements at the end such that the size becomes n. New elements are default initialized.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws, or T's constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the difference between <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> and new_size.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a415af326d2e102d8733bb4f8345f0997"></a><span class="identifier">resize</span><span class="special">(</span><span class="identifier">size_type</span> new_size<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts or erases elements at the end such that the size becomes n. New elements are copy constructed from x.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws, or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the difference between <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> and new_size. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a571a1ebd439c33f1f113a7d4085bcd6f"></a><span class="identifier">shrink_to_fit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Tries to deallocate the excess of memory created with previous allocations. The size of the deque is unchanged</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab788832410aec3eb172baa5ea010d8c1"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: !empty()</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the first element of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a32c8e5b597d498601a4d650b3d6584ca"></a><span class="identifier">front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: !empty()</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const reference to the first element from the beginning of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a44405cad37ae73a33acc76269f6a424f"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: !empty()</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the last element of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aac5fe0749158424f48b6fca1a7d2e5cf"></a><span class="identifier">back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: !empty()</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const reference to the last element of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae0776eb7f0a4370ccad45bafb519db40"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> &gt; n.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the nth element from the beginning of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aaea9864c1a994731b2a4e80bd827df6b"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> &gt; n.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const reference to the nth element from the beginning of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a7073b3e19f93ece2fd68b369c6c0e220"></a><span class="identifier">nth</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> &gt;= n.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns an iterator to the nth element from the beginning of the container. Returns <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a> if n == <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a>.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a120491aaef66d07706b72a061b967e4f"></a><span class="identifier">nth</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> &gt;= n.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const_iterator to the nth element from the beginning of the container. Returns <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a> if n == <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a>.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a902a054a083e51c5f0c4d792ebb2ecfb"></a><span class="identifier">index_of</span><span class="special">(</span><span class="identifier">iterator</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1add112de85e00a75fcaea3a24d3e9df0e">begin()</a> &lt;= p &lt;= <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the index of the element pointed by p and <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> if p == <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a1c7caa5c1f258ac28214f02ec8a3d16c"></a><span class="identifier">index_of</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1add112de85e00a75fcaea3a24d3e9df0e">begin()</a> &lt;= p &lt;= <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns the index of the element pointed by p and <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> if p == <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant.</p>
+<p><span class="bold"><strong>Note</strong></span>: Non-standard extension </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a7559532bc4d772315c64165f0626171a"></a><span class="identifier">at</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> &gt; n.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a reference to the nth element from the beginning of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: range_error if n &gt;= <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a></p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">const_reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2e9a915e012e48002917e24d8fe44675"></a><span class="identifier">at</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a> &gt; n.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Returns a const reference to the nth element from the beginning of the container.</p>
+<p><span class="bold"><strong>Throws</strong></span>: range_error if n &gt;= <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aea640403f2b7ba11b830f92414432783">size()</a></p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a44a54253630314d94626c84ef9a44456"></a><span class="identifier">emplace_front</span><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span> args<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts an object of type T constructed with std::forward&lt;Args&gt;(args)... in the beginning of the deque.</p>
+<p><span class="bold"><strong>Returns</strong></span>: A reference to the created object.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or the in-place constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">reference</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae8f574b514b6e09fc6d13a9a6e0d7c3f"></a><span class="identifier">emplace_back</span><span class="special">(</span><span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span> args<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts an object of type T constructed with std::forward&lt;Args&gt;(args)... in the end of the deque.</p>
+<p><span class="bold"><strong>Returns</strong></span>: A reference to the created object.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or the in-place constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Args<span class="special">&gt;</span> <span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a225d300e4bce4ccfdf2f44de9afaac85"></a><span class="identifier">emplace</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span> args<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts an object of type T constructed with std::forward&lt;Args&gt;(args)... before p</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or the in-place constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: If p is <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>, amortized constant time Linear time otherwise. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a3eda1e06b2fa3c4d657af95cb3b95fac"></a><span class="identifier">push_front</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts a copy of x at the front of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a496ed71734410dba2589f59d0b6ea816"></a><span class="identifier">push_front</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a new element in the front of the deque and moves the resources of x to this new element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab3a60b1a80ab59f7cf46efb174248748"></a><span class="identifier">push_back</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Inserts a copy of x at the end of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1acff6f99249944b56fe1e0a998f73b474"></a><span class="identifier">push_back</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Constructs a new element in the end of the deque and moves the resources of x to this new element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Amortized constant time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0c951ef72bd3d0542e345c75a3e253ee"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Insert a copy of x before p.</p>
+<p><span class="bold"><strong>Returns</strong></span>: an iterator to the inserted element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or x's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: If p is <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>, amortized constant time Linear time otherwise. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a4edde910e4e5682aa2af4957328301db"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> p<span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: p must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Insert a new element before p with x's resources.</p>
+<p><span class="bold"><strong>Returns</strong></span>: an iterator to the inserted element.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: If p is <a class="link" href="classboost_1_1container_1_1deque.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ae90bad7d69882c9571cc4a643e81481c">end()</a>, amortized constant time Linear time otherwise. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a7c75c12c4fdf7e31c97983d7be068b9f"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> pos<span class="special">,</span> <span class="identifier">size_type</span> n<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: pos must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Insert n copies of x before pos.</p>
+<p><span class="bold"><strong>Returns</strong></span>: an iterator to the first inserted element or pos if n is 0.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to n. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> InIt<span class="special">&gt;</span> 
+  <span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aa6765ebb3f1e6e3b9cf3de221a87b76e"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> pos<span class="special">,</span> <span class="identifier">InIt</span> first<span class="special">,</span> <span class="identifier">InIt</span> last<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: pos must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Insert a copy of the [first, last) range before pos.</p>
+<p><span class="bold"><strong>Returns</strong></span>: an iterator to the first inserted element or pos if first == last.</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws, T's constructor from a dereferenced InIt throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to distance [first, last). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a8b821f0bd77401f693c63205349aae19"></a><span class="identifier">insert</span><span class="special">(</span><span class="identifier">const_iterator</span> pos<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">value_type</span> <span class="special">&gt;</span> il<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Requires</strong></span>: pos must be a valid iterator of *this.</p>
+<p><span class="bold"><strong>Effects</strong></span>: Insert a copy of the [il.begin(), il.end()) range before pos.</p>
+<p><span class="bold"><strong>Returns</strong></span>: an iterator to the first inserted element or pos if il.begin() == il.end().</p>
+<p><span class="bold"><strong>Throws</strong></span>: If memory allocation throws, T's constructor from a dereferenced std::initializer_list throws or T's copy constructor throws.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to distance [il.begin(), il.end()). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a395a46b9ebe10fb793d183b02de1be53"></a><span class="identifier">pop_front</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Removes the first element from the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a0ab389dbc76ae7f27c8e7166535dc740"></a><span class="identifier">pop_back</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Removes the last element from the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a1bf95e7f8d5468898788d1ac81538e55"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> pos<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the element at p.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the elements between pos and the last element (if pos is near the end) or the first element if(pos is near the beginning). Constant if pos is the first or the last element. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab31585c0de78ec0581d09850ceee2131"></a><span class="identifier">erase</span><span class="special">(</span><span class="identifier">const_iterator</span> first<span class="special">,</span> <span class="identifier">const_iterator</span> last<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases the elements pointed by [first, last).</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the distance between first and last plus the elements between pos and the last element (if pos is near the end) or the first element if(pos is near the beginning). </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1ab71258407a1443080f1b5b93ffc5e6cd"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">propagate_on_container_swap</span><span class="special">::</span><span class="identifier">value</span><span class="special">||</span><span class="identifier">allocator_traits_type</span><span class="special">::</span><span class="identifier">is_always_equal</span><span class="special">::</span><span class="identifier">value</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Swaps the contents of *this and x.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a8b0918f7356781626028d4dc2ca41135"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Erases all the elements of the deque.</p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing.</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the deque. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.6.3.4.6"></a><h3>
+<a name="id13-bb"></a><code class="computeroutput">deque</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a231d653119ac632ce95499cb154842cc"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if x and y are equal</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1afc83d22e093416929a36995b35180d8b"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if x and y are unequal</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a79c789f3fbe4a5cf8c000d3d879ebaf6"></a><span class="keyword">operator</span><span class="special">&lt;</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if x is less than y</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1aaec95e21289b19edfcc12fa7de60fdaa"></a><span class="keyword">operator</span><span class="special">&gt;</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if x is greater than y</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a2cf85b41cdd9403a348d603b8859685c"></a><span class="keyword">operator</span><span class="special">&lt;=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if x is equal or less than y</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a54b7520fae1c8db2bbbd9cebe3ba4093"></a><span class="keyword">operator</span><span class="special">&gt;=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: Returns true if x is equal or greater than y</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Linear to the number of elements in the container. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1deque_1a017facd32989bdb41f6587cf8af40872"></a><span class="identifier">swap</span><span class="special">(</span><a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> x<span class="special">,</span> <a class="link" href="classboost_1_1container_1_1deque.html" title="Class template deque">deque</a> <span class="special">&amp;</span> y<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="keyword">noexcept</span><span class="special">(</span><span class="identifier">x</span><span class="special">.</span><span class="identifier">swap</span><span class="special">(</span><span class="identifier">y</span><span class="special">)</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: x.swap(y)</p>
+<p><span class="bold"><strong>Complexity</strong></span>: Constant. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2018 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="container__fwd_8hpp_1ac1cf57eb8a50c6330153e86be09a56a4.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.deque_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1container_1_1pmr_1_1deque__of.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

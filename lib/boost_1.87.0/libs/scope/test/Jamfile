@@ -1,0 +1,99 @@
+# Copyright 2023-2024 Andrey Semashev
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# https://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.0.1 ;
+
+import testing ;
+import path ;
+import regex ;
+import os ;
+import-search /boost/config/checks ;
+import config : requires ;
+
+project
+    : requirements
+        <library>/boost/scope//boost_scope
+        <include>common
+
+        <c++-template-depth>1024
+
+        [ requires
+            # Requirements of Boost.Scope implementation
+            exceptions
+            sfinae_expr
+            cxx11_constexpr
+            cxx11_noexcept
+            cxx11_rvalue_references
+            cxx11_decltype
+            cxx11_template_aliases
+            cxx11_variadic_templates
+            cxx11_defaulted_functions
+            cxx11_deleted_functions
+            cxx11_function_template_default_args
+            cxx11_hdr_type_traits
+
+            # Requirements of Boost.Scope tests
+            cxx11_nullptr
+            cxx11_lambdas
+            cxx11_auto_declarations
+            cxx11_unified_initialization_syntax
+            cxx11_hdr_system_error
+        ]
+
+        <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
+        <target-os>windows:<define>_CRT_SECURE_NO_DEPRECATE
+    ;
+
+path-constant SCOPE_INCLUDE_DIR : ../include ;
+
+# this rule enumerates through all the sources and invokes
+# the run rule for each source, the result is a list of all
+# the run rules, which we can pass on to the test_suite rule:
+rule test_all
+{
+    local all_rules ;
+    local file ;
+
+    if ! [ os.environ BOOST_SCOPE_TEST_WITHOUT_SELF_CONTAINED_HEADER_TESTS ]
+    {
+        local headers_path = [ path.make $(SCOPE_INCLUDE_DIR)/boost/scope ] ;
+        for file in [ path.glob-tree $(headers_path) : *.hpp : detail ]
+        {
+            local rel_file = [ path.relative-to $(headers_path) $(file) ] ;
+            # Note: The test name starts with '~' in order to group these tests in the test report table, preferably at the end.
+            #       All '/' are replaced with '-' because apparently test scripts have a problem with test names containing slashes.
+            local test_name = [ regex.replace ~hdr/$(rel_file) "/" "-" ] ;
+            #ECHO $(rel_file) ;
+            all_rules += [ compile compile/self_contained_header.cpp : <define>"BOOST_SCOPE_TEST_HEADER=$(rel_file)" <dependency>$(file) : $(test_name) ] ;
+        }
+    }
+
+    for file in [ glob compile/*.cpp ]
+    {
+        if [ path.basename $(file) ] != "self_contained_header.cpp"
+        {
+            all_rules += [ compile $(file) ] ;
+        }
+    }
+    for file in [ glob compile_fail/*.cpp ]
+    {
+        all_rules += [ compile-fail $(file) ] ;
+    }
+    for file in [ glob run/*.cpp ]
+    {
+        all_rules += [ run $(file) : : :
+            <warnings>extra
+            <toolset>msvc:<warnings-as-errors>on
+            <toolset>clang:<warnings-as-errors>on
+            <toolset>gcc:<warnings-as-errors>on
+        ] ;
+    }
+
+    #ECHO All rules: $(all_rules) ;
+    return $(all_rules) ;
+}
+
+test-suite scope : [ test_all ] ;

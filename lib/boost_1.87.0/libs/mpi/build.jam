@@ -1,0 +1,42 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/foreach//boost_foreach
+    /boost/function//boost_function
+    /boost/graph//boost_graph
+    /boost/integer//boost_integer
+    /boost/iterator//boost_iterator
+    /boost/lexical_cast//boost_lexical_cast
+    /boost/mpl//boost_mpl
+    /boost/optional//boost_optional
+    /boost/python//boost_python
+    /boost/serialization//boost_serialization
+    /boost/smart_ptr//boost_smart_ptr
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits ;
+
+project /boost/mpi
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_mpi : build//boost_mpi ]
+    [ alias boost_mpi_python : build//boost_mpi_python ]
+    [ alias mpi : build//mpi ]
+    [ alias all : boost_mpi boost_mpi_python mpi test ]
+    ;
+
+call-if : boost-library mpi
+    : install boost_mpi boost_mpi_python mpi
+    ;
+

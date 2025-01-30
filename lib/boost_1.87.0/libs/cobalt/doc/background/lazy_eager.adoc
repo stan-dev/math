@@ -1,0 +1,117 @@
+[#lazy] [#eager]
+== Lazy & eager
+
+Coroutines are lazy if they only start execution of its code after it gets resumed, while an eager one will execute right-away until its first suspension point (i.e. a `co_await`, `co_yield` or `co_return` expression.)
+
+[source,cpp]
+----
+lazy_coro co_example()
+{
+    printf("Entered coro\n");
+    co_yield 0;
+    printf("Coro done\n");
+}
+
+int main()
+{
+    printf("enter main\n");
+    auto lazy = co_example();
+    printf("constructed coro\n");
+    lazy.resume();
+    printf("resumed once\n");
+    lazy.resume();    
+    printf("resumed twice\n");
+    return 0;
+}
+----
+
+Which will produce output like this:
+
+[source]
+----
+enter main
+constructed coro
+Entered coro
+resumed once
+Coro Done
+resumed twice
+----
+
+ifdef::generate-diagram[]
+[mermaid, target=lazy_eager1]
+----
+sequenceDiagram
+    participant main;
+    Note left of main: "enter main"
+    main-->>+lazy: co_example()
+    Note left of main: "constructed coro"
+    main->>lazy: resume()
+    Note right of lazy: "Entered coro
+    lazy-->>main: co_yield 0
+    Note left of main: "resumed once"
+    main-->>+lazy: resume()
+    Note right of lazy: "Coro done"
+    lazy->>main: co_return
+    Note left of main: "resumed twice"
+----
+endif::[]
+
+ifndef::generate-diagram[]
+image::lazy_eager1.png[]
+endif::[]
+
+
+Whereas an eager coro would look like this:
+
+[source,cpp]
+----
+eager_coro co_example()
+{
+    printf("Entered coro\n");
+    co_yield 0;
+    printf("Coro done\n");
+}
+
+int main()
+{
+    printf("enter main\n");
+    auto lazy = co_example();
+    printf("constructed coro\n");
+    lazy.resume();
+    printf("resumed once\n");
+    return 0;
+}
+----
+
+Which will produce output like this:
+
+[source]
+----
+enter main
+Entered coro
+constructed coro
+resume once
+Coro Done
+----
+
+
+ifdef::generate-diagram[]
+[mermaid, target=lazy_eager2]
+----
+sequenceDiagram
+    participant main;
+    Note left of main: "enter main"
+    main->>lazy: co_example()
+    Note right of lazy: "Entered coro
+    lazy-->>main: co_yield 0
+    Note left of main: "constructed coro"
+    main-->>+lazy: resume()
+    Note right of lazy: "Coro done"
+    lazy->>main: co_return
+    Note left of main: "resumed once"
+----
+endif::[]
+
+ifndef::generate-diagram[]
+image::lazy_eager2.png[]
+endif::[]

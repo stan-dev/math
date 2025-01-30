@@ -1,0 +1,169 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template integer</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Histogram">
+<link rel="up" href="../histogram/reference.html#doxygen.integer_8hpp" title="Header &lt;boost/histogram/axis/integer.hpp&gt;">
+<link rel="prev" href="classboost_1_1histogram_1_1axis_1_1category.html" title="Class template category">
+<link rel="next" href="classboost_1_1histogram_1_1axis_1_1interval__view.html" title="Class template interval_view">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1histogram_1_1axis_1_1category.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../histogram/reference.html#doxygen.integer_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1histogram_1_1axis_1_1interval__view.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template integer</span></h2>
+<p>boost::histogram::axis::integer — Axis for an interval of integer values with unit steps. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../histogram/reference.html#doxygen.integer_8hpp" title="Header &lt;boost/histogram/axis/integer.hpp&gt;">boost/histogram/axis/integer.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Value<span class="special">,</span> <span class="keyword">typename</span> MetaData<span class="special">,</span> <span class="keyword">typename</span> Options<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a> <span class="special">:</span> <span class="keyword">public</span> boost::histogram::axis::iterator_mixin&lt; integer&lt; Value, MetaData, Options &gt; &gt;,
+                <span class="keyword">public</span> metadata_base_t&lt; MetaData &gt;
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#id35-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a6444d72203629dc0d6b3ade58a4741f9"><span class="identifier">integer</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a0a9fa6e4c0107a02709137d014268eb9"><span class="identifier">integer</span></a><span class="special">(</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">metadata_type</span> <span class="special">=</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> <span class="identifier">options_type</span> <span class="special">=</span> <span class="special">{</span><span class="special">}</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a8472a8f2f420ba5595d8b9fb7aa7e78a"><span class="identifier">integer</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">index_type</span><span class="special">,</span> <span class="identifier">index_type</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">index_type</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a90c490f836129e48a9772f2ed3351644"><span class="identifier">index</span></a><span class="special">(</span><span class="identifier">value_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">auto</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1ac288dac6d855a4253420e615b1ba4704"><span class="identifier">update</span></a><span class="special">(</span><span class="identifier">value_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">value_type</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1adef943adee48642dba65444093375b0e"><span class="identifier">value</span></a><span class="special">(</span><span class="identifier">local_index_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1ab9786d5339dac907428c119fea787be5"><span class="identifier">bin</span></a><span class="special">(</span><span class="identifier">index_type</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">index_type</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a6b6384d80e908b51bdba711a83e0e086"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> V<span class="special">,</span> <span class="keyword">typename</span> M<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a2df795802f42a83108d4b1829020f9cc"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a><span class="special">&lt;</span> <span class="identifier">V</span><span class="special">,</span> <span class="identifier">M</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> V<span class="special">,</span> <span class="keyword">typename</span> M<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a4966ab2ef886377799b203b1431a2e3d"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a><span class="special">&lt;</span> <span class="identifier">V</span><span class="special">,</span> <span class="identifier">M</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a30073bebec015660f4d90e43b4b4b60d"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#id36-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a3548a2e7489ae5869dfc2b354a1c7831"><span class="identifier">options</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html#doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a46c0aca0f19e1532da73bafef4f09846"><span class="identifier">inclusive</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id26519"></a><h2>Description</h2>
+<p>Binning is a O(1) operation. This axis bins even faster than a regular axis.</p>
+<p>The options <code class="computeroutput">growth</code> and<code class="computeroutput">circular</code> are mutually exclusive. If the axis uses integers and either<code class="computeroutput">growth</code> or<code class="computeroutput">circular</code> are set, the axis cannot have the options<code class="computeroutput">underflow</code> or<code class="computeroutput">overflow</code> set.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id26530"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Value</pre>
+<p>input value type. Must be integer or floating point. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> MetaData</pre>
+<p>type to store meta data. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Options</pre>
+<p>see boost::histogram::axis::option. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id26551"></a><h3>
+<a name="id35-bb"></a><code class="computeroutput">integer</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a6444d72203629dc0d6b3ade58a4741f9"></a><span class="identifier">integer</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a0a9fa6e4c0107a02709137d014268eb9"></a><span class="identifier">integer</span><span class="special">(</span><span class="identifier">value_type</span> start<span class="special">,</span> <span class="identifier">value_type</span> stop<span class="special">,</span> <span class="identifier">metadata_type</span> meta <span class="special">=</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> 
+        <span class="identifier">options_type</span> options <span class="special">=</span> <span class="special">{</span><span class="special">}</span><span class="special">)</span><span class="special">;</span></pre>Construct over semi-open integer interval [start, stop). <p>
+The constructor throws <code class="computeroutput">std::invalid_argument</code> if start is not less than stop.</p>
+<p>The arguments meta and alloc are passed by value. If you move either of them into the axis and the constructor throws, their values are lost. Do not move if you cannot guarantee that the bin description is not valid. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">start</code></span></p></td>
+<td><p>first integer of covered range. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">stop</code></span></p></td>
+<td><p>one past last integer of covered range. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">meta</code></span></p></td>
+<td><p>description of the axis (optional). </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">options</code></span></p></td>
+<td><p>see boost::histogram::axis::option (optional).</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a8472a8f2f420ba5595d8b9fb7aa7e78a"></a><span class="identifier">integer</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a> <span class="special">&amp;</span> src<span class="special">,</span> <span class="identifier">index_type</span> begin<span class="special">,</span> <span class="identifier">index_type</span> end<span class="special">,</span> <span class="keyword">unsigned</span> merge<span class="special">)</span><span class="special">;</span></pre>Constructor used by algorithm::reduce to shrink and rebin. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">index_type</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a90c490f836129e48a9772f2ed3351644"></a><span class="identifier">index</span><span class="special">(</span><span class="identifier">value_type</span> x<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return index for value argument. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">auto</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1ac288dac6d855a4253420e615b1ba4704"></a><span class="identifier">update</span><span class="special">(</span><span class="identifier">value_type</span> x<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns index and shift (if axis has grown) for the passed argument. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">value_type</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1adef943adee48642dba65444093375b0e"></a><span class="identifier">value</span><span class="special">(</span><span class="identifier">local_index_type</span> i<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return value for index argument. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1ab9786d5339dac907428c119fea787be5"></a><span class="identifier">bin</span><span class="special">(</span><span class="identifier">index_type</span> idx<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Return bin for index argument. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">index_type</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a6b6384d80e908b51bdba711a83e0e086"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns the number of bins, without over- or underflow. </li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> V<span class="special">,</span> <span class="keyword">typename</span> M<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a2df795802f42a83108d4b1829020f9cc"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a><span class="special">&lt;</span> <span class="identifier">V</span><span class="special">,</span> <span class="identifier">M</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;</span> o<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> V<span class="special">,</span> <span class="keyword">typename</span> M<span class="special">,</span> <span class="keyword">typename</span> O<span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a4966ab2ef886377799b203b1431a2e3d"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a><span class="special">&lt;</span> <span class="identifier">V</span><span class="special">,</span> <span class="identifier">M</span><span class="special">,</span> <span class="identifier">O</span> <span class="special">&gt;</span> <span class="special">&amp;</span> o<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a30073bebec015660f4d90e43b4b4b60d"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span> ar<span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id26770"></a><h3>
+<a name="id36-bb"></a><code class="computeroutput">integer</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a3548a2e7489ae5869dfc2b354a1c7831"></a><span class="identifier">options</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Returns the options. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1histogram_1_1axis_1_1integer_1a46c0aca0f19e1532da73bafef4f09846"></a><span class="identifier">inclusive</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>Whether the axis is inclusive (see <a class="link" href="structboost_1_1histogram_1_1axis_1_1traits_1_1is__inclusive.html" title="Struct template is_inclusive">axis::traits::is_inclusive</a>).</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Hans
+      Dembinski<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1histogram_1_1axis_1_1category.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../histogram/reference.html#doxygen.integer_8hpp"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1histogram_1_1axis_1_1interval__view.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>This Library's Relationship to Boost.Spirit</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="prev" href="configuration_and_optional_features.html" title="Configuration and Optional Features">
+<link rel="next" href="cheat_sheet.html" title="Cheat Sheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="configuration_and_optional_features.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="cheat_sheet.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_parser.this_library_s_relationship_to_boost_spirit"></a><a class="link" href="this_library_s_relationship_to_boost_spirit.html" title="This Library's Relationship to Boost.Spirit">This
+    Library's Relationship to Boost.Spirit</a>
+</h2></div></div></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        If you are familiar with Spirit 2 and/or Spirit X3, you may be interested
+        in this section. If you are not, and you have not read the tutorial for Boost.Parser
+        yet, very little of this will make sense.
+      </p></td></tr>
+</table></div>
+<p>
+      <a href="https://www.boost.org/doc/libs/release/libs/spirit" target="_top">Boost.Spirit</a>
+      is a library that is already in Boost, and it has been around for a long time.
+    </p>
+<p>
+      However, it does not suit user needs in some ways.
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Spirit 2 suffers from very long compile times.
+        </li>
+<li class="listitem">
+          Spirit 2 has error reporting that requires a lot of user intervention to
+          work.
+        </li>
+<li class="listitem">
+          Spirit 2 requires user intervention, including a (long) recompile, to enable
+          parse tracing.
+        </li>
+<li class="listitem">
+          Spirit X3 has rules that do not compose well — the attributes produced
+          by a rule can change depending on the context in which you use the rule.
+        </li>
+<li class="listitem">
+          Spirit X3 is missing many of the convenient interfaces to parsers that
+          Spirit 2 had. For instance, you cannot add parameters to a parser (see
+          description of <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1aea9a85108e6af1280eccd9135584938d.html" title="Function template _locals">_locals()</a></code>
+          in <a class="link" href="tutorial.html#boost_parser.tutorial.more_about_rules" title="More About Rules">More About Rules</a>).
+        </li>
+<li class="listitem">
+          All versions of Spirit have Unicode support, but it is quite difficult
+          to get working.
+        </li>
+</ul></div>
+<p>
+      I wanted a library that does not suffer from any of the above limitations.
+      It should be noted that while Spirit X3 only has a couple of flaws in the list
+      above, the one related to rules is a deal-breaker. The ability to write rules,
+      test them in isolation, and then re-use them throughout a complex parser is
+      essential.
+    </p>
+<p>
+      Though no version of <a href="https://www.boost.org/doc/libs/release/libs/spirit" target="_top">Boost.Spirit</a>
+      (Spirit 2 or Spirit X3) suffers from all those limitations, there also does
+      not exist any one version that avoids all of them. Boost.Parser does so. However,
+      there are a lot of great ideas in <a href="https://www.boost.org/doc/libs/release/libs/spirit" target="_top">Boost.Spirit</a>
+      that have been retained in Boost.Parser. Both libraries:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          use the same operator overloads to combine parsers;
+        </li>
+<li class="listitem">
+          use approximately the same set of directives to influence the parse (e.g.
+          <code class="computeroutput"><span class="identifier">lexeme</span><span class="special">[]</span></code>);
+        </li>
+<li class="listitem">
+          are built around a flexible parse context object that has state added to
+          and removed from it during the parse (again, comparing to Spirit X3).
+        </li>
+</ul></div>
+<h4>
+<a name="boost_parser.this_library_s_relationship_to_boost_spirit.h0"></a>
+      <span class="phrase"><a name="boost_parser.this_library_s_relationship_to_boost_spirit.the_spirit_x3_rule_problem"></a></span><a class="link" href="this_library_s_relationship_to_boost_spirit.html#boost_parser.this_library_s_relationship_to_boost_spirit.the_spirit_x3_rule_problem">The
+      Spirit X3 rule problem</a>
+    </h4>
+<p>
+      Some readers have wanted a concrete example of my claim that Spirit X3's rules
+      do not compose well. Consider this program.
+    </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">spirit</span><span class="special">/</span><span class="identifier">home</span><span class="special">/</span><span class="identifier">x3</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">iostream</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">set</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">vector</span><span class="special">&gt;</span>
+
+
+<span class="keyword">namespace</span> <span class="identifier">x3</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">spirit</span><span class="special">::</span><span class="identifier">x3</span><span class="special">;</span>
+<span class="keyword">using</span> <span class="identifier">ints_type</span> <span class="special">=</span> <span class="identifier">x3</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">ints</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&gt;;</span>
+<span class="identifier">BOOST_SPIRIT_DECLARE</span><span class="special">(</span><span class="identifier">ints_type</span><span class="special">);</span>
+
+<span class="identifier">x3</span><span class="special">::</span><span class="identifier">rule</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">ints</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;&gt;</span> <span class="identifier">ints</span> <span class="special">=</span> <span class="string">"ints"</span><span class="special">;</span>
+<span class="keyword">constexpr</span> <span class="keyword">auto</span> <span class="identifier">ints_def</span> <span class="special">=</span> <span class="identifier">x3</span><span class="special">::</span><span class="identifier">int_</span> <span class="special">%</span> <span class="char">','</span><span class="special">;</span>
+<span class="identifier">BOOST_SPIRIT_DEFINE</span><span class="special">(</span><span class="identifier">ints</span><span class="special">);</span>
+
+<span class="preprocessor">#define</span> <span class="identifier">FIXED_ATTRIBUTE</span> <span class="number">0</span>
+
+
+<span class="keyword">int</span> <span class="identifier">main</span><span class="special">()</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">input</span> <span class="special">=</span> <span class="string">"43, 42"</span><span class="special">;</span>
+    <span class="keyword">auto</span> <span class="identifier">first</span> <span class="special">=</span> <span class="identifier">input</span><span class="special">.</span><span class="identifier">begin</span><span class="special">();</span>
+    <span class="keyword">auto</span> <span class="keyword">const</span> <span class="identifier">last</span> <span class="special">=</span> <span class="identifier">input</span><span class="special">.</span><span class="identifier">end</span><span class="special">();</span>
+<span class="preprocessor">#if</span> <span class="identifier">FIXED_ATTRIBUTE</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="preprocessor">#else</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">set</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="preprocessor">#endif</span>
+    <span class="keyword">bool</span> <span class="identifier">success</span> <span class="special">=</span> <span class="identifier">x3</span><span class="special">::</span><span class="identifier">phrase_parse</span><span class="special">(</span><span class="identifier">first</span><span class="special">,</span> <span class="identifier">last</span><span class="special">,</span> <span class="identifier">ints</span><span class="special">,</span> <span class="identifier">x3</span><span class="special">::</span><span class="identifier">space</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">success</span><span class="special">)</span> <span class="special">{</span>
+        <span class="comment">// We want this to print "43 42\n".</span>
+        <span class="keyword">for</span> <span class="special">(</span><span class="keyword">auto</span> <span class="identifier">x</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">)</span> <span class="special">{</span>
+            <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">x</span> <span class="special">&lt;&lt;</span> <span class="char">' '</span><span class="special">;</span>
+        <span class="special">}</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"\n"</span><span class="special">;</span>
+    <span class="special">}</span>
+
+    <span class="keyword">return</span> <span class="number">0</span><span class="special">;</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Defining <code class="computeroutput"><span class="identifier">FIXED_ATTRIBUTE</span></code> to
+      be <code class="computeroutput"><span class="number">1</span></code> leads to a well-formed program
+      that prints <code class="computeroutput"><span class="string">"42 43\n"</span></code>
+      instead of the desired result. The problem here is that if you feed an attribute
+      out-param to <code class="computeroutput"><span class="identifier">x3</span><span class="special">::</span><span class="identifier">phrase_parse</span><span class="special">()</span></code>,
+      you get the loose-match semantics that Spirit X3 and Boost.Parser both do.
+      This is a problem, because the user explicitly asserted that the type of the
+      <code class="computeroutput"><span class="identifier">ints</span></code> rule's attribute should
+      be <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span></code>. In
+      my opinion, this code should be ill-formed with <code class="computeroutput"><span class="identifier">FIXED_ATTRIBUTE</span>
+      <span class="special">==</span> <span class="number">1</span></code>.
+      To make it well-formed again, the user could use <code class="computeroutput"><span class="identifier">ints_def</span></code>
+      directly, since it does not specify an attribute type.
+    </p>
+<p>
+      When the user explicitly states that a type is some fixed <code class="computeroutput"><span class="identifier">T</span></code>,
+      a library should not ignore that. As a user of X3, I was bitten by this in
+      such a way that I considered X3 to be a nonviable option for my uses. I ran
+      into a problem that resulted from X3's ignoring one or more of my rules' attributes
+      so that it made the parse produce the wrong result, and I could see no way
+      to fix it.
+    </p>
+<p>
+      When a library provides wider use cases via genericity, we generally consider
+      this a good thing. If it is too loose in its semantics, we generally say that
+      it is type-unsafe. Using <code class="computeroutput"><a class="link" href="../doxygen/headers/structboost_1_1parser_1_1rule.html" title="Struct template rule">rules</a></code> to nail down type flexibility
+      is one way Boost.Parser tries to enable genericity where it is desired, and
+      let the user turn it off where it is not.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="configuration_and_optional_features.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="cheat_sheet.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tagfile>
+    <compound kind="file">
+        <name>boost/system/result</name>
+        <filename>system.html#ref_boostsystemresult_hpp</filename>
+        <namespace>boost::system</namespace>
+    </compound>
+    <compound kind="namespace">
+        <name>boost::system</name>
+        <filename></filename>
+        <class kind="class">boost::system::result</class>
+        <class kind="class">boost::system::error_code</class>
+    </compound>
+    <compound kind="class">
+        <name>boost::system::result</name>
+        <filename>system.html#ref_resultt_e</filename>
+        <class kind="class">boost::system::result::value_type</class>
+        <member kind="function">
+            <name>value</name>
+            <anchorfile>system.html#ref_checked_value_access_2</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>error</name>
+            <anchorfile>system.html#ref_error_access_2</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_value</name>
+            <anchorfile>system.html#ref_queries_2</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_error</name>
+            <anchorfile>system.html#ref_queries_2</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>operator bool</name>
+            <anchorfile>system.html#ref_queries_2</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>operator*</name>
+            <anchorfile>system.html#ref_unchecked_value_access</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>boost::system::result::value_type</name>
+        <filename>system.html#ref_resultt_e</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::system::error_code</name>
+        <filename>system.html#ref_error_code</filename>
+    </compound>
+</tagfile>

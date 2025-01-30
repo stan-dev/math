@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Normalization :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/normalization.html">
+    <link rel="prev" href="params.html">
+    <link rel="next" href="stringtoken.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+    <li><a href="normalization.html">Normalization</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="params.html"><span class="material-symbols-outlined" title="Previous: Params">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: URLs">arrow_upward</span></a>
+    <a accesskey="p" href="stringtoken.html"><span class="material-symbols-outlined" title="Next: String Token">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Normalization</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Normalization allows us to determine if two URLs refer to the same resource.
+URLs comparisons serve the same purpose, where two strings are compared as if they were normalized.</p>
+</div>
+<div class="paragraph">
+<p>There is no way to determine whether two URLs refer to the same resource without full knowledge or control of them.
+Thus, equivalence is based on string comparisons augmented by additional URL and scheme rules.
+This means comparison is not sufficient to determine whether two URLs identify different resources as the same resource can always be served from different addresses.</p>
+</div>
+<div class="paragraph">
+<p>For this reason, comparison methods are designed to minimize false negatives while strictly avoiding false positives.
+In other words, if two URLs compare equal, they definitely represent the same resource.
+If they are considered different, they might still refer to the same resource depending on the application.</p>
+</div>
+<div class="paragraph">
+<p>Context-dependent rules can be considered to minimize the number of false negatives, where cheaper methods have a higher chance of producing false negatives:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Simple String Comparison</p>
+</li>
+<li>
+<p>Syntax-Based Normalization</p>
+</li>
+<li>
+<p>Scheme-Based Normalization</p>
+</li>
+<li>
+<p>Protocol-Based Normalization</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_simple_string_comparison"><a class="anchor" href="#_simple_string_comparison"></a>Simple String Comparison</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Simple String Comparison can be performed by accessing the underlying buffer of URLs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u1("https://www.boost.org/index.html");
+url_view u2("https://www.boost.org/doc/../index.html");
+assert(u1.buffer() != u2.buffer());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By only considering the rules of <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>, Simple String Comparison fails to identify the URLs above point to the same resource.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_syntax_based_normalization"><a class="anchor" href="#_syntax_based_normalization"></a>Syntax-Based Normalization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The comparison operators implement Syntax-Based Normalization, which implements the rules defined by <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u1("https://www.boost.org/index.html");
+url_view u2("https://www.boost.org/doc/../index.html");
+assert(u1 == u2);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In mutable URLs, the member function <code>normalize</code> can also be used to apply Syntax-Based Normalization to a URL.
+A normalized URL is represented by a canonical string where any two strings that would compare equal end up with the same underlying representation.
+In other words, Simple String Comparison of two normalized URLs is equivalent to Syntax-Based Normalization.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u1("https://www.boost.org/index.html");
+url u2("https://www.boost.org/doc/../index.html");
+assert(u1.buffer() != u2.buffer());
+assert(u1 == u2);
+u2.normalize();
+assert(u1.buffer() == u2.buffer());
+assert(u1 == u2);</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_syntax_based_normalization_procedure"><a class="anchor" href="#_syntax_based_normalization_procedure"></a>Syntax-Based Normalization Procedure</h3>
+<div class="paragraph">
+<p>Normalization uses the following definitions of <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>
+to minimize false negatives:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Case Normalization: percent-encoding triplets are normalized to use uppercase letters</p>
+</li>
+<li>
+<p>Percent-Encoding Normalization: decode octets that do not require percent-encoding</p>
+</li>
+<li>
+<p>Path Segment Normalization: path segments "." and ".." are resolved</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following example normalizes the percent-encoding and path segments of a URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u("https://www.boost.org/doc/../%69%6e%64%65%78%20file.html");
+u.normalize();
+assert(u.buffer() == "https://www.boost.org/index%20file.html");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scheme_and_protocol_based_normalization"><a class="anchor" href="#_scheme_and_protocol_based_normalization"></a>Scheme and Protocol-Based Normalization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Syntax-Based Normalization can also be used as a first step for Scheme-Based and Protocol-Based Normalization.
+One common scheme-specific rule is ignoring the default port for that scheme and empty absolute paths:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto normalize_http_url =
+    [](url&amp; u)
+{
+    u.normalize();
+    if (u.port() == "80" ||
+        u.port().empty())
+        u.remove_port();
+    if (u.has_authority() &amp;&amp;
+        u.encoded_path().empty())
+        u.set_path_absolute(true);
+};
+
+url u1("https://www.boost.org");
+normalize_http_url(u1);
+url u2("https://www.boost.org/");
+normalize_http_url(u2);
+url u3("https://www.boost.org:/");
+normalize_http_url(u3);
+url u4("https://www.boost.org:80/");
+normalize_http_url(u4);
+
+assert(u1.buffer() == "https://www.boost.org/");
+assert(u2.buffer() == "https://www.boost.org/");
+assert(u3.buffer() == "https://www.boost.org/");
+assert(u4.buffer() == "https://www.boost.org/");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Other criteria commonly used to minimize false negatives for specific schemes are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Handling empty authority component as an error or localhost</p>
+</li>
+<li>
+<p>Replacing authority with empty string for the default authority</p>
+</li>
+<li>
+<p>Normalizing extra subcomponents with case-insensitive data</p>
+</li>
+<li>
+<p>Normalizing paths with case-insensitive data</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/normalization.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="params.html">Params</a></span>
+        <span class="next"><a href="stringtoken.html">String Token</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

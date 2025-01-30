@@ -1,0 +1,329 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="shared_library_refcountable_reference"><title>Shared Library Refcountable Reference</title><header id="doxygen.shared_library_refcountable_reference.import_8hpp" name="boost/dll/import.hpp">
+<para>Contains all the boost::dll::import* reference counting functions that hold a shared pointer to the instance of boost::dll::shared_library. </para><namespace name="boost">
+<namespace name="dll">
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1ab602dd22af00ce79d835827090d8439e" name="import_symbol"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const boost::dll::fs::path &amp;</paramtype><description><para>Path to shared library or shared library to load function from. </para></description></parameter><parameter name="name"><paramtype>const char *</paramtype><description><para>Null-terminated C or C++ mangled name of the function to import. Can handle std::string, char*, const char*. </para></description></parameter><parameter name="mode"><paramtype>load_mode::type</paramtype><default>load_mode::default_mode</default><description><para>An mode that will be used on library load.</para></description></parameter><description><para>Returns callable object or boost::shared_ptr&lt;T&gt; that holds the symbol imported from the loaded library. Returned value refcounts usage of the loaded shared library, so that it won't get unload until all copies of return value are not destroyed.</para><para>This call will succeed if call to  <link linkend="boost.dll.shared_library">boost::dll::shared_library</link><computeroutput>::has(const char* )</computeroutput> function with the same symbol name returned <computeroutput>true</computeroutput>.</para><para>For importing symbols by <emphasis role="bold">alias</emphasis> names use  <link linkend="boost.dll.import_alias">boost::dll::import_alias</link> method.</para><para><emphasis role="bold">Examples:</emphasis> </para><para><programlisting language="c++">boost::function&lt;int(int)&gt; f = import_symbol&lt;int(int)&gt;("test_lib.so", "integer_func_name");
+
+auto f_cpp11 = import_symbol&lt;int(int)&gt;("test_lib.so", "integer_func_name");
+</programlisting></para><para><programlisting language="c++">boost::shared_ptr&lt;int&gt; i = import_symbol&lt;int&gt;("test_lib.so", "integer_name");
+</programlisting></para><para><emphasis role="bold">Template</emphasis> <emphasis role="bold">parameter</emphasis> <emphasis role="bold">T:</emphasis> Type of the symbol that we are going to import. Must be explicitly specified.</para><para>
+
+
+xmlonly &lt;link linkend='boost.dll.fs.system_error'&gt;boost::dll::fs::system_error&lt;/link&gt; if symbol does not exist or if the DLL/DSO was not loaded. Overload that accepts path also throws std::bad_alloc in case of insufficient memory. </para></description><returns><para>callable object if T is a function type, or boost::shared_ptr&lt;T&gt; if T is an object type.</para>
+</returns><throws><simpara><classname/> </simpara>
+</throws></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1a887e84665c887a6141f26dd69e3c9008" name="import_symbol"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const boost::dll::fs::path &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="mode"><paramtype>load_mode::type</paramtype><default>load_mode::default_mode</default></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1adb19ace365328f627ed41913cf612d8c" name="import_symbol"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const shared_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1aaca5780bdc4c943a9b2e90d8d8e981df" name="import_symbol"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const shared_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1a668825d367bcbfa9071ce0f751853265" name="import_symbol"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>shared_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1a75be938f58ba3517ab2a8c123465c3d0" name="import_symbol"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>shared_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1a493f0f92429493d46c632e20808cd1df" name="import_alias"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const boost::dll::fs::path &amp;</paramtype><description><para>Path to shared library or shared library to load function from. </para></description></parameter><parameter name="name"><paramtype>const char *</paramtype><description><para>Null-terminated C or C++ mangled name of the function or variable to import. Can handle std::string, char*, const char*. </para></description></parameter><parameter name="mode"><paramtype>load_mode::type</paramtype><default>load_mode::default_mode</default><description><para>An mode that will be used on library load.</para></description></parameter><description><para>Returns callable object or boost::shared_ptr&lt;T&gt; that holds the symbol imported from the loaded library. Returned value refcounts usage of the loaded shared library, so that it won't get unload until all copies of return value are not destroyed.</para><para>This call will succeed if call to  <link linkend="boost.dll.shared_library">boost::dll::shared_library</link><computeroutput>::has(const char* )</computeroutput> function with the same symbol name returned <computeroutput>true</computeroutput>.</para><para>For importing symbols by <emphasis role="bold">non</emphasis> <emphasis role="bold">alias</emphasis> names use  <link linkend="boost.dll.import">boost::dll::import</link> method.</para><para><emphasis role="bold">Examples:</emphasis> </para><para><programlisting language="c++">boost::function&lt;int(int)&gt; f = import_alias&lt;int(int)&gt;("test_lib.so", "integer_func_alias_name");
+
+auto f_cpp11 = import_alias&lt;int(int)&gt;("test_lib.so", "integer_func_alias_name");
+</programlisting></para><para><programlisting language="c++">boost::shared_ptr&lt;int&gt; i = import_alias&lt;int&gt;("test_lib.so", "integer_alias_name");
+</programlisting></para><para><programlisting language="c++"/></para><para><emphasis role="bold">Template</emphasis> <emphasis role="bold">parameter</emphasis> <emphasis role="bold">T:</emphasis> Type of the symbol alias that we are going to import. Must be explicitly specified.</para><para>
+
+
+xmlonly &lt;link linkend='boost.dll.fs.system_error'&gt;boost::dll::fs::system_error&lt;/link&gt; if symbol does not exist or if the DLL/DSO was not loaded. Overload that accepts path also throws std::bad_alloc in case of insufficient memory. </para></description><returns><para>callable object if T is a function type, or boost::shared_ptr&lt;T&gt; if T is an object type.</para>
+</returns><throws><simpara><classname/> </simpara>
+</throws></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1ae8a6c89c0a0437ecdca26b3a3b999008" name="import_alias"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const boost::dll::fs::path &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="mode"><paramtype>load_mode::type</paramtype><default>load_mode::default_mode</default></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1a8e46480af32692097dc61b60a80698cd" name="import_alias"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const shared_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1a0c2abcf29ec25cea1c584865d4923a82" name="import_alias"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>const shared_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1aae25aca8899038a02fd506609d554967" name="import_alias"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>shared_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import_8hpp_1acf81ea55ce91c693e12950a67f9128dc" name="import_alias"><type>result_type</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="lib"><paramtype>shared_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.shared_library_refcountable_reference.import__class_8hpp" name="boost/dll/import_class.hpp">
+<para>Contains the boost::dll::experimental::import_class function for importing classes. </para><para><warning><para>Extremely experimental! Requires C++11! Will change in next version of Boost! <link linkend="doxygen.shared_library_refcountable_reference.import__class_8hpp">boost/dll/import_class.hpp</link> is not included in boost/dll.hpp </para>
+</warning>
+</para><namespace name="boost">
+<namespace name="dll">
+<namespace name="experimental">
+<class id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class" name="imported_class"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>This class represents an imported class.</para><para><note><para>It must be constructed via boost::dll::import_class(const smart_library&amp; lib, std::size_t, Args...)</para>
+</note>
+
+</para></description><typedef id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a27b13d56e473cd229e4500ab90e0a7a9" name="base_t"><type><classname>imported_class</classname>&lt; T &gt;</type></typedef>
+<method-group name="private member functions">
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1af6d08bf694af1ad4f5192e3f7e0318b7" name="make_data"><type><emphasis>unspecified</emphasis></type><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="args"><paramtype>Args ...</paramtype></parameter></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ad7a1475605ecac55af0d7b04078bc1fb" name="make_data"><type><emphasis>unspecified</emphasis></type><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></method>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a4826d191204070fcad2eab5366b7dc38"><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></constructor>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ae536d1cdf939c9f519d8c0946518e9d8"><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></constructor>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a6d32ee41f4593aa83652a837eb81da83"><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></constructor>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1acd0db624b106e3547c762512e74a29af"><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></constructor>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a239b784d33843cd3e8a1f318ad1716dd" name="make" specifiers="static"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ab081be86ba4eb5186459fadd98d47986" name="make" specifiers="static"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a45996e1d582e112db84ce951bc3387ce" name="make" specifiers="static"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ade0d418ad0d70d59a9ba7d43b78c955b" name="make" specifiers="static"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></method>
+</method-group>
+<method-group name="public member functions">
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a04ddccce7102c0f434702f33f534a87c" name="get"><type>T *</type><purpose>Returns a pointer to the underlying class. </purpose></method>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ad7cd67d278a7cea2393e5d27b23acd60" cv="= delete"/>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ae9766910237ff75c4b64484e7e7cdb14" cv="= delete"><parameter name=""><paramtype><classname>imported_class</classname> &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ae7bce285a879499a6483094e04752d8b" cv="= default"><parameter name=""><paramtype><classname>imported_class</classname> &amp;&amp;</paramtype></parameter><purpose>Move constructor. </purpose></constructor>
+<copy-assignment id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a4e5385537a73e175405ce276b7cb2685" cv="= delete"><type><classname>imported_class</classname> &amp;</type><parameter name=""><paramtype><classname>imported_class</classname> &amp;</paramtype></parameter></copy-assignment>
+<copy-assignment id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1adfa1b6c10ca48e35591324474e8bf897" cv="= default"><type><classname>imported_class</classname> &amp;</type><parameter name=""><paramtype><classname>imported_class</classname> &amp;&amp;</paramtype></parameter><purpose>Move assignmend. </purpose></copy-assignment>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1aa027d73f4657ccbcb24c67a7d102b62a" name="is_move_constructible"><type>bool</type><purpose>Check if the imported class is move-constructible. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1af4f82cebec6da5f2f9325d6849905f39" name="is_move_assignable"><type>bool</type><purpose>Check if the imported class is move-assignable. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a539db329710278d1aafe704d03d5f8ee" name="is_copy_constructible"><type>bool</type><purpose>Check if the imported class is copy-constructible. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1ab89b62885b27a5f412a2beb13faa8e18" name="is_copy_assignable"><type>bool</type><purpose>Check if the imported class is copy-assignable. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a6eea71c2dbb57058d9892c903461529d" name="copy" cv="const"><type><classname>imported_class</classname>&lt; T &gt;</type><purpose>Invoke the copy constructor. </purpose><description><para><important><para>Undefined behaviour if the imported object is not copy constructible. </para>
+</important>
+</para></description></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a7b33ba5db628c83e8428b654f1a4bf6a" name="move"><type><classname>imported_class</classname>&lt; T &gt;</type><purpose>Invoke the move constructor. </purpose><description><para><important><para>Undefined behaviour if the imported object is not move constructible. </para>
+</important>
+</para></description></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a92977eeaf2e2bba76b6ad335c98dd3c5" name="copy_assign" cv="const"><type>void</type><parameter name="lhs"><paramtype>const <classname>imported_class</classname>&lt; T &gt; &amp;</paramtype></parameter><purpose>Invoke the copy assignment. </purpose><description><para><important><para>Undefined behaviour if the imported object is not copy assignable. </para>
+</important>
+</para></description></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1aa2d431f5c358b2cf41a21469d765d346" name="move_assign"><type>void</type><parameter name="lhs"><paramtype><classname>imported_class</classname>&lt; T &gt; &amp;</paramtype></parameter><purpose>Invoke the move assignment. </purpose><description><para><important><para>Undefined behaviour if the imported object is not move assignable. </para>
+</important>
+</para></description></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a67b76affb3b5d35fa419ac234144038b" name="conversion-operator" cv="const" specifiers="explicit"><type>bool</type><purpose>Check if the class is loaded. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a559c93509d549df003bd6ccd637a970e" name="get_type_info"><type>const std::type_info &amp;</type><purpose>Get a const reference to the std::type_info. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a5e4882a890295c101b55540cff754b36" name="call"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Signature"/>
+        </template><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Call a member function. This returns a proxy to the function. The proxy mechanic mechanic is necessary, so the signaute can be passed.</para><para><emphasis role="bold">Example</emphasis> </para><para><programlisting language="c++">im_class.call&lt;void(const char*)&gt;("function_name")("MyString");
+</programlisting> </para></description></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a6e946efcb6c86b3f8b08fe90dc0cac93" name="call"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Tin"/>
+          <template-type-parameter name="Signature"/>
+          <template-type-parameter name=""><default><emphasis>unspecified</emphasis></default></template-type-parameter>
+        </template><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Call a qualified member function, i.e. const and or volatile.</para><para><emphasis role="bold">Example</emphasis> </para><para><programlisting language="c++">im_class.call&lt;const type_alias, void(const char*)&gt;("function_name")("MyString");
+</programlisting> </para></description></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a4b32e2f7a203455ee726e74140e4b9dc" name="operator-&gt;*"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Tin"/>
+          <template-type-parameter name="T2"/>
+        </template><parameter name="mn"><paramtype><emphasis>unspecified</emphasis></paramtype></parameter><purpose>Overload of -&gt;* for an imported method. </purpose></method>
+<method id="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class_1a7821eca724b5091f641c7c86bc1d95ae" name="import"><type><emphasis>unspecified</emphasis></type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><purpose>Import a method of the class. </purpose></method>
+</method-group>
+</class><function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1ac48efc637a8099b3780d7d4e215482ef" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a2f5c867c63e69e3df842232f7b0cd80b" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1aebe1422519148a460c877191ab11b541" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"><purpose><para>Class type or alias </para></purpose></template-type-parameter>
+          <template-nontype-parameter name="Args"><type>typename ...</type><purpose><para>Constructor argument list. </para></purpose></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype><description><para>Path to shared library or shared library to load function from. </para></description></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter><description><para>Returns an instance of <link linkend="doxygen.shared_library_refcountable_reference.classboost_1_1dll_1_1experimental_1_1imported__class">imported_class</link> which allows to call or import more functions. It takes a copy of the smart_libray, so no added type_aliases will be visible, for the object.</para><para>Few compilers do implement an allocating constructor, which allows the construction of the class without knowing the size. That is not portable, so the actual size of the class shall always be provided.</para><para><emphasis role="bold">Example:</emphasis> </para><para><programlisting language="c++">auto import_class&lt;class type_alias, const std::string&amp;, std::size_t&gt;(lib, "class_name", 20, "param1", 42);
+</programlisting></para><para>In this example we construct an instance of the class "class_name" with the size 20, which has "type_alias" as an alias, through a constructor which takes a const-ref of std::string and an std::size_t parameter.</para><para>
+
+
+
+xmlonly &lt;link linkend='boost.dll.fs.system_error'&gt;boost::dll::fs::system_error&lt;/link&gt; if symbol does not exist or if the DLL/DSO was not loaded. Overload that accepts path also throws std::bad_alloc in case of insufficient memory.</para><para><note><para>This function does add the type alias to the boost::dll::experimental::smart_library. </para>
+</note>
+</para></description><returns><para>class object.</para>
+</returns><throws><simpara><classname/> </simpara>
+</throws></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a64977b6ffe802cc722edcd10cb4b5bee" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1aa385ac25b0604d3c70f85c1e18a7f28f" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib_"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a683655b537fc12897b5c55dbcec9b0a1" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a654349e6942de551bdc3a76b3762db97" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a33a6a111b7a001497606f31e92e72b8e" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a17756d38982ee6bd93e3d99ddef846ab" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1ac7a86fc28898efa380da9ff26d762701" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a0f1a2923d1d1b21ae6eaa6a491e8fbb5" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a93a00db7695480355981d3de990b7db0" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1af1133ebb4e13306d8d4b534668409ac2" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a0b5fe187ef7112aaf928b9f1a1e8401f" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__class_8hpp_1a02b489303ac790d571accb2bd85272d4" name="import_class"><type><classname>imported_class</classname>&lt; T &gt;</type><template>
+          <template-type-parameter name="T"/>
+          <template-nontype-parameter name="Args"><type>typename ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;</paramtype></parameter><parameter name="alias_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="size"><paramtype>std::size_t</paramtype></parameter><parameter name="args"><paramtype>Args...</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp" name="boost/dll/import_mangled.hpp">
+<para>Contains the <link linkend="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a5045a8a4b95fdf8fb85a993c5eb87113">boost::dll::experimental::import_mangled</link> function for importing mangled symbols. </para><para><warning><para>Extremely experimental! Requires C++11! Will change in next version of Boost! <link linkend="doxygen.shared_library_refcountable_reference.import__mangled_8hpp">boost/dll/import_mangled.hpp</link> is not included in boost/dll.hpp </para>
+</warning>
+</para><namespace name="boost">
+<namespace name="dll">
+<namespace name="experimental">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a5045a8a4b95fdf8fb85a993c5eb87113" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const boost::dll::fs::path &amp;</paramtype><description><para>Path to shared library or shared library to load function from. </para></description></parameter><parameter name="name"><paramtype>const char *</paramtype><description><para>Null-terminated C or C++ mangled name of the function to import. Can handle std::string, char*, const char*. </para></description></parameter><parameter name="mode"><paramtype>load_mode::type</paramtype><default>load_mode::default_mode</default><description><para>An mode that will be used on library load.</para></description></parameter><description><para>Returns callable object or boost::shared_ptr&lt;T&gt; that holds the symbol imported from the loaded library. Returned value refcounts usage of the loaded shared library, so that it won't get unload until all copies of return value are not destroyed.</para><para>For importing symbols by <emphasis role="bold">alias</emphasis> names use  <link linkend="boost.dll.import_alias">boost::dll::import_alias</link> method.</para><para><emphasis role="bold">Examples:</emphasis> </para><para><programlisting language="c++">boost::function&lt;int(int)&gt; f = import_mangled&lt;int(int)&gt;("test_lib.so", "integer_func_name");
+
+auto f_cpp11 = import_mangled&lt;int(int)&gt;("test_lib.so", "integer_func_name");
+</programlisting></para><para><programlisting language="c++">boost::shared_ptr&lt;int&gt; i = import_mangled&lt;int&gt;("test_lib.so", "integer_name");
+</programlisting></para><para>Additionally you can also import overloaded symbols, including member-functions.</para><para><programlisting language="c++">auto fp = import_mangled&lt;void(int), void(double)&gt;("test_lib.so", "func");
+</programlisting></para><para><programlisting language="c++">auto fp = import_mangled&lt;my_class, void(int), void(double)&gt;("test_lib.so", "func");
+</programlisting></para><para>If qualified member-functions are needed, this can be set by repeating the class name with const or volatile. All following signatures after the redifintion will use this, i.e. the latest.</para><para><itemizedlist>
+<listitem><para>* <programlisting language="c++">auto fp = <link linkend="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a5045a8a4b95fdf8fb85a993c5eb87113">import_mangled</link>&lt;my_class, void(int), void(double),
+                         const my_class, void(int), void(double)&gt;("test_lib.so", "func");
+</programlisting></para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Template</emphasis> <emphasis role="bold">parameter</emphasis> <emphasis role="bold">T:</emphasis> Type of the symbol that we are going to import. Must be explicitly specified.</para><para>
+
+
+xmlonly &lt;link linkend='boost.dll.fs.system_error'&gt;boost::dll::fs::system_error&lt;/link&gt; if symbol does not exist or if the DLL/DSO was not loaded. Overload that accepts path also throws std::bad_alloc in case of insufficient memory. </para></description><returns><para>callable object if T is a function type, or boost::shared_ptr&lt;T&gt; if T is an object type.</para>
+</returns><throws><simpara><classname/> </simpara>
+</throws></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1aa3366227bfe9213513a45ba940a338f2" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const boost::dll::fs::path &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="mode"><paramtype>load_mode::type</paramtype><default>load_mode::default_mode</default></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a48dbcc1bdaf102c35c07b06b45a05d88" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a5682658ccd542c9e6564eb73951f2230" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const smart_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1aada32d96f679397b495057c545d95b52" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1ad5770c4510dab5ca50de27e777346efc" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>smart_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a88555cc726db5b69e62de13192013ae1" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const shared_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1ab22fd46150527bd96e1659aefdde6b2c" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>const shared_library &amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a0f32f6c453ce5f2f4e1f88e1c22ba300" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>shared_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const char *</paramtype></parameter></function>
+<function id="doxygen.shared_library_refcountable_reference.import__mangled_8hpp_1a66a0ca295e0ec428c8a319e4e304fbe9" name="import_mangled"><type>result_type</type><template>
+          <template-nontype-parameter name="Args"><type>class ...</type></template-nontype-parameter>
+        </template><parameter name="lib"><paramtype>shared_library &amp;&amp;</paramtype></parameter><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></function>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

@@ -1,0 +1,81 @@
+# Copyright 2018-2020 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
+
+import modules ;
+import package ;
+import path ;
+import stage ;
+
+stage.add-install-dir cmakedir : cmake : libdir ;
+
+# header-subdir
+
+rule header-subdir
+{
+    local r ;
+
+    local layout = [ modules.peek boostcpp : layout ] ;
+
+    if $(layout) = versioned
+    {
+        local BOOST_VERSION_TAG = [ modules.peek boostcpp : BOOST_VERSION_TAG ] ;
+        r = "boost-$(BOOST_VERSION_TAG)" ;
+    }
+
+    return $(r) ;
+}
+
+# stagedir
+
+rule stagedir
+{
+    if [ modules.peek boostcpp : BOOST_STAGE_LOCATE ]
+    {
+        return [ path.make [ modules.peek boostcpp : BOOST_STAGE_LOCATE ] ] ;
+    }
+    else
+    {
+        return [ path.make [ path.join [ path.pwd ] stage ] ] ;
+    }
+}
+
+# stage-libdir
+
+rule stage-libdir
+{
+    local ld = [ MATCH --stage-libdir=(.*) : [ modules.peek : ARGV ] ] ;
+
+    if $(ld)
+    {
+        ld = [ path.root [ path.make $(ld) ] [ path.pwd ] ] ;
+        return $(ld) ;
+    }
+    else
+    {
+        local stagedir = [ stagedir ] ;
+        return $(stagedir)/lib ;
+    }
+}
+
+# stage-includedir
+
+rule stage-includedir
+{
+    local ld = [ MATCH --stage-includedir=(.*) : [ modules.peek : ARGV ] ] ;
+
+    if $(ld)
+    {
+        ld = [ path.root [ path.make $(ld) ] [ path.pwd ] ] ;
+        return $(ld) ;
+    }
+    else if [ modules.peek boostcpp : BOOST_ROOT ]
+    {
+        return [ path.make [ modules.peek boostcpp : BOOST_ROOT ] ] ;
+    }
+    else
+    {
+        local stagedir = [ stagedir ] ;
+        return $(stagedir)/include ;
+    }
+}

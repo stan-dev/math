@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class ptime</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../date_time/doxy.html#doxygen.posix_time_reference.ptime_8hpp" title="Header &lt;boost/date_time/posix_time/ptime.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1posix__time_1a90f5faa401912bab091752d84836ed13.html" title="Function template operator&gt;&gt;">
+<link rel="next" href="namespaceboost_1_1posix__time_1a78f1aba3274ffdc28e50709bb198b929.html" title="Function duration_from_string">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1posix__time_1a90f5faa401912bab091752d84836ed13.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.posix_time_reference.ptime_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1posix__time_1a78f1aba3274ffdc28e50709bb198b929.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class ptime</span></h2>
+<p>boost::posix_time::ptime — Time type with no timezone or other adjustments. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../date_time/doxy.html#doxygen.posix_time_reference.ptime_8hpp" title="Header &lt;boost/date_time/posix_time/ptime.hpp&gt;">boost/date_time/posix_time/ptime.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1posix__time_1_1ptime.html" title="Class ptime">ptime</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">date_time</span><span class="special">::</span><span class="identifier">base_time</span><span class="special">&lt;</span> <span class="identifier">ptime</span><span class="special">,</span> <span class="identifier">posix_time_system</span> <span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">posix_time_system</span>                    <a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a0da18a5909501e2f9df7ea3fee1dd159"></a><span class="identifier">time_system_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">time_system_type</span><span class="special">::</span><span class="identifier">time_rep_type</span>      <a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1aa59e3b783851914dc4d854e53219ab93"></a><span class="identifier">time_rep_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">time_system_type</span><span class="special">::</span><span class="identifier">time_duration_type</span> <a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a31c5e2f3ad6530d9b67f8b8784ea3056"></a><span class="identifier">time_duration_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1posix__time_1_1ptime.html" title="Class ptime">ptime</a>                                <a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1ab77e9fc4a6e2b28fe5d0f5b2ca6b7cde"></a><span class="identifier">time_type</span><span class="special">;</span>         
+
+  <span class="comment">// <a class="link" href="classboost_1_1posix__time_1_1ptime.html#id-1_3_12_15_5_11_1_1_1_7-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1posix__time_1_1ptime.html#doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a53763c6628509e0581d11ca5c6d5078e"><span class="identifier">ptime</span></a><span class="special">(</span><span class="identifier">gregorian</span><span class="special">::</span><span class="identifier">date</span><span class="special">,</span> <span class="identifier">time_duration_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1posix__time_1_1ptime.html#doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a45cf1782496578a2c078e94bbe7dd2a7"><span class="identifier">ptime</span></a><span class="special">(</span><span class="identifier">gregorian</span><span class="special">::</span><span class="identifier">date</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1posix__time_1_1ptime.html#doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1ad6387a5db612182be011db52f22e872d"><span class="identifier">ptime</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">time_rep_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1posix__time_1_1ptime.html#doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a90328b7ae716cf8e0f3dd9df83d89ca7"><span class="identifier">ptime</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">special_values</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1posix__time_1_1ptime.html#doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a25b87ee4ffc072bf21eb26e9280dabde"><span class="identifier">ptime</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.12.15.5.11.3.4"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id-1.3.12.15.5.11.3.4.2"></a><h3>
+<a name="id-1_3_12_15_5_11_1_1_1_7-bb"></a><code class="computeroutput">ptime</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a53763c6628509e0581d11ca5c6d5078e"></a><span class="identifier">ptime</span><span class="special">(</span><span class="identifier">gregorian</span><span class="special">::</span><span class="identifier">date</span> d<span class="special">,</span> <span class="identifier">time_duration_type</span> td<span class="special">)</span><span class="special">;</span></pre>Construct with date and offset in day. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a45cf1782496578a2c078e94bbe7dd2a7"></a><span class="identifier">ptime</span><span class="special">(</span><span class="identifier">gregorian</span><span class="special">::</span><span class="identifier">date</span> d<span class="special">)</span><span class="special">;</span></pre>Construct a time at start of the given day (midnight) </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1ad6387a5db612182be011db52f22e872d"></a><span class="identifier">ptime</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">time_rep_type</span> <span class="special">&amp;</span> rhs<span class="special">)</span><span class="special">;</span></pre>Copy from time_rep. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a90328b7ae716cf8e0f3dd9df83d89ca7"></a><span class="identifier">ptime</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">special_values</span> sv<span class="special">)</span><span class="special">;</span></pre>Construct from special value. </li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.posix_time_reference.classboost_1_1posix__time_1_1ptime_1a25b87ee4ffc072bf21eb26e9280dabde"></a><span class="identifier">ptime</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2005 CrystalClear Software, Inc<p>Subject to the Boost Software License, Version 1.0. (See accompanying file
+    <code class="filename">LICENSE_1_0.txt</code> or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)</p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1posix__time_1a90f5faa401912bab091752d84836ed13.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../date_time/doxy.html#doxygen.posix_time_reference.ptime_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1posix__time_1a78f1aba3274ffdc28e50709bb198b929.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Copyright 2018 John Maddock
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import feature ;
+import generators ;
+import modules ;
+import project ;
+import targets ;
+import testing ;
+import toolset ;
+import type ;
+
+path-constant ROOT : ../../.. ;
+
+actions auto-index
+{
+    "$(>[1])" "--prefix=$(ROOT)" "--in=$(>[2])" "--script=$(>[3])" "--out=$(<[1])"
+}
+
+rule auto-index-test ( target-name : input-file : script-file : output-file ? : options * )
+{
+    make $(target-name)._out
+        :  ../build//auto_index/<variant>release
+            $(input-file)
+            $(script-file)
+        :   @auto-index
+        :   <location-prefix>$(target-name).test
+            <dependency>Jamfile.v2
+        ;
+
+    testing.run text_diff.cpp
+        :
+        :   $(target-name)._out
+            $(target-name).gold
+        :   <preserve-test-targets>on
+            <dependency>Jamfile.v2
+        :   $(target-name)_check
+        ;
+}
+
+auto-index-test test1 : type_traits.docbook : index.idx ;
+auto-index-test test2 : type_traits.docbook : index.idx : : --internal-index ;
+auto-index-test test3 : type_traits.docbook : index.idx : : --internal-index --index-type=index ;

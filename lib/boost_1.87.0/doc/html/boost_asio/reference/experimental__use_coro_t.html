@@ -1,0 +1,224 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>experimental::use_coro_t</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="experimental__use_coro.html" title="experimental::use_coro">
+<link rel="next" href="experimental__use_coro_t/allocator_type.html" title="experimental::use_coro_t::allocator_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="experimental__use_coro.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="experimental__use_coro_t/allocator_type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.experimental__use_coro_t"></a><a class="link" href="experimental__use_coro_t.html" title="experimental::use_coro_t">experimental::use_coro_t</a>
+</h3></div></div></div>
+<p>
+        <a class="indexterm" name="boost_asio.indexterm.experimental__use_coro_t"></a>
+      </p>
+<p>
+        A <a class="link" href="../overview/model/completion_tokens.html" title="Completion Tokens">completion
+        token</a> that creates another coro for the task completion.
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <span class="identifier">Allocator</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">allocator</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">use_coro_t</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.experimental__use_coro_t.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__use_coro_t.types"></a></span><a class="link" href="experimental__use_coro_t.html#boost_asio.reference.experimental__use_coro_t.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t/allocator_type.html" title="experimental::use_coro_t::allocator_type"><span class="bold"><strong>allocator_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The allocator type. The allocator is used when constructing the
+                  std::promise object for a given asynchronous operation.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t/as_default_on_t.html" title="experimental::use_coro_t::as_default_on_t"><span class="bold"><strong>as_default_on_t</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Type alias to adapt an I/O object to use use_coro_t as its default
+                  completion token type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t__executor_with_default.html" title="experimental::use_coro_t::executor_with_default"><span class="bold"><strong>executor_with_default</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Adapts an executor to add the use_coro_t completion token as the
+                  default.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="boost_asio.reference.experimental__use_coro_t.h1"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__use_coro_t.member_functions"></a></span><a class="link" href="experimental__use_coro_t.html#boost_asio.reference.experimental__use_coro_t.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t/as_default_on.html" title="experimental::use_coro_t::as_default_on"><span class="bold"><strong>as_default_on</strong></span></a> <span class="silver">[static]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Function helper to adapt an I/O object to use use_coro_t as its
+                  default completion token type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t/get_allocator.html" title="experimental::use_coro_t::get_allocator"><span class="bold"><strong>get_allocator</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Obtain allocator.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t/rebind.html" title="experimental::use_coro_t::rebind"><span class="bold"><strong>rebind</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Specify an alternate allocator.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__use_coro_t/use_coro_t.html" title="experimental::use_coro_t::use_coro_t"><span class="bold"><strong>use_coro_t</strong></span></a> <span class="silver">[constructor]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Default constructor. <br> <span class="silver"> —</span><br> Constructor used to specify
+                  file name, line, and function name.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<p>
+        The <code class="computeroutput"><span class="identifier">use_coro_t</span></code> class, with
+        its value <code class="computeroutput"><span class="identifier">use_coro</span></code>, is used
+        to represent an operation that can be awaited by the current resumable coroutine.
+        This completion token may be passed as a handler to an asynchronous operation.
+        For example:
+      </p>
+<pre class="programlisting"><span class="identifier">coro</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">my_coroutine</span><span class="special">(</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span> <span class="identifier">my_socket</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">buffer</span><span class="special">,</span> <span class="identifier">use_coro</span><span class="special">);</span>
+  <span class="special">...</span>
+<span class="special">}</span>
+</pre>
+<p>
+        When used with co_await, the initiating function (<code class="computeroutput"><span class="identifier">async_read_some</span></code>
+        in the above example) suspends the current coroutine. The coroutine is resumed
+        when the asynchronous operation completes, and the result of the operation
+        is returned.
+      </p>
+<p>
+        Note that this token is not the most efficient (use the default completion
+        token <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">deferred</span></code> for that) but does provide type
+        erasure, as it will always return a <code class="computeroutput"><span class="identifier">coro</span></code>.
+      </p>
+<h5>
+<a name="boost_asio.reference.experimental__use_coro_t.h2"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__use_coro_t.requirements"></a></span><a class="link" href="experimental__use_coro_t.html#boost_asio.reference.experimental__use_coro_t.requirements">Requirements</a>
+      </h5>
+<p>
+        <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/experimental/use_coro.hpp</code>
+      </p>
+<p>
+        <span class="emphasis"><em>Convenience header: </em></span>None
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="experimental__use_coro.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="experimental__use_coro_t/allocator_type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

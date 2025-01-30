@@ -1,0 +1,73 @@
+#
+# Copyright (c) 2024 Dmitry Arkhipov (grisumbras@yandex.ru)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/docca
+#
+
+import-search /boost/docca ;
+
+import common ;
+import docca ;
+import os ;
+import testing ;
+import toolset ;
+
+local templates = [ glob-tree-ex ../include/docca : *.jinja2 ] ;
+
+make python-tests
+    : docca_test.py
+    : @run-pytest
+    : <include>..
+      <dependency>../docca.py
+    ;
+
+make template-tests
+    : docca_qbk_test.py
+    : @run-pytest
+    : <include>..
+      <dependency>../docca.py
+      <dependency>$(templates)
+    ;
+
+.STATUS       = [ modules.peek testing : .STATUS ] ;
+.SET_STATUS   = [ modules.peek testing : .SET_STATUS ] ;
+.THEN         = [ modules.peek testing : .THEN ] ;
+.STATUS_0     = [ modules.peek testing : .STATUS_0 ] ;
+.STATUS_NOT_0 = [ modules.peek testing : .STATUS_NOT_0 ] ;
+.ENDIF        = [ modules.peek testing : .ENDIF ] ;
+.CATENATE     = [ modules.peek testing : .CATENATE ] ;
+.NULL_OUT     = [ modules.peek common  : NULL_OUT ] ;
+.CP           = [ common.copy-command ] ;
+
+rule run-pytest ( target : sources + : properties * )
+{
+    local includes =  [ on $(target) return $(INCLUDE) ] ;
+    PYTHONPATH on $(target) =
+        [ common.prepend-path-variable-command PYTHONPATH
+        : $(__file__:D)
+          $(includes)
+        ] ;
+}
+
+actions run-pytest
+{
+    $(PYTHONPATH)
+    "$(PYTHON)" -m pytest "$(>:W)" "$(FLAGS)" >"$(<:W).tmp" 2>&1
+    $(.SET_STATUS)
+    if $(.STATUS_0)
+        $(.CP) "$(<:W).tmp"  "$(<)" $(.NULL_OUT)
+    $(.ENDIF)
+    if $(.STATUS_NOT_0)
+        echo ====== BEGIN OUTPUT ======
+        $(.CATENATE) "$(<:W).tmp"
+        echo ====== END OUTPUT ======
+    $(.ENDIF)
+    exit $(.STATUS)
+}
+
+toolset.flags $(__name__).run-pytest FLAGS   <flags> ;
+toolset.flags $(__name__).run-pytest INCLUDE <include> ;
+toolset.flags $(__name__).run-pytest PYTHON  <python.interpreter> ;

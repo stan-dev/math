@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="result_of.reference"><title>Reference</title><header id="doxygen.result_of.reference.result__of_8hpp" name="boost/utility/result_of.hpp">
+<namespace name="boost">
+<struct id="doxygen.result_of.reference.structboost_1_1result__of" name="result_of"><template>
+      <template-type-parameter name="F"/>
+    </template></struct><struct id="doxygen.result_of.reference.structboost_1_1tr1__result__of" name="tr1_result_of"><template>
+      <template-type-parameter name="F"/>
+    </template></struct></namespace>
+</header>
+</library-reference>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Segments :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/segments.html">
+    <link rel="prev" href="containers.html">
+    <link rel="next" href="params.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+    <li><a href="segments.html">Segments</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="containers.html"><span class="material-symbols-outlined" title="Previous: Containers">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: URLs">arrow_upward</span></a>
+    <a accesskey="p" href="params.html"><span class="material-symbols-outlined" title="Next: Params">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Segments</h1>
+  <div class="paragraph">
+<p>Hierarchical schemes often interpret the path as a slash-delimited sequence of percent-encoded strings called segments.
+In this library the segments may be accessed using these separate, bidirectional view types which reference the underlying URL:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Accessor</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_view.html" class="xref page">segments_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/segments.html" class="xref page">segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A read-only range of decoded segments.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_ref.html" class="xref page">segments_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/segments.html" class="xref page">segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A modifiable range of decoded segments.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_encoded_view.html" class="xref page">segments_encoded_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_segments.html" class="xref page">encoded_segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A read-only range of segments.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/segments_encoded_ref.html" class="xref page">segments_encoded_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_segments.html" class="xref page">encoded_segments</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A modifiable range of segments.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>First we observe these invariants about paths and segments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>All URLs have a path</p>
+</li>
+<li>
+<p>A path is absolute, relative, or empty</p>
+</li>
+<li>
+<p>Paths starting with "/" are absolute</p>
+</li>
+<li>
+<p>A relative path can never follow an authority</p>
+</li>
+<li>
+<p>Every path maps to a unique range of segments, plus a <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code> indicating if the path is absolute.</p>
+</li>
+<li>
+<p>Every range of segments, plus a <code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">bool</a></code> indicating if the path is absolute, maps to a unique path.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following URL contains a path with three segments: "path", "to", and "file.txt":</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">http://www.example.com/path/to/file.txt</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To understand the relationship between the path and segments, we define this function <code>segs</code> which returns a list of strings corresponding to the elements in a container of segments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto segs( core::string_view s ) -&gt; std::list&lt; std::string &gt;
+{
+    url_view u( s );
+    std::list&lt; std::string &gt; seq;
+    for( auto seg : u.encoded_segments() )
+        seq.push_back( seg.decode() );
+    return seq;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this table we show the result of invoking <code>segs</code> with different paths.
+This demonstrates how the library achieves the invariants described above for various interesting cases:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 42.8571%;">
+<col style="width: 42.8571%;">
+<col style="width: 14.2858%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>s</code></th>
+<th class="tableblock halign-left valign-top">cpp:segs( s )[]</th>
+<th class="tableblock halign-left valign-top">absolute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>""</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ }[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"./"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "" }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"usr"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "usr" }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"./usr"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "usr" }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/index.htm"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "index.htm" }[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/images/cat-pic.gif"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "images", "cat-pic.gif" }[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"images/cat-pic.gif"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "images", "cat-pic.gif" }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/fast//query"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "fast", "", "query" }[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"fast//"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "fast", "", "" }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/./"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "" }[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>".//"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:{ "", "" }[]</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This implies that two paths may map to the same sequence of segments . In the paths <code>undefined[&#x22;usr&#x22;]</code> and <code>undefined[&#x22;./usr&#x22;]</code>, the <code>undefined[&#x22;./&#x22;]</code> is a prefix that might be necessary to maintain the invariant that instances of <code><a href="../reference/boost/urls/url_view_base.html" class="xref page">url_view_base</a></code> always refer to valid URLs.
+Thus, both paths map to cpp:{ "usr" }[].
+On the other hand, each sequence determines a unique path for a given URL.
+For instance, setting the segments to <code>{"a"}</code> would always map to either <code>"./a"</code> or <code>"a"</code>, depending on whether the "." prefix is necessary to keep the URL valid.</p>
+</div>
+<div class="paragraph">
+<p>Sequences don&#8217;t iterate the leading "." when it&#8217;s necessary to keep the URL valid.
+Thus, when we assign cpp:{ "x", "y", "z" }[] to segments, the sequence always contains cpp:{ "x", "y", "z" }[] after that.
+It never contains cpp:{ ".", "x", "y", "z" }[] because the <code>"."</code> needed to be included.
+In other words, the contents of the segment container are authoritative, and the path string is a function of them.
+Not vice-versa.</p>
+</div>
+<div class="paragraph">
+<p>Library algorithms which modify individual segments of the path or set the entire path attempt to behave consistently with the behavior expected as if the operation was performed on the equivalent sequence.
+If a path maps, say, to the three element sequence cpp:{ "a", "b", "c" }[] then erasing the middle segment should result in the sequence cpp:{ "a", "c" }[].
+The library always strives to do exactly what the caller requests; however, in some cases this would result in either an invalid URL, or a dramatic and unwanted change in the URL&#8217;s semantics.</p>
+</div>
+<div class="paragraph">
+<p>For example consider the following URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = url().set_path( "kyle:xy" );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The library produces the URL string <code>"kyle%3Axy"</code> and not <code>"kyle:xy"</code>, because the latter would have an unintended scheme.
+The table below demonstrates the results achieved by performing various modifications to a URL containing a path:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">URL</th>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"info:kyle:xy"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>remove_scheme()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;kyle%3Axy&#x22;]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;kyle%3Axy&#x22;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:set_scheme( "gopher" )[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"gopher:kyle:xy"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"http://www.example.com//kyle:xy"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>remove_authority()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"http:/.//kyle:xy"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"//www.example.com//kyle:xy"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>remove_authority()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/.//kyle:xy"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;<a href="http://www.example.com//kyle:xy&#x22" class="bare">http://www.example.com//kyle:xy&#x22</a>;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>remove_origin()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;/.//kyle:xy&#x22;]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;info:kyle:xy&#x22;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>remove_origin()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;kyle%3Axy&#x22;]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/kyle:xy"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:set_path_absolute( false )[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;kyle%3Axy&#x22;]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;kyle%3Axy&#x22;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:set_path_absolute( true )[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;/kyle:xy&#x22;]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;&#x22;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:set_path( "kyle:xy" )[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;kyle%3Axy&#x22;]</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>undefined[&#x22;&#x22;]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cpp:set_path( "//foo/fighters.txt" )[]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"/.//foo/fighters.txt"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"my%3Asharona/billa%3Abong"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>normalize()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"my%3Asharona/billa:bong"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"./my:sharona"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>normalize()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"my%3Asharona"</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>For the full set of containers and functions for operating on paths and segments, please consult the reference.</p>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/segments.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="containers.html">Containers</a></span>
+        <span class="next"><a href="params.html">Params</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

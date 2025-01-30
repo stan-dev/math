@@ -1,0 +1,70 @@
+[/
+    Copyright (c) 2022 Alan de Freitas (vinnie.falco@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section Formatting]
+
+Algorithms to format URLs construct a mutable URL by parsing and applying
+arguments to a URL template. The following example uses the __format__
+function to construct an absolute URL:
+
+[c++]
+[snippet_format_1]
+
+The rules for a format URL string are the same
+as for a __std_format_string__, where replacement
+fields are delimited by curly braces. The URL
+type is inferred from the format string.
+
+The URL components to which replacement fields
+belong are identified before replacement is
+applied and any invalid characters for that
+formatted argument are percent-escaped:
+
+[c++]
+[snippet_format_2]
+
+Delimiters in the URL template, such as `":"`,
+`"//"`, `"?"`, and `"#"`, unambiguously associate each
+replacement field to a URL component. All other
+characters are normalized to ensure the URL is
+valid:
+
+[c++]
+[snippet_format_3a]
+
+[c++]
+[snippet_format_3b]
+
+The function __format_to__ can be used to format URLs
+into any modifiable URL container.
+
+[c++]
+[snippet_format_4]
+
+As with __std_format__, positional and named arguments are
+supported.
+
+[c++]
+[snippet_format_5a]
+
+The __arg__ function can be used to associate names
+with arguments:
+
+[c++]
+[snippet_format_5b]
+
+A second overload based on __std_initializer_list__
+is provided for both __format__ and __format_to__.
+These overloads can help with lists of named
+arguments:
+
+[c++]
+[snippet_format_5c]
+
+[endsect]

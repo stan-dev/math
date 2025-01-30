@@ -1,0 +1,631 @@
+[/
+ / Copyright 2023-2024 Andrey Semashev
+ /
+ / Distributed under the Boost Software License, Version 1.0.
+ / (See accompanying file LICENSE_1_0.txt or copy at
+ / https://www.boost.org/LICENSE_1_0.txt)
+ /
+ / This document is a part of Boost.Scope library documentation.
+ /]
+
+[section:unique_resource Unique resource wrapper]
+
+    #include <``[boost_scope_unique_resource_hpp]``>
+
+Boost.Scope provides a [class_scope_unique_resource] class template. This is a wrapper for an arbitrary resource that represents exclusive
+ownership of the resource. The wrapper offers access to the owned resource and automatically calls a deleter function object to free the
+resource upon destruction. This is a generalization of `std::unique_ptr`, but while `std::unique_ptr` is only used to wrap pointers,
+[class_scope_unique_resource] can wrap other types of resources as well.
+
+A resource type must have the following properties to be compatible with [class_scope_unique_resource]:
+
+* Move-constructible, where the move constructor is marked as `noexcept`, or
+* Copy-constructible, or
+* An lvalue reference to an object type.
+
+Note that if the resource type is a reference, the referenced object must be stored externally to the [class_scope_unique_resource] wrapper
+and must remain valid for the entire duration of ownership by the wrapper. Users are not expected to access the resource object other than
+through the [class_scope_unique_resource] wrapper. For example, it is not allowed to modify the resource object by setting it to an invalid
+state or explicitly freeing the resource circumventing the resource wrapper, as the wrapper will still invoke the deleter on the then-invalid
+resource.
+
+The deleter must be a function object type that is callable on an lvalue of the resource type. The deleter must be copy-constructible.
+Although not strictly required, it is generally highly recommended that calling a deleter on a resource doesn't throw exceptions and is marked
+`noexcept`, as the deleter will often be called from the [class_scope_unique_resource] destructor.
+
+Like `std::unique_ptr`, [class_scope_unique_resource] is not copyable and supports a number of other operations, such as move construction and
+assignment, `reset`, `release` and `swap` with the similar semantics. Some of the operations impose additional requirements on the resource and
+deleter types; such operations will not be available if those requirements aren't met. For example, `swap` is only supported if both
+the resource and deleter types are swappable, and at least one of those types is nothrow swappable (the last part is necessary to implement the
+[@https://en.cppreference.com/w/cpp/language/exceptions strong exception guarantee] for the `swap` operation). The requirements are listed for
+each operation in the [class_scope_unique_resource] class reference.
+
+[tip If the resource type is dereferenceable (i.e. supports unary `operator*`), [class_scope_unique_resource] also provides `operator*` and
+`operator->`, making it act more like a smart-pointer.]
+
+Let's consider a usage example. Here, we need to compare the contents of two files; `equal_files` returns `true` if the files have equal
+contents and `false` otherwise.
+
+    // A deleter for POSIX-like file descriptors
+    struct fd_deleter
+    {
+        void operator() (int fd) const noexcept
+        {
+            if (fd >= 0)
+                close(fd);
+        }
+    };
+
+    // Opens a file with the given filename for reading and returns wrapped file descriptor
+    boost::scope::unique_resource< int, fd_deleter > open_file(std::string const& filename)
+    {
+        boost::scope::unique_resource< int, fd_deleter > file(open(filename.c_str(), O_RDONLY));
+        if (file.get() < 0)
+        {
+            int err = errno;
+            throw std::system_error(err, std::generic_category(), "Failed to open file " + filename);
+        }
+
+        return file;
+    }
+
+    // Reads contents of a file denoted by fd into buffer and returns the number of read bytes
+    std::size_t read_file(int fd, unsigned char* buf, std::size_t size)
+    {
+        std::size_t total_read_size = 0;
+        while (total_read_size < size)
+        {
+            ssize_t read_size = read(fd, buf + total_read_size, size - total_read_size);
+            if (read_size < 0)
+            {
+                int err = errno;
+                if (err == EINTR)
+                    continue;
+                throw std::system_error(err, std::generic_category(), "Failed to write data");
+            }
+
+            if (read_size == 0)
+            {
+                // End of file
+                break;
+            }
+
+            total_read_size += read_size;
+        }
+
+        return total_read_size;
+    }
+
+    // Compares contents of two files for equality
+    bool equal_files(std::string const& filename1, std::string const& filename2)
+    {
+        // Create unique resource wrappers for files
+        auto file1 = open_file(filename1.c_str());
+        auto file2 = open_file(filename2.c_str());
+
+        // Use them to read file contents
+        constexpr std::size_t buf_size = 1024;
+        unsigned char buf1[buf_size];
+        unsigned char buf2[buf_size];
+        while (true)
+        {
+            std::size_t size1 = read_file(file1.get(), buf1, buf_size);
+            std::size_t size2 = read_file(file2.get(), buf2, buf_size);
+
+            if (size1 != size2)
+            {
+                // File sizes are different
+                return false;
+            }
+
+            if (std::memcmp(buf1, buf2, size1) != 0)
+            {
+                // File contents are different
+                return false;
+            }
+
+            if (size1 < buf_size)
+            {
+                // Files have ended. At this point we know they have equal contents.
+                break;
+            }
+        }
+
+        return true;
+    }
+
+[note POSIX-like file descriptors are supported on Windows through non-standard APIs like
+[@https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/open-wopen `_open`],
+[@https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/close `_close`],
+[@https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/read `_read`],
+[@https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/write `_write`] and others. It is often possible to port a program
+performing simple IO with regular files and file descriptors to Windows by simple renaming. However, here and below we will be using
+the standard POSIX nomenclature.]
+
+In this example, there are several points to note. First, the `fd_deleter` function object checks if the file descriptor is valid before
+passing it to `close`. This is necessary in this piece of code because we unconditionally initialize [class_scope_unique_resource] object
+with the value returned by `open`, which may be -1 indicating an error. By default, [class_scope_unique_resource] doesn't discriminate
+valid (i.e. allocated) resource values from invalid (i.e. unallocated), which means that from its perspective the value of -1 is a file
+descriptor that needs to be freed by calling the deleter on it. Therefore, the deleter must be prepared to handle resource values that are
+unallocated. Later on we will see how to mitigate this.
+
+[tip Besides the resource value, you can specify the deleter object as the second argument of the [class_scope_unique_resource] constructor.
+In fact, the second argument is mandatory if the deleter is not default-constructible or if its default constructor may throw. This is
+necessary to be able to call the deleter on the passed resource value, should the construction of either the resource or the deleter throw.
+This ensures that the resource doesn't leak in case if [class_scope_unique_resource] initialization fails.]
+
+Second, we still need to check if opening the file succeeded before using it. Since [class_scope_unique_resource] in this example is always
+constructed in allocated state, we have to check the file descriptor value for being negative. In order to access the resource value one
+can use the `get` method of [class_scope_unique_resource].
+
+We can improve this example by making [class_scope_unique_resource] initialization automatically check for the file descriptor validity.
+This will only require modifying `fd_deleter` and `open_file`, the rest of the code stays unchanged.
+
+    // A deleter for POSIX-like file descriptors
+    struct fd_deleter
+    {
+        void operator() (int fd) const noexcept
+        {
+            close(fd);
+        }
+    };
+
+    // Opens a file with the given filename for reading and returns wrapped file descriptor
+    boost::scope::unique_resource< int, fd_deleter > open_file(std::string const& filename)
+    {
+        auto file = boost::scope::make_unique_resource_checked(
+            open(filename.c_str(), O_RDONLY)
+            -1,
+            fd_deleter());
+        if (!file.allocated())
+        {
+            int err = errno;
+            throw std::system_error(err, std::generic_category(), "Failed to open file " + filename);
+        }
+
+        return file;
+    }
+
+Here, the `make_unique_resource_checked` helper function performs the following:
+
+# If the resource value, which is the first argument - the result of the `open` call, is equal to the invalid resource value, which is
+  the second argument, creates and returns an unallocated [class_scope_unique_resource] object.
+# Otherwise, creates and returns an allocated [class_scope_unique_resource] object that wraps the result of the `open` call.
+# In both cases, the third argument is used to initialize the deleter in the returned [class_scope_unique_resource] object.
+
+Note that if `open` fails and returns -1, the deleter is guaranteed not to be called on this resource value - neither by
+`make_unique_resource_checked` nor by [class_scope_unique_resource], not even if [class_scope_unique_resource] construction fails with an
+exception. This allows us to simplify `fd_deleter` and remove the check for negative `fd` values.
+
+[tip If C++17 is supported, it is possible to use __boost_core_functor__ from __boost_core__ to wrap raw functions like `close` into
+a function object that can be specified as a deleter in `unique_resource`. For example, `fd_deleter` from the example above could be
+replaced with `boost::core::functor< close >`.]
+
+Furthermore, since the returned [class_scope_unique_resource] object now properly indicates whether the resource is allocated or not,
+we can use the `allocated` member function to test it instead of checking the resource value. This makes the code more readable.
+
+[note In order to avoid confusion with the [class_scope_unique_resource] object being always allocated after construction with a resource
+value, it is recommended to always use either the `make_unique_resource_checked` factory function or, more preferably, resource traits,
+as described in the next section. Resource traits are the preferred solution as it makes [class_scope_unique_resource] more efficient and
+less error-prone to use.]
+
+[section:resource_traits Resource traits]
+
+The [class_scope_unique_resource] class template also supports an optional third template parameter, which can be used to specify a resource
+traits class. Resource traits provide [class_scope_unique_resource] with additional knowledge about the resource features that allow for
+a more efficient implementation. This is useful when there is one or more resource value that is considered unallocated, that is such a value
+that does not identify an allocated resource that needs to be freed. For example, for pointer resource types, null is usually considered as
+the unallocated value, and for POSIX-like file descriptors, all negative values are unallocated values, since no valid file descriptor
+can be negative.
+
+If `Resource` is the resource type specified in [class_scope_unique_resource] template parameters then, if specified, resource traits must
+be a class type with the following public static member functions:
+
+* `bool is_allocated(Resource const& r) noexcept` - must return `true` if the resource value `r` is an allocated resource value and `false`
+  otherwise.
+* `R make_default() noexcept` - must return a value such that `std::is_constructible< Resource, R >::value && std::is_nothrow_assignable<
+  Resource&, R >::value` is `true` and constructing `Resource` from `R` produces an unallocated resource value that can be used to initialize
+  the default-constructed [class_scope_unique_resource] object.
+
+Note that all listed member functions must be non-throwing. Given these definitions, calling `is_allocated` on the value returned by
+`make_default` must always return `false`.
+
+When the conforming resource traits are provided, [class_scope_unique_resource] behavior changes as follows:
+
+* [class_scope_unique_resource] will no longer separately track whether it is in allocated state or not and instead will use `is_allocated`
+  on the wrapped resource value for this. In particular, this means that constructing [class_scope_unique_resource] from a resource value
+  or calling `reset` with a resource value may now produce a wrapper in an unallocated state, if the resource value is an unallocated value.
+* Default constructor, `reset` with no arguments, move constructor and move assignment of [class_scope_unique_resource] will use `make_default`
+  to initialize the resource value in the unallocated wrapper (for move operations - in the move source).
+
+Using the resource traits allow us to further improve the example given in the previous section. Again, our primary interest is `open_file`
+and `unique_resource` type usage, the rest of `equal_files` implementation remains unchanged.
+
+    // A deleter for POSIX-like file descriptors
+    struct fd_deleter
+    {
+        void operator() (int fd) const noexcept
+        {
+            close(fd);
+        }
+    };
+
+    // Resource traits for POSIX-like file descriptors
+    struct fd_resource_traits
+    {
+        static bool is_allocated(int fd) noexcept
+        {
+            return fd >= 0;
+        }
+
+        static int make_default() noexcept
+        {
+            // Return any unallocated resource value
+            return -1;
+        }
+    };
+
+    // A shorthand type alias for unique file descriptor wrappers
+    using unique_fd = boost::scope::unique_resource< int, fd_deleter, fd_resource_traits >;
+
+    // Opens a file with the given filename for reading and returns wrapped file descriptor
+    unique_fd open_file(std::string const& filename)
+    {
+        unique_fd file(open(filename.c_str(), O_RDONLY));
+        if (!file.allocated())
+        {
+            int err = errno;
+            throw std::system_error(err, std::generic_category(), "Failed to open file " + filename);
+        }
+
+        return file;
+    }
+
+In this piece of code, we no longer need to use `make_unique_resource_checked` every time we open a file (or otherwise create a file
+descriptor), and therefore we don't have to duplicate the invalid file descriptor value or the deleter - this information is provided
+by `fd_resource_traits` and conveniently embedded in the `unique_fd` type. As before, if `open` fails and returns -1, the constructed
+[class_scope_unique_resource] object will be in an unallocated state, meaning that we can use `allocated` accessor, and that the deleter
+will only be called if `open` succeeded.
+
+[tip The `fd_deleter`, `fd_resource_traits` and `unique_fd` types presented in the examples above are provided by the library out of
+the box in [boost_scope_fd_resource_hpp] and [boost_scope_unique_fd_hpp] headers.]
+
+[endsect]
+
+[section:simplified_resource_traits Simplified resource traits]
+
+[note Components described in this section require a C++17 compiler that supports [@https://en.cppreference.com/w/cpp/language/template_parameters
+`auto` non-type template parameters] and [@https://en.cppreference.com/w/cpp/language/fold fold expressions].]
+
+The library provides an `unallocated_resource` class template that can be used to generate resource traits for use with `unique_resource`
+when the resource satisfies the following constraints:
+
+* Resource values are allowed to be specified as [@https://en.cppreference.com/w/cpp/language/template_parameters non-type template parameters]
+  in C++. The exact set of types that meet this requirement depends on the C++ standard version being used. For example, integers,
+  enumerations, pointers and lvalue references are supported since C++17. C++20 adds support for class types. Note that resource value
+  initialization expression must be a constant expression. In particular, for pointers and references this means that the resource value
+  initialization expression must refer to an object or function or, in case of pointers, produce a null pointer.
+* There is one or more unallocated resource values that can be individually listed. All other resource values represent allocated resources
+  that need to be freed.
+* One of these unallocated resource values is considered the default.
+* Resource type supports move construction and assignment from the default value, as well as comparison for equality and inequality with
+  unallocated values, and none of these operations throw exceptions.
+
+When the above requirements are met, one can specify the unallocated resource values as non-type template parameters of `unallocated_resource` to
+generate resource traits for `unique_resource`. The first of the listed unallocated values is the default.
+
+For example, let's consider resource traits definition for Windows [@https://learn.microsoft.com/en-us/windows/win32/sysinfo/handles-and-objects
+handles].
+
+    struct handle_traits
+    {
+        //! Returns the default resource value
+        static HANDLE make_default() noexcept
+        {
+            return INVALID_HANDLE_VALUE;
+        }
+
+        //! Tests if \a res is an allocated resource value
+        static bool is_allocated(HANDLE res) noexcept
+        {
+            return res != INVALID_HANDLE_VALUE && res != (HANDLE)NULL;
+        }
+    };
+
+Here, `INVALID_HANDLE_VALUE` is a special constant returned by some Windows API functions that indicates no allocated resource associated with
+the handle. However, other functions, like [@https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess
+`OpenProcess`] or [@https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openthread `OpenThread`] for example,
+return a `NULL` handle in case of errors, and we have to test for that value as well.
+
+[tip For the curious readers, there is an [@https://devblogs.microsoft.com/oldnewthing/20040302-00/?p=40443 article] describing reasons for this
+inconsistency between different Windows APIs.]
+
+With `unallocated_resource`, the above resource traits could be reduced to this:
+
+    using handle_traits = boost::scope::unallocated_resource< INVALID_HANDLE_VALUE, (HANDLE)NULL >;
+
+[note Given that `INVALID_HANDLE_VALUE` is defined as `(HANDLE)-1` in Windows SDK, and `HANDLE` is actually a pointer type, in pure C++
+one should not be able to specify this value as a non-type template parameter because the pointer does not refer to an object. However, MSVC
+accepts this code as an extension. With other compilers, one would still have to implement proper resource traits similar to `handle_traits`
+in this case.]
+
+We can also use __boost_core_functor__ to wrap the [@https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle
+`CloseHandle`] Windows API function, which is used to free handles, to define the resource deleter. Then the complete definition of
+`unique_resource` would look like this:
+
+    using unique_handle = boost::scope::unique_resource<
+        HANDLE,
+        boost::core::functor< CloseHandle >,
+        boost::scope::unallocated_resource< INVALID_HANDLE_VALUE, (HANDLE)NULL >
+    >;
+
+[endsect]
+
+[section:comparison_with_library_fundamentals_ts Comparison with `unique_resource` defined in C++ Extensions for Library Fundamentals]
+
+The following sections provide comparison between `unique_resource` defined by [@https://cplusplus.github.io/fundamentals-ts/v3.html#scopeguard.uniqueres
+C++ Extensions for Library Fundamentals TS] and this library.
+
+[section:resource_traits Resource traits]
+
+Boost.Scope supports an additional optional template parameter for [link scope.unique_resource.resource_traits resource traits]. This allows
+`unique_resource` to become aware of the resource specifics, such as unallocated values and the default value, which is useful for usability and
+efficiency. Specifying resource traits makes the `make_unique_resource_checked` factory function unnecessary, as `unique_resource` itself is
+able to tell whether the resource is allocated upon construction. Additionally, this allows `unique_resource` to avoid storing an additional
+flag that indicates whether the resource is is in an allocated state and needs to be freed upon destruction.
+
+Using resource traits may change meaning of some `unique_resource` APIs, which is, arguably, for the better. Consider the following example.
+
+    // POSIX file descriptor resource
+    std::experimental::unique_resource< int, int (*)(int) > fd(-1, &close);
+
+Since the deleter in this case must be specified in constructor parameters (because the default constructor would create a value-initialized
+pointer to function, which is null and cannot be called), the user may be inclined to specify -1 for the file descriptor and expect that the
+constructed `unique_resource` is in an unallocated state. This assumption would be incorrect because this constructor always creates an
+allocated `unique_resource`, which means it will call `close(-1)` upon destruction. The correct way to construct `fd` in this case would be
+to use `make_unique_resource_checked` like so:
+
+    std::experimental::unique_resource< int, int (*)(int) > fd = std::experimental::make_unique_resource_checked(-1, -1, &close);
+
+Alternatively, one can call `release` immediately after constructing the `unique_resource`. Although it should be noted that this approach
+is only valid if it is known that `unique_resource` construction cannot throw.
+
+    std::experimental::unique_resource< int, int (*)(int) > fd(-1, &close);
+    fd.release(); // mark the resource unallocated
+
+A similar problem exists with the `reset` member function.
+
+    fd.reset(-1);
+
+Contrary to expectation, this call does not leave `fd` in unallocated state and also causes `close(-1)` to be called on `fd` destruction. The
+correct way to do this is to call `reset` without parameters or use `make_unique_resource_checked`.
+
+    fd.reset();
+    // or:
+    fd = std::experimental::make_unique_resource_checked(-1, -1, &close);
+
+[note It may look like calling `reset(-1)` is an artificial example that doesn't happen in practice. It is not unusual for one to want to
+combine another call with `reset` directly (e.g. `fd.reset(open(...))`) and expect this to work correctly. However, since `open` may return -1
+in case of error, we will have the problem described above.]
+
+Specifying resource traits changes meaning of the above examples. Both the constructor and `reset` from an unallocated resource value produce
+a `unique_resource` object in an unallocated state.
+
+    boost::scope::unique_resource< int, int (*)(int), boost::scope::fd_resource_traits > fd(-1, &close);
+    assert(!fd.allocated());
+
+    fd.reset(-1);
+    assert(!fd.allocated());
+
+[tip [class_scope_fd_resource_traits] is provided by Boost.Scope.]
+
+Another benefit of resource traits is that the default resource value can be different from the value-constructed one. This can be useful if
+the resource type is not default-constructible (for example, if it is a reference type) or the value-constructed resource is not an unallocated
+value. For example, [class_scope_fd_resource_traits] specifies -1 as the default value for POSIX file descriptors because the value of 0 is a
+valid allocated file descriptor.
+
+There is no direct replacement for this feature the Library Fundamentals TS, although `make_unique_resource_checked` and `release` can be used
+to work around the limitation in some cases, as shown above.
+
+[endsect]
+
+[section:constructors Constructor differences]
+
+Unlike Library Fundamentals TS, Boost.Scope does not consider pointers to functions default-constructible for the purpose of deleters specified
+in `unique_resource` template parameters. For example:
+
+    std::experimental::unique_resource< int, int (*)(int) > fd1; // compiles, creates unusable unique_resource object
+    boost::scope::unique_resource< int, int (*)(int) > fd2; // fails to compile, unique_resource is not default-constructible
+
+This is because the default- or value-constructed pointer to function is not callable, as it is garbage or null pointer, respectively.
+`unique_resource` does not provide a way to modify the deleter after construction, other than by move-assigning another `unique_resource` object,
+which means the default-constructed `unique_resource` object would be unusable and potentially cause undefined behavior on `reset` or destruction.
+
+Boost.Scope does allow omitting the deleter from constructor arguments when it truly is default-constructible and the default constructor doesn't
+throw exceptions, while the TS requires both the resource value and the deleter to be specified.
+
+    std::experimental::unique_resource< int, boost::scope::fd_deleter > fd1(10); // fails to compile, deleter is missing in constructor arguments
+    boost::scope::unique_resource< int, boost::scope::fd_deleter > fd2(10); // ok, default-constructs fd_deleter
+
+[tip [class_scope_fd_deleter] is provided by Boost.Scope.]
+
+[note The requirement for the deleter default construction to be non-throwing is to ensure that the deleter can be invoked on the resource in
+case if `unique_resource` construction fails with an exception. This prevents leaking the resource if its construction throws, or the deleter's
+constructor throws.]
+
+Boost.Scope allows omitting the resource value in `unique_resource` constructor arguments, when the deleter must be specified. `default_resource`
+keyword can be used as a placeholder for the resource value in this case:
+
+    // Creates an unallocated unique_resource with the specified deleter
+    boost::scope::unique_resource< int, int (*)(int) > fd(boost::scope::default_resource, &close);
+
+Note that in the example above, even though the resource value is value-initialized (i.e. zero), the `fd` is in an unallocated state and will not
+call the deleter on destruction. `default_resource` also works with resource traits:
+
+    boost::scope::unique_resource< int, int (*)(int), boost::scope::fd_resource_traits > fd(boost::scope::default_resource, &close);
+
+In the above case, the `fd` object will use the default value specified by the resource traits (i.e. -1, in case of fd_resource_traits) to initialize
+its stored resource object. Again, the `fd` object is in an unallocated state after construction.
+
+Library Fundamentals TS specifies that `unique_resource` move constructor must deallocate the resource if the resource is nothrow move-constructible
+and the deleter is not and the deleter's copy constructor throws and exception. This is a case when `unique_resource` is half-constructed: the
+resource has been moved into the object being constructed (i.e. is no longer stored in the source object) but the deleter fails to copy-construct
+(i.e. it only exists in the source object). The behavior described in the TS ensures that the resource doesn't leak, but it leaves the source
+`unique_resource` unallocated in case of exception, which means the move constructor only maintains
+[@https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety basic exception guarantee]. Boost.Scope in this case leaves the source
+`unique_resource` in its original state, which also guarantees that the resource doesn't leak, but provides a strong exception guarantee.
+
+[endsect]
+
+[section:check_allocated Checking whether resource is allocated]
+
+One glaring omission in the Library Fundamentals TS is that `unique_resource` doesn't provide a way to test whether the resource is in an allocated
+state. Boost.Scope rectifies this by providing `allocated()` method, as well as contextual conversion to `bool`.
+
+    boost::scope::unique_resource< int, int (*)(int), boost::scope::fd_resource_traits > fd(-1, &close);
+    assert(!fd.allocated());
+    assert(!fd);
+
+    fd.reset(10);
+    assert(fd.allocated());
+    assert(!!fd);
+
+[note The contextual conversion to `bool` in `unique_resource` does not test the resource /value/ and only tests whether the resource is allocated.
+This is consistent with other components, such as `std::optional`, for example.]
+
+[endsect]
+
+[section:swap Native support for swapping]
+
+Library Fundamentals TS defines `unique_resource` to be a move-constructible and move-assignable type, and through this property it supports the
+standard `std::swap` algorithm. However, there are two issues with this approach:
+
+* It prevents swapping algorithms specialized for the resource and deleter types from being used. Even if `swap` is specialized, the generic
+  algorithm involving moving or copying the resource and deleter objects is used.
+* The generic `swap` implementation only provides [@https://en.cppreference.com/w/cpp/language/exceptions#Exception_safety basic exception guarantee].
+  The algorithm move-constructs a copy of one of the source objects and then performs two move-assignments. If either of the assignments fail, one
+  of the `unique_resource` objects will be left unallocated. It is also worth noting that the TS defines `unique_resource` move constructor to be
+  potentially destructive. If the resource type move constructor is non-throwing and the deleter copy-constructor throws, the deleter is called on
+  the move-constructed resource object to avoid leaking it. In the context of `std::swap` this means that even if the move constructor fails, it will
+  leave the source object unallocated rather than unmodified.
+
+Boost.Scope provides native support for swapping, both as a member and non-member function `swap`. Swapping is supported if at least one of the
+resource or deleter types support non-throwing swap (either default or specialized algorithm) and provides strong exception guarantee.
+`unique_resource` swap operation is non-throwing if both resource and deleter types support non-throwing swap.
+
+    boost::scope::unique_resource< int, boost::scope::fd_deleter, boost::scope::fd_resource_traits > fd1, fd2;
+    fd1.swap(fd2);
+    swap(fd1, fd2); // found via ADL
+
+[endsect]
+
+[section:dereference Broader support for dereferencing]
+
+Library Fundamentals TS `unique_resource` supports `operator*()` and `operator->()` for pointer resource types. Boost.Scope extends this support
+for any resource types that support dereferencing.
+
+    // Resource object type
+    struct my_object
+    {
+        void foo();
+    };
+
+    // Manager for my_object instances
+    class my_object_manager
+    {
+    private:
+        // List of allocated objects
+        using my_object_list = std::list< my_object >;
+
+        // Resource handle that refers to a my_object element in the list
+        class my_handle
+        {
+        private:
+            my_object_list* m_list;
+            my_object_list::iterator m_it;
+
+        public:
+            my_handle() noexcept : m_list(nullptr), m_it() {}
+            explicit my_handle(my_object_list& list, my_object_list::iterator it) noexcept :
+                m_list(&list), m_it(it)
+            {
+            }
+
+            my_object_list::iterator operator-> () const noexcept  /*< The operator relies on `operator->` chaining. >*/
+            {
+                return m_it;
+            }
+
+            my_object& operator* () const noexcept
+            {
+                return *m_it;
+            }
+
+            my_object_list* get_list() const noexcept
+            {
+                return m_list;
+            }
+
+            my_object_list::iterator get_iterator() const noexcept
+            {
+                return m_it;
+            }
+        };
+
+        // Resource deleter
+        struct my_handle_deleter
+        {
+            void operator() (my_handle const& res) const noexcept
+            {
+                res.get_list()->erase(res.get_iterator());
+            }
+        };
+
+        // Resource traits
+        struct my_handle_traits
+        {
+            static my_handle make_default() noexcept
+            {
+                return my_handle();
+            }
+
+            static bool is_allocated(my_handle const& res) noexcept
+            {
+                return res.get_list() != nullptr && res.get_iterator() != res.get_list()->end();
+            }
+        };
+
+    public:
+        // Unique resource wrapper for my_object instances
+        using my_object_handle = boost::scope::unique_resource< my_handle, my_handle_deleter, my_handle_traits >;
+
+    private:
+        my_object_list m_objects;
+
+    public:
+        // Allocates a new object and returns a handle to it
+        my_object_handle allocate_object()
+        {
+            return my_object_handle(my_handle(m_objects, m_objects.insert(m_objects.end(), my_object())));
+        }
+    };
+
+    void allocate_and_use_object(my_object_manager& mgr)
+    {
+        my_object_manager::my_object_handle handle = mgr.allocate_object();
+        if (handle)
+            handle->foo(); // invokes my_object::foo on the allocated object
+    }
+
+In the above example, we're using `unique_resource` to reference objects created and maintained by `my_object_manager`. The `my_handle` class
+is the resource type and supports accessing `my_object` members through `operator->` and `operator*`. This enables `operator->` and `operator*`
+in `unique_resource`, which allows the code that uses `unique_resource` to access `my_object` members.
+
+With Library Fundamentals TS `unique_resource`, this is possible to emulate by accessing the stored resource object via the `unique_resource::get`
+accessor and dereferencing that.
+
+[endsect]
+
+[endsect]
+
+[endsect]

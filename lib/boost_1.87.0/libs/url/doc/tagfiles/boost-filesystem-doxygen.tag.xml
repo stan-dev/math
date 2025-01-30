@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tagfile>
+    <compound kind="namespace">
+        <name>boost::filesystem</name>
+        <filename></filename>
+        <class kind="class">boost::filesystem::path</class>
+    </compound>
+    <compound kind="class">
+        <name>boost::filesystem::path</name>
+        <filename>reference.html#class-path</filename>
+    </compound>
+</tagfile>

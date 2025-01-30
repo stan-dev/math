@@ -1,0 +1,413 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>client_errc</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__character_set/next_char.html" title="character_set::next_char">
+<link rel="next" href="boost__mysql__column_type.html" title="column_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__character_set/next_char.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__column_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__client_errc"></a><a class="link" href="boost__mysql__client_errc.html" title="client_errc">client_errc</a>
+</h4></div></div></div>
+<p>
+        <a class="indexterm" name="id48438"></a>
+MySQL client-defined error codes.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__client_errc.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__client_errc.synopsis"></a></span><a class="link" href="boost__mysql__client_errc.html#mysql.ref.boost__mysql__client_errc.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/client_errc.hpp" target="_top">boost/mysql/client_errc.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">enum</span> <span class="keyword">class</span> <span class="identifier">client_errc</span>
+    <span class="special">:</span> <span class="keyword">int</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__client_errc.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__client_errc.values"></a></span><a class="link" href="boost__mysql__client_errc.html#mysql.ref.boost__mysql__client_errc.values">Values</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="literal">incomplete_message</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  An incomplete message was received from the server (indicates a
+                  deserialization error or packet mismatch).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">protocol_value_error</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  An unexpected value was found in a server-received message (indicates
+                  a deserialization error or packet mismatch).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">server_unsupported</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The server does not support the minimum required capabilities to
+                  establish the connection.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">extra_bytes</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Unexpected extra bytes at the end of a message were received (indicates
+                  a deserialization error or packet mismatch).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">sequence_number_mismatch</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Mismatched sequence numbers (usually caused by a packet mismatch).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">unknown_auth_plugin</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The user employs an authentication plugin not known to this library.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">auth_plugin_requires_ssl</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The authentication plugin requires the connection to use SSL.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">wrong_num_params</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The number of parameters passed to the prepared statement does
+                  not match the number of actual parameters.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">server_doesnt_support_ssl</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The connection mandates SSL, but the server doesn't accept SSL
+                  connections.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">metadata_check_failed</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The static interface detected a mismatch between your C++ type
+                  definitions and what the server returned in the query.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">num_resultsets_mismatch</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The static interface detected a mismatch between the number of
+                  row types passed to <a class="link" href="boost__mysql__static_results.html" title="static_results"><code class="computeroutput"><span class="identifier">static_results</span></code></a> or <a class="link" href="boost__mysql__static_execution_state.html" title="static_execution_state"><code class="computeroutput"><span class="identifier">static_execution_state</span></code></a>
+                  and the number of resultsets returned by your query.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">row_type_mismatch</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The <code class="computeroutput"><span class="identifier">StaticRow</span></code> type
+                  passed to read_some_rows does not correspond to the resultset type
+                  being read.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">static_row_parsing_error</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The static interface encountered an error when parsing a field
+                  into a C++ data structure.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">pool_not_running</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Getting a connection from a connection_pool was cancelled before
+                  the pool was run. Ensure that you're calling connection_pool::async_run.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">pool_cancelled</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Getting a connection from a connection_pool failed because the
+                  pool was cancelled.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">no_connection_available</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Getting a connection from a connection_pool was cancelled before
+                  a connection was available.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">invalid_encoding</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  An invalid byte sequence was found while trying to decode a string.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">unformattable_value</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  A formatting operation could not format one of its arguments.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">format_string_invalid_syntax</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  A format string containing invalid syntax was provided to a SQL
+                  formatting function.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">format_string_invalid_encoding</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  A format string with an invalid byte sequence was provided to a
+                  SQL formatting function.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">format_string_manual_auto_mix</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  A format string mixes manual (e.g. {0}) and automatic (e.g. {})
+                  indexing.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">format_string_invalid_specifier</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The supplied format specifier (e.g. {:i}) is not supported by the
+                  type being formatted.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">format_arg_not_found</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  A format argument referenced by a format string was not found.
+                  Check the number of format arguments passed and their names.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">unknown_character_set</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  The character set used by the connection is not known by the client.
+                  Use <a class="link" href="boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set"><code class="computeroutput"><span class="identifier">any_connection</span><span class="special">::</span><span class="identifier">set_character_set</span></code></a> or
+                  <a class="link" href="boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="computeroutput"><span class="identifier">any_connection</span><span class="special">::</span><span class="identifier">async_set_character_set</span></code></a>
+                  before invoking operations that require a known charset.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="literal">max_buffer_size_exceeded</code>
+                </p>
+              </td>
+<td>
+                <p>
+                  An operation attempted to read or write a packet larger than the
+                  maximum buffer size. Try increasing <a class="link" href="boost__mysql__any_connection_params/max_buffer_size.html" title="any_connection_params::max_buffer_size"><code class="computeroutput"><span class="identifier">any_connection_params</span><span class="special">::</span><span class="identifier">max_buffer_size</span></code></a>.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__client_errc.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__client_errc.description"></a></span><a class="link" href="boost__mysql__client_errc.html#mysql.ref.boost__mysql__client_errc.description">Description</a>
+      </h5>
+<p>
+        These errors are produced by the client itself, rather than the server.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__character_set/next_char.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__column_type.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

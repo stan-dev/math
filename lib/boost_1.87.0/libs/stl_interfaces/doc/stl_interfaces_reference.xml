@@ -1,0 +1,758 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="headers"><title>Headers</title><header id="doxygen.headers.config_8hpp" name="boost/stl_interfaces/config.hpp">
+<macro id="doxygen.headers.config_8hpp_1a67ce3bfa67b2b04d68dd5ad40437a5b1" name="BOOST_STL_INTERFACES_USE_CONCEPTS"/>
+<macro id="doxygen.headers.config_8hpp_1a57f628145901d1ec0aa59a4e8cb8dc2a" name="BOOST_STL_INTERFACES_USE_DEDUCED_THIS"/>
+<macro id="doxygen.headers.config_8hpp_1a61d0a00cb744e9d4e637d880a7bdbf92" name="BOOST_STL_INTERFACES_NAMESPACE_V1"/>
+<macro id="doxygen.headers.config_8hpp_1a54bc41b36de0c59e28d6e104819f8d24" name="BOOST_STL_INTERFACES_NAMESPACE_V2"/>
+<macro id="doxygen.headers.config_8hpp_1a47e2337d0db618f42f6a16eb522e7f37" name="BOOST_STL_INTERFACES_NAMESPACE_V3"/>
+</header>
+<header id="doxygen.headers.fwd_8hpp" name="boost/stl_interfaces/fwd.hpp">
+<namespace name="boost">
+<namespace name="stl_interfaces">
+<enum id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a59fdc0941c927b7d8b63b98771fefaca" name="element_layout"><enumvalue id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a59fdc0941c927b7d8b63b98771fefacaa7d7e2fecdf6d687d754c708beda9cdb9" name="discontiguous"><default>false</default></enumvalue><enumvalue id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a59fdc0941c927b7d8b63b98771fefacaa23cf8d09a7805358cf05c7a6e01a7623" name="contiguous"><default>true</default></enumvalue><description><para>An enumeration used to indicate whether the underlying data have a contiguous or discontiguous layout when instantiating <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface">view_interface</link></computeroutput> and <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. </para></description></enum>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.headers.iterator__interface_8hpp" name="boost/stl_interfaces/iterator_interface.hpp">
+<namespace name="boost">
+<namespace name="stl_interfaces">
+<struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1access" name="access"><description><para>A type for granting access to the private members of an iterator derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput>. </para></description></struct><struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface" name="iterator_interface"><template>
+      <template-type-parameter name="Derived"/>
+      <template-type-parameter name="IteratorConcept"/>
+      <template-type-parameter name="ValueType"/>
+      <template-type-parameter name="Reference"/>
+      <template-type-parameter name="Pointer"/>
+      <template-type-parameter name="DifferenceType"/>
+    </template><typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a96323afe715a954e84130975c54ce0e4" name="iterator_concept"><type>IteratorConcept</type></typedef>
+<typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a165e14988c2a052c3f95523b934b03da" name="iterator_category"><type>iterator_concept</type></typedef>
+<typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a805d079f56ab3d86aacb627e2a4aa518" name="value_type"><type>std::remove_const_t&lt; ValueType &gt;</type></typedef>
+<typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1aa94b692a8107fb91fb63d0cd7229facc" name="reference"><type>Reference</type></typedef>
+<typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a3bba49aa20a4b48e3c2f3cac3ec68d6b" name="pointer"><type><emphasis>unspecified</emphasis></type></typedef>
+<typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a08b22daa4f13760d485d7e668a5c980e" name="difference_type"><type>DifferenceType</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a36145466ed636eba6b98791addb47a8a" name="operator*" cv="noexcept(noexcept(*access::base(std::declval&lt; D &amp; &gt;())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1ad9aca59d59852486aeeabb1606cba9eb" name="operator*" cv="const noexcept(noexcept(*access::base(std::declval&lt; D const &amp; &gt;())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1ae790190da640551d2d51c27c190a9667" name="operator-&gt;" cv="noexcept(noexcept(detail::make_pointer&lt; pointer, reference &gt;(*std::declval&lt; D &amp; &gt;())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a8d37066a30d331872a1dc3d90d63f826" name="operator-&gt;" cv="const noexcept(noexcept(detail::make_pointer&lt; pointer, reference &gt;(*std::declval&lt; D const &amp; &gt;())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a8d94335138ab3f9ef6a49b8b4816399b" name="operator[]" cv="const noexcept(noexcept(D(std::declval&lt; D const &amp; &gt;()), std::declval&lt; D &amp; &gt;()+=i, *std::declval&lt; D &amp; &gt;()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="i"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a22f72480cdef70b16cc305f232bb196a" name="operator++" cv="noexcept(noexcept(++access::base(std::declval&lt; D &amp; &gt;())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;!v1_dtl::plus_eq&lt;D, difference_type&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a85f41c1a322a4f3ec6e965fa30dba1a3" name="operator++" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;()+=difference_type(1)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1aebd1b3b2adc777c61a64fc3c87e600f3" name="operator++" cv="noexcept(noexcept(D(std::declval&lt; D &amp; &gt;()),++std::declval&lt; D &amp; &gt;()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a707f2396baf174bc1b68b464f37cd3ed" name="operator+=" cv="noexcept(noexcept(access::base(std::declval&lt; D &amp; &gt;())+=n))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a3195f99debf9b70b587ad0f4c8b9dc95" name="operator+" cv="const noexcept(noexcept(D(std::declval&lt; D &amp; &gt;()), std::declval&lt; D &amp; &gt;()+=i))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="i"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a7544ff4986982238c5c652e1ab1c80fa" name="operator--" cv="noexcept(noexcept(--access::base(std::declval&lt; D &amp; &gt;())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;!v1_dtl::plus_eq&lt;D, difference_type&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a574b7dd2ac46db598976bcc1a70a4938" name="operator--" cv="noexcept(noexcept(D(std::declval&lt; D &amp; &gt;()), std::declval&lt; D &amp; &gt;()+=-difference_type(1)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1ad0e006ccc4d95a33bc56e8ce44ee6fe6" name="operator--" cv="noexcept(noexcept(D(std::declval&lt; D &amp; &gt;()), --std::declval&lt; D &amp; &gt;()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name=""><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1a1d357da247aa3370b9329701592c7e3d" name="operator-=" cv="noexcept"><type>constexpr D &amp;</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="i"><paramtype>difference_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface_1ad86ad06d0225ecb09b3f9821e01c7171" name="operator-" cv="const noexcept(noexcept(access::base(std::declval&lt; D const &amp; &gt;()) - access::base(other)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="other"><paramtype>D</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1proxy__arrow__result" name="proxy_arrow_result"><template>
+      <template-type-parameter name="T"/>
+    </template><description><para>The return type of <computeroutput>operator-&gt;()</computeroutput> in a proxy iterator.</para><para>This template is used as the default <computeroutput>Pointer</computeroutput> template parameter in the <computeroutput>proxy_iterator_interface</computeroutput> template alias. Note that the use of this template implies a copy or move of the underlying object of type <computeroutput>T</computeroutput>. </para></description><method-group name="public member functions">
+<constructor id="doxygen.headers.structboost_1_1stl__interfaces_1_1proxy__arrow__result_1a0d4a495adea1a621fff460dc2d3c7334" cv="noexcept(noexcept(T(value)))"><parameter name="value"><paramtype>T const &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.headers.structboost_1_1stl__interfaces_1_1proxy__arrow__result_1a1ae2faff8fdf0325e2ca74fa14ca93a8" cv="noexcept(noexcept(T(std::move(value))))"><parameter name="value"><paramtype>T &amp;&amp;</paramtype></parameter></constructor>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1proxy__arrow__result_1a537218564ad7b1f9a2f530a009e5600d" name="operator-&gt;" cv="const noexcept"><type>constexpr T const *</type></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1proxy__arrow__result_1afa7996a8eeb375dcab07afe5382bfecd" name="operator-&gt;" cv="noexcept"><type>constexpr T *</type></method>
+</method-group>
+</struct><namespace name="v1_dtl">
+<struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1plus__eq" name="plus_eq"><template>
+      <template-type-parameter name="Iterator"/>
+      <template-type-parameter name="DifferenceType"/>
+      <template-type-parameter name=""><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::false_type</inherit></struct><struct-specialization id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1plus__eq_3_01Iterator_00_01DifferenceType_00_01voidc524a1198730a043603cb8adaf77cee6" name="plus_eq"><template>
+      <template-type-parameter name="Iterator"/>
+      <template-type-parameter name="DifferenceType"/>
+    </template><specialization><template-arg>Iterator</template-arg><template-arg>DifferenceType</template-arg><template-arg>void_t&lt; decltype(std::declval&lt; Iterator &amp; &gt;()+=std::declval&lt; DifferenceType &gt;())&gt;</template-arg></specialization><inherit access="public">std::true_type</inherit></struct-specialization><struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1ra__iter" name="ra_iter"><template>
+      <template-type-parameter name="Iterator"/>
+      <template-type-parameter name=""><default>void</default></template-type-parameter>
+    </template><inherit access="public">std::false_type</inherit></struct><struct-specialization id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1ra__iter_3_01Iterator_00_01void__t_3_01typename_01Icea473785dbebdb39502f38d5d9212f7" name="ra_iter"><template>
+      <template-type-parameter name="Iterator"/>
+    </template><specialization><template-arg>Iterator</template-arg><template-arg>void_t&lt; typename Iterator::iterator_concept &gt;</template-arg></specialization><inherit access="public">std::integral_constant&lt; bool, std::is_base_of&lt; std::random_access_iterator_tag, Iterator::iterator_concept &gt;::value &gt;</inherit></struct-specialization>
+
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1_1v1__dtl_1a6fe7f222c5c3b4b41b9e4d721c4d3e9d" name="derived_iterator"><type>void</type><template>
+          <template-type-parameter name="D"/>
+          <template-type-parameter name="IteratorConcept"/>
+          <template-type-parameter name="ValueType"/>
+          <template-type-parameter name="Reference"/>
+          <template-type-parameter name="Pointer"/>
+          <template-type-parameter name="DifferenceType"/>
+        </template><parameter name=""><paramtype><classname>iterator_interface</classname>&lt; D, IteratorConcept, ValueType, Reference, Pointer, DifferenceType &gt; const &amp;</paramtype></parameter></function>
+</namespace>
+<namespace name="v2_dtl">
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1_1v2__dtl_1a437d1ddf4f50c1006ed9561ef55d647c" name="derived_iterator"><type>void</type><template>
+          <template-type-parameter name="D"/>
+          <template-type-parameter name="IteratorConcept"/>
+          <template-type-parameter name="ValueType"/>
+          <template-type-parameter name="Reference"/>
+          <template-type-parameter name="Pointer"/>
+          <template-type-parameter name="DifferenceType"/>
+        </template><parameter name=""><paramtype>v2::iterator_interface&lt; D, IteratorConcept, ValueType, Reference, Pointer, DifferenceType &gt; const &amp;</paramtype></parameter></function>
+</namespace>
+<namespace name="v3_dtl">
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1_1v3__dtl_1ab1af31a973d89a3c319799c9de568db6" name="derived_iterator"><type>void</type><template>
+          <template-type-parameter name="IteratorConcept"/>
+          <template-type-parameter name="ValueType"/>
+          <template-type-parameter name="Reference"/>
+          <template-type-parameter name="Pointer"/>
+          <template-type-parameter name="DifferenceType"/>
+        </template><parameter name=""><paramtype>v3::iterator_interface&lt; IteratorConcept, ValueType, Reference, Pointer, DifferenceType &gt; const &amp;</paramtype></parameter></function>
+</namespace>
+<typedef id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ab626f440514179a98bb3f7b4045b3bcc" name="proxy_iterator_interface"><description><para>A template alias useful for defining proxy iterators. <formalpara><title>See Also:</title><para><computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput>. </para>
+</formalpara>
+</para></description><type><classname>iterator_interface</classname>&lt; Derived, IteratorConcept, ValueType, Reference, <classname>proxy_arrow_result</classname>&lt; Reference &gt;, DifferenceType &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a62ed151712b976c8f319e6cb85815580" name="operator=="><type>constexpr auto</type><template>
+          <template-type-parameter name="IteratorInterface1"/>
+          <template-type-parameter name="IteratorInterface2"/>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;!v1_dtl::ra_iter&lt;IteratorInterface1&gt;::value&gt;</default></template-type-parameter>
+        </template><parameter name="lhs"><paramtype>IteratorInterface1</paramtype></parameter><parameter name="rhs"><paramtype>IteratorInterface2</paramtype></parameter><description><para>Implementation of <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1a7d168148a6609f55cb7bfc5b4c89de80">operator==()</link></computeroutput>, implemented in terms of the iterator underlying IteratorInterface, for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput>, except those with an iterator category derived from <computeroutput>std::random_access_iterator_tag</computeroutput>. <sbr/>
+</para><para>Implementation of <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1a7d168148a6609f55cb7bfc5b4c89de80">operator==()</link></computeroutput> for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput> that have an iterator category derived from <computeroutput>std::random_access_iterator_tag</computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ac719175836d02a59296d1c874c1720e6" name="operator!="><type>constexpr auto</type><template>
+          <template-type-parameter name="IteratorInterface1"/>
+          <template-type-parameter name="IteratorInterface2"/>
+        </template><parameter name="lhs"><paramtype>IteratorInterface1</paramtype></parameter><parameter name="rhs"><paramtype>IteratorInterface2</paramtype></parameter><description><para>Implementation of <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1a8b6dddb132e0c67b297c26ac6c65f583">operator!=()</link></computeroutput> for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a8d0bb71b108884f89dc967725c8532e4" name="operator&lt;"><type>constexpr auto</type><template>
+          <template-type-parameter name="IteratorInterface1"/>
+          <template-type-parameter name="IteratorInterface2"/>
+        </template><parameter name="lhs"><paramtype>IteratorInterface1</paramtype></parameter><parameter name="rhs"><paramtype>IteratorInterface2</paramtype></parameter><description><para>Implementation of <computeroutput>operator&lt;()</computeroutput> for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput> that have an iterator category derived from <computeroutput>std::random_access_iterator_tag</computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a416ae3d7433d696d8b58fe615a63dc09" name="operator&lt;="><type>constexpr auto</type><template>
+          <template-type-parameter name="IteratorInterface1"/>
+          <template-type-parameter name="IteratorInterface2"/>
+        </template><parameter name="lhs"><paramtype>IteratorInterface1</paramtype></parameter><parameter name="rhs"><paramtype>IteratorInterface2</paramtype></parameter><description><para>Implementation of <computeroutput>operator&lt;=()</computeroutput> for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput> that have an iterator category derived from <computeroutput>std::random_access_iterator_tag</computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a0bb40afc34202c7799198b0dec84e875" name="operator&gt;"><type>constexpr auto</type><template>
+          <template-type-parameter name="IteratorInterface1"/>
+          <template-type-parameter name="IteratorInterface2"/>
+        </template><parameter name="lhs"><paramtype>IteratorInterface1</paramtype></parameter><parameter name="rhs"><paramtype>IteratorInterface2</paramtype></parameter><description><para>Implementation of <computeroutput>operator&gt;()</computeroutput> for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput> that have an iterator category derived from <computeroutput>std::random_access_iterator_tag</computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a1efebd821c99870f9b48b234f788918b" name="operator&gt;="><type>constexpr auto</type><template>
+          <template-type-parameter name="IteratorInterface1"/>
+          <template-type-parameter name="IteratorInterface2"/>
+        </template><parameter name="lhs"><paramtype>IteratorInterface1</paramtype></parameter><parameter name="rhs"><paramtype>IteratorInterface2</paramtype></parameter><description><para>Implementation of <computeroutput>operator&gt;=()</computeroutput> for all iterators derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1iterator__interface">iterator_interface</link></computeroutput> that have an iterator category derived from <computeroutput>std::random_access_iterator_tag</computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a7e646f602888ff107c3d748cfb52a437" name="operator+"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="it"><paramtype>D</paramtype></parameter><parameter name="n"><paramtype>typename D::difference_type</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1adde6e5904cb970f5afa389d1bf990543" name="operator+"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="n"><paramtype>typename D::difference_type</paramtype></parameter><parameter name="it"><paramtype>D</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a779457d67d453034d80f9595a725fa77" name="operator-"><type>constexpr auto</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a37843909f1ecaa89fb0d0d4025ce8d0e" name="operator-"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="it"><paramtype>D</paramtype></parameter><parameter name="n"><paramtype>typename D::difference_type</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1af5c31236ef6f34e8321246c55f8d1e9a" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a5c9d20f3ee4dc289a8a72522df9cace3" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ae6a70f3a76af9f14d27ae573807d4baa" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ab561cdb9f21604e861bc42fba760d54c" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a87c8a3b586eb9edec0fd799f6b731388" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1aa40201957cfadd241a37f116a67a4e3b" name="operator!="><type>constexpr auto</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a447c83f8667438718bb6c012f5811a85" name="operator+"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="it"><paramtype>D</paramtype></parameter><parameter name="n"><paramtype>typename D::difference_type</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1afad8b9cf1a60381ce50b7c672b6d33d7" name="operator+"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="n"><paramtype>typename D::difference_type</paramtype></parameter><parameter name="it"><paramtype>D</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a67590711c3cc2378938636e721757a50" name="operator-"><type>constexpr auto</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a5d8bb255af310d1576e7dbea2e608b3f" name="operator-"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"/>
+        </template><parameter name="it"><paramtype>D</paramtype></parameter><parameter name="n"><paramtype>typename D::difference_type</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ad7e55b869c61962777989d41080f8108" name="operator&lt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a4ff14d3b21a154f87bf556fcfbc6a7c5" name="operator&lt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ae11028a4f7a15d8a37683b4cb8ebe2be" name="operator&gt;"><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1abf9e6874f60a52dddb59596aabd75710" name="operator&gt;="><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ab9fa13648c469577ab6f5c7615bf1429" name="operator=="><type>constexpr bool</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1af230635acd593e60c514bd43e2d2bb4d" name="operator!="><type>constexpr auto</type><template>
+          <template-type-parameter name="D1"/>
+          <template-type-parameter name="D2"/>
+        </template><parameter name="lhs"><paramtype>D1</paramtype></parameter><parameter name="rhs"><paramtype>D2</paramtype></parameter></function>
+</namespace>
+</namespace>
+<macro id="doxygen.headers.iterator__interface_8hpp_1a4e41e163a7897abadc2bf6fe37a51ff5" name="BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT" kind="functionlike"><macro-parameter name="type"/><macro-parameter name="concept_name"/><description><para><computeroutput>static_asserts</computeroutput> that type <computeroutput>type</computeroutput> models concept <computeroutput>concept_name</computeroutput>. This is useful for checking that an iterator, view, etc. that you write using one of the *<computeroutput>_interface</computeroutput> templates models the right C++ concept.</para><para>For example: <computeroutput><link linkend="doxygen.headers.iterator__interface_8hpp_1a4e41e163a7897abadc2bf6fe37a51ff5">BOOST_STL_INTERFACES_STATIC_ASSERT_CONCEPT(my_iter,
+std::input_iterator)</link></computeroutput>.</para><para><note><para>This macro expands to nothing when <computeroutput>__cpp_lib_concepts</computeroutput> is not defined. </para>
+</note>
+</para></description></macro>
+<macro id="doxygen.headers.iterator__interface_8hpp_1a7ec2e3efa292a6ed829d419dcc96d63d" name="BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS" kind="functionlike"><macro-parameter name="iter"/><macro-parameter name="category"/><macro-parameter name="concept"/><macro-parameter name="value_type"/><macro-parameter name="reference"/><macro-parameter name="pointer"/><macro-parameter name="difference_type"/><description><para><computeroutput>static_asserts</computeroutput> that the types of all typedefs in <computeroutput>std::iterator_traits&lt;iter&gt;</computeroutput> match the remaining macro parameters. This is useful for checking that an iterator you write using <computeroutput>iterator_interface</computeroutput> has the correct iterator traits.</para><para>For example: <computeroutput>BOOST_STL_INTERFACES_STATIC_ASSERT_ITERATOR_TRAITS(my_iter, std::input_iterator_tag, std::input_iterator, int, int &amp;, int *, std::ptrdiff_t)</computeroutput>.</para><para><note><para>This macro ignores the <computeroutput>concept</computeroutput> parameter when <computeroutput>__cpp_lib_concepts</computeroutput> is not defined. </para>
+</note>
+</para></description></macro>
+</header>
+<header id="doxygen.headers.reverse__iterator_8hpp" name="boost/stl_interfaces/reverse_iterator.hpp">
+<namespace name="boost">
+<namespace name="stl_interfaces">
+
+
+
+
+
+
+
+
+
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a844823c3095b2bb8512e3c2e37c215a3" name="operator=="><type>constexpr auto</type><template>
+          <template-type-parameter name="BidiIter"/>
+        </template><parameter name="lhs"><paramtype>reverse_iterator&lt; BidiIter &gt;</paramtype></parameter><parameter name="rhs"><paramtype>reverse_iterator&lt; BidiIter &gt;</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ae330d0b844a97e9542ee674c3dcadb45" name="operator=="><type>constexpr auto</type><template>
+          <template-type-parameter name="BidiIter1"/>
+          <template-type-parameter name="BidiIter2"/>
+        </template><parameter name="lhs"><paramtype>reverse_iterator&lt; BidiIter1 &gt;</paramtype></parameter><parameter name="rhs"><paramtype>reverse_iterator&lt; BidiIter2 &gt;</paramtype></parameter></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a2a2a89e65f5c29b6c8185b0578fbc1ce" name="make_reverse_iterator"><type>auto</type><template>
+          <template-type-parameter name="BidiIter"/>
+        </template><parameter name="it"><paramtype>BidiIter</paramtype></parameter><description><para>Makes a <computeroutput>reverse_iterator&lt;BidiIter&gt;</computeroutput> from an iterator of type <computeroutput>BidiIter</computeroutput>.</para><para>Makes a <computeroutput>reverse_iterator&lt;BidiIter&gt;</computeroutput> from an iterator of type <computeroutput>BidiIter</computeroutput>. This only exists to make migration from Boost.STLInterfaces to C++20 easier; switch to the one in <computeroutput>std</computeroutput> as soon as you can. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.headers.sequence__container__interface_8hpp" name="boost/stl_interfaces/sequence_container_interface.hpp">
+<namespace name="boost">
+<namespace name="stl_interfaces">
+<struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface" name="sequence_container_interface"><template>
+      <template-type-parameter name="Derived"/>
+      <template-nontype-parameter name="Contiguity"><type>element_layout</type></template-nontype-parameter>
+    </template><method-group name="public member functions">
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a96959e42e4803a8ff818d1d60f9f164a" name="empty" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()==std::declval&lt; D &amp; &gt;().end()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a84849bf5a36be7f1b0cd7fa21a984e6a" name="empty" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()==std::declval&lt; D const &amp; &gt;().end()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a904c92214bed7307bfb5a67133df216e" name="data" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-nontype-parameter name="C"><type>element_layout</type><default>Contiguity</default></template-nontype-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;C == element_layout::contiguous&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a9881202db4fdf2618107af8afad49f18" name="data" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-nontype-parameter name="C"><type>element_layout</type><default>Contiguity</default></template-nontype-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;C == element_layout::contiguous&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a6826544513616f6a4ec8a33317cf410d" name="size" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().end() - std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1aea98948fd8c42bbd48864484d283e53e" name="size" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().end() - std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1acd3c0ddaece26f2da20095c77b5f60fc" name="front" cv="noexcept(noexcept(*std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a7da45a85d5089bd053eaef80ef2cde8e" name="front" cv="const noexcept(noexcept(*std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a6187d0a12bfa37cb28a1715ef2c3337e" name="push_front" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().emplace_front(x)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="x"><paramtype>typename D::value_type const &amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1ae3b4a647d4fc7a3f8b674ae070429eb9" name="push_front" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().emplace_front(std::move(x))))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="x"><paramtype>typename D::value_type &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1ad855a804fb908b1f87b04a2d20669e3a" name="pop_front" cv="noexcept"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1abd1c4fab05e6c28f496738af3037a227" name="back" cv="noexcept(noexcept(*std::prev(std::declval&lt; D &amp; &gt;().end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt; v1_dtl::decrementable_sentinel&lt;D&gt;::value &amp;&amp; v1_dtl::common_range&lt;D&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a0a199916eaa8b024c7aa1a569ecb7c7b" name="back" cv="const noexcept(noexcept(*std::prev(std::declval&lt; D const &amp; &gt;().end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt; v1_dtl::decrementable_sentinel&lt;D&gt;::value &amp;&amp; v1_dtl::common_range&lt;D&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1ae77f2247cb7cc46b7cfd245a35d57cef" name="push_back" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().emplace_back(x)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="x"><paramtype>typename D::value_type const &amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1abd5aef6b266e7f9e60abb76d5dcab3b8" name="push_back" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().emplace_back(std::move(x))))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="x"><paramtype>typename D::value_type &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a89a78ae226b6c4c3e88a906e49722fd8" name="pop_back" cv="noexcept"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a3d387b441ab12929cf5b582ee017de64" name="operator[]" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()[n]))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>typename D::size_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1acad1c5d5d1a3730e8d42f9a6f61bead1" name="operator[]" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()[n]))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>typename D::size_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a5bcf60ff8d83e3444104166f7c9165b7" name="at"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="i"><paramtype>typename D::size_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1afc6244eefaafb97a0228c392f672d8f0" name="at" cv="const"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="i"><paramtype>typename D::size_type</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a2c16a43cae1253b6b4acf4fb83efe3a9" name="begin" cv="const noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr Iter</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Iter"><default>typename D::const_iterator</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1aaaea7a5f8b67f140be35af55f896d3f6" name="end" cv="const noexcept(noexcept(std::declval&lt; D &amp; &gt;().end()))"><type>constexpr Iter</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Iter"><default>typename D::const_iterator</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a119541ed47caee6079064fb37a7ec28b" name="cbegin" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a59359fa009f9bf46895ff5a06032339d" name="cend" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().end()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1ae6332eb9234e0c1bf533175fe3165d4a" name="rbegin" cv="noexcept(noexcept(stl_interfaces::make_reverse_iterator(std::declval&lt; D &amp; &gt;().end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;v1_dtl::common_range&lt;D&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a5ba61ca3e3bd6071f300b7891c6b2062" name="rend" cv="noexcept(noexcept(stl_interfaces::make_reverse_iterator(std::declval&lt; D &amp; &gt;().begin())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;v1_dtl::common_range&lt;D&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a08d5f2a96f4bf51081158b452b8c7c6c" name="rbegin" cv="const noexcept(noexcept(std::declval&lt; D &amp; &gt;().rbegin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a9eb1037d8bf2af3c6069736547851133" name="rend" cv="const noexcept(noexcept(std::declval&lt; D &amp; &gt;().rend()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1af8f02ea29c83210acd4fca9a1ca663d4" name="crbegin" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().rbegin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a04fc21159f16e6ec2c662c8876995481" name="crend" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().rend()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1abeb88acba854519b026d50b065cdc1b0" name="insert" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().emplace(pos, x)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="pos"><paramtype>typename D::const_iterator</paramtype></parameter><parameter name="x"><paramtype>typename D::value_type const &amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1aac803b10b84bcef97640402476c590c5" name="insert" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;() .emplace(pos, std::move(x))))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="pos"><paramtype>typename D::const_iterator</paramtype></parameter><parameter name="x"><paramtype>typename D::value_type &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a78ef779b3981368ea091bc833a02832f" name="insert" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().insert(pos, detail::make_n_iter(x, n), detail::make_n_iter_end(x, n))))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="pos"><paramtype>typename D::const_iterator</paramtype></parameter><parameter name="n"><paramtype>typename D::size_type</paramtype></parameter><parameter name="x"><paramtype>typename D::value_type const &amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a95e2b5e92bd04bbae971ced972cf05b2" name="insert" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;() .insert(pos, il.begin(), il.end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="pos"><paramtype>typename D::const_iterator</paramtype></parameter><parameter name="il"><paramtype>std::initializer_list&lt; typename D::value_type &gt;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a65198b790e3cd95cc7e3755e48a65ba1" name="erase" cv="noexcept"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="pos"><paramtype>typename D::const_iterator</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1aadc24941b8b935ba7a434279c50b9da2" name="assign" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().insert(std::declval&lt; D &amp; &gt;().begin(), first, last)))"><type>constexpr auto</type><template>
+          <template-type-parameter name="InputIterator"/>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;v1_dtl::in_iter&lt;InputIterator&gt;::value&gt;</default></template-type-parameter>
+        </template><parameter name="first"><paramtype>InputIterator</paramtype></parameter><parameter name="last"><paramtype>InputIterator</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a03ed112f149dd37d99d34a3fea19ed52" name="assign" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;() .insert(std::declval&lt; D &amp; &gt;().begin(), detail::make_n_iter(x, n), detail::make_n_iter_end(x, n))))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>typename D::size_type</paramtype></parameter><parameter name="x"><paramtype>typename D::value_type const &amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1afef7703fa063cb5434fd6e80b6a7c2a6" name="assign" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().assign(il.begin(), il.end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="il"><paramtype>std::initializer_list&lt; typename D::value_type &gt;</paramtype></parameter></method>
+<copy-assignment id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a2e8463ad05499ddefec15ecfbc0edbb5" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().assign(il.begin(), il.end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="il"><paramtype>std::initializer_list&lt; typename D::value_type &gt;</paramtype></parameter></copy-assignment>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface_1a710ecce8033510b601a98accc18fbfda" name="clear" cv="noexcept"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+</method-group>
+</struct><namespace name="v1_dtl">
+<struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1clear__impl" name="clear_impl"><template>
+      <template-type-parameter name="D"/>
+      <template-type-parameter name=""><default>void</default></template-type-parameter>
+    </template><method-group name="public static functions">
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1clear__impl_1affde796334d2a19d394f821e869fe1eb" name="call" cv="noexcept" specifiers="static"><type>constexpr void</type><parameter name="d"><paramtype>D &amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct-specialization id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1clear__impl_3_01D_00_01void__t_3_01decltype_07std_118390d76d61f1e829c8663b117977962" name="clear_impl"><template>
+      <template-type-parameter name="D"/>
+    </template><specialization><template-arg>D</template-arg><template-arg>void_t&lt; decltype(std::declval&lt; D &gt;().clear())&gt;</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1v1__dtl_1_1clear__impl_3_01D_00_01void__t_3_01decltype_07std_118390d76d61f1e829c8663b117977962_1a1e78a6c9b302d4bc0992c20a04544668" name="call" cv="noexcept" specifiers="static"><type>constexpr void</type><parameter name="d"><paramtype>D &amp;</paramtype></parameter></method>
+</method-group>
+</struct-specialization><typedef id="doxygen.headers.namespaceboost_1_1stl__interfaces_1_1v1__dtl_1ad51895aab082730537f46f03a6f6ae13" name="in_iter"><type>std::is_convertible&lt; typename std::iterator_traits&lt; Iter &gt;::iterator_category, std::input_iterator_tag &gt;</type></typedef>
+
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1_1v1__dtl_1af054e1542ba94bfc2329c524c7a94f32" name="derived_container"><type>void</type><template>
+          <template-type-parameter name="D"/>
+          <template-nontype-parameter name="Contiguity"><type>element_layout</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><classname>sequence_container_interface</classname>&lt; D, Contiguity &gt; const &amp;</paramtype></parameter></function>
+
+</namespace>
+
+
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1aaa23e01098cb179ded46b9389cbdffd1" name="swap"><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface &amp;</paramtype></parameter><description><para>Implementation of free function <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1aaa23e01098cb179ded46b9389cbdffd1">swap()</link></computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a7d168148a6609f55cb7bfc5b4c89de80" name="operator=="><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><description><para>Implementation of <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1a7d168148a6609f55cb7bfc5b4c89de80">operator==()</link></computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ad547299343cb3f20e69be218fa8d85ab" name="operator!="><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><description><para>Implementation of <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1a8b6dddb132e0c67b297c26ac6c65f583">operator!=()</link></computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ab93eaa8e36dc4864cbd817a794fdd865" name="operator&lt;"><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><description><para>Implementation of <computeroutput>operator&lt;()</computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a53fd3a241a62b7ad1e74a849d861f2ea" name="operator&lt;="><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><description><para>Implementation of <computeroutput>operator&lt;=()</computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1afc9cd477e71b362aaec3a9020e61cd6a" name="operator&gt;"><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><description><para>Implementation of <computeroutput>operator&gt;()</computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1ad22559ffcd09009f9b04b2bdf5baed9d" name="operator&gt;="><type>constexpr auto</type><template>
+          <template-type-parameter name="ContainerInterface"/>
+        </template><parameter name="lhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><parameter name="rhs"><paramtype>ContainerInterface const &amp;</paramtype></parameter><description><para>Implementation of <computeroutput>operator&gt;=()</computeroutput> for all containers derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1sequence__container__interface">sequence_container_interface</link></computeroutput>. <sbr/>
+ </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.headers.view__adaptor_8hpp" name="boost/stl_interfaces/view_adaptor.hpp">
+<namespace name="boost">
+<namespace name="stl_interfaces">
+<struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1adaptor" name="adaptor"><template>
+      <template-type-parameter name="F"/>
+    </template><description><para>Adapts an invocable <computeroutput>f</computeroutput> as a view adaptor. Calling <computeroutput>operator(args...)</computeroutput> will either: call <computeroutput>f(args...)</computeroutput> and return the result, if <computeroutput>f(args...)</computeroutput> is well-formed; or return <computeroutput>closure(stl_interfaces::bind_back(f, args...))</computeroutput> otherwise. </para></description><method-group name="public member functions">
+<constructor id="doxygen.headers.structboost_1_1stl__interfaces_1_1adaptor_1a207e9192935f9c72f2b2941b8cb67326"><parameter name="f"><paramtype>F</paramtype></parameter></constructor>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1adaptor_1a1fbbabdcb35fd2ffa5f52443ded4723d" name="operator()" cv="const"><type>constexpr auto</type><template>
+          <template-nontype-parameter name="Args"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1closure" name="closure"><template>
+      <template-type-parameter name="F"/>
+    </template><inherit access="public">boost::stl_interfaces::range_adaptor_closure&lt; closure&lt; F &gt; &gt;</inherit><description><para>An invocable consisting of a contained invocable <computeroutput>f</computeroutput>. Calling <computeroutput>operator()</computeroutput> with some argument <computeroutput>t</computeroutput> calls <computeroutput>f(t)</computeroutput> and returns the result. This type is typically used to capture a the result of a call to <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1aea1cda3687c5d9e2033c8f7cab659bb6">bind_back()</link></computeroutput>. </para></description><method-group name="public member functions">
+<constructor id="doxygen.headers.structboost_1_1stl__interfaces_1_1closure_1ae1e265788ffdc6e024671ba1aed34ead"><parameter name="f"><paramtype>F</paramtype></parameter></constructor>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1closure_1a197f31e92bc54937e037ceac6cf7ee01" name="operator()" cv="const"><type>constexpr decltype(auto)</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Enable"><default><emphasis>unspecified</emphasis></default></template-type-parameter>
+        </template><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1closure_1afd62c0a2c3e1b861d7ba76e304d0506c" name="operator()"><type>constexpr decltype(auto)</type><template>
+          <template-type-parameter name="T"/>
+          <template-type-parameter name="Enable"><default><emphasis>unspecified</emphasis></default></template-type-parameter>
+        </template><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter></method>
+</method-group>
+</struct><struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1range__adaptor__closure" name="range_adaptor_closure"><template>
+      <template-type-parameter name="D"/>
+      <template-type-parameter name=""/>
+    </template><description><para>A backwards-compatible implementation of C++23's <computeroutput>std::ranges::range_adaptor_closure</computeroutput>. <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1range__adaptor__closure">range_adaptor_closure</link></computeroutput> may be a struct template or may be an alias, as required to maintain compatability with the standard library's view adaptors. </para></description><typedef id="doxygen.headers.structboost_1_1stl__interfaces_1_1range__adaptor__closure_1ae698602d9f0d5618e17369cbaff22cc0" name="inheritance_tag_with_an_unlikely_name_"><type>int</type></typedef>
+</struct>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1aea1cda3687c5d9e2033c8f7cab659bb6" name="bind_back"><type>constexpr auto</type><template>
+          <template-type-parameter name="Func"/>
+          <template-nontype-parameter name="Args"><type>typename...</type></template-nontype-parameter>
+        </template><parameter name="f"><paramtype>Func &amp;&amp;</paramtype></parameter><parameter name="args"><paramtype>Args &amp;&amp;...</paramtype></parameter><description><para>An implementation of <computeroutput>std::bind_back()</computeroutput> from C++23. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.headers.view__interface_8hpp" name="boost/stl_interfaces/view_interface.hpp">
+<namespace name="boost">
+<namespace name="stl_interfaces">
+<struct id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface" name="view_interface"><template>
+      <template-type-parameter name="Derived"/>
+      <template-nontype-parameter name="Contiguity"><type>element_layout</type></template-nontype-parameter>
+    </template><method-group name="public member functions">
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a10c96139f2db8f08773171f86c372b4a" name="empty" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()==std::declval&lt; D &amp; &gt;().end()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a0414828f3822bc980f69d907dde4085c" name="empty" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()==std::declval&lt; D const &amp; &gt;().end()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a9c299c26d9f50041f0f272e10152f38e" name="operator bool" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().empty()))" specifiers="explicit"><type>constexpr</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="R"><default>decltype(std::declval&lt;D &amp;&gt;().empty())</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1aeca3d5d0848af94705223e291d7449a6" name="operator bool" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().empty()))" specifiers="explicit"><type>constexpr</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="R"><default>decltype(std::declval&lt;D const &amp;&gt;().empty())</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a974c34376d21a2911b6f76a7d0bc997c" name="data" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-nontype-parameter name="C"><type>element_layout</type><default>Contiguity</default></template-nontype-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;C == element_layout::contiguous&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1ae94257090e5ab257a638de337648370b" name="data" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-nontype-parameter name="C"><type>element_layout</type><default>Contiguity</default></template-nontype-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt;C == element_layout::contiguous&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a585854a221254afb0035bc0b0da48fd7" name="size" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().end() - std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1ac6113636a24d141b3d45fa9477984946" name="size" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().end() - std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a89ac3505db828e5dad860c1c47e4b61d" name="front" cv="noexcept(noexcept(*std::declval&lt; D &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a20e40287d8c142d9b1c6cf823d8ac8a5" name="front" cv="const noexcept(noexcept(*std::declval&lt; D const &amp; &gt;().begin()))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a79c57d29a70864484888f9e27a0fb8ca" name="back" cv="noexcept(noexcept(*std::prev(std::declval&lt; D &amp; &gt;().end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt; v1_dtl::decrementable_sentinel&lt;D&gt;::value &amp;&amp; v1_dtl::common_range&lt;D&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1af1cda8f1e29d2d46b344b593a8035287" name="back" cv="const noexcept(noexcept(*std::prev(std::declval&lt; D const &amp; &gt;().end())))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+          <template-type-parameter name="Enable"><default>std::enable_if_t&lt; v1_dtl::decrementable_sentinel&lt;D&gt;::value &amp;&amp; v1_dtl::common_range&lt;D&gt;::value&gt;</default></template-type-parameter>
+        </template></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a55c56ade4ea90a4bfae77870af1b2c6d" name="operator[]" cv="noexcept(noexcept(std::declval&lt; D &amp; &gt;().begin()[n]))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>v1_dtl::range_difference_t&lt; D &gt;</paramtype></parameter></method>
+<method id="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface_1a43754b98361b67c00dd30e1ea1fca9ca" name="operator[]" cv="const noexcept(noexcept(std::declval&lt; D const &amp; &gt;().begin()[n]))"><type>constexpr auto</type><template>
+          <template-type-parameter name="D"><default>Derived</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>v1_dtl::range_difference_t&lt; D &gt;</paramtype></parameter></method>
+</method-group>
+</struct><namespace name="v1_dtl">
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1_1v1__dtl_1af416319306adc19f4b68adf7f7216c51" name="derived_view"><type>void</type><template>
+          <template-type-parameter name="D"/>
+          <template-nontype-parameter name="Contiguity"><type>element_layout</type></template-nontype-parameter>
+        </template><parameter name=""><paramtype><classname>view_interface</classname>&lt; D, Contiguity &gt; const &amp;</paramtype></parameter></function>
+
+
+</namespace>
+<data-member id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a9f28960f8725505dbb14bbeefa825e98" name="BOOST_STL_INTERFACES_NAMESPACE_V1"><type/></data-member>
+<data-member id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a05ff9df0c7186aa371341bad8721a6ae" name="BOOST_STL_INTERFACES_NAMESPACE_V2"><type/></data-member>
+<data-member id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a6f4b38a6aecd7806598bd816cdb36476" name="BOOST_STL_INTERFACES_NAMESPACE_V3"><type/></data-member>
+<function id="doxygen.headers.namespaceboost_1_1stl__interfaces_1a8b6dddb132e0c67b297c26ac6c65f583" name="operator!="><type>constexpr auto</type><template>
+          <template-type-parameter name="ViewInterface"/>
+        </template><parameter name="lhs"><paramtype>ViewInterface</paramtype></parameter><parameter name="rhs"><paramtype>ViewInterface</paramtype></parameter><description><para>Implementation of <computeroutput><link linkend="doxygen.headers.namespaceboost_1_1stl__interfaces_1a8b6dddb132e0c67b297c26ac6c65f583">operator!=()</link></computeroutput> for all views derived from <computeroutput><link linkend="doxygen.headers.structboost_1_1stl__interfaces_1_1view__interface">view_interface</link></computeroutput>. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

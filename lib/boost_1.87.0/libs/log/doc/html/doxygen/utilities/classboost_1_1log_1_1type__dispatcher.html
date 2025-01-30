@@ -1,0 +1,99 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class type_dispatcher</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../utilities.html#doxygen.utilities.type__dispatcher_8hpp" title="Header &lt;boost/log/utility/type_dispatch/type_dispatcher.hpp&gt;">
+<link rel="prev" href="classboost_1_1log_1_1static__type__dispatcher.html" title="Class template static_type_dispatcher">
+<link rel="next" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html" title="Class template callback">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1static__type__dispatcher.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../utilities.html#doxygen.utilities.type__dispatcher_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.utilities.classboost_1_1log_1_1type__dispatcher"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class type_dispatcher</span></h2>
+<p>boost::log::type_dispatcher — A type dispatcher interface. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../utilities.html#doxygen.utilities.type__dispatcher_8hpp" title="Header &lt;boost/log/utility/type_dispatch/type_dispatcher.hpp&gt;">boost/log/utility/type_dispatch/type_dispatcher.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// member classes/structs/unions</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html" title="Class template callback">callback</a> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html#id255-bb">public member functions</a></span>
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1_1callback_1a570fac1da40ec0a52a45c279a4b6543e"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">T</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1_1callback_1a420e60e9788bfa3b52aa3aab72ea3a5e"><span class="keyword">operator</span> <span class="keyword">bool</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1_1callback_1aa781ac6ac5a122ef2e89325c84d51f5a"><span class="keyword">operator</span><span class="special">!</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#id256-bb">protected member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1abe865574e9df12d4090123e5b925de96"><span class="identifier">type_dispatcher</span></a><span class="special">(</span><span class="identifier">get_callback_impl_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1abb9a41a9b95d5d7759494b6d3c97ac38"><span class="special">~</span><span class="identifier">type_dispatcher</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1a817fbec9e49548d0e3bb42e21ec4ff1a"><span class="identifier">type_dispatcher</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1a5e79aa81c27f1041d07ce018a84c1d1d"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#id257-bb">public member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html" title="Class template callback">callback</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher.html#doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1a9f115542d70131068467a7a8c8779166"><span class="identifier">get_callback</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id100644"></a><h2>Description</h2>
+<p>All type dispatchers support this interface. It is used to acquire the visitor interface for the requested type. </p>
+<div class="refsect2">
+<a name="id100647"></a><h3>
+<a name="id256-bb"></a><code class="computeroutput">type_dispatcher</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1abe865574e9df12d4090123e5b925de96"></a><span class="identifier">type_dispatcher</span><span class="special">(</span><span class="identifier">get_callback_impl_type</span> get_callback_impl<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Initializing constructor </p>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1abb9a41a9b95d5d7759494b6d3c97ac38"></a><span class="special">~</span><span class="identifier">type_dispatcher</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1a817fbec9e49548d0e3bb42e21ec4ff1a"></a><span class="identifier">type_dispatcher</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="keyword">const</span> <span class="special">&amp;</span> that<span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="special">&amp;</span> <a name="doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1a5e79aa81c27f1041d07ce018a84c1d1d"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1type__dispatcher.html" title="Class type_dispatcher">type_dispatcher</a> <span class="keyword">const</span> <span class="special">&amp;</span> that<span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id100704"></a><h3>
+<a name="id257-bb"></a><code class="computeroutput">type_dispatcher</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <a class="link" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html" title="Class template callback">callback</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a name="doxygen.utilities.classboost_1_1log_1_1type__dispatcher_1a9f115542d70131068467a7a8c8779166"></a><span class="identifier">get_callback</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>The method requests a callback for the value of type <code class="computeroutput">T</code> </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The type-specific callback or an empty value, if the type is not supported </p></td>
+</tr></tbody>
+</table></div>
+</li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1static__type__dispatcher.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../utilities.html#doxygen.utilities.type__dispatcher_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1type__dispatcher_1_1callback.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

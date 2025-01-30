@@ -1,0 +1,68 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Header &lt;boost/test/detail/global_typedef.hpp&gt;</title>
+<link rel="stylesheet" href="../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Boost.Test">
+<link rel="up" href="../boost_test/reference.html" title="Reference">
+<link rel="prev" href="a00710.html" title="Header &lt;boost/test/debug_config.hpp&gt;">
+<link rel="next" href="a00892.html" title="Struct template static_constant">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00710.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_test/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a00892.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.a00713"></a>Header &lt;<a href="../../../../../boost/test/detail/global_typedef.hpp" target="_top">boost/test/detail/global_typedef.hpp</a>&gt;</h4></div></div></div>
+<p>some trivial global typedefs </p>
+<pre class="synopsis">
+
+<a class="link" href="a00713_1a944f9cab7de78ca60d1570702acc71bc.html" title="Macro BOOST_TEST_L">BOOST_TEST_L</a>(s)
+<a class="link" href="a00713_1a477e6af9115b4934d1562c759e108538.html" title="Macro BOOST_TEST_STRINGIZE">BOOST_TEST_STRINGIZE</a>(s)
+<a class="link" href="a00713_1ab11d7d15fca277cc1f5170469357910e.html" title="Macro BOOST_TEST_EMPTY_STRING">BOOST_TEST_EMPTY_STRING</a>
+<a class="link" href="a00713_1a56c00e5fda680f92769f72f064dc6d17.html" title="Macro BOOST_TEST_SINGLETON_CONS_NO_CTOR">BOOST_TEST_SINGLETON_CONS_NO_CTOR</a>(type)
+<a class="link" href="a00713_1a882c58f745e07821358135c2b491fd4f.html" title="Macro BOOST_TEST_SINGLETON_CONS">BOOST_TEST_SINGLETON_CONS</a>(type)
+<a class="link" href="a00713_1aeeb199918d1d17292620bea54af2ca8d.html" title="Macro BOOST_TEST_SINGLETON_CONS_IMPL">BOOST_TEST_SINGLETON_CONS_IMPL</a>(type)
+<a class="link" href="a00713_1a97c1e8e74e75ca9370c667d44acb4821.html" title="Macro BOOST_TEST_SINGLETON_INST">BOOST_TEST_SINGLETON_INST</a>(inst)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">unit_test</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="a00892.html" title="Struct template static_constant">static_constant</a><span class="special">;</span>
+
+    <span class="keyword">enum</span> <a name="doxygen.a00855_1ad2083dc687e475fa29571d0ee2dbe67b"></a>test_unit_type <span class="special">{</span> <a name="doxygen.a00855_1ad2083dc687e475fa29571d0ee2dbe67bac0ee5c48cb486c05a3f9dfe20f333a27"></a>TUT_CASE = 0x01, <a name="doxygen.a00855_1ad2083dc687e475fa29571d0ee2dbe67ba7eafe7a04342a3c900e290a7390667ad"></a>TUT_SUITE = 0x10, <a name="doxygen.a00855_1ad2083dc687e475fa29571d0ee2dbe67ba262ecbe3c03d4563abfde7d265152858"></a>TUT_ANY = 0x11 <span class="special">}</span><span class="special">;</span>
+
+    <span class="keyword">enum</span> <a name="doxygen.a00855_1aff3508748a2be9cc00f99b3cea34d799"></a>assertion_result <span class="special">{</span> <a name="doxygen.a00855_1aff3508748a2be9cc00f99b3cea34d799a74948dcb93a647bfaf4199afd9c2eca1"></a>AR_FAILED, <a name="doxygen.a00855_1aff3508748a2be9cc00f99b3cea34d799ac91d50eb595b06b3892ee9466aad214a"></a>AR_PASSED, <a name="doxygen.a00855_1aff3508748a2be9cc00f99b3cea34d799ae3fa0fb16534a200105dc10ef585b343"></a>AR_TRIGGERED <span class="special">}</span><span class="special">;</span>
+
+    <span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <a name="doxygen.a00855_1a342d43e1c6b3a771205410a4b727cb6b"></a><span class="identifier">counter_t</span><span class="special">;</span>
+    <span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <a name="doxygen.a00855_1a8b826aeca85736f8c77a2e80f4cc51c9"></a><span class="identifier">test_unit_id</span><span class="special">;</span>
+
+    <span class="keyword">const</span> <span class="identifier">test_unit_id</span> <a class="link" href="a00855_1aadfeffb8876b9760c8e217fcf75bc7e0.html" title="Global INV_TEST_UNIT_ID">INV_TEST_UNIT_ID</a><span class="special">;</span>
+    <span class="keyword">const</span> <span class="identifier">test_unit_id</span> <a class="link" href="a00855_1ae672af1b400473b3ebd00be0ca4f5dbb.html" title="Global MAX_TEST_CASE_ID">MAX_TEST_CASE_ID</a><span class="special">;</span>
+    <span class="keyword">const</span> <span class="identifier">test_unit_id</span> <a class="link" href="a00855_1a59e018578964f7a897a200df8d11b5d3.html" title="Global MIN_TEST_CASE_ID">MIN_TEST_CASE_ID</a><span class="special">;</span>
+    <span class="keyword">const</span> <span class="identifier">test_unit_id</span> <a class="link" href="a00855_1ab04b0fc78273a05b80e4ce8bd0f08f3f.html" title="Global MAX_TEST_SUITE_ID">MAX_TEST_SUITE_ID</a><span class="special">;</span>
+    <span class="keyword">const</span> <span class="identifier">test_unit_id</span> <a class="link" href="a00855_1aa99157df260d3f29c22ae495961278cc.html" title="Global MIN_TEST_SUITE_ID">MIN_TEST_SUITE_ID</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="copyright-footer">Copyright © 2001-2022 Boost.Test contributors<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00710.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_test/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a00892.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

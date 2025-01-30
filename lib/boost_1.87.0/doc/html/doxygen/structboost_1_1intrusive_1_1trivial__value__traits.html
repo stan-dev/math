@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template trivial_value_traits</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../intrusive/reference.html#doxygen.trivial__value__traits_8hpp" title="Header &lt;boost/intrusive/trivial_value_traits.hpp&gt;">
+<link rel="prev" href="classboost_1_1intrusive_1_1treap__set.html" title="Class template treap_set">
+<link rel="next" href="structboost_1_1intrusive_1_1make__unordered__multiset.html" title="Struct template make_unordered_multiset">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1intrusive_1_1treap__set.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../intrusive/reference.html#doxygen.trivial__value__traits_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1intrusive_1_1make__unordered__multiset.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template trivial_value_traits</span></h2>
+<p>boost::intrusive::trivial_value_traits</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../intrusive/reference.html#doxygen.trivial__value__traits_8hpp" title="Header &lt;boost/intrusive/trivial_value_traits.hpp&gt;">boost/intrusive/trivial_value_traits.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> NodeTraits<span class="special">,</span> <span class="identifier">link_mode_type</span> LinkMode <span class="special">=</span> <span class="identifier">safe_link</span><span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1intrusive_1_1trivial__value__traits.html" title="Struct template trivial_value_traits">trivial_value_traits</a> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">NodeTraits</span>                  <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a2ed9098a2be57e52594537d5e0ce7984"></a><span class="identifier">node_traits</span><span class="special">;</span>   
+  <span class="keyword">typedef</span> <span class="identifier">node_traits</span><span class="special">::</span><span class="identifier">node_ptr</span>       <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a27410f67947ab025e6f1eefc41622c81"></a><span class="identifier">node_ptr</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">node_traits</span><span class="special">::</span><span class="identifier">const_node_ptr</span> <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a0f6a28c8b1444373b18463fba9c64eb2"></a><span class="identifier">const_node_ptr</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">node_traits</span><span class="special">::</span><span class="identifier">node</span>           <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1ac8cf5954f4a5c126cc0569a0f9e0a18f"></a><span class="identifier">value_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="identifier">node_ptr</span>                    <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a85c91573416ba29e0b3b4761ee7bbc93"></a><span class="identifier">pointer</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">const_node_ptr</span>              <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a06fc0fb649867a1548f7f6cdf0379a97"></a><span class="identifier">const_pointer</span><span class="special">;</span> 
+
+  <span class="comment">// <a class="link" href="boost_interprocess_header_reference/classboost_1_1interprocess_1_1upgradable__lock.html#id103-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">node_ptr</span> <a class="link" href="structboost_1_1intrusive_1_1trivial__value__traits.html#doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a28a2dcace83ac348769d3e5beb2c1700"><span class="identifier">to_node_ptr</span></a><span class="special">(</span><span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">const_node_ptr</span> <a class="link" href="structboost_1_1intrusive_1_1trivial__value__traits.html#doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a0efeed29a258a0821fb670b6f63cf414"><span class="identifier">to_node_ptr</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">pointer</span> <a class="link" href="structboost_1_1intrusive_1_1trivial__value__traits.html#doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a8045c1e05e21fc9c266eb56664f779fe"><span class="identifier">to_value_ptr</span></a><span class="special">(</span><span class="identifier">node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">const_pointer</span> <a class="link" href="structboost_1_1intrusive_1_1trivial__value__traits.html#doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a31cd913111be0e6bc82f49cc955d8d92"><span class="identifier">to_value_ptr</span></a><span class="special">(</span><span class="identifier">const_node_ptr</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">link_mode_type</span> <span class="identifier">link_mode</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.18.42.43.3.4"></a><h2>Description</h2>
+<p>This value traits template is used to create value traits from user defined node traits where value_traits::value_type and node_traits::node should be equal </p>
+<div class="refsect2">
+<a name="id-1.3.18.42.43.3.4.3"></a><h3>
+<a name="id103-bb"></a><code class="computeroutput">trivial_value_traits</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">node_ptr</span> <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a28a2dcace83ac348769d3e5beb2c1700"></a><span class="identifier">to_node_ptr</span><span class="special">(</span><span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">const_node_ptr</span> <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a0efeed29a258a0821fb670b6f63cf414"></a><span class="identifier">to_node_ptr</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">value_type</span> <span class="special">&amp;</span> value<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">pointer</span> <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a8045c1e05e21fc9c266eb56664f779fe"></a><span class="identifier">to_value_ptr</span><span class="special">(</span><span class="identifier">node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">static</span> <span class="identifier">const_pointer</span> <a name="doxygen.structboost_1_1intrusive_1_1trivial__value__traits_1a31cd913111be0e6bc82f49cc955d8d92"></a><span class="identifier">to_value_ptr</span><span class="special">(</span><span class="identifier">const_node_ptr</span> n<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005 Olaf Krzikalla<br>Copyright © 2006-2015 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1intrusive_1_1treap__set.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../intrusive/reference.html#doxygen.trivial__value__traits_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1intrusive_1_1make__unordered__multiset.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Using a Result - Boost.Outcome documentation</title>
+<link rel="stylesheet" href="../../../css/boost.css" type="text/css">
+<meta name="generator" content="Hugo 0.52 with Boostdoc theme">
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<link rel="icon" href="../../../images/favicon.ico" type="image/ico"/>
+<body><div class="spirit-nav">
+<a accesskey="p" href="../../../experimental/c-api/from-c/declare.html"><img src="../../../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../../../experimental/c-api/from-c.html"><img src="../../../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../../../index.html"><img src="../../../images/home.png" alt="Home"></a><a accesskey="n" href="../../../experimental/c-api/from-c/try.html"><img src="../../../images/next.png" alt="Next"></a></div><div id="content">
+  <div class="titlepage"><div><div><h1 style="clear: both">Using a Result</h1></div></div></div>
+  <p>This models <a href="../../../experimental/worked-example/implicit-construction.html">the earlier C++ example of use</a>,
+and its C equivalent isn&rsquo;t much more verbose thanks to our helper typedefs and macros:</p>
+
+<div class="code-snippet"><div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="n">result</span> <span class="nf">positive_only</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">FAILURE</span><span class="p">(</span><span class="n">c_enum_bad_argument</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">SUCCESS</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">bool</span> <span class="nf">test</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">result</span> <span class="n">r</span> <span class="o">=</span> <span class="n">positive_only</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">BOOST_OUTCOME_C_RESULT_HAS_ERROR</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+  <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">outcome_status_code_equal_generic</span><span class="p">(</span><span class="o">&amp;</span><span class="n">r</span><span class="p">.</span><span class="n">error</span><span class="p">,</span> <span class="n">EINVAL</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#34;Positive numbers only!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div><a href="https://github.com/boostorg/outcome/tree/master/doc/src/snippets/c_api2.cpp#L66" class="code-snippet-url" target="_blank">View this code on Github</a></div>
+
+
+<p>For this to link, the <code>BOOST_OUTCOME_C_DECLARE_RESULT_SYSTEM_FROM_ENUM</code> macro needs to be
+compiled at least once within C++ within the final binary to emit the extern
+functions needed by C.</p>
+
+
+        </div><p><small>Last revised: July 16, 2024 at 21:33:35 &#43;0100</small></p>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../../experimental/c-api/from-c/declare.html"><img src="../../../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../../../experimental/c-api/from-c.html"><img src="../../../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../../../index.html"><img src="../../../images/home.png" alt="Home"></a><a accesskey="n" href="../../../experimental/c-api/from-c/try.html"><img src="../../../images/next.png" alt="Next"></a></div></body>
+</html>

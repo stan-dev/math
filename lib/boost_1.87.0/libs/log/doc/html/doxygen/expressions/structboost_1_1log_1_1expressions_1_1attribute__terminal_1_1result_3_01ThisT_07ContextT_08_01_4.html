@@ -1,0 +1,48 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template result&lt;ThisT(ContextT)&gt;</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#id42991" title="Description">
+<link rel="prev" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">
+<link rel="next" href="attr_8hpp_1a4092770e33ec0ec13894eebf01050a76.html" title="Function template attr">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#id42991"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="attr_8hpp_1a4092770e33ec0ec13894eebf01050a76.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template result&lt;ThisT(ContextT)&gt;</span></h2>
+<p>boost::log::expressions::attribute_terminal::result&lt;ThisT(ContextT)&gt;</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../expressions.html#doxygen.expressions.attr_8hpp" title="Header &lt;boost/log/expressions/attr.hpp&gt;">boost/log/expressions/attr.hpp</a>&gt;
+
+</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ThisT<span class="special">,</span> <span class="keyword">typename</span> ContextT<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4.html" title="Struct template result&lt;ThisT(ContextT)&gt;">result</a><span class="special">&lt;</span><span class="identifier">ThisT</span><span class="special">(</span><span class="identifier">ContextT</span><span class="special">)</span><span class="special">&gt;</span> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">remove_cv</span><span class="special">&lt;</span> <span class="identifier">typenameremove_reference</span><span class="special">&lt;</span> <span class="identifier">typenamephoenix</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">::</span><span class="identifier">env</span><span class="special">&lt;</span> <span class="identifier">ContextT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span>                         <a name="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a95855a2ccdbd0ee02f77b061ff06f5e5"></a><span class="identifier">env_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">env_type</span><span class="special">::</span><span class="identifier">args_type</span>                                                                                                            <a name="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a86d30eb2d12ed4b01c4700a00b0b544b"></a><span class="identifier">args_type</span><span class="special">;</span>              
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                                                                                                                    <a name="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a391f6699927ee60c0120715ab309bb19"></a><span class="identifier">cv_value_extractor_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">&lt;</span> <span class="identifier">cv_value_extractor_type</span><span class="special">(</span><span class="identifier">attribute_nameconst</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">typenamefusion</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">::</span><span class="identifier">at_c</span><span class="special">&lt;</span> <span class="identifier">args_type</span><span class="special">,</span> <span class="number">0</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a name="doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a442b32a5226af0ce402a2515108ec0b3"></a><span class="identifier">type</span><span class="special">;</span>                   
+<span class="special">}</span><span class="special">;</span></pre></div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#id42991"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="attr_8hpp_1a4092770e33ec0ec13894eebf01050a76.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

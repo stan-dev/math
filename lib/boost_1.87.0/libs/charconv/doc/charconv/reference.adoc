@@ -1,0 +1,210 @@
+////
+Copyright 2022 Peter Dimov
+Copyright 2023 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#reference]
+= Reference
+:idprefix: ref_
+
+== <boost/charconv/from_chars.hpp>
+
+=== Synopsis
+[source, c++]
+----
+namespace boost {
+namespace charconv {
+
+struct from_chars_result;
+
+template <typename Integral>
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars(const char* first, const char* last, Integral& value, int base = 10) noexcept;
+
+template <typename Real>
+from_chars_result from_chars(const char* first, const char* last, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+// ...
+
+} // namespace charconv
+} // namespace boost
+----
+
+=== from_chars_result
+
+[source, c++]
+----
+struct from_chars_result
+{
+    char const* ptr;
+    std::errc ec;
+};
+----
+
+`from_chars_result` is the return type of the `from_chars` family of
+overloaded functions.
+
+The `ec` member is `std::errc()` when the conversion was successful, `std::errc::invalid_argument`
+when no prefix of the passed characters form a valid value, or `std::errc::result_out_of_range`
+when the characters form a value that would be out of range for the type.
+
+The `ptr` member points to the first character that is not part of the matched
+value, or to `last` if all characters matched.
+
+=== from_chars
+
+[source, c++]
+----
+template <typename Integral>
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars(const char* first, const char* last, Integral& value, int base = 10) noexcept;
+----
+
+Requires:;; `base` is between 2 and 36 inclusive.
+
+Effects:;; Attempts to interpret the characters in `[first, last)` as a numeric value in base `base`,
+  consisting of an optional minus sign (only if the type is signed), and a sequence of digits. For
+  bases above 10, the digit characters are `Aa` to `Zz`, as appropriate for `base`.
+
+Returns:;; The `ec` member of the return value is `std::errc()` on success, `std::errc::invalid_argument` if
+  `[first, last)` can't be interpreted as an integer of base `base`, or `std::errc::result_out_of_range`
+  if `[first, last)` when interpreted as an integer of base `base` can't be represented
+  as a value of type `Integral`. The `ptr` member of the return value points to the first
+  character in `[first, last)` that is not part of the matched value, or to `last` if
+  all characters matched.
+
+[source, c++]
+----
+template <typename Real>
+from_chars_result from_chars(const char* first, const char* last, Real& value, boost::charconv::chars_format fmt = boost::charconv::chars_format::general, int precision) noexcept;
+----
+
+Requires:;; `fmt` has the value of one of the enumerators of chars_format.
+
+Effects:;; value is converted to a string in the style of printf in the "C" locale with the given precision. If a precision is not provided, the shortest representation will be given.
+
+Returns:;; The `ec` member of the return value is `std::errc{}` on success, `std::errc::invalid_argument` if the value can't be interpreted with the given format `fmt`, or `std::errc::result_out_of_range` if the value can't be represented in the target floating point type.
+The `ptr` member of the return value points to the first character in `[first, last)` that is not part of the matched value, or to `last` if all characters matched.
+
+== <boost/charconv/to_chars.hpp>
+
+=== Synopsis
+[source, c++]
+----
+namespace boost {
+namespace charconv {
+
+struct to_chars_result;
+
+template <typename Integral>
+BOOST_CHARCONV_CONSTEXPR to_chars_result to_chars(char* first, char* last, Integral value, int base = 10) noexcept;
+
+template <typename Real>
+to_chars_result to_chars(char* first, char* last, Real value, chars_format fmt = chars_format::general, int precision) noexcept;
+
+// ...
+
+} // namespace charconv
+} // namespace boost
+----
+
+=== to_chars_result
+
+[source, c++]
+----
+struct to_chars_result
+{
+    char const* ptr;
+    std::errc ec;
+};
+----
+
+`to_chars_result` is the return type of the `to_chars` family of
+overloaded functions.
+
+The `ec` member is `std::errc()` when the conversion was successful or `std::errc::result_out_of_range`
+when the value cannot fit into the provided buffer.
+
+The `ptr` member points to the first character after the characters written,
+or to `last` when `ec` is `std::errc::result_out_of_range`.
+
+=== to_chars
+
+[source, c++]
+----
+template <typename Integral>
+BOOST_CHARCONV_CONSTEXPR to_chars_result to_chars( char* first, char* last, Integral value, int base = 10 ) noexcept;
+----
+
+Requires:;; `base` is between 2 and 36 inclusive.
+
+Effects:;; The value of `value` is converted to a string of digits in the given
+  base (with no redundant leading zeroes), which is stored in `[first, last)`.
+  Digits in the range 10..35 (inclusive) are represented as lowercase characters
+  `a`..`z`. If value is less than zero, the representation starts with a minus sign.
+
+Returns:;; The `ec` member of the return value is `std::errc()` on success or `std::errc::result_out_of_range` if
+  `[first, last)` does not contain enough space to hold the string representation of
+  `value`. The `ptr` member of the return value points to the character in `[first, last]`
+  that is one past the parsed characters, or to `last` when `ec` is `std::errc::result_out_of_range`.
+
+[source, c++]
+----
+template <typename Real>
+to_chars_result to_chars(char* first, char* last, Real value, chars_format fmt = chars_format::general, int precision) noexcept;
+----
+
+Requires:;; fmt has the value of one of the enumerators of chars_format.
+
+Effects:;; The value is converted to a string in the style of printf in the "C" locale with the given precision.
+If no precision is provided the value character string will be the shortest representation of `value`.
+
+Returns:;; The `ec` member of the return value is `std::errc()` on success or `std::errc::result_out_of_range` if
+`[first, last)` does not contain enough space to hold the string representation of
+`value`. The `ptr` member of the return value points to the character in `[first, last]`
+that is one past the parsed characters, or to `last` when `ec` is `std::errc::result_out_of_range`.
+
+== <boost/charconv/limits.hpp>
+
+=== Synopsis
+[source, c++]
+----
+namespace boost {
+namespace charconv {
+
+template<typename T> struct limits
+{
+    static constexpr int max_chars10 = /*see below*/;
+    static constexpr int max_chars = /*see below*/;
+};
+
+} // namespace charconv
+} // namespace boost
+----
+
+=== limits
+
+[source, c++]
+----
+template<typename T>
+constexpr int limits<T>::max_chars10;
+----
+
+`max_chars10` is the minimum size of the buffer that needs to be
+passed to `to_chars` to guarantee successful conversion for all values of
+type `T`, when either no base is passed, or base 10 is passed.
+
+[source, c++]
+----
+template<typename T>
+constexpr int limits<T>::max_chars;
+----
+
+`max_chars` is the minimum size of the buffer that needs to be
+passed to `to_chars` to guarantee successful conversion for all values of
+type `T`, for any base.
+
+== <boost/charconv.hpp>
+
+This convenience header includes all headers previously
+mentioned.

@@ -1,0 +1,80 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>connection_pool::valid</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__connection_pool.html" title="connection_pool">
+<link rel="prev" href="_dtor_connection_pool.html" title="connection_pool::~connection_pool">
+<link rel="next" href="get_executor.html" title="connection_pool::get_executor">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="_dtor_connection_pool.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__connection_pool.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="get_executor.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__connection_pool.valid"></a><a class="link" href="valid.html" title="connection_pool::valid">connection_pool::valid</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id62015"></a>
+Returns whether the object is in a moved-from state.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.valid.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.valid.synopsis"></a></span><a class="link" href="valid.html#mysql.ref.boost__mysql__connection_pool.valid.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">bool</span>
+<span class="identifier">valid</span><span class="special">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.valid.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.valid.description"></a></span><a class="link" href="valid.html#mysql.ref.boost__mysql__connection_pool.valid.description">Description</a>
+        </h6>
+<p>
+          This function returns always <code class="computeroutput"><span class="keyword">true</span></code>
+          except for pools that have been moved-from. Moved-from objects don't represent
+          valid pools. They can only be assigned to or destroyed.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.valid.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.valid.exception_safety"></a></span><a class="link" href="valid.html#mysql.ref.boost__mysql__connection_pool.valid.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          No-throw guarantee.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__connection_pool.valid.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__connection_pool.valid.thread_safety"></a></span><a class="link" href="valid.html#mysql.ref.boost__mysql__connection_pool.valid.thread_safety">Thread-safety</a>
+        </h6>
+<p>
+          Reads the internal state handle. Does not access the pool state. Can be
+          called concurrently with any other function that reads the state handle,
+          like <a class="link" href="async_run.html" title="connection_pool::async_run"><code class="computeroutput"><span class="identifier">async_run</span></code></a> or <a class="link" href="async_get_connection.html" title="connection_pool::async_get_connection"><code class="computeroutput"><span class="identifier">async_get_connection</span></code></a>. It can't
+          be called concurrently with functions modifying the handle, like assignments,
+          even if <a class="link" href="../boost__mysql__pool_params/thread_safe.html" title="pool_params::thread_safe"><code class="computeroutput"><span class="identifier">pool_params</span><span class="special">::</span><span class="identifier">thread_safe</span></code></a> is set to true.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="_dtor_connection_pool.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__connection_pool.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="get_executor.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

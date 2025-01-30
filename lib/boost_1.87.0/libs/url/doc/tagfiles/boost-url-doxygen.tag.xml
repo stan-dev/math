@@ -1,0 +1,1425 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<tagfile>
+    <compound kind="namespace">
+        <name>boost::urls</name>
+        <filename>boost/urls.adoc</filename>
+        <class kind="class">boost::urls::url_view</class>
+        <class kind="class">boost::urls::authority_view</class>
+        <class kind="class">boost::urls::ignore_case_param</class>
+        <class kind="class">boost::urls::ipv4_address</class>
+        <class kind="class">boost::urls::ipv6_address</class>
+        <class kind="class">boost::urls::no_value_t</class>
+        <class kind="class">boost::urls::param</class>
+        <class kind="class">boost::urls::param_pct_view</class>
+        <class kind="class">boost::urls::param_view</class>
+        <class kind="class">boost::urls::params_base</class>
+        <class kind="class">boost::urls::params_encoded_base</class>
+        <class kind="class">boost::urls::params_encoded_ref</class>
+        <class kind="class">boost::urls::params_encoded_view</class>
+        <class kind="class">boost::urls::params_ref</class>
+        <class kind="class">boost::urls::params_view</class>
+        <class kind="class">boost::urls::segments_base</class>
+        <class kind="class">boost::urls::segments_view</class>
+        <class kind="class">boost::urls::segments_encoded_base</class>
+        <class kind="class">boost::urls::segments_encoded_ref</class>
+        <class kind="class">boost::urls::segments_encoded_view</class>
+        <class kind="class">boost::urls::segments_ref</class>
+        <class kind="class">boost::urls::static_url</class>
+        <class kind="class">boost::urls::static_url_base</class>
+        <class kind="class">boost::urls::url</class>
+        <class kind="class">boost::urls::url_base</class>
+        <class kind="class">boost::urls::url_view</class>
+        <class kind="class">boost::urls::url_view_base</class>
+        <class kind="class">boost::urls::decode_view</class>
+        <class kind="class">boost::urls::encoding_opts</class>
+        <class kind="class">boost::urls::pct_string_view</class>
+        <class kind="class">boost::urls::absolute_uri_rule</class>
+        <class kind="class">boost::urls::origin_form_rule</class>
+        <class kind="class">boost::urls::authority_rule</class>
+        <class kind="class">boost::urls::gen_delim_chars</class>
+        <class kind="class">boost::urls::ipv4_address_rule</class>
+        <class kind="class">boost::urls::ipv6_address_rule</class>
+        <class kind="class">boost::urls::pchars</class>
+        <class kind="class">boost::urls::pct_encoded_rule</class>
+        <class kind="class">boost::urls::query_rule</class>
+        <class kind="class">boost::urls::relative_ref_rule</class>
+        <class kind="class">boost::urls::reserved_chars</class>
+        <class kind="class">boost::urls::sub_delim_chars</class>
+        <class kind="class">boost::urls::unreserved_chars</class>
+        <class kind="class">boost::urls::uri_reference_rule</class>
+        <class kind="class">boost::urls::uri_rule</class>
+        <!-- Constants as classes -->
+        <class kind="class">boost::urls::error</class>
+        <class kind="class">boost::urls::ignore_case</class>
+        <class kind="class">boost::urls::host_type</class>
+        <class kind="class">boost::urls::no_value</class>
+        <class kind="class">boost::urls::scheme</class>
+        <member kind="function">
+            <type>boost::system::result</type>
+            <name>parse_uri</name>
+            <anchorfile>boost/urls/parse_uri.adoc</anchorfile>
+            <anchor></anchor>
+            <arglist>(core::string_view s)</arglist>
+        </member>
+        <member kind="function">
+            <name>operator&lt;&lt;</name>
+            <anchorfile>boost/urls/operator_lshift.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>arg</name>
+            <anchorfile>boost/urls/arg.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>format</name>
+            <anchorfile>boost/urls/format.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>format_to</name>
+            <anchorfile>boost/urls/format_to.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_absolute_uri</name>
+            <anchorfile>boost/urls/parse_absolute_uri.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_authority</name>
+            <anchorfile>boost/urls/parse_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_origin_form</name>
+            <anchorfile>boost/urls/parse_origin_form.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_path</name>
+            <anchorfile>boost/urls/parse_path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_query</name>
+            <anchorfile>boost/urls/parse_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_relative_ref</name>
+            <anchorfile>boost/urls/parse_relative_ref.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_uri</name>
+            <anchorfile>boost/urls/parse_uri.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>parse_uri_reference</name>
+            <anchorfile>boost/urls/parse_uri_reference.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>resolve</name>
+            <anchorfile>boost/urls/resolve.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encode</name>
+            <anchorfile>boost/urls/encode.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_size</name>
+            <anchorfile>boost/urls/encoded_size.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>make_pct_string_view</name>
+            <anchorfile>boost/urls/make_pct_string_view.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="namespace">
+        <name>boost::urls::string_token</name>
+        <filename>boost/urls/string_token.adoc</filename>
+        <class kind="class">boost::urls::string_token::assign_to</class>
+        <class kind="class">boost::urls::string_token::append_to</class>
+        <class kind="class">boost::urls::string_token::preserve_size</class>
+        <class kind="class">boost::urls::string_token::return_string</class>
+        <class kind="class">boost::urls::string_token::is_token</class>
+    </compound>
+    <compound kind="namespace">
+        <name>boost::urls::grammar</name>
+        <filename>boost/urls/grammar.adoc</filename>
+        <member kind="function">
+            <name>parse</name>
+            <anchorfile>boost/urls/grammar/parse.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>delim_rule</name>
+            <anchorfile>boost/urls/grammar/delim_rule.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>find_if</name>
+            <anchorfile>boost/urls/grammar/find_if.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>find_if_not</name>
+            <anchorfile>boost/urls/grammar/find_if_not.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <class kind="class">boost::urls::grammar::unsigned_rule</class>
+        <class kind="class">boost::urls::grammar::tuple_rule</class>
+        <class kind="class">boost::urls::grammar::to_lower</class>
+        <class kind="class">boost::urls::grammar::to_upper</class>
+        <class kind="class">boost::urls::grammar::token_rule</class>
+        <class kind="class">boost::urls::grammar::dec_octet_rule</class>
+        <class kind="class">boost::urls::grammar::squelch</class>
+        <class kind="class">boost::urls::grammar::optional_rule</class>
+        <class kind="class">boost::urls::grammar::ipv4_address_rule</class>
+        <class kind="class">boost::urls::grammar::variant_rule</class>
+        <class kind="class">boost::urls::grammar::is_charset</class>
+        <class kind="class">boost::urls::grammar::is_rule</class>
+        <class kind="class">boost::urls::grammar::alnum_chars</class>
+        <class kind="class">boost::urls::grammar::alpha_chars</class>
+        <class kind="class">boost::urls::grammar::digit_chars</class>
+        <class kind="class">boost::urls::grammar::hexdig_chars</class>
+        <class kind="class">boost::urls::grammar::vchars</class>
+        <class kind="class">boost::urls::grammar::lut_chars</class>
+        <class kind="class">boost::urls::grammar::ci_compare</class>
+        <class kind="class">boost::urls::grammar::ci_digest</class>
+        <class kind="class">boost::urls::grammar::ci_is_equal</class>
+        <class kind="class">boost::urls::grammar::ci_is_less</class>
+        <class kind="class">boost::urls::grammar::hexdig_value</class>
+        <class kind="class">boost::urls::grammar::not_empty_rule</class>
+        <class kind="class">boost::urls::grammar::optional_rule</class>
+        <class kind="class">boost::urls::grammar::range_rule</class>
+        <class kind="class">boost::urls::grammar::ref</class>
+        <class kind="class">boost::urls::grammar::aligned_storage</class>
+        <class kind="class">boost::urls::grammar::ci_hash</class>
+        <class kind="class">boost::urls::grammar::ci_equal</class>
+        <class kind="class">boost::urls::grammar::ci_less</class>
+        <class kind="class">boost::urls::grammar::lut_chars</class>
+        <class kind="class">boost::urls::grammar::range</class>
+        <class kind="class">boost::urls::grammar::recycled</class>
+        <class kind="class">boost::urls::grammar::recycled_ptr</class>
+        <class kind="class">boost::urls::grammar::string_view_base</class>
+        <class kind="class">boost::urls::grammar::unsigned_rule</class>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::url_view</name>
+        <filename>boost/urls/url_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::authority_view</name>
+        <filename>boost/urls/authority_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ignore_case_param</name>
+        <filename>boost/urls/ignore_case_param.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ipv4_address</name>
+        <filename>boost/urls/ipv4_address.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ipv6_address</name>
+        <filename>boost/urls/ipv6_address.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::no_value_t</name>
+        <filename>boost/urls/no_value_t.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::param</name>
+        <filename>boost/urls/param.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::param_pct_view</name>
+        <filename>boost/urls/param_pct_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::param_view</name>
+        <filename>boost/urls/param_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::params_base</name>
+        <filename>boost/urls/params_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::params_encoded_base</name>
+        <filename>boost/urls/params_encoded_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::params_encoded_ref</name>
+        <filename>boost/urls/params_encoded_ref.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::params_encoded_view</name>
+        <filename>boost/urls/params_encoded_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::params_ref</name>
+        <filename>boost/urls/params_ref.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::params_view</name>
+        <filename>boost/urls/params_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::segments_base</name>
+        <filename>boost/urls/segments_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::segments_view</name>
+        <filename>boost/urls/segments_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::segments_encoded_base</name>
+        <filename>boost/urls/segments_encoded_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::segments_encoded_ref</name>
+        <filename>boost/urls/segments_encoded_ref.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::segments_encoded_view</name>
+        <filename>boost/urls/segments_encoded_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::segments_ref</name>
+        <filename>boost/urls/segments_ref.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::static_url</name>
+        <filename>boost/urls/static_url.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::static_url_base</name>
+        <filename>boost/urls/static_url_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::url</name>
+        <filename>boost/urls/url.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::url_base</name>
+        <filename>boost/urls/url_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::url_view</name>
+        <filename>boost/urls/url_view.adoc</filename>
+        <member kind="function">
+            <type>boost::urls::segments_view</type>
+            <name>segments</name>
+            <anchorfile>boost/urls/url_view_base/segments.adoc</anchorfile>
+            <anchor></anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type>boost::urls::params_view</type>
+            <name>params</name>
+            <anchorfile>boost/urls/url_view_base/params.adoc</anchorfile>
+            <anchor></anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type>boost::urls::segments_encoded_view</type>
+            <name>encoded_segments</name>
+            <anchorfile>boost/urls/url_view_base/encoded_segments.adoc</anchorfile>
+            <anchor></anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type>boost::urls::params_encoded_view</type>
+            <name>encoded_params</name>
+            <anchorfile>boost/urls/url_view_base/encoded_params.adoc</anchorfile>
+            <anchor></anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function">
+            <type>bool</type>
+            <name>has_authority</name>
+            <anchorfile>boost/urls/url_view_base/has_authority.adoc</anchorfile>
+            <anchor></anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::url_view_base</name>
+        <filename>boost/urls/url_view_base.adoc</filename>
+        <member kind="function">
+            <name>authority</name>
+            <anchorfile>boost/urls/url_view_base/authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>buffer</name>
+            <anchorfile>boost/urls/url_view_base/buffer.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>compare</name>
+            <anchorfile>boost/urls/url_view_base/compare.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>data</name>
+            <anchorfile>boost/urls/url_view_base/data.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>digest</name>
+            <anchorfile>boost/urls/url_view_base/digest.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>empty</name>
+            <anchorfile>boost/urls/url_view_base/empty.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_authority</name>
+            <anchorfile>boost/urls/url_view_base/encoded_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_fragment</name>
+            <anchorfile>boost/urls/url_view_base/encoded_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host_address</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host_and_port</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host_and_port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host_name</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host_name.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_origin</name>
+            <anchorfile>boost/urls/url_view_base/encoded_origin.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_params</name>
+            <anchorfile>boost/urls/url_view_base/encoded_params.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_password</name>
+            <anchorfile>boost/urls/url_view_base/encoded_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_path</name>
+            <anchorfile>boost/urls/url_view_base/encoded_path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_query</name>
+            <anchorfile>boost/urls/url_view_base/encoded_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_resource</name>
+            <anchorfile>boost/urls/url_view_base/encoded_resource.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_segments</name>
+            <anchorfile>boost/urls/url_view_base/encoded_segments.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_target</name>
+            <anchorfile>boost/urls/url_view_base/encoded_target.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_user</name>
+            <anchorfile>boost/urls/url_view_base/encoded_user.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_userinfo</name>
+            <anchorfile>boost/urls/url_view_base/encoded_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_zone_id</name>
+            <anchorfile>boost/urls/url_view_base/encoded_zone_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>fragment</name>
+            <anchorfile>boost/urls/url_view_base/fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_authority</name>
+            <anchorfile>boost/urls/url_view_base/has_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_fragment</name>
+            <anchorfile>boost/urls/url_view_base/has_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_password</name>
+            <anchorfile>boost/urls/url_view_base/has_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_port</name>
+            <anchorfile>boost/urls/url_view_base/has_port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_query</name>
+            <anchorfile>boost/urls/url_view_base/has_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_scheme</name>
+            <anchorfile>boost/urls/url_view_base/has_scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_userinfo</name>
+            <anchorfile>boost/urls/url_view_base/has_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host</name>
+            <anchorfile>boost/urls/url_view_base/host.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_address</name>
+            <anchorfile>boost/urls/url_view_base/host_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_ipv4_address</name>
+            <anchorfile>boost/urls/url_view_base/host_ipv4_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_ipv6_address</name>
+            <anchorfile>boost/urls/url_view_base/host_ipv6_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_ipvfuture</name>
+            <anchorfile>boost/urls/url_view_base/host_ipvfuture.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_name</name>
+            <anchorfile>boost/urls/url_view_base/host_name.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_type</name>
+            <anchorfile>boost/urls/url_view_base/host_type.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>is_path_absolute</name>
+            <anchorfile>boost/urls/url_view_base/is_path_absolute.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>operator core::string_view</name>
+            <anchorfile>boost/urls/url_view_base/2conversion.adoc</anchorfile>
+            <anchor></anchor>string_view`] ¦
+        </member>
+        <member kind="function">
+            <name>params</name>
+            <anchorfile>boost/urls/url_view_base/params.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>password</name>
+            <anchorfile>boost/urls/url_view_base/password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>path</name>
+            <anchorfile>boost/urls/url_view_base/path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>persist</name>
+            <anchorfile>boost/urls/url_view_base/persist.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>port</name>
+            <anchorfile>boost/urls/url_view_base/port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>port_number</name>
+            <anchorfile>boost/urls/url_view_base/port_number.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>query</name>
+            <anchorfile>boost/urls/url_view_base/query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>scheme</name>
+            <anchorfile>boost/urls/url_view_base/scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>scheme_id</name>
+            <anchorfile>boost/urls/url_view_base/scheme_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>segments</name>
+            <anchorfile>boost/urls/url_view_base/segments.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>size</name>
+            <anchorfile>boost/urls/url_view_base/size.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>user</name>
+            <anchorfile>boost/urls/url_view_base/user.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>userinfo</name>
+            <anchorfile>boost/urls/url_view_base/userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>zone_id</name>
+            <anchorfile>boost/urls/url_view_base/zone_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>max_size</name>
+            <anchorfile>boost/urls/url_view_base/max_size.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::url_base</name>
+        <filename>boost/urls/url_base.adoc</filename>
+        <member kind="function">
+            <name>authority</name>
+            <anchorfile>boost/urls/url_view_base/authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>buffer</name>
+            <anchorfile>boost/urls/url_view_base/buffer.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>c_str</name>
+            <anchorfile>boost/urls/url_base/c_str.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>capacity</name>
+            <anchorfile>boost/urls/url_base/capacity.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>clear</name>
+            <anchorfile>boost/urls/url_base/clear.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>compare</name>
+            <anchorfile>boost/urls/url_view_base/compare.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>data</name>
+            <anchorfile>boost/urls/url_view_base/data.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>digest</name>
+            <anchorfile>boost/urls/url_view_base/digest.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>empty</name>
+            <anchorfile>boost/urls/url_view_base/empty.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_authority</name>
+            <anchorfile>boost/urls/url_view_base/encoded_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_fragment</name>
+            <anchorfile>boost/urls/url_view_base/encoded_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host_address</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host_and_port</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host_and_port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_host_name</name>
+            <anchorfile>boost/urls/url_view_base/encoded_host_name.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_origin</name>
+            <anchorfile>boost/urls/url_view_base/encoded_origin.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_params</name>
+            <anchorfile>boost/urls/url_view_base/encoded_params.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_password</name>
+            <anchorfile>boost/urls/url_view_base/encoded_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_path</name>
+            <anchorfile>boost/urls/url_view_base/encoded_path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_query</name>
+            <anchorfile>boost/urls/url_view_base/encoded_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_resource</name>
+            <anchorfile>boost/urls/url_view_base/encoded_resource.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_segments</name>
+            <anchorfile>boost/urls/url_view_base/encoded_segments.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_target</name>
+            <anchorfile>boost/urls/url_view_base/encoded_target.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_user</name>
+            <anchorfile>boost/urls/url_view_base/encoded_user.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_userinfo</name>
+            <anchorfile>boost/urls/url_view_base/encoded_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>encoded_zone_id</name>
+            <anchorfile>boost/urls/url_view_base/encoded_zone_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>fragment</name>
+            <anchorfile>boost/urls/url_view_base/fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_authority</name>
+            <anchorfile>boost/urls/url_view_base/has_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_fragment</name>
+            <anchorfile>boost/urls/url_view_base/has_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_password</name>
+            <anchorfile>boost/urls/url_view_base/has_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_port</name>
+            <anchorfile>boost/urls/url_view_base/has_port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_query</name>
+            <anchorfile>boost/urls/url_view_base/has_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_scheme</name>
+            <anchorfile>boost/urls/url_view_base/has_scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>has_userinfo</name>
+            <anchorfile>boost/urls/url_view_base/has_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host</name>
+            <anchorfile>boost/urls/url_view_base/host.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_address</name>
+            <anchorfile>boost/urls/url_view_base/host_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_ipv4_address</name>
+            <anchorfile>boost/urls/url_view_base/host_ipv4_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_ipv6_address</name>
+            <anchorfile>boost/urls/url_view_base/host_ipv6_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_ipvfuture</name>
+            <anchorfile>boost/urls/url_view_base/host_ipvfuture.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_name</name>
+            <anchorfile>boost/urls/url_view_base/host_name.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>host_type</name>
+            <anchorfile>boost/urls/url_view_base/host_type.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>is_path_absolute</name>
+            <anchorfile>boost/urls/url_view_base/is_path_absolute.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>normalize</name>
+            <anchorfile>boost/urls/url_base/normalize.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>normalize_authority</name>
+            <anchorfile>boost/urls/url_base/normalize_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>normalize_fragment</name>
+            <anchorfile>boost/urls/url_base/normalize_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>normalize_path</name>
+            <anchorfile>boost/urls/url_base/normalize_path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>normalize_query</name>
+            <anchorfile>boost/urls/url_base/normalize_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>normalize_scheme</name>
+            <anchorfile>boost/urls/url_base/normalize_scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>operator core::string_view</name>
+            <anchorfile>boost/urls/url_view_base/2conversion.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>params</name>
+            <anchorfile>boost/urls/url_view_base/params.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>password</name>
+            <anchorfile>boost/urls/url_view_base/password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>path</name>
+            <anchorfile>boost/urls/url_view_base/path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>persist</name>
+            <anchorfile>boost/urls/url_view_base/persist.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>port</name>
+            <anchorfile>boost/urls/url_view_base/port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>port_number</name>
+            <anchorfile>boost/urls/url_view_base/port_number.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>query</name>
+            <anchorfile>boost/urls/url_view_base/query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_authority</name>
+            <anchorfile>boost/urls/url_base/remove_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_fragment</name>
+            <anchorfile>boost/urls/url_base/remove_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_origin</name>
+            <anchorfile>boost/urls/url_base/remove_origin.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_password</name>
+            <anchorfile>boost/urls/url_base/remove_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_port</name>
+            <anchorfile>boost/urls/url_base/remove_port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_query</name>
+            <anchorfile>boost/urls/url_base/remove_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_scheme</name>
+            <anchorfile>boost/urls/url_base/remove_scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>remove_userinfo</name>
+            <anchorfile>boost/urls/url_base/remove_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>reserve</name>
+            <anchorfile>boost/urls/url_base/reserve.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>resolve</name>
+            <anchorfile>boost/urls/url_base/resolve.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>scheme</name>
+            <anchorfile>boost/urls/url_view_base/scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>scheme_id</name>
+            <anchorfile>boost/urls/url_view_base/scheme_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>segments</name>
+            <anchorfile>boost/urls/url_view_base/segments.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_authority</name>
+            <anchorfile>boost/urls/url_base/set_encoded_authority.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_fragment</name>
+            <anchorfile>boost/urls/url_base/set_encoded_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_host</name>
+            <anchorfile>boost/urls/url_base/set_encoded_host.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_host_address</name>
+            <anchorfile>boost/urls/url_base/set_encoded_host_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_host_name</name>
+            <anchorfile>boost/urls/url_base/set_encoded_host_name.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_params</name>
+            <anchorfile>boost/urls/url_base/set_encoded_params.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_password</name>
+            <anchorfile>boost/urls/url_base/set_encoded_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_path</name>
+            <anchorfile>boost/urls/url_base/set_encoded_path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_query</name>
+            <anchorfile>boost/urls/url_base/set_encoded_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_user</name>
+            <anchorfile>boost/urls/url_base/set_encoded_user.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_encoded_userinfo</name>
+            <anchorfile>boost/urls/url_base/set_encoded_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_fragment</name>
+            <anchorfile>boost/urls/url_base/set_fragment.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_host</name>
+            <anchorfile>boost/urls/url_base/set_host.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_host_address</name>
+            <anchorfile>boost/urls/url_base/set_host_address.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_host_ipv4</name>
+            <anchorfile>boost/urls/url_base/set_host_ipv4.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_host_ipv6</name>
+            <anchorfile>boost/urls/url_base/set_host_ipv6.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_host_ipvfuture</name>
+            <anchorfile>boost/urls/url_base/set_host_ipvfuture.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_host_name</name>
+            <anchorfile>boost/urls/url_base/set_host_name.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_params</name>
+            <anchorfile>boost/urls/url_base/set_params.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_password</name>
+            <anchorfile>boost/urls/url_base/set_password.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_path</name>
+            <anchorfile>boost/urls/url_base/set_path.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_path_absolute</name>
+            <anchorfile>boost/urls/url_base/set_path_absolute.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_port</name>
+            <anchorfile>boost/urls/url_base/set_port.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_port_number</name>
+            <anchorfile>boost/urls/url_base/set_port_number.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_query</name>
+            <anchorfile>boost/urls/url_base/set_query.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_scheme</name>
+            <anchorfile>boost/urls/url_base/set_scheme.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_scheme_id</name>
+            <anchorfile>boost/urls/url_base/set_scheme_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_user</name>
+            <anchorfile>boost/urls/url_base/set_user.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>set_userinfo</name>
+            <anchorfile>boost/urls/url_base/set_userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>size</name>
+            <anchorfile>boost/urls/url_view_base/size.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>user</name>
+            <anchorfile>boost/urls/url_view_base/user.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>userinfo</name>
+            <anchorfile>boost/urls/url_view_base/userinfo.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>zone_id</name>
+            <anchorfile>boost/urls/url_view_base/zone_id.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>max_size</name>
+            <anchorfile>boost/urls/url_view_base/max_size.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::decode_view</name>
+        <filename>boost/urls/decode_view.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::encoding_opts</name>
+        <filename>boost/urls/encoding_opts.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::pct_string_view</name>
+        <filename>boost/urls/pct_string_view.adoc</filename>
+        <member kind="function">
+            <name>operator*</name>
+            <anchorfile>boost/urls/pct_string_view/operator_star.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+        <member kind="function">
+            <name>decode</name>
+            <anchorfile>boost/urls/pct_string_view/decode.adoc</anchorfile>
+            <anchor></anchor>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::absolute_uri_rule</name>
+        <filename>boost/urls/absolute_uri_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::origin_form_rule</name>
+        <filename>boost/urls/origin_form_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::authority_rule</name>
+        <filename>boost/urls/authority_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::gen_delim_chars</name>
+        <filename>boost/urls/gen_delim_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ipv4_address_rule</name>
+        <filename>boost/urls/ipv4_address_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ipv6_address_rule</name>
+        <filename>boost/urls/ipv6_address_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::pchars</name>
+        <filename>boost/urls/pchars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::pct_encoded_rule</name>
+        <filename>boost/urls/pct_encoded_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::query_rule</name>
+        <filename>boost/urls/query_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::relative_ref_rule</name>
+        <filename>boost/urls/relative_ref_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::reserved_chars</name>
+        <filename>boost/urls/reserved_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::sub_delim_chars</name>
+        <filename>boost/urls/sub_delim_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::unreserved_chars</name>
+        <filename>boost/urls/unreserved_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::uri_reference_rule</name>
+        <filename>boost/urls/uri_reference_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::uri_rule</name>
+        <filename>boost/urls/uri_rule.adoc</filename>
+    </compound>
+    <!-- Constants as classes -->
+    <compound kind="class">
+        <name>boost::urls::error</name>
+        <filename>boost/urls/error.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ignore_case</name>
+        <filename>boost/urls/ignore_case.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::host_type</name>
+        <filename>boost/urls/host_type.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::no_value</name>
+        <filename>boost/urls/no_value.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::scheme</name>
+        <filename>boost/urls/scheme.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::string_token::assign_to</name>
+        <filename>boost/urls/string_token/assign_to.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::string_token::append_to</name>
+        <filename>boost/urls/string_token/append_to.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::string_token::preserve_size</name>
+        <filename>boost/urls/string_token/preserve_size.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::string_token::return_string</name>
+        <filename>boost/urls/string_token/return_string.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::string_token::is_token</name>
+        <filename>boost/urls/string_token/is_token.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::unsigned_rule</name>
+        <filename>boost/urls/grammar/unsigned_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::tuple_rule</name>
+        <filename>boost/urls/grammar/tuple_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::to_lower</name>
+        <filename>boost/urls/grammar/to_lower.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::to_upper</name>
+        <filename>boost/urls/grammar/to_upper.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::token_rule</name>
+        <filename>boost/urls/grammar/token_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::is_charset</name>
+        <filename>boost/urls/grammar/is_charset.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::is_rule</name>
+        <filename>boost/urls/grammar/is_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::alnum_chars</name>
+        <filename>boost/urls/grammar/alnum_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::alpha_chars</name>
+        <filename>boost/urls/grammar/alpha_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::digit_chars</name>
+        <filename>boost/urls/grammar/digit_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::hexdig_chars</name>
+        <filename>boost/urls/grammar/hexdig_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::vchars</name>
+        <filename>boost/urls/grammar/vchars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::lut_chars</name>
+        <filename>boost/urls/grammar/lut_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_compare</name>
+        <filename>boost/urls/grammar/ci_compare.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_digest</name>
+        <filename>boost/urls/grammar/ci_digest.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_is_equal</name>
+        <filename>boost/urls/grammar/ci_is_equal.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_is_less</name>
+        <filename>boost/urls/grammar/ci_is_less.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::hexdig_value</name>
+        <filename>boost/urls/grammar/hexdig_value.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::not_empty_rule</name>
+        <filename>boost/urls/grammar/not_empty_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::optional_rule</name>
+        <filename>boost/urls/grammar/optional_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::range_rule</name>
+        <filename>boost/urls/grammar/range_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ref</name>
+        <filename>boost/urls/grammar/ref.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::aligned_storage</name>
+        <filename>boost/urls/grammar/aligned_storage.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_hash</name>
+        <filename>boost/urls/grammar/ci_hash.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_equal</name>
+        <filename>boost/urls/grammar/ci_equal.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::ci_less</name>
+        <filename>boost/urls/grammar/ci_less.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::lut_chars</name>
+        <filename>boost/urls/grammar/lut_chars.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::range</name>
+        <filename>boost/urls/grammar/range.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::recycled</name>
+        <filename>boost/urls/grammar/recycled.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::recycled_ptr</name>
+        <filename>boost/urls/grammar/recycled_ptr.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::string_view_base</name>
+        <filename>boost/urls/grammar/string_view_base.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::unsigned_rule</name>
+        <filename>boost/urls/grammar/unsigned_rule.adoc</filename>
+    </compound>
+
+    <compound kind="class">
+        <name>boost::urls::grammar::dec_octet_rule</name>
+        <filename>boost/urls/grammar/dec_octet_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::squelch</name>
+        <filename>boost/urls/grammar/squelch.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::optional_rule</name>
+        <filename>boost/urls/grammar/optional_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::ipv4_address_rule</name>
+        <filename>boost/urls/ipv4_address_rule.adoc</filename>
+    </compound>
+    <compound kind="class">
+        <name>boost::urls::grammar::variant_rule</name>
+        <filename>boost/urls/grammar/variant_rule.adoc</filename>
+    </compound>
+</tagfile>

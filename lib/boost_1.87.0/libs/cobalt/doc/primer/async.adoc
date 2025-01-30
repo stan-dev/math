@@ -1,0 +1,74 @@
+== Async programming
+
+Asynchronous programming generally refers to a style of programming
+that allows tasks to be run in the background, while the other works is performed.
+
+Imagine if you will a get-request function that performs a
+full http request including connecting & ssl handshakes etc.
+
+[source,cpp]
+----
+std::string http_get(std:string_view url);
+
+int main(int argc, char * argv[])
+{
+    auto res = http_get("https://boost.org");
+    printf("%s", res.c_str());
+    return 0;
+}
+----
+
+The above code would be traditional synchronous programming. If we want to perform
+two requests in parallel we would need to create another thread to run another thread
+with synchronous code.
+
+[source,cpp]
+----
+std::string http_get(std:string_view url);
+
+int main(int argc, char * argv[])
+{
+    std::string other_res;
+
+    std::thread thr{[&]{ other_res = http_get("https://cppalliance.org"); }};
+    auto res = http_get("https://boost.org");
+    thr.join();
+
+    printf("%s", res.c_str());
+    printf("%s", other_res.c_str());
+    return 0;
+}
+----
+
+This works, but our program will spend most of the time waiting for input.
+Operating systems provide APIs that allow IO to be performed asynchronously,
+and libraries such as https://www.boost.org/doc/libs/1_83_0/doc/html/boost_asio.html[boost.asio]
+provide portable ways to manage asynchronous operations.
+Asio itself does not dictate a way to handle the completions.
+This library (boost.cobalt) provides a way to manage this all through coroutines/awaitables.
+
+[source,cpp]
+----
+cobalt::promise<std::string> http_cobalt_get(std:string_view url);
+
+cobalt::main co_main(int argc, char * argv[])
+{
+    auto [res, other_res] =
+            cobalt::join(
+                http_cobalt_get(("https://boost.org"),
+                http_cobalt_get(("https://cppalliance.org")
+            );
+
+    printf("%s", res.c_str());
+    printf("%s", other_res.c_str());
+    return 0;
+}
+----
+
+In the above code the asynchronous function to perform the request
+takes advantage of the operating system APIs so that the actual IO doesn't block.
+This means that while we're waiting for both functions to complete,
+the operations are interleaved and non-blocking.
+At the same time cobalt provides the coroutine primitives that keep us out of callback hell.
+
+

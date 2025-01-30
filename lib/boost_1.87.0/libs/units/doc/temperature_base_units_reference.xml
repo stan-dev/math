@@ -1,0 +1,26 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="temperature_base_units_reference"><title>Temperature Base Units Reference</title><header id="doxygen.temperature_base_units_reference.celsius_8hpp" name="boost/units/base_units/temperature/celsius.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="temperature">
+<struct id="doxygen.temperature_base_units_reference.structboost_1_1units_1_1temperature_1_1celsius__base__unit" name="celsius_base_unit"><inherit access="public">base_unit&lt; celsius_base_unit, temperature_dimension, -1008 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.temperature_base_units_reference.structboost_1_1units_1_1temperature_1_1celsius__base__unit_1a2d3d7c82317265902682f149f7c8b3b0" name="name" specifiers="static"><type>std::string</type></method>
+<method id="doxygen.temperature_base_units_reference.structboost_1_1units_1_1temperature_1_1celsius__base__unit_1a0b094a52cca9fd35956e2e0cd3b08be7" name="symbol" specifiers="static"><type>std::string</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.temperature_base_units_reference.fahrenheit_8hpp" name="boost/units/base_units/temperature/fahrenheit.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="temperature">
+<struct id="doxygen.temperature_base_units_reference.structboost_1_1units_1_1temperature_1_1fahrenheit__base__unit" name="fahrenheit_base_unit"><inherit access="public">base_unit&lt; fahrenheit_base_unit, temperature_dimension, -1007 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.temperature_base_units_reference.structboost_1_1units_1_1temperature_1_1fahrenheit__base__unit_1a823eeb3c26bf3c937bc5ee1ecc7c203d" name="name" specifiers="static"><type>std::string</type></method>
+<method id="doxygen.temperature_base_units_reference.structboost_1_1units_1_1temperature_1_1fahrenheit__base__unit_1ad0a281a827af8bb03b2d3cbeaa118ff2" name="symbol" specifiers="static"><type>std::string</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

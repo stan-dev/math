@@ -1,0 +1,467 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+= Quick Look
+
+This section is intended to give the reader a brief overview of the features and interface style of the library.
+
+== Integration
+
+[NOTE]
+====
+Sample code and identifiers used throughout are written as if the following declarations are in effect:
+
+[source,cpp]
+----
+#include <boost/url.hpp>
+using namespace boost::urls;
+----
+
+====
+
+We begin by including the library header file which brings all the symbols into scope.
+
+[source,cpp]
+----
+#include <boost/url.hpp>
+----
+
+Alternatively, individual headers may be included to obtain the declarations for specific types.
+
+Boost.URL is a compiled library.
+You need to link your program with the Boost.URL built library.
+You must install binaries in a location that can be found by your linker.
+
+If you followed the http://www.boost.org/doc/libs/release/more/getting_started/index.html[Boost Getting Started,window=blank_]
+instructions, that's already been done for you.
+
+== Parsing
+
+Say you have the following URL that you want to parse:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=code_urls_parsing_1,indent=0]
+----
+
+In this example, we use the cpp:string_view[] type provided by boost:core[].
+This is a
+cpp:string_view[] implementation that is implicitly convertible to cpp:std::string_view[].
+The library namespace includes the aliases cpp:string_view[], cpp:error_code[], and
+cpp:result[].
+
+You can parse the string by calling this function:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=code_urls_parsing_2,indent=0]
+----
+
+The function cpp:parse_uri[] returns an object of type cpp:result<url_view>[] which is a container resembling a variant that holds either an error or an object.
+A number of functions are available to parse different types of URL.
+
+We can immediately call cpp:result::value[] to obtain a cpp:url_view[].
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_3,indent=0]
+----
+
+Or simply
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_parsing_4,indent=0]
+----
+
+When there are no errors, cpp:result::value[]
+returns an instance of cpp:url_view[], which holds the parsed result.
+cpp:result::value[]
+throws an exception on a parsing error.
+
+Alternatively, the functions
+cpp:result::has_value[] and
+cpp:result::has_error[] could also be used to check if the string has been parsed without errors.
+
+[NOTE]
+====
+It is worth noting that cpp:parse_uri[] does not allocate any memory dynamically.
+Like a cpp:string_view[], a cpp:url_view[] does not retain ownership of the underlying string buffer.
+
+As long as the contents of the original string are unmodified, constructed URL views always contain a valid URL in its correctly serialized form.
+
+If the input does not match the URL grammar, an error code is reported through cpp:result[] rather than exceptions.
+Exceptions only thrown on excessive input length.
+====
+
+== Accessing
+
+Accessing the parts of the URL is easy:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_accessing_1,indent=0]
+----
+
+URL paths can be further divided into path segments with the function cpp:url_view::segments[].
+Although URL query strings are often used to represent key/value pairs, this interpretation is not defined by https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_].
+Users can treat the query as a single entity.
+cpp:url_view[] provides the function
+cpp:url_view::params[] to extract this view of key/value pairs.
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_accessing_1b,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+path
+to
+my-file.txt
+
+id: 42
+name: John Doe Jingleheimer-Schmidt
+----
+--
+====
+
+These functions return views referring to substrings and sub-ranges of the underlying URL.
+By simply referencing the relevant portion of the URL string internally, its components can represent percent-decoded strings and be converted to other types without any previous memory allocation.
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_token_1,indent=0]
+----
+
+A special cpp:string_token[] type can also be used to specify how a portion of the URL should be encoded and returned.
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_token_2,indent=0]
+----
+
+These functions might also return empty strings
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_accessing_2a,indent=0]
+----
+
+for both empty and absent components
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_accessing_2b,indent=0]
+----
+
+Many components do not have corresponding functions such as
+cpp:url_view::has_authority[]
+to check for their existence.
+This happens because some URL components are mandatory.
+
+When applicable, the encoded components can also be directly accessed through a cpp:string_view[] without any need to allocate memory:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_accessing_4,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+scheme    : https
+authority : user:pass@example.com:443
+userinfo  : user:pass
+user      : user
+password  : pass
+host      : example.com
+port      : 443
+path      : /path/to/my%2dfile.txt
+query     : id=42&name=John%20Doe+Jingleheimer%2DSchmidt
+fragment  : page%20anchor
+----
+--
+====
+
+== Percent-Encoding
+
+An instance of cpp:decode_view[] provides a number of functions to persist a decoded string:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_decoding_1,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+id=42&name=John Doe Jingleheimer-Schmidt
+----
+--
+====
+
+cpp:decode_view[] and its decoding functions are designed to perform no memory allocations unless the algorithm where its being used needs the result to be in another container.
+The design also permits recycling objects to reuse their memory, and at least minimize the number of allocations by deferring them until the result is in fact needed by the application.
+
+In the example above, the memory owned by `str` can be reused to store other results.
+This is also useful when manipulating URLs:
+
+[source,cpp]
+----
+u1.set_host(u2.host());
+----
+
+If cpp:u2.host()[] returned a value type, then two memory allocations would be necessary for this operation.
+Another common use case is converting URL path segments into filesystem paths:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_decoding_3,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+path: "path/to/my-file.txt"
+----
+--
+====
+
+In this example, only the internal allocations of
+cpp:filesystem::path[] need to happen.
+In many common use cases, no allocations are necessary at all, such as finding the appropriate route for a URL in a web server:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_decoding_4a,indent=0]
+----
+
+This allows us to easily match files in the document root directory of a web server:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_decoding_4b,indent=0]
+----
+
+// [#compound-elements]
+== Compound elements
+
+The path and query parts of the URL are treated specially by the library.
+While they can be accessed as individual encoded strings, they can also be accessed through special view types.
+
+This code calls
+cpp:url_view::encoded_segments[]
+to obtain the path segments as a container that returns encoded strings:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_compound_elements_1,indent=0]
+----
+--
+
+Output::
++
+--
+[source,cpp]
+----
+path
+to
+my-file.txt
+----
+--
+====
+
+As with other cpp:url_view[] functions which return encoded strings, the encoded segments container does not allocate memory.
+Instead, it returns views to the corresponding portions of the underlying encoded buffer referenced by the URL.
+
+As with other library functions, cpp:decode_view[] permits accessing elements of composed elements while avoiding memory allocations entirely:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoded_compound_elements_1,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+path
+to
+my-file.txt
+----
+--
+====
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoded_compound_elements_2,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+key = id, value = 42
+key = name, value = John Doe
+----
+--
+====
+
+== Modifying
+
+The library provides the containers cpp:url[] and cpp:static_url[] which supporting modification of the URL contents.
+A cpp:url[] or cpp:static_url[] must be constructed from an existing cpp:url_view[].
+
+Unlike the cpp:url_view[], which does not gain ownership of the underlying character buffer, the cpp:url[] container uses the default allocator to control a resizable character buffer which it owns.
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_1,indent=0]
+----
+
+On the other hand, a cpp:static_url[] has fixed-capacity storage and does not require dynamic memory allocations.
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_1b,indent=0]
+----
+
+Objects of type cpp:url[] are https://en.cppreference.com/w/cpp/concepts/regular[std::regular,window=blank_].
+Similarly to built-in types, such as cpp:int[], a cpp:url[] is copyable, movable, assignable, default constructible, and equality comparable.
+They support all the inspection functions of
+cpp:url_view[], and also provide functions to modify all components of the URL.
+
+Changing the scheme is easy:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_2,indent=0]
+----
+
+Or we can use a predefined constant:
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_3,indent=0]
+----
+
+The scheme must be valid, however, or an exception is thrown.
+All modifying functions perform validation on their input.
+
+* Attempting to set the URL scheme or port to an invalid string results in an exception.
+* Attempting to set other URL components to invalid strings will get the original input properly percent-encoded for that component.
+
+It is not possible for a cpp:url[] to hold syntactically illegal text.
+
+Modification functions return a reference to the object, so chaining is possible:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_4,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=John%20Doe#page%20anchor
+----
+--
+====
+
+All non-const operations offer the strong exception safety guarantee.
+
+The path segment and query parameter containers returned by a cpp:url[] offer modifiable range functionality, using member functions of the container:
+
+[tabs]
+====
+Code::
++
+--
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_quicklook_modifying_5,indent=0]
+----
+--
+
+Output::
++
+--
+[source]
+----
+https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&name=Vinnie%20Falco#page%20anchor
+----
+--
+====
+
+
+
+

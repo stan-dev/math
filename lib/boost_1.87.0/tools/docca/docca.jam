@@ -1,0 +1,397 @@
+#
+# Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+# Copyright (c) 2021 Dmitry Arkhipov (grisumbras@yandex.ru)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/docca
+#
+
+
+import "class" : new ;
+import common ;
+import doxygen ;
+import feature ;
+import modules ;
+import param ;
+import path ;
+import print ;
+import project ;
+import property-set ;
+import quickbook ;
+import saxonhe ;
+import sequence ;
+import toolset ;
+import type ;
+import virtual-target ;
+
+local saved-project = [ modules.peek project : .current-project ] ;
+toolset.using python ;
+modules.poke project : .current-project : $(saved-project) ;
+
+
+.here  = [ path.make [ modules.binding $(__name__) ] ] ;
+.here = $(.here:D) ;
+
+
+feature.feature "docca:param" : : free ;
+feature.feature "docca:template" : : free dependency ;
+feature.feature "docca:config" : : free dependency ;
+feature.feature "docca:extension" : : free dependency ;
+
+rule reference ( target : sources * : requirements * : default-build *
+    : usage-requirements * )
+{
+    param.handle-named-params
+        sources requirements default-build usage-requirements ;
+
+    local overrides = $(sources[1]) ;
+    sources = $(sources[2-]) ;
+
+    local project = [ project.current ] ;
+    local target-dir = $(target:S=) ;
+    target-dir = $(target-dir:B=_$(target-dir:B)-dir) ;
+
+    # Generate doxygen configuration file from sources
+    sources = [ sequence.transform fix-source $(project) : $(sources) ] ;
+    doxyfile $(target-dir)/sources.dox
+        : $(sources)
+        : $(requirements)
+          <doxygen:param>GENERATE_HTML=NO
+          <doxygen:param>GENERATE_XML=YES
+          <doxygen:param>XML_OUTPUT=$(target-dir)
+        : $(default-build)
+        ;
+    $(project).mark-target-as-explicit $(target-dir)/sources.dox ;
+
+    #--------------------------------------------------------------------------
+    #
+    # Invoke Doxygen to process the header files and produce the XML
+    # containing the description of the C++ declarations and extracted
+    # Javadoc comments.
+    doxygen-xml-multifile $(target-dir)/stamp
+        : $(target-dir)/sources.dox
+        : $(requirements)
+        : $(default-build)
+        ;
+    $(project).mark-target-as-explicit $(target-dir)/stamp ;
+
+
+    # Adopt as a target index.xml which was created as a side-effect
+    make-explicit $(target-dir)/index.xml $(project)
+        : $(target-dir)/stamp
+        : @docca.touch-action
+        ;
+
+    #--------------------------------------------------------------------------
+    #
+    # Copy the project-specific config XSLT
+    copy-xsl $(overrides) $(project) $(target-dir)/custom-overrides.xsl ;
+
+    # Copy all the XSLT modules to the target directory.
+    # Also, specify their dependencies.
+    local src-dir = $(.here)/include/docca ;
+    copy-xsl $(src-dir)/common.xsl             $(project) $(target-dir) ;
+    copy-xsl $(src-dir)/base-config.xsl        $(project) $(target-dir) ;
+    copy-xsl $(src-dir)/assemble-quickbook.xsl $(project) $(target-dir) ;
+
+    copy-xsl $(src-dir)/base-extract-xml-pages.xsl $(project) $(target-dir)
+        : common.xsl
+        ;
+
+    copy-xsl $(src-dir)/base-stage1.xsl $(project) $(target-dir)
+        : common.xsl
+        ;
+
+    copy-xsl $(src-dir)/extract-xml-pages.xsl $(project) $(target-dir)
+        : base-extract-xml-pages.xsl
+          base-config.xsl
+          custom-overrides.xsl
+        ;
+
+    copy-xsl $(src-dir)/stage1.xsl $(project) $(target-dir)
+        : base-stage1.xsl
+          base-config.xsl
+          custom-overrides.xsl
+        ;
+
+    copy-xsl $(src-dir)/base-stage2.xsl $(project) $(target-dir)
+        : common.xsl
+        ;
+
+    copy-xsl $(src-dir)/stage2.xsl $(project) $(target-dir)
+        : base-stage2.xsl
+          base-config.xsl
+          custom-overrides.xsl
+        ;
+
+    #-------------------------------------------------------------------------------
+    #
+    # Run index.xml through the first transformation stage
+    # (assembling and splitting the XML into page-specific files).
+    #
+    make-explicit $(target-dir)/xml-pages.xml $(project)
+        : $(target-dir)/index.xml
+          $(target-dir)/extract-xml-pages.xsl
+        : @saxonhe.saxonhe
+        ;
+
+    # Adopt as a target xml-pages directory which was created as a side-effect
+    make-explicit $(target-dir)/xml-pages $(project)
+        : $(target-dir)/xml-pages.xml
+        : @docca.null-action
+        :
+        : <implicit-dependency>$(target-dir)/xml-pages.xml
+        ;
+
+    make-explicit $(target-dir)/stage1/results $(project)
+        : $(target-dir)/xml-pages
+          $(target-dir)/stage1.xsl
+        : @saxonhe.saxonhe_dir
+        : $(requirements)
+        ;
+
+    make-explicit $(target-dir)/stage2/results $(project)
+        : $(target-dir)/stage1/results
+          $(target-dir)/stage2.xsl
+        : @saxonhe.saxonhe_dir
+        : $(requirements)
+        ;
+
+    generate $(target)
+        : $(target-dir)/xml-pages.xml
+          $(target-dir)/assemble-quickbook.xsl
+
+          # TODO: make this input to the XSLT somehow
+          #       rather than relying on it being hard-coded
+          #       in the XSLT (which it is!)
+          $(target-dir)/stage2/results
+        : <generating-rule>@docca.make-qbk
+          $(requirements)
+        : $(default-build)
+        : $(usage-requirements)
+        ;
+}
+
+
+rule pyreference ( target : sources * : requirements * : default-build *
+    : usage-requirements * )
+{
+    param.handle-named-params
+        sources requirements default-build usage-requirements ;
+
+    local project = [ project.current ] ;
+    local target-dir = $(target:S=) ;
+    target-dir = $(target-dir:B=_$(target-dir:B)-dir) ;
+
+    # Generate doxygen configuration file from sources
+    sources = [ sequence.transform fix-source $(project) : $(sources) ] ;
+    doxyfile $(target-dir)/sources.dox
+        : $(sources)
+        : $(requirements)
+          <doxygen:param>GENERATE_HTML=NO
+          <doxygen:param>GENERATE_XML=YES
+          <doxygen:param>XML_OUTPUT=$(target-dir)
+        : $(default-build)
+        ;
+    $(project).mark-target-as-explicit $(target-dir)/sources.dox ;
+
+    #--------------------------------------------------------------------------
+    #
+    # Invoke Doxygen to process the header files and produce the XML
+    # containing the description of the C++ declarations and extracted
+    # Javadoc comments.
+    doxygen-xml-multifile $(target-dir)/stamp
+        : $(target-dir)/sources.dox
+        : $(requirements)
+        : $(default-build)
+        ;
+    $(project).mark-target-as-explicit $(target-dir)/stamp ;
+
+    # Adopt as a target index.xml which was created as a side-effect
+    make-explicit $(target-dir)/index.xml $(project)
+        : $(target-dir)/stamp
+        : @docca.touch-action
+        ;
+
+    # Construct a config file from parameters provided by the build system
+    make $(target-dir)/docca-config.json
+        :
+        : @docca.make-docca-config
+        : $(requirements)
+        : $(default-build)
+        ;
+
+    generate $(target)
+        : $(target-dir)/index.xml
+        : <generating-rule>@docca.make-qbk2
+          $(requirements)
+          <docca:config>$(target-dir)/docca-config.json
+        : $(default-build)
+        : $(usage-requirements)
+        ;
+}
+
+
+rule make-qbk2 ( project name : property-set : source )
+{
+    local template = [ $(property-set).get <docca:template> ] ;
+    if $(template[2])
+    {
+        local paths ;
+        for local tmpl in $(templates)
+        {
+            paths += [ $(tmpl).path ] ;
+        }
+        import errors ;
+        errors.user-error "Several templates specified for docca:" $(paths) ;
+    }
+    if ! $(template)
+    {
+        template =
+            [ virtual-target.from-file quickbook.jinja2
+            : $(.here)/include/docca
+            : $(project)
+            ] ;
+    }
+
+    local action-name = docca.generate-reference ;
+    local relevant = [ toolset.relevant $(action-name) ] ;
+    local action = [
+          new action
+            $(source)
+            $(template)
+            [ $(property-set).get <docca:config> ]
+            [ $(property-set).get <docca:extension> ]
+        : $(action-name)
+        : [ $(property-set).relevant $(relevant) ]
+        ] ;
+    local target = [
+          new file-target $(name) exact
+        : [ type.type $(name) ]
+        : $(project)
+        : $(action)
+        ] ;
+    local path = [ path.root $(name) [ $(target).path ] ] ;
+    return [ property-set.create <include>$(path:D) ] $(target) ;
+}
+
+rule make-qbk ( project name : property-set : sources * )
+{
+        local action-name = saxonhe.saxonhe ;
+        local relevant = [ toolset.relevant $(action-name) ] ;
+        local action = [
+              new action $(sources)
+            : $(action-name)
+            : [ $(property-set).relevant $(relevant) ]
+            ] ;
+        local target = [
+              new file-target $(name) exact
+            : [ type.type $(name) ]
+            : $(project)
+            : $(action)
+            ] ;
+        local path = [ path.root $(name) [ $(target).path ] ] ;
+        return [ property-set.create <include>$(path:D) ] $(target) ;
+}
+
+
+local rule copy-xsl ( source project target-or-dir : dependencies * )
+{
+    local target ;
+    local dir ;
+    if .xsl = $(target-or-dir:S)
+    {
+        dir = $(target-or-dir:D) ;
+        target =  $(target-or-dir:D=) ;
+    }
+    else
+    {
+        dir = $(target-or-dir) ;
+        target = $(source:D=) ;
+    }
+
+    make-explicit $(target:TD=$(dir)) $(project)
+        : $(source)
+        : @common.copy
+        : <dependency>$(dependencies:TD=$(dir))
+        ;
+}
+
+
+local rule make-explicit ( target project : sources * : make-rule + : reqs *
+    : ureqs * )
+{
+    make $(target) : $(sources) : $(make-rule) : $(reqs) : $(ureqs) ;
+    $(project).mark-target-as-explicit $(target) ;
+}
+
+
+local rule fix-source ( project path )
+{
+    # Unfortunately, rule doxygen.run was written with the assumption that
+    # current project is located in the current directory (which is very likely
+    # to not be the case). We have to convert paths into a form that is both
+    # usable by doxygen and usable by b2 from the current project. This
+    # effectively means absolute paths.
+    #
+    # NOTE: doxygen.run should really do this by itself.
+
+    path = [ path.root $(path) [ $(project).location ] ] ;
+    path = [ path.root $(path) [ path.pwd ] ] ;
+    return $(path) ;
+}
+
+
+.TOUCH = [ common.file-touch-command ] ;
+actions touch-action
+{
+    $(.TOUCH) "$(<)"
+}
+
+rule null-action ( target : srcs * : props * )
+{
+    NOUPDATE $(target) ;
+}
+
+rule generate-reference ( target : sources + : properties * )
+{
+    RUNNER on $(target) = [ path.native $(.here)/docca.py ] ;
+
+}
+actions generate-reference bind CONFIGS EXTENSIONS
+{
+    "$(PYTHON:E=python)" "$(RUNNER)" -i"$(>[1])" -o"$(<)" -c"$(CONFIGS)" -E"$(EXTENSIONS)" -T"$(>[2])" -I"$(INCLUDE)"
+}
+
+rule make-docca-config ( target : sources * : properties * )
+{
+    local text = "{" ;
+
+    # Translate <docca:param> into command line flags.
+    local sep = "" ;
+    for local param in [ feature.get-values <docca:param> : $(properties) ]
+    {
+        local namevalue = [ MATCH "([^=]*)=(.*)" : $(param) ] ;
+        local name = $(namevalue[1]) ;
+        local value = $(namevalue[2]) ;
+        if ! $(value) in true false null
+        {
+            value = "\"$(value)\"" ;
+        }
+        text += "$(sep) \"$(name)\": $(value)" ;
+        sep = "," ;
+    }
+
+    text += "}" ;
+
+    print.output $(target) plain ;
+    print.text $(text) : true ;
+}
+
+toolset.flags docca.generate-reference FLAGS <flags> ;
+toolset.flags docca.generate-reference INCLUDE <include> ;
+toolset.flags docca.generate-reference CONFIGS <docca:config> ;
+toolset.flags docca.generate-reference EXTENSIONS <docca:extension> ;
+toolset.flags docca.generate-reference PYTHON <python.interpreter> ;

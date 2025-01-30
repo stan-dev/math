@@ -1,0 +1,163 @@
+# Copyright 2018-2024 Emil Dotchevski and Reverge Studios, Inc.
+
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import testing ;
+
+variant leaf_debug_capture0 : debug : <define>BOOST_LEAF_CFG_CAPTURE=0 ;
+variant leaf_release_capture0 : release : <define>BOOST_LEAF_CFG_CAPTURE=0 ;
+
+variant leaf_debug_diag0 : debug : <define>BOOST_LEAF_CFG_DIAGNOSTICS=0 ;
+variant leaf_release_diag0 : release : <define>BOOST_LEAF_CFG_DIAGNOSTICS=0 ;
+
+variant leaf_debug_embedded : debug : <define>BOOST_LEAF_EMBEDDED <rtti>off <exception-handling>off ;
+variant leaf_release_embedded : release : <define>BOOST_LEAF_EMBEDDED <rtti>off <exception-handling>off ;
+
+variant leaf_debug_single_header : debug : <define>BOOST_LEAF_TEST_SINGLE_HEADER ;
+variant leaf_release_single_header : release : <define>BOOST_LEAF_TEST_SINGLE_HEADER ;
+
+project
+    : default-build
+        <cxxstd>11
+        <threading>multi
+    : requirements
+        <define>BOOST_LEAF_BOOST_AVAILABLE
+        <target-os>windows:<define>_CRT_SECURE_NO_WARNINGS
+        <threading>single:<define>BOOST_LEAF_NO_THREADS
+        <toolset>gcc:<cxxflags>"-Wno-delete-non-virtual-dtor -Wno-parentheses"
+        <toolset>clang:<cxxflags>"-Wno-unused-variable -Wno-delete-non-virtual-dtor -Wno-non-virtual-dtor -Wno-dangling-else"
+        <toolset>darwin:<cxxflags>"-Wno-unused-variable -Wno-delete-non-virtual-dtor -Wno-non-virtual-dtor -Wno-delete-non-abstract-non-virtual-dtor -Wno-dangling-else"
+        <toolset>msvc:<cxxflags>"-wd 4267 -wd 4996 -wd 4244"
+        <include>../../..
+    ;
+
+compile _hpp_common_test.cpp ;
+compile _hpp_config_test.cpp ;
+compile _hpp_context_test.cpp ;
+compile _hpp_diagnostics_test.cpp ;
+compile _hpp_error_test.cpp ;
+compile _hpp_exception_test.cpp ;
+compile _hpp_handle_errors_test.cpp ;
+compile _hpp_leaf_test.cpp ;
+compile _hpp_on_error_test.cpp ;
+compile _hpp_pred_test.cpp ;
+compile _hpp_result_test.cpp ;
+compile _hpp_to_variant_test.cpp ;
+
+run boost_exception_test.cpp ;
+run BOOST_LEAF_ASSIGN_test.cpp ;
+run BOOST_LEAF_AUTO_test.cpp ;
+run BOOST_LEAF_CHECK_test.cpp ;
+run capture_exception_async_test.cpp ;
+run capture_exception_result_async_test.cpp ;
+run capture_exception_result_unload_test.cpp ;
+run capture_exception_state_test.cpp ;
+run capture_exception_unload_test.cpp ;
+run capture_result_async_test.cpp ;
+run capture_result_state_test.cpp ;
+run capture_result_unload_test.cpp ;
+run context_activator_test.cpp ;
+run context_deduction_test.cpp ;
+run ctx_handle_all_test.cpp ;
+run ctx_handle_some_test.cpp ;
+run ctx_remote_handle_all_test.cpp ;
+run ctx_remote_handle_some_test.cpp ;
+run diagnostics_test1.cpp ;
+run diagnostics_test2.cpp ;
+run diagnostics_test3.cpp ;
+run diagnostics_test4.cpp ;
+run diagnostics_test5.cpp ;
+run e_errno_test.cpp ;
+run e_LastError_test.cpp ;
+run error_code_test.cpp ;
+run error_id_test.cpp ;
+run exception_test.cpp ;
+run exception_to_result_test.cpp ;
+run function_traits_test.cpp ;
+run github_issue53_test.cpp ;
+run github_issue53x_test.cpp ;
+run handle_all_other_result_test.cpp ;
+run handle_all_test.cpp ;
+run handle_basic_test.cpp ;
+run handle_some_other_result_test.cpp ;
+run handle_some_test.cpp ;
+run match_member_test.cpp ;
+run match_test.cpp ;
+run match_value_test.cpp ;
+run multiple_errors_test.cpp ;
+run on_error_accumulate_basic_test.cpp ;
+run on_error_accumulate_nested_error_exception_test.cpp ;
+run on_error_accumulate_nested_error_result_test.cpp ;
+run on_error_accumulate_nested_new_error_exception_test.cpp ;
+run on_error_accumulate_nested_new_error_result_test.cpp ;
+run on_error_accumulate_nested_success_exception_test.cpp ;
+run on_error_accumulate_nested_success_result_test.cpp ;
+run on_error_defer_basic_test.cpp ;
+run on_error_defer_nested_error_exception_test.cpp ;
+run on_error_defer_nested_error_result_test.cpp ;
+run on_error_defer_nested_new_error_exception_test.cpp ;
+run on_error_defer_nested_new_error_result_test.cpp ;
+run on_error_defer_nested_success_exception_test.cpp ;
+run on_error_defer_nested_success_result_test.cpp ;
+run on_error_preload_basic_test.cpp ;
+run on_error_preload_exception_test.cpp ;
+run on_error_preload_nested_error_exception_test.cpp ;
+run on_error_preload_nested_error_result_test.cpp ;
+run on_error_preload_nested_new_error_exception_test.cpp ;
+run on_error_preload_nested_new_error_result_test.cpp ;
+run on_error_preload_nested_success_exception_test.cpp ;
+run on_error_preload_nested_success_result_test.cpp ;
+run optional_test.cpp ;
+run parse_name_test.cpp ;
+run print_test.cpp ;
+run result_bad_result_test.cpp ;
+run result_implicit_conversion_test.cpp ;
+run result_load_test.cpp ;
+run result_print_test.cpp ;
+run result_ref_test.cpp ;
+run result_state_test.cpp ;
+run tls_array_alloc_test1.cpp ;
+run tls_array_alloc_test2.cpp ;
+run tls_array_alloc_test3.cpp ;
+run tls_array_test.cpp ;
+run to_variant_test.cpp ;
+run try_capture_all_test.cpp ;
+run try_catch_error_id_test.cpp ;
+run try_catch_system_error_test.cpp ;
+run try_catch_test.cpp ;
+run try_exception_and_result_test.cpp ;
+
+lib visibility_test_lib : visibility_test_lib.cpp : <visibility>hidden ;
+run visibility_test.cpp visibility_test_lib/<link>shared ;
+run visibility_test.cpp visibility_test_lib/<link>static : : : <target-os>windows ; # This can't work on Windows, so use static link for the test.
+
+compile-fail _compile-fail-arg_boost_error_info_1.cpp ;
+compile-fail _compile-fail-arg_boost_error_info_2.cpp ;
+compile-fail _compile-fail-arg_catch_1.cpp ;
+compile-fail _compile-fail-arg_catch_2.cpp ;
+compile-fail _compile-fail-arg_match_1.cpp ;
+compile-fail _compile-fail-arg_match_2.cpp ;
+compile-fail _compile-fail-arg_rvalue_ref.cpp ;
+compile-fail _compile-fail-BOOST_LEAF_ASSIGN.cpp ;
+compile-fail _compile-fail-BOOST_LEAF_AUTO.cpp ;
+compile-fail _compile-fail-diagnostic_details.cpp ;
+compile-fail _compile-fail-diagnostic_info.cpp ;
+compile-fail _compile-fail-error_info.cpp ;
+compile-fail _compile-fail-exception_1.cpp ;
+compile-fail _compile-fail-exception_2.cpp ;
+compile-fail _compile-fail-new_error.cpp ;
+compile-fail _compile-fail-result_1.cpp ;
+compile-fail _compile-fail-result_2.cpp ;
+compile-fail _compile-fail-result_3.cpp ;
+compile-fail _compile-fail-result_4.cpp ;
+
+exe try_capture_all_exceptions : ../example/try_capture_all_exceptions.cpp : <threading>single:<build>no <exception-handling>off:<build>no <variant>leaf_debug_capture0:<build>no <variant>leaf_release_capture0:<build>no ;
+exe try_capture_all_result : ../example/try_capture_all_result.cpp : <threading>single:<build>no <variant>leaf_debug_capture0:<build>no <variant>leaf_release_capture0:<build>no <variant>leaf_debug_embedded:<build>no <variant>leaf_release_embedded:<build>no ;
+exe error_log : ../example/error_log.cpp ;
+exe error_trace : ../example/error_trace.cpp ;
+exe exception_to_result : ../example/exception_to_result.cpp : <exception-handling>off:<build>no ;
+exe print_file_exceptions : ../example/print_file/print_file_exceptions.cpp : <exception-handling>off:<build>no ;
+exe print_file_leaf_result : ../example/print_file/print_file_leaf_result.cpp ;
+exe print_file_system_result : ../example/print_file/print_file_system_result.cpp : <variant>leaf_debug_embedded:<build>no <variant>leaf_release_embedded:<build>no ;
+exe print_half : ../example/print_half.cpp ;

@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Worked example: Custom domain (the short way) - Boost.Outcome documentation</title>
+<link rel="stylesheet" href="../css/boost.css" type="text/css">
+<meta name="generator" content="Hugo 0.52 with Boostdoc theme">
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<link rel="icon" href="../images/favicon.ico" type="image/ico"/>
+<body><div class="spirit-nav">
+<a accesskey="p" href="../experimental/outcome.html"><img src="../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../experimental.html"><img src="../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../index.html"><img src="../images/home.png" alt="Home"></a><a accesskey="n" href="../experimental/worked-example/implicit-construction.html"><img src="../images/next.png" alt="Next"></a></div><div id="content">
+
+  <div class="titlepage"><div><div><h1 style="clear: both">Worked example: Custom domain (the short way)</h1></div></div></div>
+<p>The section after this one will take the long way through defining a custom domain
+which sometimes is necessary if you have particularly bespoke requirements.
+If however you just want to wrap a custom <code>enum</code> type of yours into its
+own custom code domain, the boilerplate can be automated away
+by filling in a few simple fields like this:</p>
+
+<div class="code-snippet"><div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">// My custom enum type
+</span><span class="c1"></span><span class="k">enum</span> <span class="k">class</span><span class="err"> </span><span class="nc">custom_failure</span>
+<span class="p">{</span>
+  <span class="n">not_found</span><span class="p">,</span>
+  <span class="n">bad_argument</span>
+<span class="p">};</span>
+
+<span class="c1">// Tell `status_code` to stamp out a custom code domain for this enum type
+</span><span class="c1"></span><span class="n">BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_BEGIN</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="n">quick_status_code_from_enum</span><span class="o">&lt;</span><span class="n">custom_failure</span><span class="o">&gt;</span> <span class="o">:</span> <span class="n">quick_status_code_from_enum_defaults</span><span class="o">&lt;</span><span class="n">custom_failure</span><span class="o">&gt;</span>
+<span class="p">{</span>
+  <span class="c1">// Text name of the enum
+</span><span class="c1"></span>  <span class="k">static</span> <span class="k">constexpr</span> <span class="k">const</span> <span class="k">auto</span> <span class="n">domain_name</span> <span class="o">=</span> <span class="s">&#34;My custom failure&#34;</span><span class="p">;</span>
+  <span class="c1">// Unique UUID for the enum. PLEASE use https://www.random.org/cgi-bin/randbyte?nbytes=16&amp;format=h
+</span><span class="c1"></span>  <span class="k">static</span> <span class="k">constexpr</span> <span class="k">const</span> <span class="k">auto</span> <span class="n">domain_uuid</span> <span class="o">=</span> <span class="s">&#34;{be201f65-3962-dd0e-1266-a72e63776a42}&#34;</span><span class="p">;</span>
+  <span class="c1">// Map of each enum value to its text string, and list of semantically equivalent errc&#39;s
+</span><span class="c1"></span>  <span class="k">static</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="o">&lt;</span><span class="n">mapping</span><span class="o">&gt;</span> <span class="o">&amp;</span><span class="n">value_mappings</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">initializer_list</span><span class="o">&lt;</span><span class="n">mapping</span><span class="o">&gt;</span> <span class="n">v</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1">// Format is: { enum value, &#34;string representation&#34;, { list of errc mappings ... } }
+</span><span class="c1"></span>    <span class="p">{</span><span class="n">custom_failure</span><span class="o">::</span><span class="n">not_found</span><span class="p">,</span> <span class="s">&#34;item not found&#34;</span><span class="p">,</span> <span class="p">{</span><span class="n">errc</span><span class="o">::</span><span class="n">no_such_file_or_directory</span><span class="p">}},</span>  <span class="c1">//
+</span><span class="c1"></span>    <span class="p">{</span><span class="n">custom_failure</span><span class="o">::</span><span class="n">bad_argument</span><span class="p">,</span> <span class="s">&#34;invoked wrong&#34;</span><span class="p">,</span> <span class="p">{</span><span class="n">errc</span><span class="o">::</span><span class="n">invalid_argument</span><span class="p">}},</span>         <span class="c1">//
+</span><span class="c1"></span>    <span class="p">};</span>
+    <span class="k">return</span> <span class="n">v</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">// Completely optional definition of mixin for the status code synthesised from `Enum`. It can be omitted.
+</span><span class="c1"></span>  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span><span class="err"> </span><span class="nc">Base</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nl">mixin</span> <span class="p">:</span> <span class="n">Base</span>
+  <span class="p">{</span>
+    <span class="k">using</span> <span class="n">Base</span><span class="o">::</span><span class="n">Base</span><span class="p">;</span>
+    <span class="k">constexpr</span> <span class="kt">int</span> <span class="nf">custom_method</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">42</span><span class="p">;</span> <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+<span class="n">BOOST_OUTCOME_SYSTEM_ERROR2_NAMESPACE_END</span>
+</code></pre></div><a href="https://github.com/boostorg/outcome/tree/master/doc/src/snippets/quick_status_code_from_enum.cpp#L37" class="code-snippet-url" target="_blank">View this code on Github</a></div>
+
+
+<p>Here we supply the bare minimum requirements for a status code domain:</p>
+
+<ol>
+<li>The name in text, so it can be printed.</li>
+<li>The unique UUID to identify when multiple copies of the domain are the same.
+PLEASE use <a href="https://www.random.org/cgi-bin/randbyte?nbytes=16&amp;format=h">https://www.random.org/cgi-bin/randbyte?nbytes=16&amp;format=h</a> to generate
+this, do not twiddle a few bits.</li>
+<li>For each enum value, its printable text and a sequence of <code>errc::</code> enumerations
+which you think it is semantically equivalent to i.e. its mapping onto <code>generic_code</code>
+which is how status code defines the common mapping between status codes. If you later compare the
+status code to one of those values (or to another status code which also provides
+a mapping), if the generic codes are equivalent then the comparison will return true.
+This means code like <code>if(sc == errc::no_such_file_or_directory) ...</code> would match
+all custom error codes which mean &lsquo;something was not found&rsquo;.</li>
+<li>OPTIONAL: if you would like the custom status code type generated by this
+to have additional member functions or additional payload, you can define a mixin
+here to inject either data or functions or both. If you omit this, nothing gets
+injected.</li>
+</ol>
+
+
+
+        </div><p><small>Last revised: July 16, 2024 at 21:33:35 &#43;0100</small></p>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../experimental/outcome.html"><img src="../images/prev.png" alt="Prev"></a>
+    <a accesskey="u" href="../experimental.html"><img src="../images/up.png" alt="Up"></a>
+    <a accesskey="h" href="../index.html"><img src="../images/home.png" alt="Home"></a><a accesskey="n" href="../experimental/worked-example/implicit-construction.html"><img src="../images/next.png" alt="Next"></a></div></body>
+</html>

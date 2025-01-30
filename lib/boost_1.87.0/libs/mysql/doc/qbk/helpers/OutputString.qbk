@@ -1,0 +1,22 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:boost__mysql__OutputString OutputString concept]
+
+An `OutputString` is a narrow character string type that can be used as output for
+operations that generate a string. Types like `std::string`, `std::basic_string<char, Traits, Allocator>`
+or `boost::static_string<N>` satisfy this concept.
+
+Formally, a type `T` satisfies `OutputString` if all of the following are true:
+
+* It satisfies the `std::movable` concept.
+* Has an `append(const char* data, std::size_t size)` member function that can
+  be used to add a character range to the string.
+* Has a `clear()` function that can be used to remove all characters from the string.
+
+
+[endsect]

@@ -1,0 +1,92 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="angle_base_units_reference"><title>Angle Base Units Reference</title><header id="doxygen.angle_base_units_reference.arcminute_8hpp" name="boost/units/base_units/angle/arcminute.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1arcminute__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>angle::arcminute_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1arcminute__base__unit_01_4_1ac4eb6070033e44a963ec7627ce5b4de8" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1arcminute__base__unit_01_4_1a55d850761b51cab4434c9f7a69d81248" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="angle">
+<typedef id="doxygen.angle_base_units_reference.namespaceboost_1_1units_1_1angle_1aa916ff518991211222f43f70c58c42b2" name="arcminute_base_unit"><type>scaled_base_unit&lt; <classname>degree_base_unit</classname>, scale&lt; 60, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.angle_base_units_reference.arcsecond_8hpp" name="boost/units/base_units/angle/arcsecond.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1arcsecond__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>angle::arcsecond_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1arcsecond__base__unit_01_4_1ae09363b4884ac70acbf483acd25d048b" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1arcsecond__base__unit_01_4_1a1e8cac02356a2b9a93610dcd0b9ad8b6" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="angle">
+<typedef id="doxygen.angle_base_units_reference.namespaceboost_1_1units_1_1angle_1a5679ca0e811bba8e8f75dd4c7a38f540" name="arcsecond_base_unit"><type>scaled_base_unit&lt; <classname>degree_base_unit</classname>, scale&lt; 3600, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.angle_base_units_reference.degree_8hpp" name="boost/units/base_units/angle/degree.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="angle">
+<struct id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1degree__base__unit" name="degree_base_unit"><inherit access="public">boost::units::base_unit&lt; degree_base_unit, boost::units::angle::radian_base_unit ::dimension_type, -101 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1degree__base__unit_1a314b8cfb5933839805e8ce21d72850e0" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1degree__base__unit_1ad885f0ab99bb0b12539487593033689c" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.angle_base_units_reference.gradian_8hpp" name="boost/units/base_units/angle/gradian.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="angle">
+<struct id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1gradian__base__unit" name="gradian_base_unit"><inherit access="public">boost::units::base_unit&lt; gradian_base_unit, boost::units::angle::radian_base_unit ::dimension_type, -102 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1gradian__base__unit_1a4f92ffeb9fea22209a44464775204644" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1gradian__base__unit_1af1f9d77157b7d30caa630ca1d6663b57" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.angle_base_units_reference.radian_8hpp" name="boost/units/base_units/angle/radian.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="angle">
+<struct id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1radian__base__unit" name="radian_base_unit"><inherit access="public">boost::units::base_unit&lt; radian_base_unit, plane_angle_dimension, -2 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1radian__base__unit_1aff229fa99eb2b6450849f964caaa5047" name="name" specifiers="static"><type>std::string</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1radian__base__unit_1ab8a27ed227e642f2e0c21dc45128792b" name="symbol" specifiers="static"><type>std::string</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.angle_base_units_reference.revolution_8hpp" name="boost/units/base_units/angle/revolution.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1revolution__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>angle::revolution_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1revolution__base__unit_01_4_1a3e18d6feff55c58b6277821cca11e64b" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01angle_1_1revolution__base__unit_01_4_1a55f5da444993918561cb26146a46d68c" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="angle">
+<typedef id="doxygen.angle_base_units_reference.namespaceboost_1_1units_1_1angle_1afbfa48a1a16022e1ffe1d93bf1d6b6f2" name="revolution_base_unit"><type>scaled_base_unit&lt; <classname>degree_base_unit</classname>, scale&lt; 360, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.angle_base_units_reference.steradian_8hpp" name="boost/units/base_units/angle/steradian.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="angle">
+<struct id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1steradian__base__unit" name="steradian_base_unit"><inherit access="public">boost::units::base_unit&lt; steradian_base_unit, solid_angle_dimension, -1 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1steradian__base__unit_1a5a0feacecf074b9d13c06dd6ea150850" name="name" specifiers="static"><type>std::string</type></method>
+<method id="doxygen.angle_base_units_reference.structboost_1_1units_1_1angle_1_1steradian__base__unit_1a0295c93c11627ad9817c72eb939892b3" name="symbol" specifiers="static"><type>std::string</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

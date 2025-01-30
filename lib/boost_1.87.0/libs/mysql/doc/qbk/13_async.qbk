@@ -1,0 +1,121 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:async Going async]
+[nochunk]
+
+Following __Asio__'s convention, all network operations have
+asynchronous versions with the same name prefixed by `async_`.
+The last parameter to async operations is a __CompletionToken__,
+which dictates how the asynchronous operation will be managed
+and the function's return type. These `async_` functions are
+called async initiating functions.
+
+Every async initiating function has an associated
+handler type, which dictates how the asynchronous operation
+communicates its result back to the caller. This handler
+type always has one of the two following forms:
+
+# `void(error_code)`. Used in operations that do
+   not have a proper result, e.g. [refmem connection async_connect].
+# `void(error_code, T)`. Used in operations that
+   have a result, e.g. [refmem connection async_prepare_statement]
+   (in this case, `T` is `statement`).
+   
+All asynchronous functions are overloaded
+to accept an optional [reflink diagnostics] output parameter. It is populated
+with any server-provided error information before calling the completion handler.
+
+[heading Single outstanding operation per connection]
+
+As mentioned in [link mysql.overview.async this section], only a single async
+operation per connection can be outstanding at a given point in time.
+If you need to perform queries in parallel, open more connections to the server.
+
+
+[heading Completion tokens]
+
+Any completion token you may use with Boost.Asio can also be used
+with this library. Here are some of the most common:
+
+* [*C++20 coroutines], using [asioreflink co_spawn co_spawn] and [asioreflink deferred deferred].
+  Passing `deferred` to an initiation function returns an object that can be `co_await`'ed.
+  You can combine deferred with [link mysql.async.with_diagnostics with_diagnostics] to get
+  better error reporting.   
+
+  See [*[link mysql.tutorial_async the async tutorial]] for details.
+
+* [*Stackful coroutines], which you can use to get coroutine-like functionality
+  in C++11. Access this functionality using [asioreflink spawn spawn] and [asioreflink yield_context yield_context],
+  possibly in conjunction with [link mysql.async.with_diagnostics with_diagnostics].
+  You need to link against __Context__ to use these coroutines.
+
+  See [*[link mysql.examples.coroutines_cpp11 this example]] for details.
+
+* [*Callbacks]. You can pass in a callable (function pointer or
+  function object) with the same signature as the handler
+  signature specified for the operation. The callable
+  will be called when the operation completes. The initiating
+  function will return `void`.
+  
+  [link mysql.examples.callbacks This example]
+  demonstrates how to use async functions with callbacks.
+
+* [*Futures]. In this case, you pass in the constant
+  [asioreflink use_future use_future] as completion token.
+  The initiating function will return one of the following:
+    * `std::future<void>`, if the completion handler has the
+      form given by 1).
+    * `std::future<T>`, if the completion handler has the
+      form given by 2).
+  
+  You can wait for the future by calling `future::get`.
+  If an error occurs, `future::get` will throw an exception.
+  Note that the exception is thrown by Asio itself, and will always
+  be of type `boost::system::system_error`, even if diagnostics were
+  available.
+
+* Any other type that satisfies the __CompletionToken__ type requirements.
+  We have listed the most common ones here, but you can craft your own
+  and use it with this library's async operations.
+
+
+[heading:with_diagnostics The with_diagnostics completion token]
+
+[reflink with_diagnostics] is a completion token adapter that you can use
+with async operations when using exceptions. `with_diagnostics` makes
+your operations throw [reflink error_with_diagnostics], like sync functions do.
+For example:
+
+[async_with_diagnostics_cpp20]
+[async_with_diagnostics_cpp11]
+
+`with_diagnostics` only makes sense when using exceptions. When using error codes,
+you can keep using `asio::as_tuple` and `asio::redirect_error` normally.
+
+
+[heading Cancellations and timeouts]
+
+All async operations in this library support
+[@boost:/doc/html/boost_asio/overview/core/cancellation.html per-operation cancellation].
+All operations support only the `terminal` [asioreflink cancellation_type cancellation_type].
+This means that, if an async operation is cancelled, the [reflink connection] object
+is left in an unspecified state, after which you should close or destroy the connection.
+In particular, it is [*not] safe to retry the cancelled operation.
+
+Supporting cancellation allows you to implement timeouts without explicit
+support from the library. [link mysql.tutorial_error_handling This tutorial]
+covers the subject in depth.
+
+Note that cancellation happens at the Boost.Asio level, and not at the
+MySQL operation level. This means that, when cancelling an operation, the
+current network read or write will be cancelled. The operation may have
+already reached the server and be executed. As stated above, after an
+operation is cancelled, the connection is left in an unspecified state, and
+you should close or destroy it.
+
+[endsect]

@@ -1,0 +1,90 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Customising Immediate Completion</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../composition.html" title="Composition and Completion Tokens">
+<link rel="prev" href="type_erasure.html" title="Type Erasure, Separate Compilation and Virtual Functions">
+<link rel="next" href="../networking.html" title="Networking">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="type_erasure.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../networking.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.composition.immediate_completion"></a><a class="link" href="immediate_completion.html" title="Customising Immediate Completion">Customising
+        Immediate Completion</a>
+</h4></div></div></div>
+<p>
+          The <code class="computeroutput"><span class="identifier">associated_immediate_executor</span></code>
+          associator trait, along with the <code class="computeroutput"><span class="identifier">bind_immediate_executor</span></code>
+          function, provide the ability to customise the execution of a completion
+          handler when an asynchronous operation completes immediately.
+        </p>
+<p>
+          When a supported operation completes immediately (that is, within the initiating
+          function) the associated immmediate executor is obtained, and the completion
+          handler is delivered through that executor as if by using <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">dispatch</span></code> on that executor. By default,
+          the immediate executor delivers the completion handler as if using <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">post</span></code> via the operation's I/O executor.
+        </p>
+<p>
+          For example, to allow a recursive call to the completion handler of an
+          <code class="computeroutput"><span class="identifier">async_read_some</span></code> operation,
+          we may specify that immediate completion is delivered via a <code class="computeroutput"><span class="identifier">system_executor</span></code>:
+        </p>
+<pre class="programlisting"><span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+    <span class="identifier">bind_immediate_executor</span><span class="special">(</span>
+      <span class="identifier">system_executor</span><span class="special">(),</span>
+      <span class="special">[](</span><span class="identifier">error_code</span> <span class="identifier">e</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="identifier">n</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">}</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+</pre>
+<p>
+          Immediate execution is currently supported for asynchronous operations
+          on reactor-based sockets and descriptors, and for asynchronous operations
+          on channels.
+        </p>
+<p>
+          <span class="bold"><strong>Note:</strong></span> When enabling the immediate execution
+          of completion handlers, care must be taken to ensure that unbounded recursion
+          and stack overflow do not occur. Furthermore, use of immediate completion
+          may impact the fairness of completion handler scheduling, with a potential
+          for starvation for other pending work.
+        </p>
+<h6>
+<a name="boost_asio.overview.composition.immediate_completion.h0"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.immediate_completion.see_also"></a></span><a class="link" href="immediate_completion.html#boost_asio.overview.composition.immediate_completion.see_also">See
+          Also</a>
+        </h6>
+<p>
+          <a class="link" href="../../reference/associated_immediate_executor.html" title="associated_immediate_executor">associated_immediate_executor</a>,
+          <a class="link" href="../../reference/bind_immediate_executor.html" title="bind_immediate_executor">bind_immediate_executor</a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="type_erasure.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../networking.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

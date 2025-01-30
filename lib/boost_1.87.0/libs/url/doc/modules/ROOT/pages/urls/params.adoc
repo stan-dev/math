@@ -1,0 +1,245 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Params
+
+While the query is specified as a plain string, it is usually interpreted as a set of key-value pairs commonly referred to as
+https://en.wikipedia.org/wiki/Query_string[__URL Parameters__,window=blank_], although here we use the term __query parameters__ or __params__
+for short.
+There is no official, standard specification of the query parameters format, but the W3C recommendations and HTML 5 have this to say:
+
+* The query string is composed of a series of key-value pairs.
+
+* Within each pair, the field name and value are separated by an equals sign, "=".
+
+* The series of pairs is separated by the ampersand, "&".
+
+* Most web frameworks allow multiple values to have the same key.
+
+* Key comparisons are usually case-sensitive, but the receiving authority is ultimately responsible for deciding this.
+
+This URL has two query parameters, cpp:first[] and cpp:last[] whose values are "John" and "Doe" respectively:
+
+[source]
+----
+https://www.example.com?first=John&last=Doe
+----
+
+[cols="2,3"]
+|===
+// Headers
+|s| `params( s )`
+
+// Row 1, Column 1
+|`"?first=John&last=Doe"`
+// Row 1, Column 2
+|`{ { "first", "John" }, { "last", "Doe" } }`
+|===
+
+Like the path, the library permits access to the params as using these separate, bidirectional view types which reference the underlying URL:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Type|Accessor|Description
+
+// Row 1, Column 1
+|cpp:params_view[]
+// Row 1, Column 2
+|cpp:url_view_base::params[params]
+// Row 1, Column 3
+|A read-only range of decoded params.
+
+// Row 2, Column 1
+|cpp:params_ref[]
+// Row 2, Column 2
+|cpp:url_view_base::params[params]
+// Row 2, Column 3
+|A modifiable range of decoded params.
+
+// Row 3, Column 1
+|cpp:params_encoded_view[]
+// Row 3, Column 2
+|cpp:url_view_base::encoded_params[encoded_params]
+// Row 3, Column 3
+|A read-only range of params.
+
+// Row 4, Column 1
+|cpp:params_encoded_ref[]
+// Row 4, Column 2
+|cpp:url_view_base::encoded_params[encoded_params]
+// Row 4, Column 3
+|A modifiable range of params.
+
+|===
+
+A param always has a key, even if it is the empty string.
+The value is optional; an empty string is distinct from no value.
+The lack of an `=` character in the query param is interpreted as no value, while an `=` character with no value is interpreted as an empty string.
+
+[cols="2,3"]
+|===
+// Headers
+|s| `params( s )`
+
+|`"?name=John"`
+|`{ { "name", "John" } }`
+
+|`"?=John"`
+|`{ { "", "John" } }`
+
+|`"?name="`
+|`{ { "name", "" } }`
+
+|`"?name"`
+|`{ { "name", no_value } }`
+
+|`"?"`
+|`{ { "", no_value } }`
+
+|`""`
+|`{}`
+
+|===
+
+To represent individual params the library uses these types, distinguished by their ownership model and whether percent-escapes are possible:
+
+[cols="1,1,3"]
+|===
+// Headers
+|Type|String Type|Description
+
+// Row 1, Column 1
+|cpp:param[]
+// Row 1, Column 2
+|cpp:std::string[]
+// Row 1, Column 3
+|A key-value pair with ownership of the strings.
+This can be used to hold decoded strings, or to
+allow the caller to take ownership of a param
+by making a copy.
+
+// Row 2, Column 1
+|cpp:param_view[]
+// Row 2, Column 2
+|cpp:string_view[]
+// Row 2, Column 3
+|A key-value pair without percent-escapes,
+referencing externally managed character buffers.
+
+// Row 3, Column 1
+|cpp:param_pct_view[]
+// Row 3, Column 2
+|cpp:pct_string_view[]
+// Row 3, Column 3
+|A key-value pair which may contain percent-escapes,
+referencing externally managed character buffers.
+
+|===
+
+Param types can be constructed from initializer lists, allowing for convenient notation.
+To represent a missing value, the constant
+cpp:no_value[]
+or cpp:nullptr[] may be used.
+This table shows some examples of initializer lists used to construct a param type, and the resulting data members:
+
+[cols="2,1,1,1"]
+|===
+// Headers
+|Statement|cpp:qp.key[]|cpp:qp.value[]|cpp:qp.has_value[]
+
+// Row 1, Column 1
+|`param qp = { "first", "John" };`
+// Row 1, Column 2
+|`"First"`
+// Row 1, Column 3
+|`"John"`
+// Row 1, Column 4
+|cpp:true[]
+
+// Row 2, Column 1
+|`param qp = { "first", "" };`
+// Row 2, Column 2
+|`"First"`
+// Row 2, Column 3
+|`""`
+// Row 2, Column 4
+|cpp:true[]
+
+// Row 3, Column 1
+|`param qp = { "first", no_value };`
+// Row 3, Column 2
+|`"First"`
+// Row 3, Column 3
+|`""`
+// Row 3, Column 4
+|cpp:false[]
+
+// Row 4, Column 1
+|`param qp = { "", "Doe" };`
+// Row 4, Column 2
+|`""`
+// Row 4, Column 3
+|`"Doe"`
+// Row 4, Column 4
+|cpp:true[]
+
+|===
+
+To understand the relationship between the query and the resulting range of params, first we define this function cpp:parms[] which returns a list of params corresponding to the elements in a container of params:
+
+[source,cpp]
+----
+include::example$unit/doc_3_urls.cpp[tag=code_container_5_1,indent=0]
+----
+
+In the table below we show the result of invoking cpp:parms[] with different queries.
+This demonstrates how the syntax of the query maps to the parameter structure:
+
+[cols="2,3"]
+|===
+// Headers
+|s| `params( s )`
+
+// Row 1, Column 1
+|`"?first=John&last=Doe"`
+// Row 1, Column 2
+|`{ { "first", "John" }, { "last", "Doe" } }`
+
+// Row 2, Column 1
+|`"?id=42&unsorted"`
+// Row 2, Column 2
+|`{ { "id", "42" }, { "last", no_value } }`
+
+// Row 3, Column 1
+|`"?col=cust&row="`
+// Row 3, Column 2
+|`{ { "col", "cust" }, { "row", "" } }`
+
+// Row 4, Column 1
+|`"?justify=left&"`
+// Row 4, Column 2
+|`{ { "justify", "left" }, { "", no_value } }`
+
+// Row 5, Column 1
+|`"?"`
+// Row 5, Column 2
+|`{ { "", no_value } }`
+
+// Row 6, Column 1
+|`""`
+// Row 6, Column 2
+|`{ }`
+
+|===
+
+It may be surprising that an empty query string ("?") produces a sequence with one empty param.
+This is by design, otherwise the sequence would not be distinguishable from the case where there is no query string (last two rows of the table above).
+
+For complete details on containers used to represent query strings as params please view the reference.

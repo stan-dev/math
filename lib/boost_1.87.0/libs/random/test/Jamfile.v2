@@ -1,0 +1,166 @@
+# Copyright 2003 Jens Maurer
+# Copyright 2009-2011 Steven Watanabe
+# Distributed under the Boost Software License, Version 1.0. (See accompany-
+# ing file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# Boost Random Library test Jamfile
+
+require-b2 5.0.1 ;
+import-search /boost/config/checks ;
+import config : requires ;
+
+# bring in rules for testing
+import testing ;
+
+project /boost/random/test : requirements
+
+    <library>/boost/random//boost_random
+
+    <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+;
+
+run test_const_mod.cpp /boost/test//boost_unit_test_framework ;
+run test_generate_canonical.cpp /boost/test//boost_unit_test_framework ;
+run test_random_number_generator.cpp /boost/test//boost_unit_test_framework ;
+run ../example/random_demo.cpp ;
+run test_random_device.cpp /boost/random//boost_random /boost/test//included : : : <link>static : test_random_device ;
+run test_random_device.cpp /boost/random//boost_random /boost/test//included : : : <link>shared : test_random_device_dll ;
+
+run test_minstd_rand0.cpp /boost/test//boost_unit_test_framework ;
+run test_minstd_rand.cpp /boost/test//boost_unit_test_framework ;
+run test_rand48.cpp /boost/test//boost_unit_test_framework ;
+run test_mt11213b.cpp /boost/test//boost_unit_test_framework ;
+run test_mt19937.cpp /boost/test//boost_unit_test_framework ;
+run test_mt19937_64.cpp /boost/test//boost_unit_test_framework ;
+run test_mixmax.cpp /boost/test//boost_unit_test_framework ;
+run test_ecuyer1988.cpp /boost/test//boost_unit_test_framework ;
+run test_hellekalek1995.cpp /boost/test//boost_unit_test_framework ;
+run test_linear_feedback_shift.cpp /boost/test//boost_unit_test_framework ;
+run test_taus88.cpp /boost/test//boost_unit_test_framework ;
+run test_kreutzer1986.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux3.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux4.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux3_01.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux4_01.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux64_4.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux64_3.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux64_3_01.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux64_4_01.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux24_base.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux24.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux48_base.cpp /boost/test//boost_unit_test_framework ;
+run test_ranlux48.cpp /boost/test//boost_unit_test_framework ;
+run test_knuth_b.cpp /boost/test//boost_unit_test_framework ;
+run test_independent_bits31.cpp /boost/test//boost_unit_test_framework ;
+run test_independent_bits32.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci607.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci1279.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci2281.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci3217.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci4423.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci9689.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci19937.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci23209.cpp /boost/test//boost_unit_test_framework ;
+run test_lagged_fibonacci44497.cpp /boost/test//boost_unit_test_framework ;
+run test_zero_seed.cpp /boost/test//boost_unit_test_framework ;
+run test_splitmix64.cpp /boost/test//boost_unit_test_framework ;
+
+run niederreiter_base2_validate.cpp /boost/test//boost_unit_test_framework ;
+run sobol_validate.cpp /boost/test//boost_unit_test_framework ;
+run faure_validate.cpp /boost/test//boost_unit_test_framework ;
+
+# Disable by default.  These don't add much and the larger
+# ones can overflow the stack.
+explicit test_lagged_fibonacci1279 test_lagged_fibonacci2281
+    test_lagged_fibonacci2281 test_lagged_fibonacci3217
+    test_lagged_fibonacci4423 test_lagged_fibonacci9689
+    test_lagged_fibonacci19937 test_lagged_fibonacci23209
+    test_lagged_fibonacci44497 ;
+
+alias math_test :
+    /boost/assign//boost_assign
+    /boost/exception//boost_exception
+    /boost/lexical_cast//boost_lexical_cast
+    /boost/math//boost_math_tr1
+    /boost/numeric_conversion//boost_numeric_conversion
+    ;
+
+run test_seed_seq.cpp /boost/assign//boost_assign /boost/test//boost_unit_test_framework ;
+
+run test_binomial.cpp math_test ;
+run test_binomial_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_poisson.cpp math_test ;
+run test_poisson_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_discrete.cpp math_test ;
+run test_discrete_distribution.cpp /boost/assign//boost_assign /boost/test//boost_unit_test_framework ;
+run test_gamma.cpp math_test ;
+run test_gamma_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_weibull.cpp math_test ;
+run test_weibull_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_extreme_value.cpp math_test ;
+run test_extreme_value_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_negative_binomial.cpp math_test ;
+run test_negative_binomial_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_chi_squared.cpp math_test ;
+run test_chi_squared_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_fisher_f.cpp math_test ;
+run test_fisher_f_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_student_t.cpp math_test ;
+run test_student_t_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_normal.cpp math_test ;
+run test_normal_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_piecewise_constant.cpp math_test ;
+run test_piecewise_constant_distribution.cpp /boost/assign//boost_assign /boost/test//boost_unit_test_framework ;
+run test_piecewise_linear.cpp math_test ;
+run test_piecewise_linear_distribution.cpp /boost/assign//boost_assign /boost/test//boost_unit_test_framework ;
+run test_exponential.cpp math_test ;
+run test_exponential_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_bernoulli.cpp math_test ;
+run test_bernoulli_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_cauchy.cpp math_test ;
+run test_cauchy_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_geometric.cpp math_test ;
+run test_geometric_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_lognormal.cpp math_test ;
+run test_lognormal_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_triangle.cpp math_test ;
+run test_triangle_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_uniform_int.cpp math_test ;
+run test_uniform_int_distribution.cpp math_test /boost/test//boost_unit_test_framework ;
+run test_uniform_real.cpp math_test ;
+run test_uniform_real_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_uniform_on_sphere.cpp math_test ;
+run test_uniform_on_sphere_distribution.cpp math_test /boost/test//boost_unit_test_framework ;
+run test_uniform_smallint.cpp math_test ;
+run test_uniform_smallint_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_old_uniform_real.cpp math_test ;
+run test_old_uniform_real_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_old_uniform_int.cpp math_test ;
+run test_old_uniform_int_distribution.cpp math_test /boost/test//boost_unit_test_framework ;
+run test_beta.cpp math_test ;
+run test_beta_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_laplace.cpp math_test ;
+run test_laplace_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_non_central_chi_squared.cpp math_test ;
+run test_non_central_chi_squared_distribution.cpp /boost/test//boost_unit_test_framework ;
+run test_hyperexponential.cpp math_test ;
+run test_hyperexponential_distribution.cpp math_test /boost/test//boost_unit_test_framework ;
+
+# run nondet_random_speed.cpp ;
+# run random_device.cpp ;
+# run random_speed.cpp ;
+# run statistic_tests.cpp ;
+
+exe statistic_tests.exe : statistic_tests.cpp ;
+explicit statistic_tests.exe ;
+
+install statistic_tests : statistic_tests.exe : <install-type>EXE <location>. ;
+explicit statistic_tests ;
+
+#
+# Multiprecision tests:
+#
+run multiprecision_int_test.cpp /boost/test//boost_unit_test_framework /boost/multiprecision//boost_multiprecision : : : [ requires cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction cxx14_variable_templates cxx14_constexpr ] ;
+# This one runs too slow in debug mode, we really need inline expansions turned on amongst other things:
+run multiprecision_float_test.cpp /boost/test//boost_unit_test_framework /boost/multiprecision//boost_multiprecision : : : [ requires cxx14_decltype_auto cxx14_generic_lambdas cxx14_return_type_deduction cxx14_variable_templates cxx14_constexpr ] release ;

@@ -1,0 +1,104 @@
+# Copyright 2017 Peter Dimov
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or http://www.boost.org/LICENSE_1_0.txt)
+
+# WARNING: This project *only* works in the context of a full Boost structure
+# with an up to date super-project.
+
+import modules ;
+import sequence ;
+import set ;
+import project ;
+import virtual-target ;
+import testing ;
+import ac ;
+
+project : requirements -<link>static ; # from tools/Jamfile
+
+if "--debug-check-build" in [ modules.peek : ARGV ]
+{
+    .info-enabled = 1 ;
+}
+
+local rule .info ( messages * )
+{
+    if $(.info-enabled)
+    {
+        ECHO "info:" $(messages) ;
+    }
+}
+
+path-constant boost-root : ../../.. ;
+
+local all-libraries = [ MATCH .*libs/(.*)/build/.* :
+    [ glob $(boost-root)/libs/*/build/Jamfile.v2 ]
+    [ glob $(boost-root)/libs/*/build/Jamfile ] ] ;
+
+all-libraries = [ sequence.unique $(all-libraries) ] ;
+
+local all-libraries-modular
+    = [ MATCH .*libs/(.*)/build.jam : [ glob $(boost-root)/libs/*/build.jam ] ] ;
+
+# The function_types library has a Jamfile, but it's used for maintenance
+# purposes, there's no library to build and install.
+
+all-libraries = [ set.difference $(all-libraries) : function_types headers ] ;
+
+# ECHO "all-libraries:" $(all-libraries) ;
+# ECHO "all-libraries-modular:" $(all-libraries-modular) ;
+
+rule alias-sources-impl ( project name : property-set : sources * )
+{
+    local target-graph ;
+
+    for local s in $(sources)
+    {
+        target-graph += [ virtual-target.traverse $(s) : include-sources : include-roots ] ;
+    }
+
+    # Remove targets created by the main target
+
+    local result ;
+
+    for local t in $(target-graph)
+    {
+        if [ $(t).root ] && ! ( $(t) in $(sources) ) && ( [ $(t).type ] = STATIC_LIB || [ $(t).type ] = SHARED_LIB )
+        {
+            result += $(t) ;
+        }
+    }
+
+    .info "$(name):" ;
+
+    for local t in $(result)
+    {
+        .info "  " [ $(t).name ] ;
+    }
+
+    return $(result) ;
+}
+
+for local lib in $(all-libraries)
+{
+    if $(lib) in $(all-libraries-modular)
+    {
+        generate library-$(lib) : /boost/$(lib)//stage : <generating-rule>@alias-sources-impl ;
+    }
+    else
+    {
+        generate library-$(lib) : /boost/$(lib)/build//stage : <generating-rule>@alias-sources-impl ;
+    }
+}
+
+for local lib in $(all-libraries)
+{
+    local python-dep ;
+
+    if $(lib) in python mpi graph_parallel
+    {
+        python-dep = /python//python ;
+    }
+
+    run main.cpp : : : [ ac.check-library library-$(lib) : <library>library-$(lib) <library>$(python-dep) : <build>no ] : $(lib) ;
+}

@@ -1,0 +1,37 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/asio//boost_asio
+    /boost/assert//boost_assert
+    /boost/charconv//boost_charconv
+    /boost/compat//boost_compat
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/describe//boost_describe
+    /boost/endian//boost_endian
+    /boost/intrusive//boost_intrusive
+    /boost/mp11//boost_mp11
+    /boost/optional//boost_optional
+    /boost/pfr//boost_pfr
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/variant2//boost_variant2 ;
+
+project /boost/mysql
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_mysql : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_mysql example test ]
+    ;
+
+call-if : boost-library mysql
+    ;
+

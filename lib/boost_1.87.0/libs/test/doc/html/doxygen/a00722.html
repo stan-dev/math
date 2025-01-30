@@ -1,0 +1,596 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Header &lt;boost/test/framework.hpp&gt;</title>
+<link rel="stylesheet" href="../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Boost.Test">
+<link rel="up" href="../boost_test/reference.html" title="Reference">
+<link rel="prev" href="a00853_1ga23bcddcacf116627347215318b732bce.html" title="Macro BOOST_TEST_SYS_ASSERT">
+<link rel="next" href="a00932.html" title="Struct master_test_suite_name_setter">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00853_1ga23bcddcacf116627347215318b732bce.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_test/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a00932.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.a00722"></a>Header &lt;<a href="../../../../../boost/test/framework.hpp" target="_top">boost/test/framework.hpp</a>&gt;</h4></div></div></div>
+<p>Defines Unit Test Framework mono-state interfaces. The framework interfaces are based on Monostate design pattern. </p>
+<pre class="synopsis">
+
+<a class="link" href="a00722_1a74365e8617b4256a9bcba9582a033969.html" title="Macro BOOST_TEST_SETUP_ASSERT">BOOST_TEST_SETUP_ASSERT</a>(cond, msg)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">unit_test</span> <span class="special">{</span>
+    <span class="keyword">typedef</span> <a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">*</span><span class="special">(</span><span class="special">*</span> <a class="link" href="a00855_1a72abef43f4c112974a41417cc53f96e4.html" title="Type definition init_unit_test_func"><span class="identifier">init_unit_test_func</span></a><span class="special">;</span>
+    <span class="keyword">namespace</span> <span class="identifier">framework</span> <span class="special">{</span>
+      <span class="keyword">struct</span> <a class="link" href="a00928.html" title="Struct context_generator">context_generator</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="a00936.html" title="Struct internal_error">internal_error</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="a00944.html" title="Struct nothing_to_test">nothing_to_test</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="a00940.html" title="Struct setup_error">setup_error</a><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id30-bb">Unit Test Framework initialization and shutdown</a></span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a9f012dd3ef928181dc1c4d896f4fe3a5"><span class="identifier">init</span></a><span class="special">(</span><span class="identifier">init_unit_test_func</span><span class="special">,</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">char</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a6a95564b913ee2b951073568f222762f"><span class="identifier">finalize_setup_phase</span></a><span class="special">(</span><span class="identifier">test_unit_id</span> <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// This function returns true when testing is in progress (setup is finished). </span>
+      <span class="keyword">bool</span> <a name="doxygen.a00860_1a3fe4ed335905de4d22b8be381129e624"></a><span class="identifier">test_in_progress</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a7be340e3194af95dd45edbfe06453641"><span class="identifier">shutdown</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id31-bb">Test unit registration</a></span>
+      <a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">&amp;</span> <a class="link" href="a00722.html#doxygen.a00860_1ac470bd1ee2c590c1a7e941ce7973241f"><span class="identifier">current_auto_test_suite</span></a><span class="special">(</span><a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a8099e5801cb76e83e44efe9e40b1aad6"><span class="identifier">register_test_unit</span></a><span class="special">(</span><a class="link" href="a01028.html" title="Class test_case">test_case</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a5e1e15a90c013ca9693c79140bd69fc7"><span class="identifier">register_test_unit</span></a><span class="special">(</span><a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1ac633e89d0f65443476393b1a3d1c22ad"><span class="identifier">deregister_test_unit</span></a><span class="special">(</span><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// After this call the framework can be reinitialized to perform a second test run during the same program lifetime. </span>
+      <span class="keyword">void</span> <a name="doxygen.a00860_1af7c66227261f3259303e1d7701058cbe"></a><span class="identifier">clear</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id32-bb">Test observer registration</a></span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a44433831b2b7e97ac2504f530d6842db"><span class="identifier">register_observer</span></a><span class="special">(</span><a class="link" href="a00956.html" title="Class test_observer">test_observer</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a752ef63301f37b7c8b9827a1b5808ffd"><span class="identifier">deregister_observer</span></a><span class="special">(</span><a class="link" href="a00956.html" title="Class test_observer">test_observer</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id33-bb">Global fixtures registration</a></span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a68407bd1064a58c44a4461f8345f40b4"><span class="identifier">register_global_fixture</span></a><span class="special">(</span><span class="identifier">global_fixture</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1a738e803f4c14da3f12aed5705bad9313"><span class="identifier">deregister_global_fixture</span></a><span class="special">(</span><span class="identifier">global_fixture</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id34-bb">Assertion/uncaught exception context support</a></span>
+      <span class="keyword">int</span> <a class="link" href="a00722.html#doxygen.a00860_1a4fe702b19ba9fc15dca2836d45a2bc77"><span class="identifier">add_context</span></a><span class="special">(</span><span class="identifier">lazy_ostream</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">bool</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1abb8d36ba3a26686d62fd1effc351cb8e"><span class="identifier">clear_context</span></a><span class="special">(</span><span class="keyword">int</span> <span class="special">=</span> <span class="special">-</span><span class="number">1</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Produces an instance of small "delegate" object, which facilitates access to collected context. </span>
+      <a class="link" href="a00928.html" title="Struct context_generator">context_generator</a> <a name="doxygen.a00860_1ad0398459bb0e077c0720cb0f96afa69c"></a><span class="identifier">get_context</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id35-bb">Access to registered test units.</a></span>
+      <a class="link" href="a01036.html" title="Class master_test_suite_t">master_test_suite_t</a> <span class="special">&amp;</span> <a class="link" href="a00722.html#doxygen.a00860_1a3f1610f79cd70af1f0792b31eea92a67"><span class="identifier">master_test_suite</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="a00722.html#doxygen.a00860_1af4d92cd4e358fd7ccefcfdfaa6d4d5ba"><span class="identifier">current_test_unit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <a class="link" href="a01028.html" title="Class test_case">test_case</a> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="a00722.html#doxygen.a00860_1a8ec19b9f8d081a73b6295104be12bf32"><span class="identifier">current_test_case</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">test_unit_id</span> <a class="link" href="a00722.html#doxygen.a00860_1aff36c34e89c440125121ef47ee3f1e0d"><span class="identifier">current_test_case_id</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="special">&amp;</span> <a class="link" href="a00722.html#doxygen.a00860_1abdacf0293bb940f31443d8c42f031532"><span class="identifier">get</span></a><span class="special">(</span><span class="identifier">test_unit_id</span><span class="special">,</span> <span class="identifier">test_unit_type</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> UnitType<span class="special">&gt;</span> <span class="identifier">UnitType</span> <span class="special">&amp;</span> <a class="link" href="a00722.html#doxygen.a00860_1a951fec26e4e6b5189e9fd8e22cfb7b69"><span class="identifier">get</span></a><span class="special">(</span><span class="identifier">test_unit_id</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id36-bb">Test initiation interface</a></span>
+      <span class="keyword">void</span> <a class="link" href="a00722.html#doxygen.a00860_1abbae11c3f5ce001a9471ff580aa8feb4"><span class="identifier">run</span></a><span class="special">(</span><span class="identifier">test_unit_id</span> <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Initiates test execution. Same as other overload. </span>
+      <span class="keyword">void</span> <a name="doxygen.a00860_1a5b5909e990182f39c34a6a825c6cd03d"></a><span class="identifier">run</span><span class="special">(</span><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="keyword">const</span> <span class="special">*</span> tu<span class="special">,</span> <span class="keyword">bool</span> continue_test <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// <a class="link" href="a00722.html#id37-bb">Test events dispatchers</a></span>
+      <span class="keyword">void</span> <a name="doxygen.a00860_1aceb25223d74d2c706f92fd3aaaaf0104"></a><span class="identifier">assertion_result</span><span class="special">(</span><span class="identifier">unit_test</span><span class="special">::</span><span class="identifier">assertion_result</span> ar<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Reports uncaught exception to all test observers. </span>
+      <span class="keyword">void</span> <a name="doxygen.a00860_1a22bb04be670db141c3435f4470672577"></a><span class="identifier">exception_caught</span><span class="special">(</span><a class="link" href="a00904.html" title="Class execution_exception">execution_exception</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Reports aborted test unit to all test observers. </span>
+      <span class="keyword">void</span> <a name="doxygen.a00860_1a6e9476304b65427b96a61c601c1df203"></a><span class="identifier">test_unit_aborted</span><span class="special">(</span><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Reports aborted test module to all test observers. </span>
+      <span class="keyword">void</span> <a name="doxygen.a00860_1a00cdd004631fa4bfa26d8e0834096cc1"></a><span class="identifier">test_aborted</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">namespace</span> <span class="identifier">impl</span> <span class="special">{</span>
+        <span class="keyword">struct</span> <a class="link" href="a00932.html" title="Struct master_test_suite_name_setter">master_test_suite_name_setter</a><span class="special">;</span>
+        <span class="keyword">void</span> <a name="doxygen.a00861_1a2023f48d1003c4a1cd00d2db84edbbf3"></a><span class="identifier">setup_for_execution</span><span class="special">(</span><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">void</span> <a name="doxygen.a00861_1aa0898391d8fa4f6ce959f23571313181"></a><span class="identifier">setup_loggers</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+<div class="refsect2">
+<a name="id52392"></a><h3>
+<a name="id30-bb"></a><code class="computeroutput"></code> Unit Test Framework initialization and shutdown</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a9f012dd3ef928181dc1c4d896f4fe3a5"></a><span class="identifier">init</span><span class="special">(</span><span class="identifier">init_unit_test_func</span> init_func<span class="special">,</span> <span class="keyword">int</span> argc<span class="special">,</span> <span class="keyword">char</span> <span class="special">*</span> argv<span class="special">)</span><span class="special">;</span></pre>This function performs initialization of the framework mono-state. <p>It needs to be called every time before the test is started. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">init_func</code></span></p></td>
+<td><p>test module initialization routine </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">argc</code></span></p></td>
+<td><p>command line arguments collection </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">argv</code></span></p></td>
+<td><p>command line arguments collection </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a6a95564b913ee2b951073568f222762f"></a><span class="identifier">finalize_setup_phase</span><span class="special">(</span><span class="identifier">test_unit_id</span> tu <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">)</span><span class="special">;</span></pre>This function applies all the decorators and figures out default run status. This argument facilitates an ability of the test cases to prepare some other test units (primarily used internally for self testing). <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">tu</code></span></p></td>
+<td><p>Optional id of the test unit representing root of test tree. If absent, master test suite is used </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a7be340e3194af95dd45edbfe06453641"></a><span class="identifier">shutdown</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>This function shuts down the framework and clears up its mono-state. <p>It needs to be at the very end of test module execution </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id52466"></a><h3>
+<a name="id31-bb"></a><code class="computeroutput"></code> Test unit registration</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">&amp;</span> 
+<a name="doxygen.a00860_1ac470bd1ee2c590c1a7e941ce7973241f"></a><span class="identifier">current_auto_test_suite</span><span class="special">(</span><a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">*</span> ts <span class="special">=</span> <span class="number">0</span><span class="special">,</span> <span class="keyword">bool</span> push_or_pop <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span></pre>Provides both read and write access to current "leaf" auto test suite during the test unit registration phase. <p>During auto-registration phase the framework maintain a FIFO queue of test units being registered. New test units become children of the current "leaf" test suite and if this is test suite it is pushed back into queue and becomes a new leaf. When test suite registration is completed, a test suite is popped from the back of the queue. Only automatically registered test suites should be added to this queue. Master test suite is always a zero element in this queue, so if no other test suites are registered all test cases are added to master test suite. This function facilitates all three possible actions:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>if no argument are provided it returns the current queue leaf test suite</p></li>
+<li class="listitem"><p>if test suite is provided and no second argument are set, test suite is added to the queue</p></li>
+<li class="listitem"><p>if no test suite are provided and last argument is false, the semantic of this function is similar to queue pop: last element is popped from the queue 
+
+</p></li>
+</ul></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ts</code></span></p></td>
+<td><p>test suite to push back to the queue </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">push_or_pop</code></span></p></td>
+<td><p>should we push ts to the queue or pop leaf test suite instead </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a8099e5801cb76e83e44efe9e40b1aad6"></a><span class="identifier">register_test_unit</span><span class="special">(</span><a class="link" href="a01028.html" title="Class test_case">test_case</a> <span class="special">*</span> tc<span class="special">)</span><span class="special">;</span></pre>This function add new test case into the global collection of test units the framework aware of. <p>This function also assignes unique test unit id for every test case. Later on one can use this id to locate the test case if necessary. This is the way for the framework to maintain weak references between test units. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">tc</code></span></p></td>
+<td><p>test case to register </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a5e1e15a90c013ca9693c79140bd69fc7"></a><span class="identifier">register_test_unit</span><span class="special">(</span><a class="link" href="a01032.html" title="Class test_suite">test_suite</a> <span class="special">*</span> ts<span class="special">)</span><span class="special">;</span></pre>This function add new test suite into the global collection of test units the framework aware of. <p>This function also assignes unique test unit id for every test suite. Later on one can use this id to locate the test case if necessary. This is the way for the framework to maintain weak references between test units. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ts</code></span></p></td>
+<td><p>test suite to register </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1ac633e89d0f65443476393b1a3d1c22ad"></a><span class="identifier">deregister_test_unit</span><span class="special">(</span><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="special">*</span> tu<span class="special">)</span><span class="special">;</span></pre>This function removes the test unit from the collection of known test units and destroys the test unit object. <p>This function also assigns unique test unit id for every test case. Later on one can use this id to located the test case if necessary. This is the way for the framework to maintain weak references between test units. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">tu</code></span></p></td>
+<td><p>test unit to deregister </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id52578"></a><h3>
+<a name="id32-bb"></a><code class="computeroutput"></code> Test observer registration</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a44433831b2b7e97ac2504f530d6842db"></a><span class="identifier">register_observer</span><span class="special">(</span><a class="link" href="a00956.html" title="Class test_observer">test_observer</a> <span class="special">&amp;</span> to<span class="special">)</span><span class="special">;</span></pre>Observer lifetime should exceed the the testing execution timeframe. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">to</code></span></p></td>
+<td><p>test observer object to add </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a752ef63301f37b7c8b9827a1b5808ffd"></a><span class="identifier">deregister_observer</span><span class="special">(</span><a class="link" href="a00956.html" title="Class test_observer">test_observer</a> <span class="special">&amp;</span> to<span class="special">)</span><span class="special">;</span></pre>Excludes the observer object form the framework's list of test observers. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">to</code></span></p></td>
+<td><p>test observer object to exclude </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id52627"></a><h3>
+<a name="id33-bb"></a><code class="computeroutput"></code> Global fixtures registration</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a68407bd1064a58c44a4461f8345f40b4"></a><span class="identifier">register_global_fixture</span><span class="special">(</span><span class="identifier">global_fixture</span> <span class="special">&amp;</span> tuf<span class="special">)</span><span class="special">;</span></pre>Adds a new global fixture to be setup before any other tests starts and tore down after any other tests finished. Test unit fixture lifetime should exceed the testing execution timeframe. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">tuf</code></span></p></td>
+<td><p>fixture to add </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1a738e803f4c14da3f12aed5705bad9313"></a><span class="identifier">deregister_global_fixture</span><span class="special">(</span><span class="identifier">global_fixture</span> <span class="special">&amp;</span> tuf<span class="special">)</span><span class="special">;</span></pre>Removes a test global fixture from the framework. <p>Test unit fixture lifetime should exceed the testing execution timeframe 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">tuf</code></span></p></td>
+<td><p>fixture to remove </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id52676"></a><h3>
+<a name="id34-bb"></a><code class="computeroutput"></code> Assertion/uncaught exception context support</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">int</span> <a name="doxygen.a00860_1a4fe702b19ba9fc15dca2836d45a2bc77"></a><span class="identifier">add_context</span><span class="special">(</span><span class="identifier">lazy_ostream</span> <span class="keyword">const</span> <span class="special">&amp;</span> context_descr<span class="special">,</span> <span class="keyword">bool</span> sticky<span class="special">)</span><span class="special">;</span></pre>Records context frame message. <p>Some context frames are sticky - they can only explicitly cleared by specifying context id. Other (non sticky) context frames cleared after every assertion. 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">context_descr</code></span></p></td>
+<td><p>context frame message </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">sticky</code></span></p></td>
+<td><p>is this sticky frame or not </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>id of the newly created frame </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1abb8d36ba3a26686d62fd1effc351cb8e"></a><span class="identifier">clear_context</span><span class="special">(</span><span class="keyword">int</span> context_id <span class="special">=</span> <span class="special">-</span><span class="number">1</span><span class="special">)</span><span class="special">;</span></pre>Erases context frame (when test exits context scope) <p>If context_id is passed clears that specific context frame identified by this id, otherwise clears all non sticky contexts. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id52729"></a><h3>
+<a name="id35-bb"></a><code class="computeroutput"></code> Access to registered test units.</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="a01036.html" title="Class master_test_suite_t">master_test_suite_t</a> <span class="special">&amp;</span> <a name="doxygen.a00860_1a3f1610f79cd70af1f0792b31eea92a67"></a><span class="identifier">master_test_suite</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>There is only only master test suite per test module. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>a reference the master test suite instance </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.a00860_1af4d92cd4e358fd7ccefcfdfaa6d4d5ba"></a><span class="identifier">current_test_unit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>This function provides an access to the test unit currently being executed. <p>The difference with current_test_case is about the time between a test-suite is being set up or torn down (fixtures) and when the test-cases of that suite start. This function is only valid during test execution phase. </p>
+<p><b>See Also: </b><a class="link" href="a00722.html#doxygen.a00860_1aff36c34e89c440125121ef47ee3f1e0d">current_test_case_id</a>, <a class="link" href="a00722.html#doxygen.a00860_1a8ec19b9f8d081a73b6295104be12bf32">current_test_case</a> </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="a01028.html" title="Class test_case">test_case</a> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.a00860_1a8ec19b9f8d081a73b6295104be12bf32"></a><span class="identifier">current_test_case</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>This function provides an access to the test case currently being executed. <p>This function is only valid during test execution phase. </p>
+<p><b>See Also: </b><a class="link" href="a00722.html#doxygen.a00860_1aff36c34e89c440125121ef47ee3f1e0d">current_test_case_id</a> </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">test_unit_id</span> <a name="doxygen.a00860_1aff36c34e89c440125121ef47ee3f1e0d"></a><span class="identifier">current_test_case_id</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>This function provides an access to an id of the test case currently being executed. <p>This function safer than current_test_case, cause if wont throw if no test case is being executed. </p>
+<p><b>See Also: </b><a class="link" href="a00722.html#doxygen.a00860_1a8ec19b9f8d081a73b6295104be12bf32">current_test_case</a> </p>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="a01020.html" title="Class test_unit">test_unit</a> <span class="special">&amp;</span> <a name="doxygen.a00860_1abdacf0293bb940f31443d8c42f031532"></a><span class="identifier">get</span><span class="special">(</span><span class="identifier">test_unit_id</span> tu_id<span class="special">,</span> <span class="identifier">test_unit_type</span> tu_type<span class="special">)</span><span class="special">;</span></pre>This function provides access to a test unit by id and type combination. It will throw if no test unit located. <p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">tu_id</code></span></p></td>
+<td><p>id of a test unit to locate </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">tu_type</code></span></p></td>
+<td><p>type of a test unit to locate </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>located test unit </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> UnitType<span class="special">&gt;</span> <span class="identifier">UnitType</span> <span class="special">&amp;</span> <a name="doxygen.a00860_1a951fec26e4e6b5189e9fd8e22cfb7b69"></a><span class="identifier">get</span><span class="special">(</span><span class="identifier">test_unit_id</span> id<span class="special">)</span><span class="special">;</span></pre>This function template provides access to a typed test unit by id. <p>It will throw if you specify incorrect test unit type 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">id</code></span></p></td>
+<td><p>id of test unit to get </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Template Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">UnitType</code></span></p></td>
+<td><p>compile time type of test unit to get (<a class="link" href="a01032.html" title="Class test_suite">test_suite</a> or <a class="link" href="a01028.html" title="Class test_case">test_case</a>) </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id52867"></a><h3>
+<a name="id36-bb"></a><code class="computeroutput"></code> Test initiation interface</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.a00860_1abbae11c3f5ce001a9471ff580aa8feb4"></a><span class="identifier">run</span><span class="special">(</span><span class="identifier">test_unit_id</span> tu <span class="special">=</span> <span class="identifier">INV_TEST_UNIT_ID</span><span class="special">,</span> <span class="keyword">bool</span> continue_test <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span></pre>Initiates test execution. <p>This function is used to start the test execution from a specific "root" test unit. If no root provided, test is started from master test suite. This second argument facilitates an ability of the test cases to start some other test units (primarily used internally for self testing). 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">tu</code></span></p></td>
+<td><p>Optional id of the test unit or test unit itself from which the test is started. If absent, master test suite is used </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">continue_test</code></span></p></td>
+<td><p>true == continue test if it was already started, false == restart the test from scratch regardless </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id52904"></a><h3>
+<a name="id37-bb"></a><code class="computeroutput"></code> Test events dispatchers</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"></ol></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2022 Boost.Test contributors<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00853_1ga23bcddcacf116627347215318b732bce.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_test/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a00932.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

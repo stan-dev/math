@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "cmake-pedantic",
+      "hidden": true,
+      "warnings": {
+        "dev": true,
+        "deprecated": true,
+        "uninitialized": false,
+        "unusedCli": true,
+        "systemVars": false
+      }
+    },
+    {
+      "name": "coverage",
+      "generator": "Unix Makefiles",
+      "hidden": false,
+      "inherits": ["cmake-pedantic"],
+      "binaryDir": "${sourceDir}/build/coverage",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Coverage",
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_FLAGS": "-Wall -std=c++17 -Og -g --coverage -fkeep-inline-functions -fkeep-static-functions",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_EXE_LINKER_FLAGS": "--coverage",
+        "CMAKE_SHARED_LINKER_FLAGS": "--coverage",
+        "PROJECT_BINARY_DIR": "${sourceDir}/build/coverage"
+      }
+    }
+  ],
+  "buildPresets": [
+     { "name": "coverage", "configurePreset": "coverage" }
+  ],
+  "testPresets": [
+     {
+       "name": "test",
+       "hidden": true,
+       "output": {"outputOnFailure": true},
+       "execution": {"noTestsAction": "error", "stopOnFailure": true}
+     },
+     { "name": "coverage",        "configurePreset": "coverage",         "inherits": ["test"] }
+  ]
+}

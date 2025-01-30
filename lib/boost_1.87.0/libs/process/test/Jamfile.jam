@@ -1,0 +1,7 @@
+# Copyright (c) 2024 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+alias v1-tests : v1//bare v1//with-valgrind v1//without-valgrind ;
+alias v2-tests : v2//standalone v2//with_target ;

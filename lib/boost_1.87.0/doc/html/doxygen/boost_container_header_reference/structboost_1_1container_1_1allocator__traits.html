@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template allocator_traits</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator__traits_8hpp" title="Header &lt;boost/container/allocator_traits.hpp&gt;">
+<link rel="prev" href="structboost_1_1container_1_1allocator_1_1rebind.html" title="Struct template rebind">
+<link rel="next" href="structboost_1_1container_1_1allocator__traits_1_1portable__rebind__alloc.html" title="Struct template portable_rebind_alloc">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1container_1_1allocator_1_1rebind.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator__traits_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1container_1_1allocator__traits_1_1portable__rebind__alloc.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template allocator_traits</span></h2>
+<p>boost::container::allocator_traits</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator__traits_8hpp" title="Header &lt;boost/container/allocator_traits.hpp&gt;">boost/container/allocator_traits.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Allocator<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html" title="Struct template allocator_traits">allocator_traits</a> <span class="special">{</span>
+  <span class="comment">// <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traitstypes">types</a></span>
+  <span class="keyword">typedef</span> <span class="identifier">Allocator</span>                             <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a37b715c0a291b9441ef7d571e768203e"></a><span class="identifier">allocator_type</span><span class="special">;</span>                        
+  <span class="keyword">typedef</span> <span class="identifier">allocator_type</span><span class="special">::</span><span class="identifier">value_type</span>            <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a187569fdb3229fed110d25332ff16ecc"></a><span class="identifier">value_type</span><span class="special">;</span>                            
+  <span class="keyword">typedef</span> <span class="identifier">unspecified</span>                           <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ae3ce016bfe535073fe66fbd729796663"><span class="identifier">pointer</span></a><span class="special">;</span>                               
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a930845cb66e25bcdbb1a891b95d51df6"><span class="identifier">const_pointer</span></a><span class="special">;</span>                         
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a7e4e6725356c589e62c84e5f0022f3c0"><span class="identifier">reference</span></a><span class="special">;</span>                             
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1af4bcc2a472ed020de173b8d401f6c73f"><span class="identifier">const_reference</span></a><span class="special">;</span>                       
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a5a890a6e98e3b6bcee85aa404bb20380"><span class="identifier">void_pointer</span></a><span class="special">;</span>                          
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ab55d28574910cb9446fdf6310dfc8e0f"><span class="identifier">const_void_pointer</span></a><span class="special">;</span>                    
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ae3aede855e32c66ac95120a4d2c6f8a2"><span class="identifier">difference_type</span></a><span class="special">;</span>                       
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a359e3f9dec73160eab91e0ba8f5595d9"><span class="identifier">size_type</span></a><span class="special">;</span>                             
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a09e36d7078b102416a5d12e779566909"><span class="identifier">propagate_on_container_copy_assignment</span></a><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a0701b56d932091c18e3c4b78ffc90c80"><span class="identifier">propagate_on_container_move_assignment</span></a><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a065d8c668d9a0fc4b7b225d1bb54b498"><span class="identifier">propagate_on_container_swap</span></a><span class="special">;</span>           
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a90c5d5f665f3737cfe614d7a50dc065c"><span class="identifier">is_always_equal</span></a><span class="special">;</span>                       
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a337472d0fbc669dfcb93042d36d4097a"><span class="identifier">is_partially_propagable</span></a><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">see_documentation</span>                     <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1af46de7c56c83c9a7dc3a44958aef5e7a"><span class="identifier">rebind_alloc</span></a><span class="special">;</span>                          
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html" title="Struct template allocator_traits">allocator_traits</a><span class="special">&lt;</span> <span class="identifier">rebind_alloc</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a6df482e78681acc4a7dfcb2f04e8df48"><span class="identifier">rebind_traits</span></a><span class="special">;</span>                         
+
+  <span class="comment">// member classes/structs/unions</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1container_1_1allocator__traits_1_1portable__rebind__alloc.html" title="Struct template portable_rebind_alloc">portable_rebind_alloc</a> <span class="special">{</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a class="link" href="structboost_1_1container_1_1allocator__traits_1_1portable__rebind__alloc.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1_1portable__rebind__alloc_1ac55a4b70c9911c29ba07a575c8ba23ff"><span class="identifier">type</span></a><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1container_1_1allocator__traits.html#id11-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">pointer</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ae5b146d18bfd597741d88e0962b43a7d"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a92aa2dc105cd5b34f73ef8680a0c681e"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">pointer</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">pointer</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a448fab5ee9dec30dbe58f2a956c44fab"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">const_void_pointer</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a709a15dc30bce1784bdeac20e628eb32"><span class="identifier">destroy</span></a><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">size_type</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1accb277010b5096de28aada9fafd9045e"><span class="identifier">max_size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">Allocator</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1acb343a21c5d0dfe31c8b4851c8903971"><span class="identifier">select_on_container_copy_construction</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span> <span class="special">...</span> Args<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a689b5729a0c30a9dd838d2b2f4dfb986"><span class="identifier">construct</span></a><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a37f229dc4551a1043a8e6f6c3a84b442"><span class="identifier">storage_is_unpropagable</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">pointer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1aa21cdb8e823adce34b2cd9b5662dd782"><span class="identifier">equal</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.9.14.4.3.4"></a><h2>Description</h2>
+<p>The class template <a class="link" href="structboost_1_1container_1_1allocator__traits.html" title="Struct template allocator_traits">allocator_traits</a> supplies a uniform interface to all allocator types. This class is a C++03-compatible implementation of std::allocator_traits </p>
+<div class="refsect2">
+<a name="id-1.3.9.14.4.3.4.3"></a><h3>
+<a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traitstypes"></a><code class="computeroutput">allocator_traits</code> 
+        public
+       types</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">unspecified</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ae3ce016bfe535073fe66fbd729796663"></a><span class="identifier">pointer</span><span class="special">;</span></p>
+<p>Allocator::pointer if such a type exists; otherwise, value_type* </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a930845cb66e25bcdbb1a891b95d51df6"></a><span class="identifier">const_pointer</span><span class="special">;</span></p>
+<p>Allocator::const_pointer if such a type exists ; otherwise, pointer_traits&lt;pointer&gt;::rebind&lt;const </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a7e4e6725356c589e62c84e5f0022f3c0"></a><span class="identifier">reference</span><span class="special">;</span></p>
+<p>Non-standard extension Allocator::reference if such a type exists; otherwise, value_type&amp; </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1af4bcc2a472ed020de173b8d401f6c73f"></a><span class="identifier">const_reference</span><span class="special">;</span></p>
+<p>Non-standard extension Allocator::const_reference if such a type exists ; otherwise, const value_type&amp; </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a5a890a6e98e3b6bcee85aa404bb20380"></a><span class="identifier">void_pointer</span><span class="special">;</span></p>
+<p>Allocator::void_pointer if such a type exists ; otherwise, pointer_traits&lt;pointer&gt;::rebind&lt;void&gt;. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ab55d28574910cb9446fdf6310dfc8e0f"></a><span class="identifier">const_void_pointer</span><span class="special">;</span></p>
+<p>Allocator::const_void_pointer if such a type exists ; otherwise, pointer_traits&lt;pointer&gt;::rebind&lt;const </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ae3aede855e32c66ac95120a4d2c6f8a2"></a><span class="identifier">difference_type</span><span class="special">;</span></p>
+<p>Allocator::difference_type if such a type exists ; otherwise, pointer_traits&lt;pointer&gt;::difference_type. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a359e3f9dec73160eab91e0ba8f5595d9"></a><span class="identifier">size_type</span><span class="special">;</span></p>
+<p>Allocator::size_type if such a type exists ; otherwise, make_unsigned&lt;difference_type&gt;::type </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a09e36d7078b102416a5d12e779566909"></a><span class="identifier">propagate_on_container_copy_assignment</span><span class="special">;</span></p>
+<p>Allocator::propagate_on_container_copy_assignment if such a type exists, otherwise a type with an internal constant static boolean member <code class="computeroutput">value</code> == false. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a0701b56d932091c18e3c4b78ffc90c80"></a><span class="identifier">propagate_on_container_move_assignment</span><span class="special">;</span></p>
+<p>Allocator::propagate_on_container_move_assignment if such a type exists, otherwise a type with an internal constant static boolean member <code class="computeroutput">value</code> == false. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a065d8c668d9a0fc4b7b225d1bb54b498"></a><span class="identifier">propagate_on_container_swap</span><span class="special">;</span></p>
+<p>Allocator::propagate_on_container_swap if such a type exists, otherwise a type with an internal constant static boolean member <code class="computeroutput">value</code> == false. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a90c5d5f665f3737cfe614d7a50dc065c"></a><span class="identifier">is_always_equal</span><span class="special">;</span></p>
+<p>Allocator::is_always_equal if such a type exists, otherwise a type with an internal constant static boolean member <code class="computeroutput">value</code> == is_empty&lt;Allocator&gt;::value </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a337472d0fbc669dfcb93042d36d4097a"></a><span class="identifier">is_partially_propagable</span><span class="special">;</span></p>
+<p>Allocator::is_partially_propagable if such a type exists, otherwise a type with an internal constant static boolean member <code class="computeroutput">value</code> == false <span class="bold"><strong>Note</strong></span>: Non-standard extension used to implement <code class="computeroutput"><a class="link" href="classboost_1_1container_1_1small__vector__allocator.html" title="Class template small_vector_allocator">small_vector_allocator</a></code>. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <span class="identifier">see_documentation</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1af46de7c56c83c9a7dc3a44958aef5e7a"></a><span class="identifier">rebind_alloc</span><span class="special">;</span></p>
+<p>Defines an allocator: Allocator::rebind&lt;T&gt;::other if such a type exists; otherwise, Allocator&lt;T, Args&gt; if Allocator is a class template instantiation of the form Allocator&lt;U, Args&gt;, where Args is zero or more type arguments ; otherwise, the instantiation of rebind_alloc is ill-formed.</p>
+<p>In C++03 compilers <code class="computeroutput">rebind_alloc</code> is a struct derived from an allocator deduced by previously detailed rules. </p>
+</li>
+<li class="listitem">
+<p>
+<span class="keyword">typedef</span> <a class="link" href="structboost_1_1container_1_1allocator__traits.html" title="Struct template allocator_traits">allocator_traits</a><span class="special">&lt;</span> <span class="identifier">rebind_alloc</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&gt;</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a6df482e78681acc4a7dfcb2f04e8df48"></a><span class="identifier">rebind_traits</span><span class="special">;</span></p>
+<p>In C++03 compilers <code class="computeroutput">rebind_traits</code> is a struct derived from <code class="computeroutput">allocator_traits&lt;OtherAlloc&gt;</code>, where <code class="computeroutput">OtherAlloc</code> is the allocator deduced by rules explained in <code class="computeroutput">rebind_alloc</code>. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.4.3.4.4"></a><h3>
+<a name="id11-bb"></a><code class="computeroutput">allocator_traits</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">pointer</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1ae5b146d18bfd597741d88e0962b43a7d"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">a.allocate(n)</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a92aa2dc105cd5b34f73ef8680a0c681e"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="identifier">pointer</span> p<span class="special">,</span> <span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">a.deallocate(p, n)</code></p>
+<p><span class="bold"><strong>Throws</strong></span>: Nothing </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">pointer</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a448fab5ee9dec30dbe58f2a956c44fab"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="identifier">size_type</span> n<span class="special">,</span> <span class="identifier">const_void_pointer</span> p<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: calls <code class="computeroutput">a.allocate(n, p)</code> if that call is well-formed; otherwise, invokes <code class="computeroutput">a.allocate(n)</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a709a15dc30bce1784bdeac20e628eb32"></a><span class="identifier">destroy</span><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: calls <code class="computeroutput">a.destroy(p)</code> if that call is well-formed; otherwise, invokes <code class="computeroutput">p-&gt;~T()</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1accb277010b5096de28aada9fafd9045e"></a><span class="identifier">max_size</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">a.max_size()</code> if that expression is well-formed; otherwise, <code class="computeroutput">numeric_limits&lt;size_type&gt;::max()</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">Allocator</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1acb343a21c5d0dfe31c8b4851c8903971"></a><span class="identifier">select_on_container_copy_construction</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">a.select_on_container_copy_construction()</code> if that expression is well-formed; otherwise, a. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span> <span class="special">...</span> Args<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a689b5729a0c30a9dd838d2b2f4dfb986"></a><span class="identifier">construct</span><span class="special">(</span><span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="identifier">T</span> <span class="special">*</span> p<span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">...</span> args<span class="special">)</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Effects</strong></span>: calls <code class="computeroutput">a.construct(p, std::forward&lt;Args&gt;(args)...)</code> if that call is well-formed; otherwise, invokes <code class="computeroutput"><code class="computeroutput">placement new</code> (static_cast&lt;void*&gt;(p)) T(std::forward&lt;Args&gt;(args)...)</code> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1a37f229dc4551a1043a8e6f6c3a84b442"></a><span class="identifier">storage_is_unpropagable</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="identifier">pointer</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">a.storage_is_unpropagable(p)</code> if is_partially_propagable::value is true; otherwise, <code class="computeroutput">false</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator__traits_1aa21cdb8e823adce34b2cd9b5662dd782"></a><span class="identifier">equal</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span> a<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Allocator</span> <span class="special">&amp;</span> b<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Returns</strong></span>: <code class="computeroutput">true</code> if <code class="computeroutput">is_always_equal::value == true</code>, otherwise, <code class="computeroutput">a == b</code>. </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2018 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1container_1_1allocator_1_1rebind.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator__traits_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1container_1_1allocator__traits_1_1portable__rebind__alloc.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

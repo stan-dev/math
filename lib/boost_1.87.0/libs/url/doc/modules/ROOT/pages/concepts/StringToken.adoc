@@ -1,0 +1,149 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= StringToken
+
+A string token is an rvalue passed to a function template which customizes the return type of the function and also controls how a modifiable character buffer is obtained and presented.
+The string token's lifetime extends only for the duration of the function call in which it appears as a parameter.
+A string token cannot be copied, moved, or assigned, and must be destroyed when the function returns or throws.
+
+== Requirements
+
+In this table:
+
+* cpp:T[] is a type meeting the requirements of __StringToken__
+* cpp:t[] is an rvalue reference of type T
+* cpp:n[] is a value of type cpp:std::size_t[]
+
+[cols="1,1,3"]
+|===
+// Headers
+|Expression|Result|Semantics, Pre/Post-conditions
+
+// Row 1, Column 1
+|
+cpp:std::derived_from<T,string_token::arg>[]
+
+// Row 1, Column 2
+|cpp:true[]
+
+// Row 1, Column 3
+|All string tokens must be publicly and
+unambiguously derived from
+cpp:string_token::arg[].
+
+// Row 2, Column 1
+|cpp:T::result_type[]
+
+// Row 2, Column 2
+|
+// Row 2, Column 3
+|This type determines the return type of functions
+which accept a string token.
+
+// Row 3, Column 1
+|cpp:t.prepare(n);[]
+
+// Row 3, Column 2
+|cpp:char*[]
+
+// Row 3, Column 3
+|This function overrides the virtual function in the base.
+It must return a pointer to a character buffer of at least
+size cpp:n[], otherwise throw an exception.
+
+// Row 4, Column 1
+|cpp:t.result();[]
+
+// Row 4, Column 3
+|cpp:T::result_type[]
+
+// Row 4, Column 5
+|This function is invoked by the algorithm to receive the result
+from the string token.
+It is only invoked if cpp:prepare[] returned successfuly and the
+string token was not destroyed.
+
+|===
+
+== Algorithm Requirements
+
+When an algorithm accepts a string token, it must meet these requirements:
+
+* cpp:prepare[] is called only once or not at all,
+* cpp:result[] is only called after cpp:prepare[] returns successfully, and
+* The string token is destroyed when the algorithm completes or if an exception is thrown.
+
+String tokens cannot be reused.
+
+== Exemplars
+
+String token prototype:
+
+[source,cpp]
+----
+struct StringToken : string_token::arg
+{
+    using result_type = std::string;
+
+    char* prepare( std::size_t n ) override;
+
+    result_type result();
+};
+----
+
+Algorithm prototype:
+
+[source,cpp]
+----
+namespace detail {
+
+// Algorithm implementation may be placed
+// out of line, and written as an ordinary
+// function (no template required).
+
+void algorithm_impl( string_token::arg& token )
+{
+    std::size_t n = 0;
+
+    // calculate space needed in cpp:n[]
+
+    // acquire a destination buffer
+    char* dest = token.prepare( n );
+
+    // write the characters to the buffer
+}    
+
+} // detail
+
+// public interface is a function template,
+// defaulting to return cpp:std::string[].
+
+template< class StringToken = string_token::return_string >
+auto
+algorithm( StringToken&& token = {} ) ->
+    typename StringToken::result_type
+{
+    // invoke the algorithm with the token
+    algorithm_impl( token );
+
+    // return the result from the token
+    return token.result();
+}
+
+----
+
+Models
+
+* cpp:string_token::return_string[]
+* cpp:string_token::assign_to[]
+* cpp:string_token::preserve_size[]
+* cpp:string_token::return_string[]
+
+

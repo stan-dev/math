@@ -1,0 +1,1109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template stack</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../lockfree/reference.html#doxygen.stack_8hpp" title="Header &lt;boost/lockfree/stack.hpp&gt;">
+<link rel="prev" href="classboost_1_1lockfree_1_1spsc__queue.html" title="Class template spsc_queue">
+<link rel="next" href="../lockfree/appendices.html" title="Appendices">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1lockfree_1_1spsc__queue.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../lockfree/reference.html#doxygen.stack_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../lockfree/appendices.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.classboost_1_1lockfree_1_1stack"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template stack</span></h2>
+<p>boost::lockfree::stack</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../lockfree/reference.html#doxygen.stack_8hpp" title="Header &lt;boost/lockfree/stack.hpp&gt;">boost/lockfree/stack.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span><span class="special">...</span> Options<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                                 <a name="doxygen.classboost_1_1lockfree_1_1stack_1a15a90cacfe2eab8e6735e2d28c09026d"></a><span class="identifier">value_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span><span class="special">::</span><span class="identifier">allocator</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1aa07fd8df78777638ef0c6f6107761a85"></a><span class="identifier">allocator</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">implementation_defined</span><span class="special">::</span><span class="identifier">size_type</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1af6a1187ab6b1472268466602072e9eaf"></a><span class="identifier">size_type</span><span class="special">;</span> 
+
+  <span class="comment">// <a class="link" href="classboost_1_1lockfree_1_1stack.html#id-1_3_21_6_5_1_1_1_6-bb">public member functions</a></span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a9534a04c81419a8183e94b181928b5e2"><span class="identifier">is_lock_free</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae1d5313f6bb2a413c540ba6b6a9b77f2"><span class="identifier">stack</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a8dbd37017ee1e45e8ef494e90ba5b2f3"><span class="identifier">stack</span></a><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">allocator_rebind</span><span class="special">&lt;</span> <span class="identifier">node_allocator</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a3e90196072a647c8162201a66f7eea47"><span class="identifier">stack</span></a><span class="special">(</span><span class="identifier">allocator</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a699287479f90d0d6608f0e3644fd2a2d"><span class="identifier">stack</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1aac0d8d62117cc111d0c36a5e8a6519b9"><span class="identifier">stack</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae91a420a1cfca599876a471511e0a5bb"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ad7af9876e49a9bf38e27e1b10a6e21ec"><span class="identifier">stack</span></a><span class="special">(</span><a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a4928698fd73ee32208747173e49a50f1"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a78e1cd5522a1f9ce00d9d0e0971b7e53"><span class="identifier">stack</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> 
+          <span class="keyword">typename</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">allocator_rebind</span><span class="special">&lt;</span> <span class="identifier">node_allocator</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a54d3a3cf9296d8e3b6fc80f8b684ce25"><span class="identifier">stack</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">node_allocator</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae44f2a2b0fdedba40f2b8743915e70a0"><span class="identifier">reserve</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a68dd77481b6695b32ca834b161729bde"><span class="identifier">reserve_unsafe</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a1285da740c270fbc0bc9085b4a2120db"><span class="special">~</span><span class="identifier">stack</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a4ec7bdce0912d59c31ae92f942bd4b97"><span class="identifier">push</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a6452ec871bb6f57badd246e37a2999f0"><span class="identifier">push</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a2638ccd040bbb8160c0590b735fad91f"><span class="identifier">bounded_push</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae2577ab2c10cb0ad6e1a7b7bb240ff3a"><span class="identifier">bounded_push</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstIterator<span class="special">&gt;</span> 
+    <span class="identifier">ConstIterator</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ab4e1efb388d4425cdd53d0df62c0b111"><span class="identifier">push</span></a><span class="special">(</span><span class="identifier">ConstIterator</span><span class="special">,</span> <span class="identifier">ConstIterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Extent<span class="special">&gt;</span> <span class="identifier">size_type</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae134426a20a4c0446911e88326a790d2"><span class="identifier">push</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">Extent</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstIterator<span class="special">&gt;</span> 
+    <span class="identifier">ConstIterator</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae05a956fd34ddb036834741731796451"><span class="identifier">bounded_push</span></a><span class="special">(</span><span class="identifier">ConstIterator</span><span class="special">,</span> <span class="identifier">ConstIterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Extent<span class="special">&gt;</span> 
+    <span class="identifier">size_type</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a3500bb9a139028faff4cfe537ebc0683"><span class="identifier">bounded_push</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">Extent</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ac13781e5915a7148471b4d0d8a42ec65"><span class="identifier">unsynchronized_push</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a60c845ecf312d20ba2c22a3c564a0df5"><span class="identifier">unsynchronized_push</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstIterator<span class="special">&gt;</span> 
+    <span class="identifier">ConstIterator</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a148ce971a2eb34e015b39587ee5fb784"><span class="identifier">unsynchronized_push</span></a><span class="special">(</span><span class="identifier">ConstIterator</span><span class="special">,</span> <span class="identifier">ConstIterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Extent<span class="special">&gt;</span> 
+    <span class="identifier">size_type</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1aa051e4a127de714e9e8dd66ff4864e5e"><span class="identifier">unsynchronized_push</span></a><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">Extent</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae7a21d178b5a2fd805147eeb6bf0784c"><span class="identifier">pop</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> 
+           <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1aacd414c5c9d600517520160bafbd0e31"><span class="identifier">pop</span></a><span class="special">(</span><span class="identifier">U</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a800a005c0844810d89f84aec82bbf2ea"><span class="identifier">pop</span></a><span class="special">(</span><span class="identifier">uses_optional_t</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">&gt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">U</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a85f15d66bdb428440362a9d4775bb3f7"><span class="identifier">pop</span></a><span class="special">(</span><span class="identifier">uses_optional_t</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a95a7acc2013ff8f4f38bca337e803d9c"><span class="identifier">unsynchronized_pop</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> 
+           <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1ae16eb773dc30562a9cf9c7b0dc7c20b7"><span class="identifier">unsynchronized_pop</span></a><span class="special">(</span><span class="identifier">U</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a71f189fa95cc93ce24e45da12604d4ad"><span class="identifier">consume_one</span></a><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="identifier">size_t</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a880dfff931389a5a4b35cac8a135a0ea"><span class="identifier">consume_all</span></a><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="identifier">size_t</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a58d97acee233612eccbb9db11089e796"><span class="identifier">consume_all_atomic</span></a><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="identifier">size_t</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1a41edbd5554b03cc1c329f9f094879f34"><span class="identifier">consume_all_atomic_reversed</span></a><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html#doxygen.classboost_1_1lockfree_1_1stack_1aaeab1a227794b63d0e9cc04b844b5a4d"><span class="identifier">empty</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.21.6.5.3.4"></a><h2>Description</h2>
+<p>The stack class provides a multi-writer/multi-reader stack, pushing and popping is lock-free, construction/destruction has to be synchronized. It uses a freelist for memory management, freed nodes are pushed to the freelist and not returned to the OS before the stack is destroyed.</p>
+<p><span class="bold"><strong>Policies:</strong></span> </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">boost::lockfree::fixed_sized&lt;&gt;</code>, defaults to <code class="computeroutput">boost::lockfree::fixed_sized&lt;false&gt;</code> <br>
+ Can be used to completely disable dynamic memory allocations during push in order to ensure lockfree behavior.<br>
+ If the data structure is configured as fixed-sized, the internal nodes are stored inside an array and they are addressed by array indexing. This limits the possible size of the stack to the number of elements that can be addressed by the index type (usually 2**16-2), but on platforms that lack double-width compare-and-exchange instructions, this is the best way to achieve lock-freedom.</p></li>
+<li class="listitem"><p><code class="computeroutput">boost::lockfree::capacity&lt;&gt;</code>, optional <br>
+ If this template argument is passed to the options, the size of the stack is set at compile-time. <br>
+ It this option implies <code class="computeroutput">fixed_sized&lt;true&gt;</code> </p></li>
+<li class="listitem"><p><code class="computeroutput">boost::lockfree::allocator&lt;&gt;</code>, defaults to <code class="computeroutput">boost::lockfree::allocator&lt;std::allocator&lt;void&gt;&gt;</code> <br>
+ Specifies the allocator that is used for the internal freelist</p></li>
+</ul></div>
+<p>
+</p>
+<p><span class="bold"><strong>Requirements:</strong></span> </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p>T must have a copy constructor or a move constructor </p></li></ul></div>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.21.6.5.3.4.6"></a><h3>
+<a name="id-1_3_21_6_5_1_1_1_6-bb"></a><code class="computeroutput">stack</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a9534a04c81419a8183e94b181928b5e2"></a><span class="identifier">is_lock_free</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>It only checks, if the top stack node and the freelist can be modified in a lock-free manner. On most platforms, the whole implementation is lock-free, if this is true. Using c++0x-style atomics, there is no possibility to provide a completely accurate implementation, because one would need to test every internal node, which is impossible if further nodes will be allocated from the operating system. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if implementation is lock-free.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae1d5313f6bb2a413c540ba6b6a9b77f2"></a><span class="identifier">stack</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a fixed-sized stack</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>Must specify a capacity&lt;&gt; argument </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a8dbd37017ee1e45e8ef494e90ba5b2f3"></a><span class="identifier">stack</span><span class="special">(</span><span class="keyword">typename</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">allocator_rebind</span><span class="special">&lt;</span> <span class="identifier">node_allocator</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="keyword">const</span> <span class="special">&amp;</span> alloc<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a fixed-sized stack with a custom allocator</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>Must specify a capacity&lt;&gt; argument </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a3e90196072a647c8162201a66f7eea47"></a><span class="identifier">stack</span><span class="special">(</span><span class="identifier">allocator</span> <span class="keyword">const</span> <span class="special">&amp;</span> alloc<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a fixed-sized stack with a custom allocator</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>Must specify a capacity&lt;&gt; argument </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a699287479f90d0d6608f0e3644fd2a2d"></a><span class="identifier">stack</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a variable-sized stack</p>
+<p>Allocate n nodes initially for the freelist</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>Must <span class="bold"><strong>not</strong></span> specify a capacity&lt;&gt; argument </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1lockfree_1_1stack_1aac0d8d62117cc111d0c36a5e8a6519b9"></a><span class="identifier">stack</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae91a420a1cfca599876a471511e0a5bb"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.classboost_1_1lockfree_1_1stack_1ad7af9876e49a9bf38e27e1b10a6e21ec"></a><span class="identifier">stack</span><span class="special">(</span><a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a4928698fd73ee32208747173e49a50f1"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1lockfree_1_1stack.html" title="Class template stack">stack</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1lockfree_1_1stack_1a78e1cd5522a1f9ce00d9d0e0971b7e53"></a><span class="identifier">stack</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> 
+        <span class="keyword">typename</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">allocator_rebind</span><span class="special">&lt;</span> <span class="identifier">node_allocator</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="keyword">const</span> <span class="special">&amp;</span> alloc<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a variable-sized stack with a custom allocator</p>
+<p>Allocate n nodes initially for the freelist</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>Must <span class="bold"><strong>not</strong></span> specify a capacity&lt;&gt; argument </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <a name="doxygen.classboost_1_1lockfree_1_1stack_1a54d3a3cf9296d8e3b6fc80f8b684ce25"></a><span class="identifier">stack</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">,</span> <span class="identifier">node_allocator</span> <span class="keyword">const</span> <span class="special">&amp;</span> alloc<span class="special">)</span><span class="special">;</span></pre>
+<p>Construct a variable-sized stack with a custom allocator</p>
+<p>Allocate n nodes initially for the freelist</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>Must <span class="bold"><strong>not</strong></span> specify a capacity&lt;&gt; argument </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae44f2a2b0fdedba40f2b8743915e70a0"></a><span class="identifier">reserve</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocate n nodes for freelist</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>thread-safe, may block if memory allocator blocks </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>only valid if no capacity&lt;&gt; argument given </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="special">!</span><span class="identifier">has_capacity</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a68dd77481b6695b32ca834b161729bde"></a><span class="identifier">reserve_unsafe</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocate n nodes for freelist</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>not thread-safe, may block if memory allocator blocks </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>only valid if no capacity&lt;&gt; argument given </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.classboost_1_1lockfree_1_1stack_1a1285da740c270fbc0bc9085b4a2120db"></a><span class="special">~</span><span class="identifier">stack</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destroys stack, free all nodes from freelist.</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>not thread-safe </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a4ec7bdce0912d59c31ae92f942bd4b97"></a><span class="identifier">push</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes object t to the stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>object will be pushed to the stack, if internal node can be allocated </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the push operation is successful.</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a6452ec871bb6f57badd246e37a2999f0"></a><span class="identifier">push</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes object t to the stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>object will be pushed to the stack, if internal node can be allocated </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the push operation is successful.</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws  </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a2638ccd040bbb8160c0590b735fad91f"></a><span class="identifier">bounded_push</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes object t to the stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>object will be pushed to the stack, if internal node can be allocated </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the push operation is successful.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae2577ab2c10cb0ad6e1a7b7bb240ff3a"></a><span class="identifier">bounded_push</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes object t to the stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail  </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>object will be pushed to the stack, if internal node can be allocated </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the push operation is successful.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstIterator<span class="special">&gt;</span> 
+  <span class="identifier">ConstIterator</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ab4e1efb388d4425cdd53d0df62c0b111"></a><span class="identifier">push</span><span class="special">(</span><span class="identifier">ConstIterator</span> begin<span class="special">,</span> <span class="identifier">ConstIterator</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes as many objects from the range [begin, end) as freelist node can be allocated.</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Operation is applied atomically </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free.</p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>iterator to the first element, which has not been pushed</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Extent<span class="special">&gt;</span> <span class="identifier">size_type</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae134426a20a4c0446911e88326a790d2"></a><span class="identifier">push</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">Extent</span> <span class="special">&gt;</span> t<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes as many objects from the span as freelist node can be allocated.</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Operation is applied atomically </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free.</p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Number of elements pushed</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstIterator<span class="special">&gt;</span> 
+  <span class="identifier">ConstIterator</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae05a956fd34ddb036834741731796451"></a><span class="identifier">bounded_push</span><span class="special">(</span><span class="identifier">ConstIterator</span> begin<span class="special">,</span> <span class="identifier">ConstIterator</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes as many objects from the range [begin, end) as freelist node can be allocated.</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Operation is applied atomically </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>iterator to the first element, which has not been pushed</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Extent<span class="special">&gt;</span> 
+  <span class="identifier">size_type</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a3500bb9a139028faff4cfe537ebc0683"></a><span class="identifier">bounded_push</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">Extent</span> <span class="special">&gt;</span> t<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes as many objects from the span as freelist node can be allocated.</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Operation is applied atomically </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Number of elements pushed</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ac13781e5915a7148471b4d0d8a42ec65"></a><span class="identifier">unsynchronized_push</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes object t to the stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>object will be pushed to the stack, if internal node can be allocated </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the push operation is successful.</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a60c845ecf312d20ba2c22a3c564a0df5"></a><span class="identifier">unsynchronized_push</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> v<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes object t to the stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>object will be pushed to the stack, if internal node can be allocated </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the push operation is successful.</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws  </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstIterator<span class="special">&gt;</span> 
+  <span class="identifier">ConstIterator</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a148ce971a2eb34e015b39587ee5fb784"></a><span class="identifier">unsynchronized_push</span><span class="special">(</span><span class="identifier">ConstIterator</span> begin<span class="special">,</span> <span class="identifier">ConstIterator</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes as many objects from the range [begin, end) as freelist node can be allocated.</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>iterator to the first element, which has not been pushed</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Extent<span class="special">&gt;</span> 
+  <span class="identifier">size_type</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1aa051e4a127de714e9e8dd66ff4864e5e"></a><span class="identifier">unsynchronized_push</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">Extent</span> <span class="special">&gt;</span> t<span class="special">)</span><span class="special">;</span></pre>
+<p>Pushes as many objects from the span as freelist node can be allocated.</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </p></td></tr>
+</table></div>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>iterator to the first element, which has not been pushed</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>if memory allocator throws </td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae7a21d178b5a2fd805147eeb6bf0784c"></a><span class="identifier">pop</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;</span> ret<span class="special">)</span><span class="special">;</span></pre>
+<p>Pops object from stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>if pop operation is successful, object will be copied to ret. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the pop operation is successful, false if stack was empty.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> 
+         <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1aacd414c5c9d600517520160bafbd0e31"></a><span class="identifier">pop</span><span class="special">(</span><span class="identifier">U</span> <span class="special">&amp;</span> ret<span class="special">)</span><span class="special">;</span></pre>
+<p>Pops object from stack.</p>
+<p>
+
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>type T must be convertible to U </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>if pop operation is successful, object will be copied to ret. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the pop operation is successful, false if stack was empty.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a800a005c0844810d89f84aec82bbf2ea"></a><span class="identifier">pop</span><span class="special">(</span><span class="identifier">uses_optional_t</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Pops object from stack, returning a std::optional&lt;&gt;</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">std::optional</code> with value if successful, <code class="computeroutput">std::nullopt</code> if stack is empty.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">&gt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span> <span class="identifier">U</span> <span class="special">&gt;</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a85f15d66bdb428440362a9d4775bb3f7"></a><span class="identifier">pop</span><span class="special">(</span><span class="identifier">uses_optional_t</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Pops object from stack, returning a std::optional&lt;&gt;</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>type T must be convertible to U </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">std::optional</code> with value if successful, <code class="computeroutput">std::nullopt</code> if stack is empty.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a95a7acc2013ff8f4f38bca337e803d9c"></a><span class="identifier">unsynchronized_pop</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;</span> ret<span class="special">)</span><span class="special">;</span></pre>
+<p>Pops object from stack.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not thread-safe, but non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>if pop operation is successful, object will be copied to ret. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the pop operation is successful, false if stack was empty.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">,</span> 
+         <span class="keyword">typename</span> Enabler <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">U</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1ae16eb773dc30562a9cf9c7b0dc7c20b7"></a><span class="identifier">unsynchronized_pop</span><span class="special">(</span><span class="identifier">U</span> <span class="special">&amp;</span> ret<span class="special">)</span><span class="special">;</span></pre>
+<p>Pops object from stack.</p>
+<p>
+
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not thread-safe, but non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>type T must be convertible to U </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p>if pop operation is successful, object will be copied to ret. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if the pop operation is successful, false if stack was empty.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a71f189fa95cc93ce24e45da12604d4ad"></a><span class="identifier">consume_one</span><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span> f<span class="special">)</span><span class="special">;</span></pre>
+<p>consumes one element via a functor</p>
+<p>pops one element from the stack and applies the functor on this object</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if one element was consumed</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="identifier">size_t</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a880dfff931389a5a4b35cac8a135a0ea"></a><span class="identifier">consume_all</span><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span> f<span class="special">)</span><span class="special">;</span></pre>
+<p>consumes all elements via a functor</p>
+<p>sequentially pops all elements from the stack and applies the functor on each object</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>number of elements that are consumed</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="identifier">size_t</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a58d97acee233612eccbb9db11089e796"></a><span class="identifier">consume_all_atomic</span><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span> f<span class="special">)</span><span class="special">;</span></pre>
+<p>consumes all elements via a functor</p>
+<p>atomically pops all elements from the stack and applies the functor on each object</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>number of elements that are consumed</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Functor<span class="special">&gt;</span> <span class="identifier">size_t</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1a41edbd5554b03cc1c329f9f094879f34"></a><span class="identifier">consume_all_atomic_reversed</span><span class="special">(</span><span class="identifier">Functor</span> <span class="special">&amp;&amp;</span> f<span class="special">)</span><span class="special">;</span></pre>
+<p>consumes all elements via a functor</p>
+<p>atomically pops all elements from the stack and applies the functor on each object in reversed order</p>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>number of elements that are consumed</p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.classboost_1_1lockfree_1_1stack_1aaeab1a227794b63d0e9cc04b844b5a4d"></a><span class="identifier">empty</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>It only guarantees that at some point during the execution of the function the stack has been empty. It is rarely practical to use this value in program logic, because the stack can be modified by other threads. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true, if stack is empty.</p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2011 Tim
+      Blechmann<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1lockfree_1_1spsc__queue.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../lockfree/reference.html#doxygen.stack_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../lockfree/appendices.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

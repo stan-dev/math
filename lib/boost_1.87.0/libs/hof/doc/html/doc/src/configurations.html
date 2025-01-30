@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Configurations &#8212; Boost.HigherOrderFunctions 0.6 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/boostbook.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Discussion" href="discussion.html" />
+    <link rel="prev" title="tap" href="../../include/boost/hof/tap.html" /> 
+  </head><body>
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86"src="../../_static/boost.png"></td>
+</tr></table>
+
+<div class="spirit-nav">
+<a accesskey="p"  href="../../include/boost/hof/tap.html"><img src="../../_static/prev.png" alt="Prev"></a>
+<a accesskey="u" href="../index.html"><img src="../../_static/up.png" alt="Up"></a>
+<a accesskey="h" href="../index.html"><img src="../../_static/home.png" alt="Home"></a>
+<a accesskey="n"  href="discussion.html"><img src="../../_static/next.png" alt="Next"></a>
+</div>
+  
+
+    <div class="document">
+  <div class="chapter">
+      <div class="body" role="main">
+        
+  <!-- Copyright 2018 Paul Fultz II
+     Distributed under the Boost Software License, Version 1.0.
+     (http://www.boost.org/LICENSE_1_0.txt)
+-->
+<section id="configurations">
+<h1>Configurations<a class="headerlink" href="#configurations" title="Permalink to this heading">¶</a></h1>
+<p>There are several configuration macros that control the behavior of Boost.HigherOrderFunctions library.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BOOST_HOF_CHECK_UNPACK_SEQUENCE</span></code></p></td>
+<td><p>Unpack has extra checks to ensure that the function will be invoked with the
+sequence. This extra check can help improve error reporting but it can slow
+down compilation. This is enabled by default.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BOOST_HOF_NO_EXPRESSION_SFINAE</span></code></p></td>
+<td><p>This controls whether the library will use expression SFINAE to detect the
+callability of functions. On MSVC, this is enabled by default, since it does
+not have full support for expression SFINAE.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">BOOST_HOF_RECURSIVE_CONSTEXPR_DEPTH</span></code></p></td>
+<td><p>Because C++ instantiates <cite>constexpr</cite> functions eagerly, recursion with
+<cite>constexpr</cite> functions can cause the compiler to reach its internal limits. The
+setting is used by the library to set a limit on recursion depth to avoid
+infinite template instantiations. The default is 16, but increasing the limit
+can increase compile times.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+      </div>
+  </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer" role="contentinfo">
+    <table xmlns:rev="http://www.cs.rpi.edu/~gregod/boost/tools/doc/revision" width="100%"><tr>
+    <td align="left"></td>
+    <td align="right"><div class="copyright-footer">
+            &#169; Copyright 2016, Paul Fultz II.
+        
+          Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.2.1.
+          <p>Distributed under the Boost Software License, Version 1.0.
+          (See accompanying file <code class="filename">LICENSE_1_0.txt</code> or copy at 
+          <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+          </p>
+    </div></td>
+    </tr></table>
+    </div>
+  </body>
+</html>

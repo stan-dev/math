@@ -1,0 +1,26 @@
+== Promises
+
+<<promise, Promises>> are the recommended default coroutine type.
+They're eager and thus easily usable for ad-hoc concurrecy.
+
+[source,cpp]
+----
+cobalt::promise<int> my_promise()
+{
+   co_await do_the_thing();
+   co_return 0;
+}
+
+cobalt::main co_main(int argc, char * argv[])
+{
+    // start the promise here
+    auto p = my_promise();
+    // do something else here
+    co_await do_the_other_thing();
+    // wait for the promise to complete
+    auto res = co_await p;
+
+    co_return res;
+}
+----
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="in_place_factory.reference"><title>Reference</title><header id="doxygen.in_place_factory.reference.in__place__factory_8hpp" name="boost/utility/in_place_factory.hpp">
+<namespace name="boost">
+<class id="doxygen.in_place_factory.reference.classboost_1_1in__place__factory__base" name="in_place_factory_base"/></namespace>
+</header>
+<header id="doxygen.in_place_factory.reference.typed__in__place__factory_8hpp" name="boost/utility/typed_in_place_factory.hpp">
+<namespace name="boost">
+<class id="doxygen.in_place_factory.reference.classboost_1_1typed__in__place__factory__base" name="typed_in_place_factory_base"/></namespace>
+</header>
+</library-reference>

@@ -1,0 +1,170 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>handshake_params::handshake_params</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__handshake_params.html" title="handshake_params">
+<link rel="prev" href="../boost__mysql__handshake_params.html" title="handshake_params">
+<link rel="next" href="username.html" title="handshake_params::username">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost__mysql__handshake_params.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__handshake_params.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="username.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__handshake_params.handshake_params"></a><a class="link" href="handshake_params.html" title="handshake_params::handshake_params">handshake_params::handshake_params</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id77499"></a>
+Initializing constructor.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__handshake_params.handshake_params.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__handshake_params.handshake_params.synopsis"></a></span><a class="link" href="handshake_params.html#mysql.ref.boost__mysql__handshake_params.handshake_params.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">handshake_params</span><span class="special">(</span>
+    <a class="link" href="../boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a> <span class="identifier">username</span><span class="special">,</span>
+    <a class="link" href="../boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a> <span class="identifier">password</span><span class="special">,</span>
+    <a class="link" href="../boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a> <span class="identifier">db</span> <span class="special">=</span> <span class="string">""</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">uint16_t</span> <span class="identifier">connection_col</span> <span class="special">=</span> <a class="link" href="default_collation.html" title="handshake_params::default_collation"><code class="literal">handshake_params::default_collation</code></a><span class="special">,</span>
+    <a class="link" href="../boost__mysql__ssl_mode.html" title="ssl_mode"><code class="literal">ssl_mode</code></a> <span class="identifier">mode</span> <span class="special">=</span> <a class="link" href="../boost__mysql__ssl_mode.html" title="ssl_mode"><code class="literal">ssl_mode::require</code></a><span class="special">,</span>
+    <span class="keyword">bool</span> <span class="identifier">multi_queries</span> <span class="special">=</span> <span class="keyword">false</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__handshake_params.handshake_params.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__handshake_params.handshake_params.exception_safety"></a></span><a class="link" href="handshake_params.html#mysql.ref.boost__mysql__handshake_params.handshake_params.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          No-throw guarantee.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__handshake_params.handshake_params.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__handshake_params.handshake_params.parameters"></a></span><a class="link" href="handshake_params.html#mysql.ref.boost__mysql__handshake_params.handshake_params.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">username</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    User name to authenticate as.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">password</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Password for that username, possibly empty.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">db</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Database name to use, or empty string for no database (this is
+                    the default).
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">connection_col</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The ID of the collation to use for the connection. Impacts how
+                    text queries and prepared statements are interpreted. Defaults
+                    to <code class="computeroutput"><span class="identifier">utf8mb4_general_ci</span></code>
+                    (see <a class="link" href="default_collation.html" title="handshake_params::default_collation"><code class="computeroutput"><span class="identifier">default_collation</span></code></a>),
+                    which is compatible with MySQL 5.x, 8.x and MariaDB.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">mode</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The <a class="link" href="../boost__mysql__ssl_mode.html" title="ssl_mode"><code class="computeroutput"><span class="identifier">ssl_mode</span></code></a> to use with
+                    this connection; ignored if the connection's <code class="computeroutput"><span class="identifier">Stream</span></code>
+                    does not support SSL.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">multi_queries</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    Whether to enable support for executing semicolon-separated queries
+                    using <a class="link" href="../boost__mysql__connection/execute.html" title="connection::execute"><code class="computeroutput"><span class="identifier">connection</span><span class="special">::</span><span class="identifier">execute</span></code></a> and <a class="link" href="../boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="computeroutput"><span class="identifier">connection</span><span class="special">::</span><span class="identifier">start_execution</span></code></a>. Disabled
+                    by default.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost__mysql__handshake_params.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__handshake_params.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="username.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

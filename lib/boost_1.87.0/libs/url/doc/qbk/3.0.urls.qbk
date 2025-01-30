@@ -1,0 +1,306 @@
+[/
+    Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/url
+]
+
+[section URLs]
+
+A URL, short for "Uniform Resource Locator," is a compact string
+of characters identifying an abstract or physical resource.
+It has these five parts, with may be optional or disallowed
+depending on the context:
+
+[$url/images/PartsDiagram.svg]
+
+Each part's syntax is defined by a set of production rules in
+__rfc3986__. All valid URLs conform to this grammar, also called
+the "generic syntax." Here is an example URL which describes a
+file and its location on a network host:
+
+[teletype]
+```
+https://www.example.com/path/to/file.txt?userid=1001&pages=3&results=full#page1
+```
+
+The parts and their corresponding text is as follows:
+
+[table Example Parts [
+    [Part]
+    [Text]
+][
+    [[link url.urls.containers.scheme ['scheme]]]
+    ["https"]
+][
+    [[link url.urls.containers.authority ['authority]]]
+    ["www.example.com"]
+][
+    [[link url.urls.containers.path ['path]]]
+    ["/path/to/file.txt"]
+][
+    [[link url.urls.containers.query ['query]]]
+    ["userid=1001&pages=3&results=full"]
+][
+    [[link url.urls.containers.fragment ['fragment]]]
+    ["page1"]
+]]
+
+The production rule for the example above is called a ['URI],
+which can contain all five parts. The specification using
+[@https://datatracker.ietf.org/doc/html/rfc2234 ['ABNF notation]]
+is:
+
+[teletype]
+```
+URI           = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+
+hier-part     = "//" authority path-abempty
+              / path-absolute
+              / path-rootless
+              / path-empty
+```
+
+In this notation, the square brackets ("\[" and "\]") denote optional
+elements, quoted text represents character literals, and slashes are
+used to indicate a choice between one of several elements. For the
+complete specification of ABNF notation please consult
+[@https://datatracker.ietf.org/doc/html/rfc2234 rfc2234],
+"Augmented BNF for Syntax Specifications."
+When using this library to process or create URLs, it is necessary
+to choose which of these top-level production rules are applicable
+for a given use-case:
+['absolute-URI], ['origin-form], ['relative-ref], ['URI], or
+['URI-reference]. These are discussed in greater depth later.
+
+[/-----------------------------------------------------------------------------]
+
+[heading Scheme]
+
+The most important part is the ['scheme], whose production rule is:
+
+[teletype]
+```
+scheme        = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+```
+
+The scheme, which some informal texts incorrectly refer to as
+"protocol", defines how the rest of the URL is interpreted.
+Public schemes are registered and managed by the
+[@https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority Internet Assigned Numbers Authority] (IANA).
+Here are some registered schemes and their corresponding
+specifications:
+
+[table Public Schemes [
+    [Scheme]
+    [Specification]
+][
+    [[*http]]
+    [[@https://datatracker.ietf.org/doc/html/rfc7230#section-2.7.1 http URI Scheme (rfc7230)]]
+][
+    [[*magnet]]
+    [[@https://en.wikipedia.org/wiki/Magnet_URI_scheme Magnet URI scheme]]
+][
+    [[*mailto]]
+    [[@https://datatracker.ietf.org/doc/html/rfc6068 The 'mailto' URI Scheme (rfc6068)]]
+][
+    [[*payto]]
+    [[@https://datatracker.ietf.org/doc/html/rfc8905 The 'payto' URI Scheme for Payments (rfc8905)]]
+][
+    [[*telnet]]
+    [[@https://datatracker.ietf.org/doc/html/rfc4248 The telnet URI Scheme (rfc4248)]]
+][
+    [[*urn]]
+    [[@https://datatracker.ietf.org/doc/html/rfc2141 URN Syntax]]
+]]
+
+Private schemes are possible, defined by organizations to enumerate internal
+resources such as documents or physical devices, or to facilitate the operation
+of their software. These are not subject to the same rigor as the registered
+ones; they can be developed and modified by the organization to meet specific
+needs with less concern for interoperability or backward compatibility. Note
+that private does not imply secret; some private schemes such as Amazon's "s3"
+have publicly available specifications and are quite popular. Here are some
+examples:
+
+[table Private Schemes [
+    [Scheme]
+    [Specification]
+][
+    [[*app]]
+    [[@https://www.w3.org/TR/app-uri/ app: URL Scheme]]
+][
+    [[*odbc]]
+    [[@https://datatracker.ietf.org/doc/html/draft-patrick-lambert-odbc-uri-scheme ODBC URI Scheme]]
+][
+    [[*slack]]
+    [[@https://api.slack.com/reference/deep-linking Reference: Deep linking into Slack]]
+]]
+
+In some cases the scheme is implied by the surrounding context and
+therefore omitted. Here is a complete HTTP/1.1 GET request for the
+target URL "/index.htm":
+
+[teletype]
+```
+GET /index.htm HTTP/1.1
+Host: www.example.com
+Accept: text/html
+User-Agent: Beast
+```
+
+The scheme of "http" is implied here because the context is already an HTTP
+request. The production rule for the URL in the request above is called
+['origin-form], defined in the
+[@https://datatracker.ietf.org/doc/html/rfc7230#section-5.3.1 HTTP specification]
+thusly:
+
+[teletype]
+```
+origin-form    = absolute-path [ "?" query ]
+
+absolute-path  = 1*( "/" segment )
+```
+
+[note
+All URLs have a scheme, whether it is explicit or implicit.
+The scheme determines what the rest of the URL means.
+]
+
+Here are some more examples of URLs using various schemes (and one example
+of something that is not a URL):
+
+[teletype]
+[table Scheme Examples [
+    [URL]
+    [Notes]
+][
+    [`https://www.boost.org/index.html`]
+    [Hierarchical URL with `https` protocol. Resource in the HTTP protocol.]
+][
+    [`ftp://host.dom/etc/motd`]
+    [Hierarchical URL with `ftp` scheme. Resource in the FTP protocol.]
+][
+    [`urn:isbn:045145052`]
+    [Opaque URL with `urn` scheme. Identifies `isbn` resource.]
+][
+    [`mailto:person@example.com`]
+    [Opaque URL with `mailto` scheme. Identifies e-mail address.]
+][
+    [`index.html`]
+    [URL reference. Missing scheme and authority.]
+][
+    [`www.boost.org`]
+    [A Protocol-Relative Link (PRL). [*Not a URL].]
+]]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Authority]
+
+The authority determines how a resource can be accessed.
+It contains two parts: the
+[@https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1 ['userinfo]]
+that holds identity credentials, and the
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2 ['host]]
+and
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3 ['port]]
+which identify a communication endpoint having dominion
+over the resource described in the remainder of the URL.
+This is the ABNF specification for the authority part:
+[teletype]
+```
+authority   = [ user [ ":" password ] "@" ] host [ ":" port ]
+```
+
+The combination of user and optional password is called the
+['userinfo].
+
+The authority determines how a resource can be accessed.
+It contains two parts: the
+[@https://www.rfc-editor.org/rfc/rfc3986#section-3.2.1 ['userinfo]]
+that holds identity credentials, and the
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.2 ['host]]
+and
+[@https://datatracker.ietf.org/doc/html/rfc3986#section-3.2.3 ['port]]
+which identify a communication endpoint having dominion
+over the resource described in the remainder of the URL.
+
+[$url/images/AuthorityDiagram.svg]
+
+Some observations:
+
+* The use of the password field is deprecated.
+* The authority always has a defined host field, even if empty.
+* The host can be a name, or an IPv4, an IPv6, or an IPvFuture address.
+* All but the port field use percent-encoding to escape delimiters.
+
+The host subcomponent represents where resources
+are located. 
+
+[note
+    Note that if an authority is present, the host is always
+    defined even if it is the empty string (corresponding
+    to a zero-length ['reg-name] in the BNF).
+
+    [snippet_parsing_authority_10a]
+]
+
+The authority component also influences how we should
+interpret the URL path. If the authority is present,
+the path component must either be empty or begin with
+a slash.
+
+[note Although the specification allows the format `username:password`,
+the password component should be used with care.
+
+It is not recommended to transfer password data through URLs
+unless this is an empty string indicating no password.]
+
+[/-----------------------------------------------------------------------------]
+
+[heading Containers]
+
+This library provides the following containers, which
+are capable of storing any possible URL:
+
+* __url__: A modifiable container for a URL.
+* __url_view__: A non-owning reference to a valid URL.
+* __static_url__: A URL with fixed-capacity storage.
+
+These containers maintain a useful invariant: they
+always contain a valid URL. In addition, the library
+provides the __authority_view__ container which holds
+a non-modifiable reference to a valid ['authority].
+An authority by itself, is not a valid URL.
+
+In the sections that follow we describe the mechanisms use to
+parse strings using various specific grammars, followed by the
+interface for inspecting and modified each of the main parts of
+the URL. Finally we discuss important algorithms availble to
+use with URLs.
+
+[/
+URLs
+    Parsing
+    Containers
+    Segments
+    Params
+    Normalization
+    StringToken
+    Percent Encoding
+]
+
+[include 3.1.parsing.qbk]
+[include 3.2.containers.qbk]
+[include 3.3.segments.qbk]
+[include 3.4.params.qbk]
+[include 3.5.normalization.qbk]
+[include 3.6.stringtoken.qbk]
+[include 3.7.percent-encoding.qbk]
+[include 3.8.formatting.qbk]
+
+[endsect]
+

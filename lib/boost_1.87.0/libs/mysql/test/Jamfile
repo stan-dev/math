@@ -1,0 +1,172 @@
+#
+# Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+require-b2 5.0.1 ;
+import-search /boost/config/checks ;
+
+import os ;
+import path ;
+import feature ;
+import ac ;
+import indirect ;
+import config : requires ;
+
+# Support header-only builds
+feature.feature boost.mysql.separate-compilation : on off : propagated composite ;
+
+# Support builds with BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT
+feature.feature boost.mysql.use-ts-executor : off on : propagated composite ;
+
+# Support builds forcing !BOOST_ASIO_HAS_LOCAL_SOCKETS
+feature.feature boost.mysql.disable-local-sockets : off on : propagated composite ;
+
+# Support valgrind
+feature.feature boost.mysql.valgrind : off on : propagated composite ;
+feature.compose <boost.mysql.valgrind>on : <define>BOOST_USE_VALGRIND ;
+
+# Configure openssl if it hasn't been done yet
+using openssl ;
+
+# Provide a way to fail the build if OpenSSL is not found - used by CIs
+rule do_fail_impl ( a * )
+{
+    exit "OpenSSL could not be found. Don't build target fail_if_no_openssl to skip this check" ;
+}
+
+local do_fail = [ indirect.make do_fail_impl ] ;
+
+alias fail_if_no_openssl
+    : requirements
+        [ ac.check-library /openssl//ssl    : : <conditional>@$(do_fail) ]
+        [ ac.check-library /openssl//crypto : : <conditional>@$(do_fail) ]
+;
+
+explicit fail_if_no_openssl ;
+
+# Requirements to use across targets
+local requirements =
+        <define>BOOST_ALL_NO_LIB=1
+        <define>BOOST_ASIO_NO_DEPRECATED=1
+        <define>BOOST_ASIO_DISABLE_BOOST_ARRAY=1
+        <define>BOOST_ASIO_DISABLE_BOOST_BIND=1
+        <define>BOOST_ASIO_DISABLE_BOOST_DATE_TIME=1
+        <define>BOOST_ASIO_DISABLE_BOOST_REGEX=1
+        <define>BOOST_ASIO_DISABLE_BOOST_COROUTINE=1
+        <define>BOOST_ASIO_HAS_DEFAULT_FUNCTION_TEMPLATE_ARGUMENTS=1
+        <define>BOOST_ALLOW_DEPRECATED_HEADERS=1
+        # Disable warning C4702: unreachable code, produced by Boost.Asio buffer.hpp
+        # Remove /wd4100 when PFR fixes warnings
+        <toolset>msvc:<cxxflags>"/bigobj /wd4702 /wd4100 /permissive-"
+        <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS=1
+        <toolset>msvc:<define>_SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING
+        <toolset>msvc:<define>_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING
+        <toolset>msvc:<define>_SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
+        <toolset>msvc:<define>_CRT_SECURE_NO_WARNINGS # Required by Asio
+        # gcc-13+ doesn't understand view types and issues array bound warnings that don't make sense.
+        # -Wno-implicit-fallthrough is required by Asio SSL components
+        <toolset>gcc:<cxxflags>"-Wno-dangling-reference -Wno-array-bounds -Wno-implicit-fallthrough"
+        # gcc-13+ complains about TSAN not supporting std::atomic_thread_fence,
+        # used by Asio old net-ts type-erased executors.
+        <toolset>gcc,<thread-sanitizer>norecover:<cxxflags>-Wno-tsan
+        # gcc-11 emits spurious warnings for valid vector::insert ops
+        <toolset>gcc-11:<cxxflags>-Wno-stringop-overflow
+        # TODO: remove when PFR unused warnings are fixed
+        # https://github.com/boostorg/pfr/pull/187
+        <toolset>gcc:<cxxflags>-Wno-unused-parameter
+        <toolset>clang:<cxxflags>-Wno-unused-parameter
+        <target-os>linux:<define>_XOPEN_SOURCE=600
+        <target-os>linux:<define>_GNU_SOURCE=1
+        <target-os>windows:<define>_WIN32_WINNT=0x0601
+        <boost.mysql.use-ts-executor>on:<define>BOOST_ASIO_USE_TS_EXECUTOR_AS_DEFAULT
+        # Disable assertions when doing coverage, as they distort coverage data
+        <coverage>on:<define>BOOST_DISABLE_ASSERTS
+        <boost.mysql.disable-local-sockets>on:<define>BOOST_ASIO_DISABLE_LOCAL_SOCKETS
+    ;
+
+alias boost_mysql
+    :
+        $(boost_dependencies)/<warnings-as-errors>off
+        /openssl//ssl/<link>shared
+        /openssl//crypto/<link>shared
+    : requirements
+        [ requires
+            cxx11_defaulted_moves
+            cxx11_final
+            cxx11_hdr_array
+            cxx11_hdr_chrono
+            cxx11_hdr_tuple
+            cxx11_hdr_type_traits
+            cxx11_numeric_limits
+            cxx11_override
+            cxx11_smart_ptr
+            cxx11_trailing_result_types
+            cxx11_template_aliases
+            cxx11_variadic_templates
+        ]
+        [ ac.check-library /openssl//ssl    : <library>/openssl//ssl/<link>shared : <build>no ]
+        [ ac.check-library /openssl//crypto : <library>/openssl//crypto/<link>shared : <build>no ]
+        $(requirements)
+    : usage-requirements
+        $(requirements)
+    ;
+
+lib boost_mysql_compiled
+    :
+        common/src/boost_asio.cpp
+        boost_mysql
+    : requirements
+        <boost.mysql.separate-compilation>on:<source>common/src/boost_mysql.cpp
+        <boost.mysql.separate-compilation>on:<define>BOOST_MYSQL_SEPARATE_COMPILATION
+        <define>BOOST_ASIO_SEPARATE_COMPILATION
+        <link>static
+    : usage-requirements
+        <boost.mysql.separate-compilation>on:<define>BOOST_MYSQL_SEPARATE_COMPILATION
+        <define>BOOST_ASIO_SEPARATE_COMPILATION
+    ;
+
+alias common_test_sources
+    :
+        common/src/entry_point.cpp
+        common/src/utils.cpp
+    ;
+
+# Boost.Context causes failures with warnings-as-errors
+# under libc++, because it builds objects that raise a -stdlib=libc++ unused warning
+alias boost_context_lib
+    :
+        /boost/context//boost_context/<warnings-as-errors>off
+    : usage-requirements
+        # gcc-13+ seem to enable CET by default, which causes warnings with Boost.Context.
+        # Disable CET until https://github.com/boostorg/context/issues/263 gets fixed
+        <toolset>gcc-13:<cxxflags>-fcf-protection=none
+        <toolset>gcc-14:<cxxflags>-fcf-protection=none
+    ;
+
+# Beast and JSON depend on Container, which causes trouble with <warnings-as-errors>on
+alias boost_beast_lib : /boost/beast//boost_beast/<warnings-as-errors>off ;
+alias boost_json_lib : /boost/json//boost_json/<warnings-as-errors>off ;
+
+alias boost_mysql_test
+    :
+        boost_mysql_compiled
+        # Unit test library generates some internal warnings we're not interested in
+        /boost/test//boost_unit_test_framework/<warnings-as-errors>off
+    : requirements
+        <link>static
+        <include>common/include
+    : usage-requirements
+        <include>common/include
+    ;
+
+# Mark a test as runnable using Valgrind. Some tests use
+# an intermediate Python runner, so just setting testing.launcher globally is incorrect
+alias launch_with_valgrind
+    : usage-requirements
+        <boost.mysql.valgrind>on:<testing.launcher>"valgrind --leak-check=full --error-limit=yes --error-exitcode=1 --gen-suppressions=all"
+    ;
+
+build-project unit ;

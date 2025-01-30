@@ -1,0 +1,70 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct non_proxy_iterator</title>
+<link rel="stylesheet" href="../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Boost.Test">
+<link rel="up" href="a01116.html#id47821" title="Description">
+<link rel="prev" href="a01116.html" title="Class init_list&lt;bool&gt;">
+<link rel="next" href="a01124.html" title="Struct template is_dataset&lt;init_list&lt; T &gt;&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a01116.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="a01116.html#id47821"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a01124.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.a01120"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct non_proxy_iterator</span></h2>
+<p>boost::unit_test::data::monomorphic::init_list&lt;bool&gt;::non_proxy_iterator</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="a00785.html" title="Header &lt;boost/test/data/monomorphic/initializer_list.hpp&gt;">boost/test/data/monomorphic/initializer_list.hpp</a>&gt;
+
+</span>
+
+<span class="keyword">struct</span> <a class="link" href="a01120.html" title="Struct non_proxy_iterator">non_proxy_iterator</a> <span class="special">{</span>
+
+  <span class="comment">// <a class="link" href="a01120.html#id12-bb">public member functions</a></span>
+  <a class="link" href="a01120.html#doxygen.a01120_1ac68dc455cf3eb2678678f5736021558d"><span class="identifier">non_proxy_iterator</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="keyword">bool</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_iterator</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="a01120.html#doxygen.a01120_1afb4df54aa1ac135756e7531cc4db68fb"><span class="keyword">operator</span><span class="special">*</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">non_proxy_iterator</span> <span class="special">&amp;</span> <a class="link" href="a01120.html#doxygen.a01120_1a240e08adcf031cbd10972e21db1c9712"><span class="keyword">operator</span><span class="special">++</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="keyword">bool</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_iterator</span> <span class="identifier">iterator</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id47937"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id47939"></a><h3>
+<a name="id12-bb"></a><code class="computeroutput">non_proxy_iterator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.a01120_1ac68dc455cf3eb2678678f5736021558d"></a><span class="identifier">non_proxy_iterator</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="keyword">bool</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">const_iterator</span> <span class="special">&amp;&amp;</span> it<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.a01120_1afb4df54aa1ac135756e7531cc4db68fb"></a><span class="keyword">operator</span><span class="special">*</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">non_proxy_iterator</span> <span class="special">&amp;</span> <a name="doxygen.a01120_1a240e08adcf031cbd10972e21db1c9712"></a><span class="keyword">operator</span><span class="special">++</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2022 Boost.Test contributors<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a01116.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="a01116.html#id47821"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a01124.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

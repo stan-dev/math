@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>character_set::next_char</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__character_set.html" title="character_set">
+<link rel="prev" href="name.html" title="character_set::name">
+<link rel="next" href="../boost__mysql__client_errc.html" title="client_errc">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="name.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__character_set.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost__mysql__client_errc.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__character_set.next_char"></a><a class="link" href="next_char.html" title="character_set::next_char">character_set::next_char</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id48397"></a>
+Obtains the size of the first character of a string.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__character_set.next_char.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__character_set.next_char.synopsis"></a></span><a class="link" href="next_char.html#mysql.ref.boost__mysql__character_set.next_char.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">(*</span><span class="identifier">next_char</span><span class="special">)(</span><span class="identifier">span</span><span class="special">&lt;</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> <span class="special">&gt;);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__character_set.next_char.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__character_set.next_char.description"></a></span><a class="link" href="next_char.html#mysql.ref.boost__mysql__character_set.next_char.description">Description</a>
+        </h6>
+<p>
+          Given a range of bytes, <code class="computeroutput"><span class="identifier">r</span></code>,
+          this function must interpret <code class="computeroutput"><span class="identifier">r</span></code>
+          as a string encoded using this character set, and return the number of
+          bytes that the first character in the string spans, or 0 in case of error.
+          <code class="computeroutput"><span class="identifier">r</span></code> is guaranteed to be non-empty
+          (<code class="computeroutput"><span class="identifier">r</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">&gt;</span> <span class="number">0</span></code>).
+        </p>
+<p>
+          In some character sets (like UTF-8), not all byte sequences represent valid
+          characters. If this function finds an invalid byte sequence while trying
+          to interpret the first character, it should return 0 to signal the error.
+        </p>
+<p>
+          This function must not throw exceptions or have side effects.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="name.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__character_set.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost__mysql__client_errc.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

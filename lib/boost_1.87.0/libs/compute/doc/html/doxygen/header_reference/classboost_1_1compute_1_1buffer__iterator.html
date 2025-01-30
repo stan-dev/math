@@ -1,0 +1,90 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template buffer_iterator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__iterator_8hpp" title="Header &lt;boost/compute/iterator/buffer_iterator.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">
+<link rel="next" href="buffer__iterator_8hpp_1a7350e9c75873f10d70c8e1025b0f0873.html" title="Function template make_buffer_iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1opengl__texture.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="buffer__iterator_8hpp_1a7350e9c75873f10d70c8e1025b0f0873.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template buffer_iterator</span></h2>
+<p>boost::compute::buffer_iterator — An iterator for values in a buffer. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__iterator_8hpp" title="Header &lt;boost/compute/iterator/buffer_iterator.hpp&gt;">boost/compute/iterator/buffer_iterator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                 <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a00411fd98211d0c053f26b055ecf7438"></a><span class="identifier">super_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">reference</span>       <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a0ede885cc3648b7d5868ad45cf879822"></a><span class="identifier">reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">difference_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a7b9bd7366cd8e27350d91e6c2c7cb446"></a><span class="identifier">difference_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#id54-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a345ccd3293bb1bfc59d2eb3f6bbd74e5"><span class="identifier">buffer_iterator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a88c3b774dbb159bfdbc545b96ab7ce02"><span class="identifier">buffer_iterator</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">buffer</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a646eb83ed7881f39fe5f4addefae3821"><span class="identifier">buffer_iterator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a2117839d2c6597dab8026fd560852893"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a3c99bbb15cecb9622a542d9340b0a4fa"><span class="special">~</span><span class="identifier">buffer_iterator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">buffer</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1aea8b9df422e15c0b0b6cd59b3151e531"><span class="identifier">get_buffer</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a2f99c1869cf7cec272223c4e1e2c13e8"><span class="identifier">get_index</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">T</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a9c40afd28b83091904bdc655b840d1c2"><span class="identifier">read</span></a><span class="special">(</span><span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1afcabf27ad7cd863ec28100bedd817e27"><span class="identifier">write</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id31009"></a><h2>Description</h2>
+<p>The <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a> class iterates over values in a memory buffer on a compute device. It is the most commonly used iterator in Boost.Compute and is used by the <a class="link" href="classboost_1_1compute_1_1vector.html" title="Class template vector">vector&lt;T&gt;</a> and <a class="link" href="classboost_1_1compute_1_1array.html" title="Class template array">array&lt;T, N&gt;</a> container classes.</p>
+<p>Buffer iterators store a reference to a memory buffer along with an index into that memory buffer.</p>
+<p>The <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a> class allows for arbitrary OpenCL memory objects (including those created outside of Boost.Compute) to be used with the Boost.Compute algorithms (such as transform() and sort()). For example, to reverse the contents of an OpenCL memory buffer containing a set of integers:</p>
+<pre class="programlisting"></pre>
+<p><b>See Also: </b>buffer, make_buffer_iterator() </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id31024"></a><h3>
+<a name="id54-bb"></a><code class="computeroutput">buffer_iterator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a345ccd3293bb1bfc59d2eb3f6bbd74e5"></a><span class="identifier">buffer_iterator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a88c3b774dbb159bfdbc545b96ab7ce02"></a><span class="identifier">buffer_iterator</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">buffer</span> <span class="special">&amp;</span> buffer<span class="special">,</span> <span class="identifier">size_t</span> index<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a646eb83ed7881f39fe5f4addefae3821"></a><span class="identifier">buffer_iterator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a2117839d2c6597dab8026fd560852893"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">buffer_iterator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a3c99bbb15cecb9622a542d9340b0a4fa"></a><span class="special">~</span><span class="identifier">buffer_iterator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">buffer</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1aea8b9df422e15c0b0b6cd59b3151e531"></a><span class="identifier">get_buffer</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">size_t</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a2f99c1869cf7cec272223c4e1e2c13e8"></a><span class="identifier">get_index</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">T</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1a9c40afd28b83091904bdc655b840d1c2"></a><span class="identifier">read</span><span class="special">(</span><span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__iterator_1afcabf27ad7cd863ec28100bedd817e27"></a><span class="identifier">write</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> value<span class="special">,</span> <span class="identifier">command_queue</span> <span class="special">&amp;</span> queue<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1opengl__texture.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="buffer__iterator_8hpp_1a7350e9c75873f10d70c8e1025b0f0873.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

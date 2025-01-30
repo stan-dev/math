@@ -1,0 +1,82 @@
+#
+# Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import common ;
+import regex ;
+
+local all_fuzzers = [ regex.replace-list
+    [ glob "fuzz_*.cpp" ] : ".cpp" : ""
+] ;
+
+# Fuzzers that should use a longer time period
+local long_fuzzers =
+    fuzz_row
+    fuzz_text_field
+    fuzz_utf8mb4
+    fuzz_escape_string
+    fuzz_format_strings
+    fuzz_format_args
+    fuzz_format_sql_injection
+;
+
+
+for local fuzzer in $(all_fuzzers)
+{
+    local fuzz_time = 10 ;
+    if $(fuzzer) in $(long_fuzzers)
+    {
+        fuzz_time = 30 ;
+    }
+
+    # Create the output corpus directories
+    make /tmp/corpus/$(fuzzer) : : common.MkDir ;
+    make /tmp/mincorpus/$(fuzzer) : : common.MkDir ;
+
+    # Build the fuzzer. Fail the build if openssl is not found
+    exe $(fuzzer)
+        : 
+            /boost/mysql/test//boost_mysql
+            /boost/mysql/test//fail_if_no_openssl
+            $(fuzzer).cpp
+        : requirements
+            <include>../common/include
+            <debug-symbols>on
+            <optimization>speed
+            <address-sanitizer>on
+            <undefined-sanitizer>norecover
+            <cxxflags>-fsanitize=fuzzer
+            <linkflags>-fsanitize=fuzzer
+    ;
+
+    # Make sure that any old crashes are run without problems
+    local old_crashes = [ glob-tree-ex old_crashes/$(fuzzer) : * ] ;
+    if $(old_crashes)
+    {
+        run $(fuzzer)
+            : target-name $(fuzzer)-old-crashes
+            : input-files [ SORT $(old_crashes) ]
+        ;
+    }
+
+    # Run the fuzzer for a short while
+    run $(fuzzer)
+        : <testing.arg>"/tmp/corpus/$(fuzzer) /tmp/seedcorpus/$(fuzzer) -max_total_time=$(fuzz_time)"
+        : target-name $(fuzzer)-fuzzing
+        : requirements
+            <dependency>/tmp/corpus/$(fuzzer)
+    ;
+
+    # Minimize the corpus
+    run $(fuzzer)
+        : <testing.arg>"/tmp/mincorpus/$(fuzzer) /tmp/corpus/$(fuzzer) -merge=1"
+        : target-name $(fuzzer)-minimize-corpus
+        : requirements
+            <dependency>$(fuzzer)-fuzzing
+            <dependency>/tmp/corpus/$(fuzzer)
+            <dependency>/tmp/mincorpus/$(fuzzer)
+    ;
+}

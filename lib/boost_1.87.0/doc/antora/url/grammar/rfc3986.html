@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>RFC 3986 :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/grammar/rfc3986.html">
+    <link rel="prev" href="range.html">
+    <link rel="next" href="../examples/qrcode.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="range.html">Ranges</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">Customization</a></li>
+    <li><a href="rfc3986.html">RFC 3986</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="range.html"><span class="material-symbols-outlined" title="Previous: Ranges">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: Customization">arrow_upward</span></a>
+    <a accesskey="p" href="../examples/qrcode.html"><span class="material-symbols-outlined" title="Next: QR Code">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">RFC 3986</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Functions like <code><a href="../reference/boost/urls/parse_uri.html" class="xref page">parse_uri</a></code> are sufficient for converting URLs, but they require that the entire string is consumed.
+When URLs appear as components of a larger grammar, it is desired to use composition of rules based parsing to process these along with other elements potentially unrelated to resource locators.
+To achieve this, the library provides rules for the top-level BNF productions found in <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a> and a rule for matching percent-encoded strings.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_percent_encoding"><a class="anchor" href="#_percent_encoding"></a>Percent Encoding</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The percent-encoding mechanism is used to represent a data octet in a component when the corresponding character is outside the allowed set or is being used as a delimiter of, or within, the component.
+An encoded octet (also called an <em>escape</em>) is encoded as the percent character ('%') followed by a two-digit hexadecimal number representing the octet&#8217;s numeric value:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">pct-encoded   = "%" HEXDIG HEXDIG</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>URL components with possible percent-encoded characters are specified in the components BNF using the <em>pct-encoded</em>
+production, along with the characters which are not considered to be part of the reserved set.
+For example, this is how path characters are described in
+<a href="https://datatracker.ietf.org/doc/html/rfc3986#section-3.3" target="blank_">3.3 Path</a>
+of the RFC:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The library provides the <code><a href="../reference/boost/urls/pct_encoded_rule.html" class="xref page">pct_encoded_rule</a></code> for matching strings which are percent-encoded.
+This function is passed the set of characters that may be used without escapes and returns a suitable rule.
+If the input is valid; that is, if there are no invalid escape sequences, the rule returns a
+<code><a href="../reference/boost/urls/decode_view.html" class="xref page">decode_view</a></code>.
+This is a forward range of characters which performs percent-decoding when iterated.
+It also supports equality and comparison to unencoded strings, without allocating memory.
+In the example below we parse the string <code>s</code> as a series of zero or more <code><a href="../reference/boost/urls/pchars.html" class="xref page">pchars</a></code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">system::result&lt; pct_string_view &gt; rv = parse( s, pct_encoded_rule( pchars ) );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These constants are used and provided by the library to specify rules for percent-encoded URL components:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">BNF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/gen_delim_chars.html" class="xref page">gen_delim_chars</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pchars.html" class="xref page">pchars</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">pchar     = unreserved / pct-encoded / sub-delims / ":" / "@"</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/reserved_chars.html" class="xref page">reserved_chars</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>(everything but <code><a href="../reference/boost/urls/unreserved_chars.html" class="xref page">unreserved_chars</a></code>)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/sub_delim_chars.html" class="xref page">sub_delim_chars</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">sub-delims    = "!" / "$" / "&amp;" / "'" / "(" / ")"
+              / "*" / "+" / "," / ";" / "="</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/unreserved_chars.html" class="xref page">unreserved_chars</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_url_rules"><a class="anchor" href="#_url_rules"></a>URL Rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a URL can appear in the context of a larger grammar, it may be desired to express the enclosing grammar in a single rule that incoporates the URL as an element.
+To achieve this, the library makes public the rules used to implement high-level parsing of complete strings as URL components, so that these components may be parsed as part of a larger string containing non-URL elements.
+Here we present a rule suitable for parsing the the HTTP
+<a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1" target="blank_"><em>request-line</em></a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">// request-line   = method SP request-target SP HTTP-version CRLF
+
+constexpr auto request_line_rule = tuple_rule(
+    not_empty_rule( token_rule( alpha_chars ) ),    // method
+    squelch( delim_rule( ' ' ) ),                   // SP
+    variant_rule(
+        absolute_uri_rule,                          // absolute-uri or
+        relative_ref_rule),                         // relative-ref
+    squelch( delim_rule( ' ' ) ),
+    squelch( literal_rule( "HTTP/" ) ),             // "HTTP/"
+    delim_rule( digit_chars ),                      // DIGIT
+    squelch( delim_rule( '.' ) ),                   // "."
+    delim_rule( digit_chars ),                      // DIGIT
+    squelch( literal_rule( "\r\n" ) ) );            // CRLF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The library offers these rules to allow custom rule definitions to integrate the various styles of valid URL rules:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">BNF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/absolute_uri_rule.html" class="xref page">absolute_uri_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+hier-part       = "//" authority path-abempty
+                / path-absolute
+                / path-rootless
+                / path-empty</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/authority_rule.html" class="xref page">authority_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">authority       = [ userinfo "@" ] host [ ":" port ]</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/origin_form_rule.html" class="xref page">origin_form_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">origin-form    = absolute-path [ "?" query ]
+
+absolute-path = 1*( "/" segment )</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/relative_ref_rule.html" class="xref page">relative_ref_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">relative-ref    = relative-part [ "?" query ] [ "#" fragment ]</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/uri_reference_rule.html" class="xref page">uri_reference_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">URI-reference   = URI / relative-ref</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/uri_rule.html" class="xref page">uri_rule</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">URI     = scheme ":" hier-part [ "?" query ] [ "#" fragment ]</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/grammar/rfc3986.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="range.html">Ranges</a></span>
+        <span class="next"><a href="../examples/qrcode.html">QR Code</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

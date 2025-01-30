@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/url
+#
+
+# An antora playbook used for local development
+# The playbook includes Boost.URL as its only component
+
+site:
+  title: Boost.URL
+  url: https://antora.cppalliance.org/develop/lib/doc
+  start_page: url::index.adoc
+  robots: allow
+  keys:
+    repo_url: 'https://github.com/boostorg/url'
+
+content:
+  sources:
+    - url: ..
+      start_path: doc
+      edit_url: 'https://github.com/boostorg/url/edit/{refname}/{path}'
+
+ui:
+  bundle:
+    url: https://github.com/boostorg/website-v2-docs/releases/download/ui-master/ui-bundle.zip
+    snapshot: true
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension' # https://gitlab.com/antora/antora-lunr-extension
+      index_latest_only: true
+    - require: '@cppalliance/antora-cpp-tagfiles-extension'
+      cpp-tagfiles:
+        using-namespaces:
+          - 'boost::'
+    - require: '@cppalliance/antora-cpp-reference-extension'
+      dependencies:
+        - name: 'boost'
+          repo: 'https://github.com/boostorg/boost.git'
+          tag: 'develop'
+          variable: 'BOOST_SRC_DIR'
+          system-env: 'BOOST_SRC_DIR'
+
+asciidoc:
+  attributes:
+    # Enable pagination
+    page-pagination: ''
+  extensions:
+    - '@cppalliance/asciidoctor-boost-links'
+    - '@asciidoctor/tabs'

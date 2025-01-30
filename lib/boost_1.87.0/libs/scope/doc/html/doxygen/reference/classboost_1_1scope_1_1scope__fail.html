@@ -1,0 +1,212 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template scope_fail</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Scope">
+<link rel="up" href="../../reference.html#doxygen.reference.scope__fail_8hpp" title="Header &lt;boost/scope/scope_fail.hpp&gt;">
+<link rel="prev" href="scope__exit_8hpp_1aab59df6902905c0a4adc00ed8c0b5483.html" title="Function template make_scope_exit">
+<link rel="next" href="scope__fail_8hpp_1a49d72b7603a33daa80fa0828ca1a6eeb.html" title="Function template make_scope_fail">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="scope__exit_8hpp_1aab59df6902905c0a4adc00ed8c0b5483.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.scope__fail_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="scope__fail_8hpp_1a49d72b7603a33daa80fa0828ca1a6eeb.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference.classboost_1_1scope_1_1scope__fail"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template scope_fail</span></h2>
+<p>boost::scope::scope_fail — Scope exit guard that invokes a function upon leaving the scope, if a failure condition is satisfied. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference.html#doxygen.reference.scope__fail_8hpp" title="Header &lt;boost/scope/scope_fail.hpp&gt;">boost/scope/scope_fail.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Func<span class="special">,</span> <span class="keyword">typename</span> Cond <span class="special">=</span> <span class="identifier">exception_checker</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">scope</span><span class="special">::</span><span class="identifier">scope_exit</span><span class="special">&lt;</span> <span class="identifier">Func</span><span class="special">,</span> <span class="identifier">exception_checker</span> <span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1scope_1_1scope__fail.html#id11-bb">public member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> F<span class="special">&gt;</span> <span class="keyword">explicit</span> <a class="link" href="classboost_1_1scope_1_1scope__fail.html#doxygen.reference.classboost_1_1scope_1_1scope__fail_1a1242746792046dc7e8f949b9269ced89"><span class="identifier">scope_fail</span></a><span class="special">(</span><span class="identifier">F</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> F<span class="special">,</span> <span class="keyword">typename</span> C<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="classboost_1_1scope_1_1scope__fail.html#doxygen.reference.classboost_1_1scope_1_1scope__fail_1ae1840c99a617c7b5f5f18c6840e384ef"><span class="identifier">scope_fail</span></a><span class="special">(</span><span class="identifier">F</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">C</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1scope__fail.html#doxygen.reference.classboost_1_1scope_1_1scope__fail_1a9eeabe1660b7575bf218d4ae4e9688f2"><span class="identifier">scope_fail</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1scope__fail.html#doxygen.reference.classboost_1_1scope_1_1scope__fail_1a859ad3b71606a349083fb1ff2a8ddb23"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1scope__fail.html#doxygen.reference.classboost_1_1scope_1_1scope__fail_1aba908c8c8528b29945179225500312a0"><span class="identifier">scope_fail</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1scope_1_1scope__fail.html#doxygen.reference.classboost_1_1scope_1_1scope__fail_1a3a6d3b5c5b203f45a1fea8ce12872507"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id9579"></a><h2>Description</h2>
+<p>The scope guard wraps two function objects: the scope guard action and a failure condition for invoking the action. Both function objects must be callable with no arguments and can be one of:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>A user-defined class with a public <code class="computeroutput">operator()</code>. </p></li>
+<li class="listitem"><p>An lvalue reference to such class. </p></li>
+<li class="listitem"><p>An lvalue reference or pointer to function taking no arguments.</p></li>
+</ul></div>
+<p>
+The condition function object <code class="computeroutput">operator()</code> must return a value contextually convertible to <code class="computeroutput">true</code>, if the failure is detected and the action function object is allowed to be executed, and <code class="computeroutput">false</code> otherwise. Additionally, the failure condition function object <code class="computeroutput">operator()</code> must not throw, as otherwise the action function object may not be called. If not specified, the default failure condition checks whether the scope is left due to an exception - the action function object will not be called if the scope is left normally.</p>
+<p><b>See Also: </b><a class="link" href="classboost_1_1scope_1_1scope__exit.html" title="Class template scope_exit">scope_exit</a> </p>
+<p>
+</p>
+<p><b>See Also: </b><a class="link" href="classboost_1_1scope_1_1scope__success.html" title="Class template scope_success">scope_success</a></p>
+<p>
+
+</p>
+<div class="refsect2">
+<a name="id9604"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Func</pre>
+<p>Scope guard action function object type. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Cond <span class="special">=</span> <span class="identifier">exception_checker</span></pre>
+<p>Scope guard failure condition function object type. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id9621"></a><h3>
+<a name="id11-bb"></a><code class="computeroutput">scope_fail</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> F<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a1242746792046dc7e8f949b9269ced89"></a><span class="identifier">scope_fail</span><span class="special">(</span><span class="identifier">F</span> <span class="special">&amp;&amp;</span> func<span class="special">,</span> <span class="keyword">bool</span> active <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Constructs a scope guard with a given callable function object. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Func</code> is constructible from <span class="emphasis"><em>func</em></span>. <code class="computeroutput">Cond</code> is nothrow default-constructible.</p>
+<p><span class="bold"><strong>Effects:</strong></span> Constructs the scope guard as if by calling <code class="computeroutput"><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a>(std::forward&lt; F &gt;(func), Cond(), active)</code>.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of the function objects throw.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">func</code></span></p></td>
+<td><p>The callable action function object to invoke on destruction. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">active</code></span></p></td>
+<td><p>Indicates whether the scope guard should be active upon construction.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1scope__exit.html#doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</a> == active</code> </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> F<span class="special">,</span> <span class="keyword">typename</span> C<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.reference.classboost_1_1scope_1_1scope__fail_1ae1840c99a617c7b5f5f18c6840e384ef"></a><span class="identifier">scope_fail</span><span class="special">(</span><span class="identifier">F</span> <span class="special">&amp;&amp;</span> func<span class="special">,</span> <span class="identifier">C</span> <span class="special">&amp;&amp;</span> cond<span class="special">,</span> <span class="keyword">bool</span> active <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Constructs a scope guard with a given callable action and failure condition function objects. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Func</code> is constructible from <span class="emphasis"><em>func</em></span>. <code class="computeroutput">Cond</code> is constructible from <span class="emphasis"><em>cond</em></span>.</p>
+<p><span class="bold"><strong>Effects:</strong></span> If <code class="computeroutput">Func</code> is nothrow constructible from <code class="computeroutput">F&amp;&amp;</code> then constructs <code class="computeroutput">Func</code> from <code class="computeroutput">std::forward&lt; F &gt;(func)</code>, otherwise constructs from <code class="computeroutput">func</code>. If <code class="computeroutput">Cond</code> is nothrow constructible from <code class="computeroutput">C&amp;&amp;</code> then constructs <code class="computeroutput">Cond</code> from <code class="computeroutput">std::forward&lt; C &gt;(cond)</code>, otherwise constructs from <code class="computeroutput">cond</code>.</p>
+<p>If <code class="computeroutput">Func</code> or <code class="computeroutput">Cond</code> construction throws and <span class="emphasis"><em>active</em></span> is <code class="computeroutput">true</code>, invokes <span class="emphasis"><em>cond</em></span> and, if it returns <code class="computeroutput">true</code>, <span class="emphasis"><em>func</em></span> before returning with the exception.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless construction of the function objects throw.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">func</code></span></p></td>
+<td><p>The callable action function object to invoke on destruction. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">cond</code></span></p></td>
+<td><p>The callable failure condition function object. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">active</code></span></p></td>
+<td><p>Indicates whether the scope guard should be active upon construction.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">this-&gt;<a class="link" href="classboost_1_1scope_1_1scope__exit.html#doxygen.reference.classboost_1_1scope_1_1scope__exit_1a668a434653609be367d851053fc4263b">active()</a> == active</code> </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a9eeabe1660b7575bf218d4ae4e9688f2"></a><span class="identifier">scope_fail</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;&amp;</span> that<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span></pre>Move-constructs a scope guard. <p><span class="bold"><strong>Requires:</strong></span> <code class="computeroutput">Func</code> and <code class="computeroutput">Cond</code> are nothrow move-constructible or copy-constructible.</p>
+<p><span class="bold"><strong>Effects:</strong></span> If <code class="computeroutput">Func</code> is nothrow move-constructible then move-constructs <code class="computeroutput">Func</code> from a member of <span class="emphasis"><em>that</em></span>, otherwise copy-constructs <code class="computeroutput">Func</code>. If <code class="computeroutput">Cond</code> is nothrow move-constructible then move-constructs <code class="computeroutput">Cond</code> from a member of <span class="emphasis"><em>that</em></span>, otherwise copy-constructs <code class="computeroutput">Cond</code>.</p>
+<p>If <code class="computeroutput">Func</code> or <code class="computeroutput">Cond</code> construction throws and <code class="computeroutput">that.active() == true</code>, invokes <code class="computeroutput">Cond</code> object stored in <span class="emphasis"><em>that</em></span> and, if it returns <code class="computeroutput">true</code>, <span class="emphasis"><em>Func</em></span> object (either the newly constructed one, if its construction succeeded, or the original one stored in <span class="emphasis"><em>that</em></span>) before returning with the exception.</p>
+<p>If the construction succeeds, marks <span class="emphasis"><em>that</em></span> as inactive.</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing, unless move-construction of the function objects throw.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">that</code></span></p></td>
+<td><p>Move source.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">that.active() == false</code> </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a859ad3b71606a349083fb1ff2a8ddb23"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.reference.classboost_1_1scope_1_1scope__fail_1aba908c8c8528b29945179225500312a0"></a><span class="identifier">scope_fail</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="special">&amp;</span> <a name="doxygen.reference.classboost_1_1scope_1_1scope__fail_1a3a6d3b5c5b203f45a1fea8ce12872507"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1scope_1_1scope__fail.html" title="Class template scope_fail">scope_fail</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2022-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="https://www.boost.org/LICENSE_1_0.txt" target="_top">https://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="scope__exit_8hpp_1aab59df6902905c0a4adc00ed8c0b5483.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.scope__fail_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="scope__fail_8hpp_1a49d72b7603a33daa80fa0828ca1a6eeb.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

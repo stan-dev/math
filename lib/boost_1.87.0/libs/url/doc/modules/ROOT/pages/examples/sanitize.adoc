@@ -1,0 +1,48 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Sanitizing URLs
+
+This example parses a non-strict or invalid URL
+into path components according to its delimiters.
+This pattern can be adapted to the requirements of other
+applications.
+
+Once the non-strict components are determined, a new URL is
+created and its parts are set with the `set_encoded_X`
+functions, which will encode any invalid chars accordingly.
+
+This sort of transformation is useful in applications that are
+extremely loose in what kinds of URLs they accept, such as
+browsers. The sanitized URL can later be used for machine-to-machine
+communication.
+
+Using non-strict URLs directly is a security concern in
+machine-to-machine communication, is ambiguous, and also
+involve an extra cost for the transformations.
+
+Different transformations are required by different applications to
+construct a valid URL appropriate for machine-to-machine communication.
+For instance, if an invalid relative reference includes something that
+looks like a host in the first path segment, browsers usually interpret
+that as the host with an implicit "https" scheme. Other applications
+also have other implicit schemes.
+
+The example also identifies whether the input url is already valid.
+It includes diagnostics that can be used to help the user determine
+if a URL is invalid and why it's invalid.
+
+Once all transformations are applied, the result is a URL
+appropriate for machine-to-machine communication.
+
+[source,cpp]
+----
+include::example$example/sanitize.cpp[tag=example_sanitize_url,indent=0]
+----
+

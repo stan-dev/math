@@ -1,0 +1,159 @@
+#
+# Copyright (c) 2024 Dmitry Arkhipov (grisumbras@yandex.ru)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/json
+#
+
+import common ;
+import make ;
+import modules ;
+import param ;
+import path ;
+import project ;
+import property ;
+import python ;
+import testing ;
+import toolset ;
+
+
+rule init ( command * )
+{
+    if ! $(.initialized)
+    {
+        .initialized = true ;
+    }
+    else
+    {
+        if ! $(command)
+        {
+            return ;
+        }
+    }
+    command ?= gdb ;
+
+    GDB_COMMAND = ;
+    .has-gdb = ;
+    for local part in $(command)
+    {
+        local found = [ common.find-tool $(part) ] ;
+        if $(found)
+        {
+            .has-gdb = true ;
+        }
+        else
+        {
+            found = $(part) ;
+        }
+        GDB_COMMAND += $(found) ;
+    }
+}
+
+rule has-gdb
+{
+    return $(.has-gdb) ;
+}
+
+rule gdb-python-header ( target : sources + : requirements *
+    : usage-requirements * )
+{
+    param.handle-named-params sources requirements usage-requirements ;
+
+    make $(target)
+        : $(sources)
+        : @boost-pretty-printers.generate-gdb-header
+        : $(requirements)
+          <dependency>$(.gdb-header-script)
+        : $(usage-requirements)
+        ;
+}
+
+rule test-gdb-printers ( target : sources + : requirements * : default-build *
+    : usage-requirements * )
+{
+    param.handle-named-params
+        sources requirements default-build usage-requirements ;
+
+    local project = [ project.current ] ;
+
+    local test-runner = _$(target:S=.py) ;
+    make $(test-runner)
+        : $(sources[1])
+        : @boost-pretty-printers.generate-gdb-test-runner
+        : <dependency>$(.gdb-test-generator-script)
+        ;
+    $(project).mark-target-as-explicit $(test-runner) ;
+
+    local test-program = _$(target) ;
+    run $(sources)
+        : target-name $(test-program)
+        : requirements
+          <testing.launcher>$(GDB_COMMAND)
+          <testing.arg>--batch-silent
+          <testing.arg>-x
+          <testing.input-file>$(test-runner)
+          <debug-symbols>on
+          <runtime-debugging>on
+          <optimization>debug
+          $(requirements)
+        : default-build
+          $(default-build)
+        ;
+    $(project).mark-target-as-explicit $(test-program) ;
+
+    alias $(target)
+        : $(test-program)
+        : $(requirements)
+        : $(default-build)
+        : $(usage-requirements)
+        ;
+}
+
+.here  = [ path.make [ modules.binding $(__name__) ] ] ;
+.here = $(.here:D) ;
+.gdb-header-script = $(.here)/generate-gdb-header.py ;
+.gdb-test-generator-script = $(.here)/generate-gdb-test-runner.py ;
+
+rule generate-gdb-header ( target : sources + : properties * )
+{
+    warn-if-not-configuered ;
+    RUNNER on $(target) = [ path.native $(.gdb-header-script) ] ;
+}
+actions generate-gdb-header
+{
+    "$(PYTHON:E=python)" "$(RUNNER)" $(>[1]) $(<) $(FLAGS)
+}
+toolset.flags boost-pretty-printers.generate-gdb-header FLAGS <flags> ;
+toolset.flags boost-pretty-printers.generate-gdb-header PYTHON <python.interpreter> ;
+
+rule generate-gdb-test-runner ( target : sources + : properties * )
+{
+    warn-if-not-configuered ;
+    RUNNER on $(target) = [ path.native $(.gdb-test-generator-script) ] ;
+}
+actions generate-gdb-test-runner
+{
+    "$(PYTHON:E=python)" "$(RUNNER)" $(>[1]) $(<)
+}
+toolset.flags boost-pretty-printers.generate-gdb-test-runner PYTHON <python.interpreter> ;
+
+rule warn-if-not-configuered ( )
+{
+    if $(.checked) { return ; }
+
+    if ! $(.initialized)
+    {
+        echo "warning: module boost-pretty-printers was not initialized!" ;
+        echo "  add \"using boost-pretty-printers ;\" to your build scripts." ;
+    }
+
+    if ! [ python.configured ]
+    {
+        echo "warning: module python was not initialized!" ;
+        echo "  add \"using python ;\" to your build scripts." ;
+    }
+
+    .checked = true ;
+}

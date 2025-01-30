@@ -1,0 +1,104 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>identity</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="prev" href="functor.html" title="functor">
+<link rel="next" href="ignore_unused.html" title="ignore_unused">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="functor.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="ignore_unused.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="core.identity"></a><a class="link" href="identity.html" title="identity">identity</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="identity.html#core.identity.overview">Overview</a></span></dt>
+<dt><span class="section"><a href="identity.html#core.identity.example">Example</a></span></dt>
+<dt><span class="section"><a href="identity.html#core.identity.reference">Reference</a></span></dt>
+</dl></div>
+<div class="simplesect">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id9855"></a>Authors</h3></div></div></div>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Glen Fernandes
+        </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="core.identity.overview"></a><a class="link" href="identity.html#core.identity.overview" title="Overview">Overview</a>
+</h3></div></div></div>
+<p>
+        The header &lt;boost/functional/identity.hpp&gt; provides the function object
+        <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">identity</span></code> whose <code class="computeroutput"><span class="keyword">operator</span><span class="special">()</span></code> returns its argument. It is an implementation
+        of C++20's <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">identity</span></code> that supports C++03 and above.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="core.identity.example"></a><a class="link" href="identity.html#core.identity.example" title="Example">Example</a>
+</h3></div></div></div>
+<p>
+        It is commonly used as the default projection in constrained algorithms.
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">Range</span><span class="special">,</span> <span class="keyword">class</span> <span class="identifier">Projection</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">identity</span><span class="special">&gt;</span>
+<span class="keyword">void</span> <span class="identifier">print</span><span class="special">(</span><span class="identifier">Range</span><span class="special">&amp;&amp;</span> <span class="identifier">range</span><span class="special">,</span> <span class="identifier">Projection</span> <span class="identifier">projection</span> <span class="special">=</span> <span class="special">{});</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="core.identity.reference"></a><a class="link" href="identity.html#core.identity.reference" title="Reference">Reference</a>
+</h3></div></div></div>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+
+<span class="keyword">struct</span> <span class="identifier">identity</span> <span class="special">{</span>
+    <span class="keyword">using</span> <span class="identifier">is_transparent</span> <span class="special">=</span> <span class="identifier">unspecified</span><span class="special">;</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+    <span class="identifier">T</span><span class="special">&amp;&amp;</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">T</span><span class="special">&amp;&amp;</span> <span class="identifier">value</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">};</span>
+
+<span class="special">}</span> <span class="comment">/* boost */</span>
+</pre>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.identity.reference.operators"></a><a class="link" href="identity.html#core.identity.reference.operators" title="Operators">Operators</a>
+</h4></div></div></div>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl class="variablelist">
+<dt><span class="term"><code class="computeroutput"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span> <span class="identifier">T</span><span class="special">&amp;&amp;</span> <span class="keyword">operator</span><span class="special">()(</span><span class="identifier">T</span><span class="special">&amp;&amp;</span> <span class="identifier">value</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></code></span></dt>
+<dd><p>
+                Returns <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;(</span><span class="identifier">value</span><span class="special">)</span></code>.
+              </p></dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2014 Peter Dimov<br>Copyright © 2014 Glen Fernandes<br>Copyright © 2014 Andrey Semashev<p>
+        Distributed under the <a href="http://boost.org/LICENSE_1_0.txt" target="_top">Boost
+        Software License, Version 1.0</a>.
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="functor.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="ignore_unused.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

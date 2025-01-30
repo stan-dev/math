@@ -1,0 +1,54 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>WritableField and WritableFieldTuple concepts</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__Stream.html" title="Stream concept">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__Stream.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__WritableFieldTuple"></a><a class="link" href="boost__mysql__WritableFieldTuple.html" title="WritableField and WritableFieldTuple concepts">WritableField
+      and WritableFieldTuple concepts</a>
+</h4></div></div></div>
+<p>
+        A type is a <code class="computeroutput"><span class="identifier">WritableField</span></code>
+        if it can be used to represent a statement parameter value to be sent to
+        the server. A type <code class="computeroutput"><span class="identifier">T</span></code> satisfies
+        <code class="computeroutput"><span class="identifier">WritableField</span></code> if it is <a class="link" href="../prepared_statements.html#mysql.prepared_statements.writable_field_reference">any of the types
+        listed in this table</a>. More types may be added in future releases.
+      </p>
+<p>
+        A type <code class="computeroutput"><span class="identifier">T</span></code> is a <code class="computeroutput"><span class="identifier">WritableFieldTuple</span></code> if it's a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>
+        specialization, or a reference to one, and all element types fulfill <code class="computeroutput"><span class="identifier">WritableField</span></code>, or are (possibly cv-qualified)
+        references to <code class="computeroutput"><span class="identifier">WritableField</span></code>
+        types. Empty tuples satisfy <code class="computeroutput"><span class="identifier">WritableFieldTuple</span></code>.
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__Stream.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a>
+</div>
+</body>
+</html>

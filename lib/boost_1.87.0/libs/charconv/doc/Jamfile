@@ -1,0 +1,27 @@
+# Copyright 2017, 2018 Peter Dimov
+# Copyright 2024 Matt Borland
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+import asciidoctor ;
+
+path-constant boostlook : ../../../tools/boostlook ;
+
+html charconv.html : charconv.adoc
+    : <use>/boost/boostlook//boostlook
+      <dependency>charconv-docinfo-footer.html
+    ;
+
+install html_ : charconv.html : <location>html ;
+
+pdf charconv.pdf : charconv.adoc ;
+explicit charconv.pdf ;
+
+install pdf_ : charconv.pdf : <location>pdf ;
+explicit pdf_ ;
+
+###############################################################################
+alias boostdoc ;
+explicit boostdoc ;
+alias boostrelease : html_ ;
+explicit boostrelease ;

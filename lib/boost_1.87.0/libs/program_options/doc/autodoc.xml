@@ -1,0 +1,585 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.cmdline_8hpp" name="boost/program_options/cmdline.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<namespace name="command_line_style">
+<enum id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ce" name="style_t"><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea91b853dd54cbb1eca6a486366ac5fca7" name="allow_long"><default>1</default><purpose>Allow "--long_name" style. </purpose></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea97f9c5f6c367f0006bfe2542f93eac03" name="allow_short"><default>allow_long &lt;&lt; 1</default><purpose>Allow "-&lt;single character" style. </purpose></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceabb3a1f374cda31d753bc0b722026d909" name="allow_dash_for_short"><default>allow_short &lt;&lt; 1</default><purpose>Allow "-" in short options. </purpose></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea2f9f632fd7be886437bf2a47592705fe" name="allow_slash_for_short"><default>allow_dash_for_short &lt;&lt; 1</default><purpose>Allow "/" in short options. </purpose></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceae8dd74788b4a4e43a795198cb86924ab" name="long_allow_adjacent"><default>allow_slash_for_short &lt;&lt; 1</default><description><para>Allow option parameter in the same token for long option, like in         --foo=10 </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea12f65baad2ecce5db83c02b556c59b7c" name="long_allow_next"><default>long_allow_adjacent &lt;&lt; 1</default><description><para>Allow option parameter in the next token for long options. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceaee08988adb6dd512711edd71b2b27aba" name="short_allow_adjacent"><default>long_allow_next &lt;&lt; 1</default><description><para>Allow option parameter in the same token for short options. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea70a1a81c2ca72e6e3cc636ef480531ba" name="short_allow_next"><default>short_allow_adjacent &lt;&lt; 1</default><description><para>Allow option parameter in the next token for short options. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea825fa290ecb2e31659c715c7380151cc" name="allow_sticky"><default>short_allow_next &lt;&lt; 1</default><description><para>Allow to merge several short options together, so that "-s -k" become "-sk". All of the options but last should accept no parameter. For example, if "-s" accept a parameter, then "k" will be taken as parameter, not another short option. Dos-style short options cannot be sticky. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea6ad9a69ab0c05a1c99a9770b1620cf77" name="allow_guessing"><default>allow_sticky &lt;&lt; 1</default><description><para>Allow abbreviated spellings for long options, if they unambiguously identify long option. No long option name should be prefix of other long option name if guessing is in effect. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea6526f81c71f411f2228a8660c4e5c3d6" name="long_case_insensitive"><default>allow_guessing &lt;&lt; 1</default><description><para>Ignore the difference in case for long options. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5ceaad6f4d6c849adc31af8f0a1adf38f097" name="short_case_insensitive"><default>long_case_insensitive &lt;&lt; 1</default><description><para>Ignore the difference in case for short options. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea214d20efcbf976e71ee53f8b931ce611" name="case_insensitive"><default>(long_case_insensitive | short_case_insensitive)</default><description><para>Ignore the difference in case for all options. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea938804c75835e1c48290d460ab61542a" name="allow_long_disguise"><default>short_case_insensitive &lt;&lt; 1</default><description><para>Allow long options with single option starting character, e.g <computeroutput>-foo=10</computeroutput> </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea22af3b4f750e5143d4893669953f41ea" name="unix_style"><default>(allow_short | short_allow_adjacent | short_allow_next | allow_long | long_allow_adjacent | long_allow_next | allow_sticky | allow_guessing | allow_dash_for_short)</default><description><para>The more-or-less traditional unix style. </para></description></enumvalue><enumvalue id="doxygen.cmdline_8hpp_1a11bbc8deb114298d24b3e061e0d2e5cea3d64419a4c093d5e64cb6bf4946b5d86" name="default_style"><default>unix_style</default><description><para>The default style. </para></description></enumvalue><description><para>Various possible styles of options.</para><para>There are "long" options, which start with "--" and "short", which start with either "-" or "/". Both kinds can be allowed or disallowed, see allow_long and allow_short. The allowed character for short options is also configurable.</para><para>Option's value can be specified in the same token as name ("--foo=bar"), or in the next token.</para><para>It's possible to introduce long options by the same character as short options, see allow_long_disguise.</para><para>Finally, guessing (specifying only prefix of option) and case insensitive processing are supported. </para></description></enum>
+</namespace>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.config_8hpp" name="boost/program_options/config.hpp">
+<macro id="doxygen.config_8hpp_1a12308eaa86267f0a6a47a2cef6add938" name="BOOST_PROGRAM_OPTIONS_DECL"/>
+</header>
+<header id="doxygen.environment__iterator_8hpp" name="boost/program_options/environment_iterator.hpp">
+<namespace name="boost">
+<class id="doxygen.classboost_1_1environment__iterator" name="environment_iterator"><inherit access="public">boost::eof_iterator&lt; environment_iterator, std::pair&lt; std::string, std::string &gt; &gt;</inherit><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1environment__iterator_1a38e3add55672064b679b5ade31b39192"><parameter name="environment"><paramtype>char **</paramtype></parameter></constructor>
+<constructor id="doxygen.classboost_1_1environment__iterator_1a5fa73142d5aefe7d4a7162fef1dd6103"/>
+<method id="doxygen.classboost_1_1environment__iterator_1afeb42ddbf492db68101741073e4fc475" name="get"><type>void</type></method>
+</method-group>
+</class></namespace>
+</header>
+<header id="doxygen.eof__iterator_8hpp" name="boost/program_options/eof_iterator.hpp">
+<namespace name="boost">
+<class id="doxygen.classboost_1_1eof__iterator" name="eof_iterator"><template>
+      <template-type-parameter name="Derived"/>
+      <template-type-parameter name="ValueType"/>
+    </template><inherit access="public">iterator_facade&lt; Derived, const ValueType, forward_traversal_tag &gt;</inherit><description><para>The '<link linkend="doxygen.classboost_1_1eof__iterator">eof_iterator</link>' class is useful for constructing forward iterators in cases where iterator extract data from some source and it's easy to detect 'eof' -- i.e. the situation where there's no data. One apparent example is reading lines from a file.</para><para>Implementing such iterators using 'iterator_facade' directly would require to create class with three core operation, a couple of constructors. When using '<link linkend="doxygen.classboost_1_1eof__iterator">eof_iterator</link>', the derived class should define only one method to get new value, plus a couple of constructors.</para><para>The basic idea is that iterator has 'eof' bit. Two iterators are equal only if both have their 'eof' bits set. The 'get' method either obtains the new value or sets the 'eof' bit.</para><para>Specifically, derived class should define:</para><para><orderedlist>
+<listitem><para>A default constructor, which creates iterator with 'eof' bit set. The constructor body should call 'found_eof' method defined here.</para>
+</listitem><listitem><para>Some other constructor. It should initialize some 'data pointer' used in iterator operation and then call 'get'.</para>
+</listitem><listitem><para>The 'get' method. It should operate this way:<itemizedlist>
+<listitem><para>look at some 'data pointer' to see if new element is available; if not, it should call 'found_eof'.</para>
+</listitem><listitem><para>extract new element and store it at location returned by the 'value' method.</para>
+</listitem><listitem><para>advance the data pointer.</para>
+</listitem></itemizedlist>
+</para>
+</listitem></orderedlist>
+</para><para>Essentially, the 'get' method has the functionality of both 'increment' and 'dereference'. It's very good for the cases where data extraction implicitly moves data pointer, like for stream operation. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1eof__iterator_1a5948ca386f776dd110b8da465cc03e21"/>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1eof__iterator_1a4d528d6d5e6239abddfb9b628efe5ba5" name="value"><type>ValueType &amp;</type><description><para>Returns the reference which should be used by derived class to store the next value. </para></description></method>
+<method id="doxygen.classboost_1_1eof__iterator_1adbf170521811e2b096ce3f2192c292a9" name="found_eof"><type>void</type><description><para>Should be called by derived class to indicate that it can't produce next element. </para></description></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.classboost_1_1eof__iterator_1a024d9de8f3c8509f79565c19dad87696" name="increment"><type>void</type></method>
+<method id="doxygen.classboost_1_1eof__iterator_1a91e057b4417b32278bcf83af1eece34c" name="equal" cv="const"><type>bool</type><parameter name="other"><paramtype>const <classname>eof_iterator</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1eof__iterator_1a095cc0989c455d2badb8277b06f6779b" name="dereference" cv="const"><type>const ValueType &amp;</type></method>
+</method-group>
+</class></namespace>
+</header>
+<header id="doxygen.errors_8hpp" name="boost/program_options/errors.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1ambiguous__option" name="ambiguous_option"><inherit access="public">boost::program_options::error_with_no_option_name</inherit><description><para>Class thrown when there's ambiguity amoung several possible options. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1ambiguous__option_1a8c53ba6ab3f1c95f8db802ce42a37e08"><parameter name="xalternatives"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1ambiguous__option_1a7f01defbfdcb4085eed5b39dea8919bf" name="alternatives" cv="const"><type>const std::vector&lt; std::string &gt; &amp;</type></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1program__options_1_1ambiguous__option_1a637a20578d26ad66ad925d38f3783b84" name="substitute_placeholders" cv="const" specifiers="virtual"><type>void</type><parameter name="error_template"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Makes all substitutions using the template </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1error" name="error"><inherit access="public">std::logic_error</inherit><description><para>Base class for all errors in the library. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1error_1aa161cca15c786cc7884ed3581991c813"><parameter name="xwhat"><paramtype>const std::string &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1error__with__no__option__name" name="error_with_no_option_name"><inherit access="public">boost::program_options::error_with_option_name</inherit><description><para>Base class of unparsable options, when the desired option cannot be identified.</para><para>It makes no sense to have an option name, when we can't match an option to the parameter</para><para>Having this a part of the <link linkend="doxygen.classboost_1_1program__options_1_1error__with__option__name">error_with_option_name</link> hierachy makes error handling a lot easier, even if the name indicates some sort of conceptual dissonance! </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1error__with__no__option__name_1af93414be8382deeb179315bf9f4bea19"><parameter name="template_"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="original_token"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__no__option__name_1a70a52794534e3c7f1266e30e038e0da1" name="set_option_name" specifiers="virtual"><type>void</type><parameter name=""><paramtype>const std::string &amp;</paramtype></parameter><description><para>Does NOT set option name, because no option name makes sense </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1error__with__option__name" name="error_with_option_name"><inherit access="public">boost::program_options::error</inherit><description><para>Base class for most exceptions in the library.</para><para>Substitutes the values for the parameter name placeholders in the template to create the human readable error message</para><para>Placeholders are surrounded by % signs: example% Poor man's version of boost::format</para><para>If a parameter name is absent, perform default substitutions instead so ugly placeholders are never left in-place.</para><para>Options are displayed in "canonical" form This is the most unambiguous form of the <emphasis>parsed</emphasis> option name and would correspond to <link linkend="doxygen.classboost_1_1program__options_1_1option__description_1adef6986ef64adfa9fc6ffb619a842fb3">option_description::format_name()</link> i.e. what is shown by print_usage()</para><para>The "canonical" form depends on whether the option is specified in short or long form, using dashes or slashes or without a prefix (from a configuration file) </para></description><data-member id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a8572dad0996f1668932553b5b151c850" name="m_error_template"><type>std::string</type><description><para>template with placeholders </para></description></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1aea5c993b171132f39d6eea55f41b04ae"><parameter name="template_"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="option_name"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="original_token"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="option_style"><paramtype>int</paramtype><default>0</default></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1ade18a0b6e05b7278ace554080ab2a744" name="set_substitute"><type>void</type><parameter name="parameter_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="value"><paramtype>const std::string &amp;</paramtype></parameter><description><para>gcc says that throw specification on dtor is loosened without this line <sbr/>
+ Substitute parameter_name-&gt;value to create the error message from the error template </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a8cc3df3b3f9936c44f1d406e51e53df5" name="set_substitute_default"><type>void</type><parameter name="parameter_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="from"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="to"><paramtype>const std::string &amp;</paramtype></parameter><description><para>If the parameter is missing, then make the from-&gt;to substitution instead </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1abba11db6fe9519d13c5bb17c2c513542" name="add_context"><type>void</type><parameter name="option_name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="original_token"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="option_style"><paramtype>int</paramtype></parameter><description><para>Add context to an exception </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a63151fd51adb096a9106bf81c1a4c9d4" name="set_prefix"><type>void</type><parameter name="option_style"><paramtype>int</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1aa8c47087e2c48b9a61c25d9bb0cd606e" name="set_option_name" specifiers="virtual"><type>void</type><parameter name="option_name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Overridden in <link linkend="doxygen.classboost_1_1program__options_1_1error__with__no__option__name">error_with_no_option_name</link> </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1accbd5099d1b2596275b38d14d78f493a" name="get_option_name" cv="const"><type>std::string</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a18130a2ce6f2a3c592accccb69b2a5be" name="set_original_token"><type>void</type><parameter name="original_token"><paramtype>const std::string &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1afbd0b009684f5f382971010391f5361d" name="what" cv="const" specifiers="virtual"><type>const char *</type><description><para>Creates the error_message on the fly Currently a thin wrapper for <link linkend="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a86fc238fbec89f22255f0ff34091076d">substitute_placeholders()</link> </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a86fc238fbec89f22255f0ff34091076d" name="substitute_placeholders" cv="const" specifiers="virtual"><type>void</type><parameter name="error_template"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Makes all substitutions using the template </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a7e4faaf6f707c513c3017f9dce4db10e" name="replace_token" cv="const"><type>void</type><parameter name="from"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="to"><paramtype>const std::string &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1aef0ade94fc62c970a73ee0335a9c9322" name="get_canonical_option_name" cv="const"><type>std::string</type><description><para>Construct option name in accordance with the appropriate prefix style: i.e. long dash or short slash etc </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1error__with__option__name_1a0e175b9b7750003eb991201ad79f8199" name="get_canonical_option_prefix" cv="const"><type>std::string</type></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1invalid__bool__value" name="invalid_bool_value"><inherit access="public">boost::program_options::validation_error</inherit><description><para>Class thrown if there is an invalid bool value given </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__bool__value_1a7dd7ee9538b70643126de0e892bbf6b2"><parameter name="value"><paramtype>const std::string &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1invalid__command__line__style" name="invalid_command_line_style"><inherit access="public">boost::program_options::error</inherit><description><para>Class thrown when there are programming error related to style </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__command__line__style_1acbd0a4c2595e217ffeeaf1247633de0b"><parameter name="msg"><paramtype>const std::string &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1invalid__command__line__syntax" name="invalid_command_line_syntax"><inherit access="public">boost::program_options::invalid_syntax</inherit><description><para>Class thrown when there are syntax errors in given command line </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__command__line__syntax_1a61ae45b8ddd000fca705f65cf5d3342a"><parameter name="kind"><paramtype>kind_t</paramtype></parameter><parameter name="option_name"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="original_token"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="option_style"><paramtype>int</paramtype><default>0</default></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1invalid__config__file__syntax" name="invalid_config_file_syntax"><inherit access="public">boost::program_options::invalid_syntax</inherit><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__config__file__syntax_1a188f278f60bd50861c31a2ce6009e215"><parameter name="invalid_line"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="kind"><paramtype>kind_t</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1invalid__config__file__syntax_1a81cf8bf59a692ab0cd436ac23c8d0e31" name="tokens" cv="const" specifiers="virtual"><type>std::string</type><description><para>Convenience functions for backwards compatibility </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1invalid__option__value" name="invalid_option_value"><inherit access="public">boost::program_options::validation_error</inherit><description><para>Class thrown if there is an invalid option value given </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__option__value_1aeeb570cbb1b81b2ce0dd08a7cdcc7260"><parameter name="value"><paramtype>const std::string &amp;</paramtype></parameter></constructor>
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__option__value_1a17b9002921a86aea503f27dbc7912f33"><parameter name="value"><paramtype>const std::wstring &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1invalid__syntax" name="invalid_syntax"><inherit access="public">boost::program_options::error_with_option_name</inherit><description><para>Class thrown when there's syntax error either for command line or config file options. See derived children for concrete classes. </para></description><enum id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebb" name="kind_t"><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebba78365faf0ec781357728394d489c815d" name="long_not_allowed"><default>30</default></enumvalue><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebba126f1771361bcc7a7a06a3bc844d2b4d" name="long_adjacent_not_allowed"/><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebba714bdcecf2ff5faae13af5af2bb0b1bd" name="short_adjacent_not_allowed"/><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebbaf80d228a036f887b032f25b8b49b57e5" name="empty_adjacent_parameter"/><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebbac45fefa12d23c73589abd80e0e1fdf7f" name="missing_parameter"/><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebba85ddb8e75c0276ae4a8229b6fb7f7039" name="extra_parameter"/><enumvalue id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1aaf4972185e8928ad07b20ca270030ebba7d0ebe09604c468b3ed02fe8c97810fa" name="unrecognized_line"/></enum>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1ae192831d8a982622f84ed041b5a4f45d"><parameter name="kind"><paramtype>kind_t</paramtype></parameter><parameter name="option_name"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="original_token"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="option_style"><paramtype>int</paramtype><default>0</default></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1ab842dd023e8517d3362d6560905aa975" name="kind" cv="const"><type>kind_t</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1ac0a1b0810027d8de8057d78283d0b619" name="tokens" cv="const" specifiers="virtual"><type>std::string</type><description><para>Convenience functions for backwards compatibility </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1program__options_1_1invalid__syntax_1ac6ca98636bc411711e867acad117af92" name="get_template"><type>std::string</type><parameter name="kind"><paramtype>kind_t</paramtype></parameter><description><para>Used to convert kind_t to a related error text </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1multiple__occurrences" name="multiple_occurrences"><inherit access="public">boost::program_options::error_with_option_name</inherit><description><para>Class thrown when there are several occurrences of an option, but user called a method which cannot return them all. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1multiple__occurrences_1a6e98271e0ea15a849015198ee68de11f"/>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1multiple__values" name="multiple_values"><inherit access="public">boost::program_options::error_with_option_name</inherit><description><para>Class thrown when there are several option values, but user called a method which cannot return them all. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1multiple__values_1abcedeb31961e903a336891c227ab8d65"/>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1reading__file" name="reading_file"><inherit access="public">boost::program_options::error</inherit><description><para>Class thrown if config file can not be read </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1reading__file_1a8a4f2b11042e3e0be8f24dfd73626346"><parameter name="filename"><paramtype>const char *</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1required__option" name="required_option"><inherit access="public">boost::program_options::error_with_option_name</inherit><description><para>Class thrown when a required/mandatory option is missing </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1required__option_1a8ff0c613b3ea78b68a88e6face427ffd"><parameter name="option_name"><paramtype>const std::string &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1too__many__positional__options__error" name="too_many_positional_options_error"><inherit access="public">boost::program_options::error</inherit><description><para>Class thrown when there are too many positional options. This is a programming error. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1too__many__positional__options__error_1a7d19b7ef4893d13496fa8132006bb5e5"/>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1unknown__option" name="unknown_option"><inherit access="public">boost::program_options::error_with_no_option_name</inherit><description><para>Class thrown when option name is not recognized. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1unknown__option_1a79c5bf775f365b7c4b8f6ecc162b354f"><parameter name="original_token"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1validation__error" name="validation_error"><inherit access="public">boost::program_options::error_with_option_name</inherit><description><para>Class thrown when value of option is incorrect. </para></description><enum id="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32c" name="kind_t"><enumvalue id="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32ca6e81cf31c89f1a7c014178276843fd1f" name="multiple_values_not_allowed"><default>30</default></enumvalue><enumvalue id="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32ca4d9cc2759007155f3004f2dc749216ce" name="at_least_one_value_required"/><enumvalue id="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32cab68e8af0b830d30a91a9a1355c7fa01d" name="invalid_bool_value"/><enumvalue id="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32cabf1d095a4635e1a4a17955f3bc0f90fd" name="invalid_option_value"/><enumvalue id="doxygen.classboost_1_1program__options_1_1validation__error_1ae31028f1c5d061e9849b1c8df823a32caaec1cd22b8cbf09e2a638a27712d61f2" name="invalid_option"/></enum>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1validation__error_1ab26e28876da6bff7d1e1b169d4a90827"><parameter name="kind"><paramtype>kind_t</paramtype></parameter><parameter name="option_name"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="original_token"><paramtype>const std::string &amp;</paramtype><default>""</default></parameter><parameter name="option_style"><paramtype>int</paramtype><default>0</default></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1validation__error_1a3786ea4cecd3a4b61fdb4069e4ae9a6c" name="kind" cv="const"><type>kind_t</type></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1program__options_1_1validation__error_1afcae3f0dccff3215a8ea4be9b3523349" name="get_template"><type>std::string</type><parameter name="kind"><paramtype>kind_t</paramtype></parameter><description><para>Used to convert kind_t to a related error text </para></description></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.namespaceboost_1_1program__options_1afe68862d52acda4de532195490618d2a" name="strip_prefixes"><type>std::string</type><parameter name="text"><paramtype>const std::string &amp;</paramtype></parameter></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.option_8hpp" name="boost/program_options/option.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1basic__option" name="basic_option"><template>
+      <template-type-parameter name="charT"/>
+    </template><description><para>Option found in input source. Contains a key and a value. The key, in turn, can be a string (name of an option), or an integer (position in input source) -- in case no name is specified. The latter is only possible for command line. The template parameter specifies the type of char used for storing the option's value. </para></description><data-member id="doxygen.classboost_1_1program__options_1_1basic__option_1a8ed5975736d6428384914194b00521cb" name="string_key"><type>std::string</type><description><para>String key of this option. Intentionally independent of the template parameter. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__option_1a799179829629da7a626f9bd60ae2fe6a" name="position_key"><type>int</type><description><para>Position key of this option. All options without an explicit name are sequentially numbered starting from 0. If an option has explicit name, 'position_key' is equal to -1. It is possible that both position_key and string_key is specified, in case name is implicitly added. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__option_1a25a3286df832a502e32b4157f2a54ae0" name="value"><type>std::vector&lt; std::basic_string&lt; charT &gt; &gt;</type><description><para>Option's value </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__option_1a712b9c26c69106e25810de5b5438d26b" name="original_tokens"><type>std::vector&lt; std::basic_string&lt; charT &gt; &gt;</type><description><para>The original unchanged tokens this option was created from. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__option_1ab84b24f7846c967a3304af63606815de" name="unregistered"><type>bool</type><description><para>True if option was not recognized. In that case, 'string_key' and 'value' are results of purely syntactic parsing of source. The original tokens can be recovered from the "original_tokens" member. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__option_1a0615b2b2bd18cc3758d56d4647c4f49e" name="case_insensitive"><type>bool</type><description><para>True if string_key has to be handled case insensitive. </para></description></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1basic__option_1a49872fabf271b0c8fd97dce813b18b21"/>
+<constructor id="doxygen.classboost_1_1program__options_1_1basic__option_1ac0746b278c34156abb7cf3a3c1b3e6b1"><parameter name="xstring_key"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="xvalue"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><typedef id="doxygen.namespaceboost_1_1program__options_1aa71dc049c9de7c2e69cf712de8e55e16" name="option"><type><classname>basic_option</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1program__options_1a4497d9d0a53eb1a7fc76556b84483694" name="woption"><type><classname>basic_option</classname>&lt; wchar_t &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.options__description_8hpp" name="boost/program_options/options_description.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1duplicate__option__error" name="duplicate_option_error"><inherit access="public">boost::program_options::error</inherit><description><para>Class thrown when duplicate option description is found. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1duplicate__option__error_1a8c0920bd977bfb8391a00a1e58d35062"><parameter name="xwhat"><paramtype>const std::string &amp;</paramtype></parameter></constructor>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1option__description" name="option_description"><description><para>Describes one possible command line/config file option. There are two kinds of properties of an option. First describe it syntactically and are used only to validate input. Second affect interpretation of the option, for example default value for it or function that should be called when the value is finally known. Routines which perform parsing never use second kind of properties -- they are side effect free. <formalpara><title>See Also:</title><para><link linkend="doxygen.classboost_1_1program__options_1_1options__description">options_description</link> </para>
+</formalpara>
+</para></description><enum id="doxygen.classboost_1_1program__options_1_1option__description_1af6c3e288c3c6b5ef5fb1c88f7c5d89e5" name="match_result"><enumvalue id="doxygen.classboost_1_1program__options_1_1option__description_1af6c3e288c3c6b5ef5fb1c88f7c5d89e5ae62c6d262ab2f56674aeed247e3a4e78" name="no_match"/><enumvalue id="doxygen.classboost_1_1program__options_1_1option__description_1af6c3e288c3c6b5ef5fb1c88f7c5d89e5ac90cf6e0bec16c95a187404c8bde93f7" name="full_match"/><enumvalue id="doxygen.classboost_1_1program__options_1_1option__description_1af6c3e288c3c6b5ef5fb1c88f7c5d89e5a6d8c298e806d94f905ac31c5fd589bf1" name="approximate_match"/></enum>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1option__description_1a68320ac570c51f0591236c98b6051da9"/>
+<constructor id="doxygen.classboost_1_1program__options_1_1option__description_1adb7e3a36c6e7b21c23fbab624b304ab4"><parameter name="name"><paramtype>const char *</paramtype></parameter><parameter name="s"><paramtype>const <classname>value_semantic</classname> *</paramtype></parameter><description><para>Initializes the object with the passed data.</para><para>Note: it would be nice to make the second parameter auto_ptr, to explicitly pass ownership. Unfortunately, it's often needed to create objects of types derived from '<link linkend="doxygen.classboost_1_1program__options_1_1value__semantic">value_semantic</link>': <link linkend="doxygen.classboost_1_1program__options_1_1options__description">options_description</link> d; d.add_options()("a", parameter&lt;int&gt;("n")-&gt;default_value(1)); Here, the static type returned by 'parameter' should be derived from <link linkend="doxygen.classboost_1_1program__options_1_1value__semantic">value_semantic</link>.</para><para>Alas, derived-&gt;base conversion for auto_ptr does not really work, see <ulink url="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2000/n1232.pdf">http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2000/n1232.pdf</ulink> <ulink url="http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#84">http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#84</ulink></para><para>So, we have to use plain old pointers. Besides, users are not expected to use the constructor directly.</para><para>The 'name' parameter is interpreted by the following rules:<itemizedlist>
+<listitem><para>if there's no "," character in 'name', it specifies long name</para>
+</listitem><listitem><para>otherwise, the part before "," specifies long name and the part after -- short name. </para>
+</listitem></itemizedlist>
+</para></description></constructor>
+<constructor id="doxygen.classboost_1_1program__options_1_1option__description_1aac4be49c03165a2bb9b90c5e8d326207"><parameter name="name"><paramtype>const char *</paramtype></parameter><parameter name="s"><paramtype>const <classname>value_semantic</classname> *</paramtype></parameter><parameter name="description"><paramtype>const char *</paramtype></parameter><description><para>Initializes the class with the passed data. </para></description></constructor>
+<destructor id="doxygen.classboost_1_1program__options_1_1option__description_1a76a095144b220bb62886d8ee5841adf8" specifiers="virtual"/>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1a9905e16a50c4aecc8b7a27e9ec50f8c4" name="match" cv="const"><type>match_result</type><parameter name="option"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="approx"><paramtype>bool</paramtype></parameter><parameter name="long_ignore_case"><paramtype>bool</paramtype></parameter><parameter name="short_ignore_case"><paramtype>bool</paramtype></parameter><description><para>Given 'option', specified in the input source, returns 'true' if 'option' specifies *this. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1a06bb3e727b89b72b7df36545bd99c907" name="key" cv="const"><type>const std::string &amp;</type><parameter name="option"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Returns the key that should identify the option, in particular in the <link linkend="doxygen.classboost_1_1program__options_1_1variables__map">variables_map</link> class. The 'option' parameter is the option spelling from the input source. If option name contains '*', returns 'option'. If long name was specified, it's the long name, otherwise it's a short name with prepended '-'. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1a00219b50a956dbfb5d3ca56179aca5a9" name="canonical_display_name" cv="const"><type>std::string</type><parameter name="canonical_option_style"><paramtype>int</paramtype><default>0</default></parameter><description><para>Returns the canonical name for the option description to enable the user to recognised a matching option. 1) For short options ('-', '/'), returns the short name prefixed. 2) For long options ('–' / '-') returns the first long name prefixed 3) All other cases, returns the first long name (if present) or the short name, unprefixed. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1abf8f20a23bb067c88a04efa323b33465" name="long_name" cv="const"><type>const std::string &amp;</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1a71f15ec8383c95b9c2df576e59c81e56" name="long_names" cv="const"><type>const std::pair&lt; const std::string *, std::size_t &gt;</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1aa56ae2a0324e5b918db5a498be7cc714" name="description" cv="const"><type>const std::string &amp;</type><purpose>Explanation of this option. </purpose></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1acc017a8ffce4db2ac725f4bb946ac26b" name="semantic" cv="const"><type>shared_ptr&lt; const <classname>value_semantic</classname> &gt;</type><purpose>Semantic of option's value. </purpose></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1adef6986ef64adfa9fc6ffb619a842fb3" name="format_name" cv="const"><type>std::string</type><purpose>Returns the option name, formatted suitably for usage message. </purpose></method>
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1a0494b1f5a05485e4f11e16e041bdcea1" name="format_parameter" cv="const"><type>std::string</type><description><para>Returns the parameter name and properties, formatted suitably for usage message. </para></description></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.classboost_1_1program__options_1_1option__description_1ac78e1ace1198d733c85799df45212455" name="set_names"><type><classname>option_description</classname> &amp;</type><parameter name="name"><paramtype>const char *</paramtype></parameter></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1options__description" name="options_description"><description><para>A set of option descriptions. This provides convenient interface for adding new option (the add_options) method, and facilities to search for options by name.</para><para>See here for option adding interface discussion. <formalpara><title>See Also:</title><para><link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link> </para>
+</formalpara>
+</para></description><data-member id="doxygen.classboost_1_1program__options_1_1options__description_1a1e0cfc015177261804d8d7e29009605a" name="m_default_line_length" specifiers="static"><type>const unsigned</type></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1options__description_1a144626ce94574fabc73dedbc0a2804cd"><parameter name="line_length"><paramtype>unsigned</paramtype><default>m_default_line_length</default></parameter><parameter name="min_description_length"><paramtype>unsigned</paramtype><default>m_default_line_length/2</default></parameter><description><para>Creates the instance. </para></description></constructor>
+<constructor id="doxygen.classboost_1_1program__options_1_1options__description_1a72b19bc024701c77d64e7484b6303104"><parameter name="caption"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="line_length"><paramtype>unsigned</paramtype><default>m_default_line_length</default></parameter><parameter name="min_description_length"><paramtype>unsigned</paramtype><default>m_default_line_length/2</default></parameter><description><para>Creates the instance. The 'caption' parameter gives the name of this '<link linkend="doxygen.classboost_1_1program__options_1_1options__description">options_description</link>' instance. Primarily useful for output. The 'description_length' specifies the number of columns that should be reserved for the description text; if the option text encroaches into this, then the description will start on the next line. </para></description></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1aabd2e8b2d879792d366b204281e8f52b" name="add"><type>void</type><parameter name="desc"><paramtype>shared_ptr&lt; <classname>option_description</classname> &gt;</paramtype></parameter><description><para>Adds new variable description. Throws duplicate_variable_error if either short or long name matches that of already present one. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1a2a346d62b7742a1f3aaf23effc73646b" name="add"><type><classname>options_description</classname> &amp;</type><parameter name="desc"><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><description><para>Adds a group of option description. This has the same effect as adding all option_descriptions in 'desc' individually, except that output operator will show a separate group. Returns *this. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1a06156b459bd9ec06b0ca751524ac0c64" name="get_option_column_width" cv="const"><type>unsigned</type><description><para>Find the maximum width of the option column, including options in groups. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1a8bd84ff884a68541bde4dde485514730" name="add_options"><type><classname>options_description_easy_init</classname></type><description><para>Returns an object of implementation-defined type suitable for adding options to <link linkend="doxygen.classboost_1_1program__options_1_1options__description">options_description</link>. The returned object will have overloaded operator() with parameter type matching '<link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link>' constructors. Calling the operator will create new <link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link> instance and add it. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1a03124d60a94b631d2e65bc1bbd90b1bc" name="find" cv="const"><type>const <classname>option_description</classname> &amp;</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="approx"><paramtype>bool</paramtype></parameter><parameter name="long_ignore_case"><paramtype>bool</paramtype><default>false</default></parameter><parameter name="short_ignore_case"><paramtype>bool</paramtype><default>false</default></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1ae7da4f8e67750e0b923ffd438cf4fca6" name="find_nothrow" cv="const"><type>const <classname>option_description</classname> *</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="approx"><paramtype>bool</paramtype></parameter><parameter name="long_ignore_case"><paramtype>bool</paramtype><default>false</default></parameter><parameter name="short_ignore_case"><paramtype>bool</paramtype><default>false</default></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1a78bb77694f2a1678b7868e4ba28c0803" name="options" cv="const"><type>const std::vector&lt; shared_ptr&lt; <classname>option_description</classname> &gt; &gt; &amp;</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1ad1b44d5b12ceac1554ffb9934b1e7383" name="print" cv="const"><type>void</type><parameter name="os"><paramtype>std::ostream &amp;</paramtype></parameter><parameter name="width"><paramtype>unsigned</paramtype><default>0</default></parameter><description><para>Outputs 'desc' to the specified stream, calling 'f' to output each <link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link> element. </para></description></method>
+</method-group>
+<method-group name="friend functions">
+<method id="doxygen.classboost_1_1program__options_1_1options__description_1ac9abcde6f458aa8bdd92bcf5ed4a5430" name="operator&lt;&lt;"><type>BOOST_PROGRAM_OPTIONS_DECL std::ostream &amp;</type><parameter name="os"><paramtype>std::ostream &amp;</paramtype></parameter><parameter name="desc"><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><description><para>Produces a human readable output of 'desc', listing options, their descriptions and allowed parameters. Other <link linkend="doxygen.classboost_1_1program__options_1_1options__description">options_description</link> instances previously passed to add will be output separately. </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1options__description__easy__init" name="options_description_easy_init"><description><para>Class which provides convenient creation syntax to <link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link>. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1options__description__easy__init_1a11318de46eaa6796b5f0c36acf76b6f6"><parameter name="owner"><paramtype><classname>options_description</classname> *</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1options__description__easy__init_1a824f53d2c613b77c51b7f347d7563583" name="operator()"><type><classname>options_description_easy_init</classname> &amp;</type><parameter name="name"><paramtype>const char *</paramtype></parameter><parameter name="description"><paramtype>const char *</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description__easy__init_1aa6682cc73cb44aadc2fe9e243ee8e2bf" name="operator()"><type><classname>options_description_easy_init</classname> &amp;</type><parameter name="name"><paramtype>const char *</paramtype></parameter><parameter name="s"><paramtype>const <classname>value_semantic</classname> *</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1options__description__easy__init_1a61e2a7c64f6c22fb36876a9efc473341" name="operator()"><type><classname>options_description_easy_init</classname> &amp;</type><parameter name="name"><paramtype>const char *</paramtype></parameter><parameter name="s"><paramtype>const <classname>value_semantic</classname> *</paramtype></parameter><parameter name="description"><paramtype>const char *</paramtype></parameter></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.parsers_8hpp" name="boost/program_options/parsers.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser" name="basic_command_line_parser"><template>
+      <template-type-parameter name="charT"/>
+    </template><description><para>Command line parser.</para><para>The class allows one to specify all the information needed for parsing and to parse the command line. It is primarily needed to emulate named function parameters -- a regular function with 5 parameters will be hard to use and creating overloads with a smaller number of parameters will be confusing.</para><para>For the most common case, the function parse_command_line is a better alternative.</para><para>There are two typedefs -- command_line_parser and wcommand_line_parser, for charT == char and charT == wchar_t cases. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1ab9cf97e8f7443bef47ec7e39748c6716"><parameter name="args"><paramtype>const std::vector&lt; std::basic_string&lt; charT &gt; &gt; &amp;</paramtype></parameter><description><para>Creates a command line parser for the specified arguments list. The 'args' parameter should not include program name. </para></description></constructor>
+<constructor id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a44299860b8a47cee68e658daafcbe15a"><parameter name="argc"><paramtype>int</paramtype><description><para>Must be non-negative i.e. &gt;= 0 </para></description></parameter><parameter name="argv"><paramtype>const charT *const</paramtype><description><para>Argv[argc] must be 0 e.g. nullptr and if argc is &gt;0 argv[0] up to argv[argc-1] must point to null terminated strings </para></description></parameter><description><para>Creates a command line parser for the specified arguments list. The parameters should be the same as passed to 'main', meaning: 
+</para></description></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a7b5b674c9b6c884fd6d86aa74853fc8f" name="options"><type><classname>basic_command_line_parser</classname> &amp;</type><parameter name="desc"><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><description><para>Sets options descriptions to use. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a9355b944f2959b3340bf00f488d78404" name="positional"><type><classname>basic_command_line_parser</classname> &amp;</type><parameter name="desc"><paramtype>const <classname>positional_options_description</classname> &amp;</paramtype></parameter><description><para>Sets positional options description to use. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a1755ce06851874809f94174f3405f6f2" name="style"><type><classname>basic_command_line_parser</classname> &amp;</type><parameter name=""><paramtype>int</paramtype></parameter><description><para>Sets the command line style. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a2d73cfd782b9374e1acd080753514a9b" name="extra_parser"><type><classname>basic_command_line_parser</classname> &amp;</type><parameter name=""><paramtype>ext_parser</paramtype></parameter><description><para>Sets the extra parsers. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a63c7062f583f40f7cd8fcdf9f8b0161f" name="run"><type><classname>basic_parsed_options</classname>&lt; charT &gt;</type><description><para>Parses the options and returns the result of parsing. Throws on error. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a6d0d5d8918ab0ac64f2941be1857036f" name="allow_unregistered"><type><classname>basic_command_line_parser</classname> &amp;</type><description><para>Specifies that unregistered options are allowed and should be passed though. For each command like token that looks like an option but does not contain a recognized name, an instance of basic_option&lt;charT&gt; will be added to result, with 'unrecognized' field set to 'true'. It's possible to collect all unrecognized options with the 'collect_unrecognized' funciton. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a50fd63a3c8a3e9061dabb7ccb89c0e29" name="extra_style_parser"><type><classname>basic_command_line_parser</classname> &amp;</type><parameter name="s"><paramtype>style_parser</paramtype></parameter></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1basic__parsed__options" name="basic_parsed_options"><template>
+      <template-type-parameter name="charT"/>
+    </template><description><para>Results of parsing an input source. The primary use of this class is passing information from parsers component to value storage component. This class does not makes much sense itself. </para></description><data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_1a514e736a6ea3a6470f6bbb195e56099c" name="options"><type>std::vector&lt; <classname>basic_option</classname>&lt; charT &gt; &gt;</type><description><para>Options found in the source. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_1ad852d158c40069682e185af845aa33a8" name="description"><type>const <classname>options_description</classname> *</type><description><para>Options description that was used for parsing. Parsers should return pointer to the instance of <link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link> passed to them, and issues of lifetime are up to the caller. Can be NULL. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_1adf1c1e768775841594a190c985277825" name="m_options_prefix"><type>int</type><description><para>Mainly used for the diagnostic messages in exceptions. The canonical option prefix for the parser which generated these results, depending on the settings for <link linkend="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a1755ce06851874809f94174f3405f6f2">basic_command_line_parser::style()</link> or cmdline::style(). In order of precedence of command_line_style enums: allow_long allow_long_disguise allow_dash_for_short allow_slash_for_short </para></description></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_1ae5f8f6b780ffc45a7accfdc70280bd48" specifiers="explicit"><parameter name="xdescription"><paramtype>const <classname>options_description</classname> *</paramtype></parameter><parameter name="options_prefix"><paramtype>int</paramtype><default>0</default></parameter></constructor>
+</method-group>
+</class><class-specialization id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4" name="basic_parsed_options"><template>
+    </template><specialization><template-arg>wchar_t</template-arg></specialization><description><para>Specialization of <link linkend="doxygen.classboost_1_1program__options_1_1basic__parsed__options">basic_parsed_options</link> which:<itemizedlist>
+<listitem><para>provides convenient conversion from <link linkend="doxygen.classboost_1_1program__options_1_1basic__parsed__options">basic_parsed_options&lt;char&gt;</link></para>
+</listitem><listitem><para>stores the passed char-based options for later use. </para>
+</listitem></itemizedlist>
+</para></description><data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4_1a818af4f1ee08815157ef2b2ee12f91df" name="options"><type>std::vector&lt; <classname>basic_option</classname>&lt; wchar_t &gt; &gt;</type></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4_1a44998a1c8a3a3f6ebe6fbe53347acfa1" name="description"><type>const <classname>options_description</classname> *</type></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4_1a0f578556f6a95f6e8d79c3f6f12bcc3e" name="utf8_encoded_options"><type><classname>basic_parsed_options</classname>&lt; char &gt;</type><description><para>Stores UTF8 encoded options that were passed to constructor, to avoid reverse conversion in some cases. </para></description></data-member>
+<data-member id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4_1a2a0a2a38c6297aad612024d0f528acfb" name="m_options_prefix"><type>int</type><description><para>Mainly used for the diagnostic messages in exceptions. The canonical option prefix for the parser which generated these results, depending on the settings for <link linkend="doxygen.classboost_1_1program__options_1_1basic__command__line__parser_1a1755ce06851874809f94174f3405f6f2">basic_command_line_parser::style()</link> or cmdline::style(). In order of precedence of command_line_style enums: allow_long allow_long_disguise allow_dash_for_short allow_slash_for_short </para></description></data-member>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4_1aa2d70f3fe46de59babdbf0d56a165708" specifiers="explicit"><parameter name="po"><paramtype>const <classname>basic_parsed_options</classname>&lt; char &gt; &amp;</paramtype></parameter><description><para>Constructs wrapped options from options in UTF8 encoding. </para></description></constructor>
+</method-group>
+</class-specialization><enum id="doxygen.namespaceboost_1_1program__options_1a6e1f5defb595e6c9d4126c338db1b248" name="collect_unrecognized_mode"><enumvalue id="doxygen.namespaceboost_1_1program__options_1a6e1f5defb595e6c9d4126c338db1b248a152b5f75af4f476d739a6be54e4ca416" name="include_positional"/><enumvalue id="doxygen.namespaceboost_1_1program__options_1a6e1f5defb595e6c9d4126c338db1b248a604b034108b23b3eb1ff4f2897dfd8d8" name="exclude_positional"/><description><para>Controls if the 'collect_unregistered' function should include positional options, or not. </para></description></enum>
+<typedef id="doxygen.namespaceboost_1_1program__options_1a2e7af46378fd3d9652706ff728ea68cd" name="parsed_options"><type><classname>basic_parsed_options</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1program__options_1a60b412f3e40e5ef27f2d80fbaefbc216" name="wparsed_options"><type><classname>basic_parsed_options</classname>&lt; wchar_t &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1program__options_1ae77d9fbba8c10a0b7f3ba5eb5aaf2305" name="ext_parser"><description><para>Augments <link linkend="doxygen.classboost_1_1program__options_1_1basic__parsed__options_3_01wchar__t_01_4">basic_parsed_options&lt;wchar_t&gt;</link> with conversion from 'parsed_options' </para></description><type>function1&lt; std::pair&lt; std::string, std::string &gt;, const std::string &amp; &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1program__options_1ae644e56997c4456c90b4f6861b062697" name="command_line_parser"><type><classname>basic_command_line_parser</classname>&lt; char &gt;</type></typedef>
+<typedef id="doxygen.namespaceboost_1_1program__options_1a47684cbc6651cbcd9649eb087e3c6714" name="wcommand_line_parser"><type><classname>basic_command_line_parser</classname>&lt; wchar_t &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+<function id="doxygen.namespaceboost_1_1program__options_1ae5fcc999f0a7002d5f7d4f7cd0e0b05a" name="parse_command_line"><type><classname>basic_parsed_options</classname>&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="argc"><paramtype>int</paramtype></parameter><parameter name="argv"><paramtype>const charT *const</paramtype></parameter><parameter name=""><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><parameter name="style"><paramtype>int</paramtype><default>0</default></parameter><parameter name="ext"><paramtype>function1&lt; std::pair&lt; std::string, std::string &gt;, const std::string &amp; &gt;</paramtype><default>ext_parser()</default></parameter><description><para>Creates instance of 'command_line_parser', passes parameters to it, and returns the result of calling the 'run' method. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1aff09015a4505e1be5a58f2b216d1471a" name="parse_config_file"><type>BOOST_PROGRAM_OPTIONS_DECL <classname>basic_parsed_options</classname>&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name=""><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name=""><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><parameter name="allow_unregistered"><paramtype>bool</paramtype><default>false</default></parameter><description><para>Parse a config file.</para><para>Read from given stream. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1a66c8b33bb8ba2e6397ada8e3eb5378d0" name="parse_config_file"><type>BOOST_PROGRAM_OPTIONS_DECL <classname>basic_parsed_options</classname>&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"><default>char</default></template-type-parameter>
+        </template><parameter name="filename"><paramtype>const char *</paramtype></parameter><parameter name=""><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><parameter name="allow_unregistered"><paramtype>bool</paramtype><default>false</default></parameter><description><para>Parse a config file.</para><para>Read from file with the given name. The character type is passed to the file stream. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1a366882f4013f420908efbcb954ee1613" name="collect_unrecognized"><type>std::vector&lt; std::basic_string&lt; charT &gt; &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="options"><paramtype>const std::vector&lt; <classname>basic_option</classname>&lt; charT &gt; &gt; &amp;</paramtype></parameter><parameter name="mode"><paramtype>enum collect_unrecognized_mode</paramtype></parameter><description><para>Collects the original tokens for all named options with 'unregistered' flag set. If 'mode' is 'include_positional' also collects all positional options. Returns the vector of origianl tokens for all collected options. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1a68bc4849b6e4ecc8f6a5f1eefc081535" name="parse_environment"><type>BOOST_PROGRAM_OPTIONS_DECL <classname>parsed_options</classname></type><parameter name=""><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><parameter name="name_mapper"><paramtype>const function1&lt; std::string, std::string &gt; &amp;</paramtype></parameter><description><para>Parse environment.</para><para>For each environment variable, the 'name_mapper' function is called to obtain the option name. If it returns empty string, the variable is ignored.</para><para>This is done since naming of environment variables is typically different from the naming of command line options. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1a6d15ac808c8eb666b7cd6384d9523d68" name="parse_environment"><type>BOOST_PROGRAM_OPTIONS_DECL <classname>parsed_options</classname></type><parameter name=""><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><parameter name="prefix"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Parse environment.</para><para>Takes all environment variables which start with 'prefix'. The option name is obtained from variable name by removing the prefix and converting the remaining string into lower case. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1a98f19d852c421b735fdf4c838ed626e0" name="parse_environment"><type>BOOST_PROGRAM_OPTIONS_DECL <classname>parsed_options</classname></type><parameter name=""><paramtype>const <classname>options_description</classname> &amp;</paramtype></parameter><parameter name="prefix"><paramtype>const char *</paramtype></parameter><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. This function exists to resolve ambiguity between the two above functions when second argument is of 'char*' type. There's implicit conversion to both function1 and string. </para></description></function>
+<overloaded-function id="doxygen.namespaceboost_1_1program__options_1a6c9820e5d3496cc13b11e9691270d295" name="split_unix"><signature><type>BOOST_PROGRAM_OPTIONS_DECL std::vector&lt; std::string &gt;</type><parameter name="cmdline"><paramtype>const std::string &amp;</paramtype></parameter><parameter name="seperator"><paramtype>const std::string &amp;</paramtype><default>" \t"</default></parameter><parameter name="quote"><paramtype>const std::string &amp;</paramtype><default>"'\""</default></parameter><parameter name="escape"><paramtype>const std::string &amp;</paramtype><default>"\\"</default></parameter></signature><signature><type>BOOST_PROGRAM_OPTIONS_DECL std::vector&lt; std::wstring &gt;</type><parameter name="cmdline"><paramtype>const std::wstring &amp;</paramtype></parameter><parameter name="seperator"><paramtype>const std::wstring &amp;</paramtype><default>L" \t"</default></parameter><parameter name="quote"><paramtype>const std::wstring &amp;</paramtype><default>L"'\""</default></parameter><parameter name="escape"><paramtype>const std::wstring &amp;</paramtype><default>L"\\"</default></parameter></signature><description><para>Splits a given string to a collection of single strings which can be passed to command_line_parser. The second parameter is used to specify a collection of possible seperator chars used for splitting. The seperator is defaulted to space " ". Splitting is done in a unix style way, with respect to quotes '"' and escape characters '\' </para></description></overloaded-function>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.positional__options_8hpp" name="boost/program_options/positional_options.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1positional__options__description" name="positional_options_description"><description><para>Describes positional options.</para><para>The class allows to guess option names for positional options, which are specified on the command line and are identified by the position. The class uses the information provided by the user to associate a name with every positional option, or tell that no name is known.</para><para>The primary assumption is that only the relative order of the positional options themselves matters, and that any interleaving ordinary options don't affect interpretation of positional options.</para><para>The user initializes the class by specifying that first N positional options should be given the name X1, following M options should be given the name X2 and so on. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1positional__options__description_1a919a789c3d77e61f24dd30fd15536521"/>
+<method id="doxygen.classboost_1_1program__options_1_1positional__options__description_1a7cd530d3772f035cb1735699005d1f1d" name="add"><type><classname>positional_options_description</classname> &amp;</type><parameter name="name"><paramtype>const char *</paramtype></parameter><parameter name="max_count"><paramtype>int</paramtype></parameter><description><para>Species that up to 'max_count' next positional options should be given the 'name'. The value of '-1' means 'unlimited'. No calls to 'add' can be made after call with 'max_value' equal to '-1'. <sbr/>
+ </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1positional__options__description_1a1c2efcfea88adee5640e4f43d71c0657" name="max_total_count" cv="const"><type>unsigned</type><description><para>Returns the maximum number of positional options that can be present. Can return (numeric_limits&lt;unsigned&gt;::max)() to indicate unlimited number. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1positional__options__description_1a939db09530ea480a9dc6e8cdca7123d2" name="name_for_position" cv="const"><type>const std::string &amp;</type><parameter name="position"><paramtype>unsigned</paramtype></parameter><description><para>Returns the name that should be associated with positional options at 'position'. Precondition: position &lt; <link linkend="doxygen.classboost_1_1program__options_1_1positional__options__description_1a1c2efcfea88adee5640e4f43d71c0657">max_total_count()</link> </para></description></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.value__semantic_8hpp" name="boost/program_options/value_semantic.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1typed__value" name="typed_value"><template>
+      <template-type-parameter name="T"/>
+      <template-type-parameter name="charT"><default>char</default></template-type-parameter>
+    </template><inherit access="public">boost::program_options::value_semantic_codecvt_helper&lt; char &gt;</inherit><inherit access="public">boost::program_options::typed_value_base</inherit><description><para>Class which handles value of a specific type. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1typed__value_1a75bb75f8eac57b8713bcc173eedc904c"><parameter name="store_to"><paramtype>T *</paramtype></parameter><description><para>Ctor. The 'store_to' parameter tells where to store the value when it's known. The parameter can be NULL. </para></description></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a5c12087e57f9ea4f7fa406ec68ded644" name="default_value"><type><classname>typed_value</classname> *</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><description><para>Specifies default value, which will be used if none is explicitly specified. The type 'T' should provide operator&lt;&lt; for ostream. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a305c526c2cc24b28eadebe16a6325fdd" name="default_value"><type><classname>typed_value</classname> *</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><parameter name="textual"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Specifies default value, which will be used if none is explicitly specified. Unlike the above overload, the type 'T' need not provide operator&lt;&lt; for ostream, but textual representation of default value must be provided by the user. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1afa0936673a60972eb101563c463a54b3" name="implicit_value"><type><classname>typed_value</classname> *</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><description><para>Specifies an implicit value, which will be used if the option is given, but without an adjacent value. Using this implies that an explicit value is optional, </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a8f375286c5bc590ded4d57421ff9747b" name="value_name"><type><classname>typed_value</classname> *</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Specifies the name used to to the value in help message. <sbr/>
+ </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a7f228f915b645f059b179d5931518798" name="implicit_value"><type><classname>typed_value</classname> *</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><parameter name="textual"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Specifies an implicit value, which will be used if the option is given, but without an adjacent value. Using this implies that an explicit value is optional, but if given, must be strictly adjacent to the option, i.e.: '-ovalue' or '–option=value'. Giving '-o' or '–option' will cause the implicit value to be applied. Unlike the above overload, the type 'T' need not provide operator&lt;&lt; for ostream, but textual representation of default value must be provided by the user. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a6d96fa8c4f2104bc402fd4877b856739" name="notifier"><type><classname>typed_value</classname> *</type><parameter name="f"><paramtype>function1&lt; void, const T &amp; &gt;</paramtype></parameter><description><para>Specifies a function to be called when the final value is determined. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a2b1c9c2f6f91abc17aee449f61cad78e" name="composing"><type><classname>typed_value</classname> *</type><description><para>Specifies that the value is composing. See the 'is_composing' method for explanation. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a36ef6f64217720fdd5f8b3a980c93e0e" name="multitoken"><type><classname>typed_value</classname> *</type><description><para>Specifies that the value can span multiple tokens. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1aab5180d30079f57c5f48211389c7b725" name="zero_tokens"><type><classname>typed_value</classname> *</type><description><para>Specifies that no tokens may be provided as the value of this option, which means that only presense of the option is significant. For such option to be useful, either the 'validate' function should be specialized, or the 'implicit_value' method should be also used. In most cases, you can use the 'bool_switch' function instead of using this method. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a04197958ca29985e866475a4f957eff6" name="required"><type><classname>typed_value</classname> *</type><description><para>Specifies that the value must occur. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a2ace1c6d5a4427f63414b584a180ff8d" name="name" cv="const"><type>std::string</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a63b8ba304dd8f107f05c707423edd167" name="is_composing" cv="const"><type>bool</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1aec414bdd211f9f5918728e550ae92ba9" name="min_tokens" cv="const"><type>unsigned</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1afa3adf597d395d7fdf52319550f82c76" name="max_tokens" cv="const"><type>unsigned</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1ad8b5065bcbdd73392cf390eac2b8add0" name="is_required" cv="const"><type>bool</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1ae441968e6e21c39ff8d60a6edd6e96c2" name="xparse" cv="const"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::basic_string&lt; charT &gt; &gt; &amp;</paramtype></parameter><description><para>Creates an instance of the 'validator' class and calls its operator() to perform the actual conversion. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1a9f932ada3b18f497104724d004f4cb78" name="apply_default" cv="const" specifiers="virtual"><type>bool</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><description><para>If default value was specified via previous call to 'default_value', stores that value into 'value_store'. Returns true if default value was stored. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1ad28399511daf8c770303e7ffa3d7e670" name="notify" cv="const"><type>void</type><parameter name="value_store"><paramtype>const boost::any &amp;</paramtype></parameter><description><para>If an address of variable to store value was specified when creating *this, stores the value there. Otherwise, does nothing. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1typed__value_1ab6ece393ffbe589e8725ee52d789565b" name="value_type" cv="const" specifiers="virtual"><type>const std::type_info &amp;</type></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1typed__value__base" name="typed_value_base"><description><para>Base class for all option that have a fixed type, and are willing to announce this type to the outside world. Any 'value_semantics' for which you want to find out the type can be dynamic_cast-ed to <link linkend="doxygen.classboost_1_1program__options_1_1typed__value__base">typed_value_base</link>. If conversion succeeds, the 'type' method can be called. </para></description><method-group name="public member functions">
+<method id="doxygen.classboost_1_1program__options_1_1typed__value__base_1a03cf79f1187f48fc736f1199fa90c8db" name="value_type" cv="const = 0" specifiers="virtual"><type>const std::type_info &amp;</type></method>
+<destructor id="doxygen.classboost_1_1program__options_1_1typed__value__base_1a8ea52b2e35ce8be0548b823113edc4a2" specifiers="virtual"/>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1untyped__value" name="untyped_value"><inherit access="public">boost::program_options::value_semantic_codecvt_helper&lt; char &gt;</inherit><description><para>Class which specifies a simple handling of a value: the value will have string type and only one token is allowed. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1untyped__value_1aeaf3f19ced9c6f49b23728c80346e453"><parameter name="zero_tokens"><paramtype>bool</paramtype><default>false</default></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1a0bd888b76dd5ca92196a1c8e7af27519" name="name" cv="const" specifiers="virtual"><type>std::string</type><description><para>Returns the name of the option. The name is only meaningful for automatic help message. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1aed63c1f0e01501a2b95acf79a143ac9d" name="min_tokens" cv="const" specifiers="virtual"><type>unsigned</type><description><para>The minimum number of tokens for this option that should be present on the command line. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1a6bde176898fdf2ec960f12a4b682cb78" name="max_tokens" cv="const" specifiers="virtual"><type>unsigned</type><description><para>The maximum number of tokens for this option that should be present on the command line. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1a02a53dac6bd9aca6f4f4d931dcb59ac0" name="is_composing" cv="const" specifiers="virtual"><type>bool</type><description><para>Returns true if values from different sources should be composed. Otherwise, value from the first source is used and values from other sources are discarded. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1a393a7c11188f22c5afc196b27e17093f" name="is_required" cv="const" specifiers="virtual"><type>bool</type><description><para>Returns true if value must be given. Non-optional value </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1ac947168f43d43b6e6b49ea716b21c6e6" name="xparse" cv="const" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter><description><para>If 'value_store' is already initialized, or new_tokens has more than one elements, throws. Otherwise, assigns the first string from 'new_tokens' to 'value_store', without any modifications. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1a84df553f9928c035db9e1a52b44d39ab" name="apply_default" cv="const" specifiers="virtual"><type>bool</type><parameter name=""><paramtype>boost::any &amp;</paramtype></parameter><description><para>Does nothing. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1untyped__value_1aba9461d7db851ef8f5a82788c651baec" name="notify" cv="const" specifiers="virtual"><type>void</type><parameter name=""><paramtype>const boost::any &amp;</paramtype></parameter><description><para>Does nothing. </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1value__semantic" name="value_semantic"><description><para>Class which specifies how the option's value is to be parsed and converted into C++ types. </para></description><method-group name="public member functions">
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1af5d3cbaa52361a4de5e48ae8d1c3fcdb" name="name" cv="const = 0" specifiers="virtual"><type>std::string</type><description><para>Returns the name of the option. The name is only meaningful for automatic help message. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1a6312a7b0e4367dd7a0779af0da791d08" name="min_tokens" cv="const = 0" specifiers="virtual"><type>unsigned</type><description><para>The minimum number of tokens for this option that should be present on the command line. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1a72df55849d41c7990a72bf5ef9efd0a4" name="max_tokens" cv="const = 0" specifiers="virtual"><type>unsigned</type><description><para>The maximum number of tokens for this option that should be present on the command line. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1aaa6c12d31facac9b3bc13e94aba2a822" name="is_composing" cv="const = 0" specifiers="virtual"><type>bool</type><description><para>Returns true if values from different sources should be composed. Otherwise, value from the first source is used and values from other sources are discarded. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1a762d8a275258c40d73eff7be981083a1" name="is_required" cv="const = 0" specifiers="virtual"><type>bool</type><description><para>Returns true if value must be given. Non-optional value </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1a283fb628542bd688bd8b31ad3ec72f56" name="parse" cv="const = 0" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter><parameter name="utf8"><paramtype>bool</paramtype></parameter><description><para>Parses a group of tokens that specify a value of option. Stores the result in 'value_store', using whatever representation is desired. May be be called several times if value of the same option is specified more than once. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1ac3e26336cff04d61bb237e358a73d15a" name="apply_default" cv="const = 0" specifiers="virtual"><type>bool</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><description><para>Called to assign default value to 'value_store'. Returns true if default value is assigned, and false if no default value exists. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic_1a05537edc1ff3479b0cb72115fa1f457d" name="notify" cv="const = 0" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>const boost::any &amp;</paramtype></parameter><description><para>Called when final value of an option is determined. </para></description></method>
+<destructor id="doxygen.classboost_1_1program__options_1_1value__semantic_1a0eaa3d5918dca270e8db7d504e267179" specifiers="virtual"/>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper" name="value_semantic_codecvt_helper"><template>
+      <template-type-parameter name="charT"/>
+    </template><description><para>Helper class which perform necessary character conversions in the 'parse' method and forwards the data further. </para></description></class><class-specialization id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper_3_01char_01_4" name="value_semantic_codecvt_helper"><template>
+    </template><specialization><template-arg>char</template-arg></specialization><inherit access="public">boost::program_options::value_semantic</inherit><description><para>Helper conversion class for values that accept ascii strings as input. Overrides the 'parse' method and defines new 'xparse' method taking std::string. Depending on whether input to parse is ascii or UTF8, will pass it to xparse unmodified, or with UTF8-&gt;ascii conversion. </para></description><method-group name="private member functions">
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper_3_01char_01_4_1af5ac238341a9eb5117670d115d9c4549" name="parse" cv="const" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter><parameter name="utf8"><paramtype>bool</paramtype></parameter><description><para>Parses a group of tokens that specify a value of option. Stores the result in 'value_store', using whatever representation is desired. May be be called several times if value of the same option is specified more than once. </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper_3_01char_01_4_1ac9c48337774bf6c00016453e8367e076" name="xparse" cv="const = 0" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter></method>
+</method-group>
+</class-specialization><class-specialization id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper_3_01wchar__t_01_4" name="value_semantic_codecvt_helper"><template>
+    </template><specialization><template-arg>wchar_t</template-arg></specialization><inherit access="public">boost::program_options::value_semantic</inherit><description><para>Helper conversion class for values that accept ascii strings as input. Overrides the 'parse' method and defines new 'xparse' method taking std::wstring. Depending on whether input to parse is ascii or UTF8, will recode input to Unicode, or pass it unmodified. </para></description><method-group name="private member functions">
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper_3_01wchar__t_01_4_1ad85b125943d02573174eca8f18066ce7" name="parse" cv="const" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::string &gt; &amp;</paramtype></parameter><parameter name="utf8"><paramtype>bool</paramtype></parameter><description><para>Parses a group of tokens that specify a value of option. Stores the result in 'value_store', using whatever representation is desired. May be be called several times if value of the same option is specified more than once. </para></description></method>
+</method-group>
+<method-group name="protected member functions">
+<method id="doxygen.classboost_1_1program__options_1_1value__semantic__codecvt__helper_3_01wchar__t_01_4_1a7b9bc3ea8bdb101725d9cfd0a984cac5" name="xparse" cv="const = 0" specifiers="virtual"><type>void</type><parameter name="value_store"><paramtype>boost::any &amp;</paramtype></parameter><parameter name="new_tokens"><paramtype>const std::vector&lt; std::wstring &gt; &amp;</paramtype></parameter></method>
+</method-group>
+</class-specialization>
+
+
+<overloaded-function id="doxygen.namespaceboost_1_1program__options_1ad3bdaecae2715d7c5f1a8c666d0788cf" name="value"><signature><type><classname>typed_value</classname>&lt; T &gt; *</type><template>
+          <template-type-parameter name="T"/>
+        </template></signature><signature><type><classname>typed_value</classname>&lt; T &gt; *</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="v"><paramtype>T *</paramtype></parameter></signature><description><para>Creates a typed_value&lt;T&gt; instance. This function is the primary method to create <link linkend="doxygen.classboost_1_1program__options_1_1value__semantic">value_semantic</link> instance for a specific type, which can later be passed to '<link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link>' constructor. The second overload is used when it's additionally desired to store the value of option into program variable. </para></description></overloaded-function>
+
+<function id="doxygen.namespaceboost_1_1program__options_1a51423168c141f6901f8f13c0f7db2242" name="wvalue"><type><classname>typed_value</classname>&lt; T, wchar_t &gt; *</type><template>
+          <template-type-parameter name="T"/>
+        </template><description><para>Creates a typed_value&lt;T&gt; instance. This function is the primary method to create <link linkend="doxygen.classboost_1_1program__options_1_1value__semantic">value_semantic</link> instance for a specific type, which can later be passed to '<link linkend="doxygen.classboost_1_1program__options_1_1option__description">option_description</link>' constructor. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1af64890ea0559492eb331d41b734c2cec" name="wvalue"><type><classname>typed_value</classname>&lt; T, wchar_t &gt; *</type><template>
+          <template-type-parameter name="T"/>
+        </template><parameter name="v"><paramtype>T *</paramtype></parameter></function>
+<overloaded-function id="doxygen.namespaceboost_1_1program__options_1abfbc9cfa76a640c4151a2d2a387daefc" name="bool_switch"><signature><type>BOOST_PROGRAM_OPTIONS_DECL <classname>typed_value</classname>&lt; bool &gt; *</type></signature><signature><type>BOOST_PROGRAM_OPTIONS_DECL <classname>typed_value</classname>&lt; bool &gt; *</type><parameter name="v"><paramtype>bool *</paramtype></parameter></signature><description><para>Works the same way as the 'value&lt;bool&gt;' function, but the created <link linkend="doxygen.classboost_1_1program__options_1_1value__semantic">value_semantic</link> won't accept any explicit value. So, if the option is present on the command line, the value will be 'true'. </para></description></overloaded-function>
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.variables__map_8hpp" name="boost/program_options/variables_map.hpp">
+<namespace name="boost">
+<namespace name="program_options">
+<class id="doxygen.classboost_1_1program__options_1_1abstract__variables__map" name="abstract_variables_map"><description><para>Implements string-&gt;string mapping with convenient value casting facilities. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1abstract__variables__map_1aa6633bd7f81603e8676bb21faf684842"/>
+<constructor id="doxygen.classboost_1_1program__options_1_1abstract__variables__map_1ace92f013018a6cba24b1b21ab64434b0"><parameter name="next"><paramtype>const <classname>abstract_variables_map</classname> *</paramtype></parameter></constructor>
+<destructor id="doxygen.classboost_1_1program__options_1_1abstract__variables__map_1ae53dded585691e409417127e5ad99822" specifiers="virtual"/>
+<method id="doxygen.classboost_1_1program__options_1_1abstract__variables__map_1a16bd49d3dc8abdaa13dbb0c426b6edad" name="operator[]" cv="const"><type>const <classname>variable_value</classname> &amp;</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Obtains the value of variable 'name', from *this and possibly from the chain of variable maps.</para><para><itemizedlist>
+<listitem><para>if there's no value in *this.<itemizedlist>
+<listitem><para>if there's next variable map, returns value from it</para>
+</listitem><listitem><para>otherwise, returns empty value</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>if there's defaulted value<itemizedlist>
+<listitem><para>if there's next variable map, which has a non-defaulted value, return that</para>
+</listitem><listitem><para>otherwise, return value from *this</para>
+</listitem></itemizedlist>
+</para>
+</listitem><listitem><para>if there's a non-defaulted value, returns it. </para>
+</listitem></itemizedlist>
+</para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1abstract__variables__map_1af39602af3ae0cb0e78e32a02b588e2a6" name="next"><type>void</type><parameter name="next"><paramtype><classname>abstract_variables_map</classname> *</paramtype></parameter><description><para>Sets next variable map, which will be used to find variables not found in *this. </para></description></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.classboost_1_1program__options_1_1abstract__variables__map_1aca05c7a89b280024f2df38f93bcd4b02" name="get" cv="const = 0" specifiers="virtual"><type>const <classname>variable_value</classname> &amp;</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Returns value of variable 'name' stored in *this, or empty value otherwise. </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1variable__value" name="variable_value"><description><para>Class holding value of option. Contains details about how the value is set and allows to conveniently obtain the value. </para></description><method-group name="friend functions">
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1ab2d0b38e449ccdf20ebe4a1c49510274" name="store"><type>BOOST_PROGRAM_OPTIONS_DECL void</type><parameter name="options"><paramtype>const <classname>basic_parsed_options</classname>&lt; char &gt; &amp;</paramtype></parameter><parameter name="m"><paramtype><classname>variables_map</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>bool</paramtype></parameter><description><para>Stores in 'm' all options that are defined in 'options'. If 'm' already has a non-defaulted value of an option, that value is not changed, even if 'options' specify some value. </para></description></method>
+</method-group>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1variable__value_1a4e8f93c7150ad63cde2f3d0b3c588ac1"/>
+<constructor id="doxygen.classboost_1_1program__options_1_1variable__value_1ab1302082939c31fe02ae2e8dcbd41a32"><parameter name="xv"><paramtype>const boost::any &amp;</paramtype></parameter><parameter name="xdefaulted"><paramtype>bool</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1ad8a6beb69be8f554592ccf9fff83f922" name="as" cv="const"><type>const T &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><description><para>If stored value if of type T, returns that value. Otherwise, throws boost::bad_any_cast exception. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1a32f7edc930199c03e9f9cb855d38b80a" name="as"><type>T &amp;</type><template>
+          <template-type-parameter name="T"/>
+        </template><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1ad67c171481239f7f85785345f575abbe" name="empty" cv="const"><type>bool</type><purpose>Returns true if no value is stored. </purpose></method>
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1a0360385531509e819dfd1024e425d963" name="defaulted" cv="const"><type>bool</type><description><para>Returns true if the value was not explicitly given, but has default value. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1a7d7fbcbcaec11e284ab40b473a9051aa" name="value" cv="const"><type>const boost::any &amp;</type><description><para>Returns the contained value. </para></description></method>
+<method id="doxygen.classboost_1_1program__options_1_1variable__value_1a1cec357dea7275ca884faeb7b23184c5" name="value"><type>boost::any &amp;</type><description><para>Returns the contained value. </para></description></method>
+</method-group>
+</class><class id="doxygen.classboost_1_1program__options_1_1variables__map" name="variables_map"><inherit access="public">boost::program_options::abstract_variables_map</inherit><inherit access="public">std::map&lt; std::string, variable_value &gt;</inherit><description><para>Concrete variables map which store variables in real map.</para><para>This class is derived from std::map&lt;std::string, variable_value&gt;, so you can use all map operators to examine its content. </para></description><method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1program__options_1_1variables__map_1a460d18fdbb10565a050ac6d08fd150d7"/>
+<constructor id="doxygen.classboost_1_1program__options_1_1variables__map_1a139e752c426c976be9cc316f82e05b99"><parameter name="next"><paramtype>const <classname>abstract_variables_map</classname> *</paramtype></parameter></constructor>
+<method id="doxygen.classboost_1_1program__options_1_1variables__map_1ac5d5d5e1f2569acf9299e93a8195bb7c" name="operator[]" cv="const"><type>const <classname>variable_value</classname> &amp;</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter></method>
+<method id="doxygen.classboost_1_1program__options_1_1variables__map_1acbb7900e27490feb22f02f2a477dfaa0" name="clear"><type>void</type></method>
+<method id="doxygen.classboost_1_1program__options_1_1variables__map_1abb062a8e405cf812012cfd1882656653" name="notify"><type>void</type></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.classboost_1_1program__options_1_1variables__map_1ace2bb9c66f4441782db74f76a9718dfd" name="get" cv="const" specifiers="virtual"><type>const <classname>variable_value</classname> &amp;</type><parameter name="name"><paramtype>const std::string &amp;</paramtype></parameter><description><para>Implementation of abstract_variables_map::get which does 'find' in *this. </para></description></method>
+</method-group>
+<method-group name="friend functions">
+<method id="doxygen.classboost_1_1program__options_1_1variables__map_1a77167af986d110a7fa257f106004a260" name="store"><type>BOOST_PROGRAM_OPTIONS_DECL void</type><parameter name="options"><paramtype>const <classname>basic_parsed_options</classname>&lt; char &gt; &amp;</paramtype></parameter><parameter name="xm"><paramtype><classname>variables_map</classname> &amp;</paramtype></parameter><parameter name="utf8"><paramtype>bool</paramtype></parameter><description><para>Stores in 'm' all options that are defined in 'options'. If 'm' already has a non-defaulted value of an option, that value is not changed, even if 'options' specify some value. </para></description></method>
+</method-group>
+</class><function id="doxygen.namespaceboost_1_1program__options_1a6a5230fb4900bc878875a28d97df0cbf" name="store"><type>BOOST_PROGRAM_OPTIONS_DECL void</type><parameter name="options"><paramtype>const <classname>basic_parsed_options</classname>&lt; char &gt; &amp;</paramtype></parameter><parameter name="m"><paramtype><classname>variables_map</classname> &amp;</paramtype></parameter><parameter name="utf8"><paramtype>bool</paramtype><default>false</default></parameter><description><para>Stores in 'm' all options that are defined in 'options'. If 'm' already has a non-defaulted value of an option, that value is not changed, even if 'options' specify some value. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1addea8a8053525e3eadbbedc9e3437c7d" name="store"><type>BOOST_PROGRAM_OPTIONS_DECL void</type><parameter name="options"><paramtype>const <classname>basic_parsed_options</classname>&lt; wchar_t &gt; &amp;</paramtype></parameter><parameter name="m"><paramtype><classname>variables_map</classname> &amp;</paramtype></parameter><description><para>Stores in 'm' all options that are defined in 'options'. If 'm' already has a non-defaulted value of an option, that value is not changed, even if 'options' specify some value. This is wide character variant. </para></description></function>
+<function id="doxygen.namespaceboost_1_1program__options_1a4e37efc0f89d618214bb1adef3f2bfe6" name="notify"><type>BOOST_PROGRAM_OPTIONS_DECL void</type><parameter name="m"><paramtype><classname>variables_map</classname> &amp;</paramtype></parameter><description><para>Runs all 'notify' function for options in 'm'. </para></description></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.version_8hpp" name="boost/program_options/version.hpp">
+<macro id="doxygen.version_8hpp_1ade89047d39c72fa36f6ac414bc611bbd" name="BOOST_PROGRAM_OPTIONS_VERSION"><description><para>The version of the source interface. The value will be incremented whenever a change is made which might cause compilation errors for existing code. </para></description></macro>
+<macro id="doxygen.version_8hpp_1ab5420a5c9f46745c27cf98bfc5ecc867" name="BOOST_PROGRAM_OPTIONS_IMPLICIT_VALUE_NEXT_TOKEN"/>
+</header>
+</library-reference>

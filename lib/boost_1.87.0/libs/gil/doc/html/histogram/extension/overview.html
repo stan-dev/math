@@ -1,0 +1,132 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Overview - Boost.GIL  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+          URL_ROOT:    '../../',
+          VERSION:     '',
+          COLLAPSE_MODINDEX: false,
+          FILE_SUFFIX: '.html'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sphinx_highlight.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="top" title="Boost.GIL  documentation" href="../../index.html" />
+    <link rel="up" title="Extensions" href="index.html" />
+    <link rel="next" title="STD extension" href="std.html" />
+    <link rel="prev" title="Extensions" href="index.html" /> 
+  </head>
+  <body>
+    <div class="header">
+    <table border="0" cellpadding="7" cellspacing="0" width="100%" summary=
+    "header">
+      <tr>
+        <td valign="top" width="300">
+          <h3><a href="../../index.html"><img
+          alt="C++ Boost" src="../../_static/gil.png" border="0"></a></h3>
+        </td>
+
+        <td >
+          <h1 align="center"><a href="../../index.html"></a></h1>
+        </td>
+	<td>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input type="text" name="q" size="18" />
+          <input type="submit" value="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+	</td>
+      </tr>
+    </table>
+    </div>
+    <hr/>
+    <div class="content">
+    <div class="navbar" style="text-align:right;">
+      
+      
+      <a class="prev" title="Extensions" href="index.html"><img src="../../_static/prev.png" alt="prev"/></a>
+      <a class="up" title="Extensions" href="index.html"><img src="../../_static/up.png" alt="up"/></a>
+      <a class="next" title="STD extension" href="std.html"><img src="../../_static/next.png" alt="next"/></a>
+      
+    </div>
+      
+  <section id="overview">
+<h1>Overview</h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#description" id="id1">Description</a></p></li>
+<li><p><a class="reference internal" href="#extensions" id="id2">Extensions</a></p></li>
+<li><p><a class="reference internal" href="#adding-an-external-container" id="id3">Adding an external container</a></p></li>
+</ul>
+</nav>
+<section id="description">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Description</a></h2>
+<p>Apart from the default class supplied by Boost.GIL, there are also provisions to
+use external containers like from std::vector, std::map, boost::histogram etc. These
+are provided as extensions.</p>
+</section>
+<section id="extensions">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Extensions</a></h2>
+<dl class="simple">
+<dt>Currently the following are available:</dt><dd><ol class="arabic simple">
+<li><p>std::vector (1D histogram support)</p></li>
+<li><p>std::map (1D histogram support)</p></li>
+<li><p>std::array (1D histogram support)</p></li>
+<li><p>std::unordered_map (1D histogram support)</p></li>
+<li><p>boost::histogram</p></li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="adding-an-external-container">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Adding an external container</a></h2>
+<dl class="simple">
+<dt>The workflow should be:</dt><dd><ol class="arabic simple">
+<li><p>Provide overloads for fill_histogram(must), make_histogram(optional) etc. in a new file preferably named after the container type in extensions/histogram/.</p></li>
+<li><p>Add tests to test/extensions/histogram.</p></li>
+<li><p>Add docs to docs/histogram/extensions.</p></li>
+<li><p>Other cmake, Jamfile, config etc. file changes.</p></li>
+</ol>
+</dd>
+</dl>
+</section>
+</section>
+
+
+    <div class="navbar" style="text-align:right;">
+      
+      
+      <a class="prev" title="Extensions" href="index.html"><img src="../../_static/prev.png" alt="prev"/></a>
+      <a class="up" title="Extensions" href="index.html"><img src="../../_static/up.png" alt="up"/></a>
+      <a class="next" title="STD extension" href="std.html"><img src="../../_static/next.png" alt="next"/></a>
+      
+    </div>
+    </div>
+    <div class="footer" role="contentinfo">
+      Last updated on 2024-12-05 01:12:49.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.2.1.
+    </div>
+  </body>
+</html>

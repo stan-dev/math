@@ -1,0 +1,31 @@
+////
+Copyright 2022 Christian Mazakas
+Copyright 2022 Peter Dimov
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= Boost.ContainerHash
+:toc: left
+:toclevels: 3
+:idprefix:
+:docinfo: private-footer
+:source-highlighter: rouge
+:nofooter:
+:sectlinks:
+:source-language: c++
+
+:leveloffset: +1
+
+include::hash/intro.adoc[]
+include::hash/recent.adoc[]
+include::hash/tutorial.adoc[]
+include::hash/user.adoc[]
+include::hash/combine.adoc[]
+include::hash/describe.adoc[]
+include::hash/reference.adoc[]
+include::hash/notes.adoc[]
+include::hash/links.adoc[]
+include::hash/thanks.adoc[]
+include::hash/changes.adoc[]
+include::hash/copyright.adoc[]

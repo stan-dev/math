@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template attribute_terminal</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../expressions.html#doxygen.expressions.attr_8hpp" title="Header &lt;boost/log/expressions/attr.hpp&gt;">
+<link rel="prev" href="classboost_1_1log_1_1expressions_1_1attribute__actor.html" title="Class template attribute_actor">
+<link rel="next" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1expressions_1_1attribute__actor.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.attr_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template attribute_terminal</span></h2>
+<p>boost::log::expressions::attribute_terminal</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../expressions.html#doxygen.expressions.attr_8hpp" title="Header &lt;boost/log/expressions/attr.hpp&gt;">boost/log/expressions/attr.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> FallbackPolicyT<span class="special">,</span> <span class="keyword">typename</span> TagT<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html" title="Class template attribute_terminal">attribute_terminal</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">TagT</span>                                  <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1af1789638d0a752af7a01ba27a431336e"></a><span class="identifier">tag_type</span><span class="special">;</span>         <span class="comment">// Attribute tag type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_extractor_type</span><span class="special">::</span><span class="identifier">value_type</span>      <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1aa64044f98c4dac4951010e037f58e17c"></a><span class="identifier">value_type</span><span class="special">;</span>       <span class="comment">// Attribute value type. </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_extractor_type</span><span class="special">::</span><span class="identifier">fallback_policy</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a3336122f8fc8400c22f5d3be75eadb3c"></a><span class="identifier">fallback_policy</span><span class="special">;</span>  <span class="comment">// Fallback policy type. </span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="comment">// Function result type.</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span><span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">result</a> <span class="special">{</span>
+  <span class="special">}</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ThisT<span class="special">,</span> <span class="keyword">typename</span> ContextT<span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4.html" title="Struct template result&lt;ThisT(ContextT)&gt;">result</a><span class="special">&lt;</span><span class="identifier">ThisT</span><span class="special">(</span><span class="identifier">ContextT</span><span class="special">)</span><span class="special">&gt;</span> <span class="special">{</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <span class="identifier">remove_cv</span><span class="special">&lt;</span> <span class="identifier">typenameremove_reference</span><span class="special">&lt;</span> <span class="identifier">typenamephoenix</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">::</span><span class="identifier">env</span><span class="special">&lt;</span> <span class="identifier">ContextT</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span>                         <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4.html#doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a95855a2ccdbd0ee02f77b061ff06f5e5"><span class="identifier">env_type</span></a><span class="special">;</span>               
+    <span class="keyword">typedef</span> <span class="identifier">env_type</span><span class="special">::</span><span class="identifier">args_type</span>                                                                                                            <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4.html#doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a86d30eb2d12ed4b01c4700a00b0b544b"><span class="identifier">args_type</span></a><span class="special">;</span>              
+    <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                                                                                                                    <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4.html#doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a391f6699927ee60c0120715ab309bb19"><span class="identifier">cv_value_extractor_type</span></a><span class="special">;</span>
+    <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">&lt;</span> <span class="identifier">cv_value_extractor_type</span><span class="special">(</span><span class="identifier">attribute_nameconst</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">typenamefusion</span><span class="special">::</span><span class="identifier">result_of</span><span class="special">::</span><span class="identifier">at_c</span><span class="special">&lt;</span> <span class="identifier">args_type</span><span class="special">,</span> <span class="number">0</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4.html#doxygen.expressions.structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result_3_01ThisT_07ContextT_08_01_4_1a442b32a5226af0ce402a2515108ec0b3"><span class="identifier">type</span></a><span class="special">;</span>                   
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#id66-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a4d7c3b7af0ae3443f9c7f80b441b6a4d"><span class="identifier">attribute_terminal</span></a><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">&gt;</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1acfb74697286607374e32d0b00b302db8"><span class="identifier">attribute_terminal</span></a><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">U</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">attribute_name</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1ab4930a89e24e98e354a4803de84f0dc5"><span class="identifier">get_name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">fallback_policy</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a54e65b79177918fcf47f5a5a9ae2a7b1"><span class="identifier">get_fallback_policy</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContextT<span class="special">&gt;</span> 
+    <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">result</a><span class="special">&lt;</span> this_type<span class="special">(</span><span class="identifier">ContextTconst</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a276ff7069b885412fb9295dfd6f787d8"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">ContextT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContextT<span class="special">&gt;</span> 
+    <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">result</a><span class="special">&lt;</span> <span class="identifier">constthis_type</span><span class="special">(</span><span class="identifier">ContextTconst</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+    <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1ad08d7a7285f7bf42d726210a91d86241"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">ContextT</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1expressions_1_1attribute__terminal.html#doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a1cac6003cdeb796ee484ecbea2df0db8"><span class="identifier">attribute_terminal</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id42991"></a><h2>Description</h2>
+<p>An attribute value extraction terminal </p>
+<div class="refsect2">
+<a name="id42994"></a><h3>
+<a name="id66-bb"></a><code class="computeroutput">attribute_terminal</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a4d7c3b7af0ae3443f9c7f80b441b6a4d"></a><span class="identifier">attribute_terminal</span><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span> name<span class="special">)</span><span class="special">;</span></pre>
+<p>Initializing constructor </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> U<span class="special">&gt;</span> 
+  <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1acfb74697286607374e32d0b00b302db8"></a><span class="identifier">attribute_terminal</span><span class="special">(</span><span class="identifier">attribute_name</span> <span class="keyword">const</span> <span class="special">&amp;</span> name<span class="special">,</span> <span class="identifier">U</span> <span class="keyword">const</span> <span class="special">&amp;</span> arg<span class="special">)</span><span class="special">;</span></pre>
+<p>Initializing constructor </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">attribute_name</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1ab4930a89e24e98e354a4803de84f0dc5"></a><span class="identifier">get_name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Attribute value name </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">fallback_policy</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a54e65b79177918fcf47f5a5a9ae2a7b1"></a><span class="identifier">get_fallback_policy</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Fallback policy </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContextT<span class="special">&gt;</span> 
+  <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">result</a><span class="special">&lt;</span> this_type<span class="special">(</span><span class="identifier">ContextTconst</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a276ff7069b885412fb9295dfd6f787d8"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">ContextT</span> <span class="keyword">const</span> <span class="special">&amp;</span> ctx<span class="special">)</span><span class="special">;</span></pre>
+<p>The operator extracts attribute value </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ContextT<span class="special">&gt;</span> 
+  <a class="link" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html" title="Struct template result">result</a><span class="special">&lt;</span> <span class="identifier">constthis_type</span><span class="special">(</span><span class="identifier">ContextTconst</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+  <a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1ad08d7a7285f7bf42d726210a91d86241"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">ContextT</span> <span class="keyword">const</span> <span class="special">&amp;</span> ctx<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>The operator extracts attribute value </p>
+</li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.expressions.classboost_1_1log_1_1expressions_1_1attribute__terminal_1a1cac6003cdeb796ee484ecbea2df0db8"></a><span class="identifier">attribute_terminal</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1expressions_1_1attribute__actor.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../expressions.html#doxygen.expressions.attr_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1log_1_1expressions_1_1attribute__terminal_1_1result.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

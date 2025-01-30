@@ -1,0 +1,68 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class scoped_flag</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink.html#id65098" title="Description">
+<link rel="prev" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation.html" title="Class scoped_feeding_operation">
+<link rel="next" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html" title="Class template basic_custom_mapping">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink.html#id65098"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class scoped_flag</span></h2>
+<p>boost::log::sinks::asynchronous_sink::scoped_flag — A scope guard that resets a flag on destructor. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../sinks.html#doxygen.sinks.async__frontend_8hpp" title="Header &lt;boost/log/sinks/async_frontend.hpp&gt;">boost/log/sinks/async_frontend.hpp</a>&gt;
+
+</span>
+
+<span class="comment">// A scope guard that resets a flag on destructor.</span>
+
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html" title="Class scoped_flag">scoped_flag</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html#id132-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a7afe086b81b9f1f13a05fc4eaf1fddb4"><span class="identifier">scoped_flag</span></a><span class="special">(</span><span class="identifier">frontend_mutex_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">condition_variable_any</span> <span class="special">&amp;</span><span class="special">,</span> 
+                       <span class="identifier">boost</span><span class="special">::</span><span class="identifier">atomic</span><span class="special">&lt;</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a8cfa47c2a030e2db61e5d7f2f2657533"><span class="special">~</span><span class="identifier">scoped_flag</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a997f172cdb9a459959980f6daca52b6f"><span class="identifier">scoped_flag</span></a><span class="special">(</span><span class="identifier">scoped_flag</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="identifier">scoped_flag</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag.html#doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a88fbcddf6d8749cd0e1535939a3ac931"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="identifier">scoped_flag</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id65596"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id65598"></a><h3>
+<a name="id132-bb"></a><code class="computeroutput">scoped_flag</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a7afe086b81b9f1f13a05fc4eaf1fddb4"></a><span class="identifier">scoped_flag</span><span class="special">(</span><span class="identifier">frontend_mutex_type</span> <span class="special">&amp;</span> mut<span class="special">,</span> 
+                     <span class="identifier">std</span><span class="special">::</span><span class="identifier">condition_variable_any</span> <span class="special">&amp;</span> cond<span class="special">,</span> 
+                     <span class="identifier">boost</span><span class="special">::</span><span class="identifier">atomic</span><span class="special">&lt;</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <span class="special">&amp;</span> f<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a8cfa47c2a030e2db61e5d7f2f2657533"></a><span class="special">~</span><span class="identifier">scoped_flag</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a997f172cdb9a459959980f6daca52b6f"></a><span class="identifier">scoped_flag</span><span class="special">(</span><span class="identifier">scoped_flag</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">scoped_flag</span> <span class="special">&amp;</span> <a name="doxygen.sinks.classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__flag_1a88fbcddf6d8749cd0e1535939a3ac931"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="identifier">scoped_flag</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink_1_1scoped__feeding__operation.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="classboost_1_1log_1_1sinks_1_1asynchronous__sink.html#id65098"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1sinks_1_1basic__custom__mapping.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

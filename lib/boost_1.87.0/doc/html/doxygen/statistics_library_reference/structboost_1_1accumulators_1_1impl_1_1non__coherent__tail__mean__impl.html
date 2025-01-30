@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template non_coherent_tail_mean_impl</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../accumulators/reference.html#doxygen.statistics_library_reference.tail__mean_8hpp" title="Header &lt;boost/accumulators/statistics/tail_mean.hpp&gt;">
+<link rel="prev" href="structboost_1_1accumulators_1_1impl_1_1coherent__tail__mean__impl.html" title="Struct template coherent_tail_mean_impl">
+<link rel="next" href="structboost_1_1accumulators_1_1tag_1_1abstract__non__coherent__tail__mean.html" title="Struct abstract_non_coherent_tail_mean">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1accumulators_1_1impl_1_1coherent__tail__mean__impl.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.tail__mean_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1tag_1_1abstract__non__coherent__tail__mean.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template non_coherent_tail_mean_impl</span></h2>
+<p>boost::accumulators::impl::non_coherent_tail_mean_impl — Estimation of the (non-coherent) tail mean based on order statistics (for both left and right tails) </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../accumulators/reference.html#doxygen.statistics_library_reference.tail__mean_8hpp" title="Header &lt;boost/accumulators/statistics/tail_mean.hpp&gt;">boost/accumulators/statistics/tail_mean.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Sample<span class="special">,</span> <span class="keyword">typename</span> LeftRight<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl.html" title="Struct template non_coherent_tail_mean_impl">non_coherent_tail_mean_impl</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">accumulator_base</span> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">numeric</span><span class="special">::</span><span class="identifier">functional</span><span class="special">::</span><span class="identifier">fdiv</span><span class="special">&lt;</span> <span class="identifier">Sample</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1a27baf290acfc27ff2c6cbe84aeacf83f"></a><span class="identifier">float_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">float_type</span>                                                    <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1a606d0365cd8eb5f1b7623c64d683d501"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl.html#id-1_3_2_6_3_33_1_1_6_2_7-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1a528ee76526438b1aecc7779d83754d24"><span class="identifier">non_coherent_tail_mean_impl</span></a><span class="special">(</span><span class="identifier">dont_care</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="identifier">result_type</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1a4bb605a6efaaba46060d4bbd2074e210"><span class="identifier">result</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1ad89df356bffd8659705c69d3da8d4c89"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.2.6.3.32.6.4"></a><h2>Description</h2>
+<p>An estimation of the non-coherent tail mean <span class="inlinemediaobject"><img src="../../images/accumulators//form_14.png"></span> is given by the mean of the <span class="inlinemediaobject"><img src="../../images/accumulators//form_64.png"></span> smallest samples (left tail) or the mean of the <span class="inlinemediaobject"><img src="../../images/accumulators//form_59.png"></span> largest samples (right tail), <span class="inlinemediaobject"><img src="../../images/accumulators//form_3.png"></span> being the total number of samples and <span class="inlinemediaobject"><img src="../../images/accumulators//form_20.png"></span> the quantile level:</p>
+<div class="equation">
+<a name="id-1.3.2.6.3.32.6.4.3.1"></a><p class="title"><b>Equation 1.22. </b></p>
+<div class="equation-contents"><div class="mediaobject" align="center"><img src="../../images/accumulators//form_69.png" align="middle"></div></div>
+</div>
+<p><br class="equation-break"></p>
+<div class="equation">
+<a name="id-1.3.2.6.3.32.6.4.4.1"></a><p class="title"><b>Equation 1.23. </b></p>
+<div class="equation-contents"><div class="mediaobject" align="center"><img src="../../images/accumulators//form_70.png" align="middle"></div></div>
+</div>
+<p><br class="equation-break"></p>
+<p>It thus requires the caching of at least the <span class="inlinemediaobject"><img src="../../images/accumulators//form_64.png"></span> smallest or the <span class="inlinemediaobject"><img src="../../images/accumulators//form_59.png"></span> largest samples.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.2.6.3.32.6.4.7"></a><h3>
+<a name="id-1_3_2_6_3_33_1_1_6_2_7-bb"></a><code class="computeroutput">non_coherent_tail_mean_impl</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1a528ee76526438b1aecc7779d83754d24"></a><span class="identifier">non_coherent_tail_mean_impl</span><span class="special">(</span><span class="identifier">dont_care</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1a4bb605a6efaaba46060d4bbd2074e210"></a><span class="identifier">result</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1non__coherent__tail__mean__impl_1ad89df356bffd8659705c69d3da8d4c89"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span> ar<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> file_version<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005, 2006 Eric Niebler<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1accumulators_1_1impl_1_1coherent__tail__mean__impl.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.tail__mean_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1tag_1_1abstract__non__coherent__tail__mean.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

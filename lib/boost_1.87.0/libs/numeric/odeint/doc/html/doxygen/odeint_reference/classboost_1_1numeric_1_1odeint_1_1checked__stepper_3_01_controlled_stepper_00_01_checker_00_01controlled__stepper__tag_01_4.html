@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template checked_stepper&lt;ControlledStepper, Checker, controlled_stepper_tag&gt;</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Numeric.Odeint">
+<link rel="up" href="check__adapter_8hpp.html" title="Header &lt;boost/numeric/odeint/integrate/check_adapter.hpp&gt;">
+<link rel="prev" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper.html" title="Class template checked_stepper">
+<link rel="next" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_dense_out_stepper_00_01_checker_00_01dense__output__stepper__tag_01_4.html" title="Class template checked_stepper&lt;DenseOutStepper, Checker, dense_output_stepper_tag&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../logo.jpg"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="check__adapter_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_dense_out_stepper_00_01_checker_00_01dense__output__stepper__tag_01_4.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template checked_stepper&lt;ControlledStepper, Checker, controlled_stepper_tag&gt;</span></h2>
+<p>boost::numeric::odeint::checked_stepper&lt;ControlledStepper, Checker, controlled_stepper_tag&gt; — Adapter to combine controlled stepper and checker. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="check__adapter_8hpp.html" title="Header &lt;boost/numeric/odeint/integrate/check_adapter.hpp&gt;">boost/numeric/odeint/integrate/check_adapter.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ControlledStepper<span class="special">,</span> <span class="keyword">typename</span> Checker<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4.html" title="Class template checked_stepper&lt;ControlledStepper, Checker, controlled_stepper_tag&gt;">checked_stepper</a><span class="special">&lt;</span><span class="identifier">ControlledStepper</span><span class="special">,</span> <span class="identifier">Checker</span><span class="special">,</span> <span class="identifier">controlled_stepper_tag</span><span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">ControlledStepper</span>        <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1a1d86450b7e4b91f5771cab04a2a98508"></a><span class="identifier">stepper_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">Checker</span>                  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1a8ed06217ea3f63ce1fbe9c21ff0aede2"></a><span class="identifier">checker_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">state_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1a16a9035fc7331e04c47bb3d36bbc7b99"></a><span class="identifier">state_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">value_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1acbc065e8fb528316049c8d49ce266d62"></a><span class="identifier">value_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">deriv_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1a1b01097adfd893ca16f3abfca425f9a7"></a><span class="identifier">deriv_type</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">time_type</span>  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1aa82fddc6d9990aae76d3fc374e783c62"></a><span class="identifier">time_type</span><span class="special">;</span>   
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4.html#id2-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1ae678c004a6475a5e73dc5edec909cf14"><span class="identifier">checked_stepper</span></a><span class="special">(</span><span class="identifier">stepper_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">checker_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="identifier">controlled_step_result</span> 
+    <a class="link" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1a7312985081d74d04f4638140e34f6e0a"><span class="identifier">try_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id24585"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id24587"></a><h3>
+<a name="id2-bb"></a><code class="computeroutput">checked_stepper</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1ae678c004a6475a5e73dc5edec909cf14"></a><span class="identifier">checked_stepper</span><span class="special">(</span><span class="identifier">stepper_type</span> <span class="special">&amp;</span> stepper<span class="special">,</span> <span class="identifier">checker_type</span> <span class="special">&amp;</span> checker<span class="special">)</span><span class="special">;</span></pre>Construct the checked_stepper. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="identifier">controlled_step_result</span> 
+  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_controlled_stepper_00_01_checker_00_01controlled__stepper__tag_01_4_1a7312985081d74d04f4638140e34f6e0a"></a><span class="identifier">try_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> state<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&amp;</span> dt<span class="special">)</span><span class="special">;</span></pre>forward of the do_step method </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2015 Karsten Ahnert and Mario Mulansky<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="check__adapter_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1numeric_1_1odeint_1_1checked__stepper_3_01_dense_out_stepper_00_01_checker_00_01dense__output__stepper__tag_01_4.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

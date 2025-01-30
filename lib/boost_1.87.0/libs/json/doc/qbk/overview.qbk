@@ -1,0 +1,189 @@
+[/
+    Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+    Copyright (c) 2020 Krystian Stasiowski (sdkrystian@gmail.com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/json
+]
+
+[section Overview]
+[block'''<?dbhtml stop-chunking?>''']
+
+[/-----------------------------------------------------------------------------]
+
+Boost.JSON is a portable C++ library which provides containers and
+algorithms that implement
+[@https://json.org/ JavaScript Object Notation], or simply "JSON",
+a lightweight data-interchange format. This format is easy for humans to
+read and write, and easy for machines to parse and generate. It is based
+on a subset of the JavaScript Programming Language
+([@https://www.ecma-international.org/ecma-262/10.0/index.html
+Standard ECMA-262]), and is currently standardised in
+[@https://datatracker.ietf.org/doc/html/rfc8259 RFC 8259].
+JSON is a text format that is language-independent but uses conventions
+that are familiar to programmers of the C-family of languages, including
+C, C++, C#, Java, JavaScript, Perl, Python, and many others. These
+properties make JSON an ideal data-interchange language.
+
+This library focuses on a common and popular use-case: parsing
+and serializing to and from a container called __value__ which
+holds JSON types. Any __value__ which you build can be serialized
+and then deserialized, guaranteeing that the result will be equal
+to the original value. Whatever JSON output you produce with this
+library will be readable by most common JSON implementations
+in any language.
+
+The __value__ container is designed to be well suited as a
+vocabulary type appropriate for use in public interfaces and
+libraries, allowing them to be composed. The library restricts
+the representable data types to the ranges which are almost
+universally accepted by most JSON implementations, especially
+JavaScript. The parser and serializer are both highly performant,
+meeting or exceeding the benchmark performance of the best comparable
+libraries. Allocators are very well supported. Code which uses these
+types will be easy to understand, flexible, and performant.
+
+Boost.JSON offers these features:
+
+* Fast compilation
+* Require only C++11
+* Fast streaming parser and serializer
+* Constant-time key lookup for objects
+* Options to allow non-standard JSON
+* Easy and safe modern API with allocator support
+* Optional header-only, without linking to a library
+
+[/-----------------------------------------------------------------------------]
+
+[section Requirements]
+
+* Requires only C++11
+* Link to a built static or dynamic Boost library (build instructions can be
+  found [@https://www.boost.org/doc/libs/release/more/getting_started/index.html
+  here]), or use header-only (see below)
+* Additional link to Boost.Container may be required
+  (as described in its [@https://www.boost.org/doc/libs/release/doc/html/container.html#container.intro.introduction_building_container documentation])
+* Supports `-fno-exceptions`, detected automatically (but read
+  [link json.overview.requirements.disabling_exceptions the relevant section]
+  on this page).
+
+The library relies heavily on these well known C++ types in
+its interfaces (henceforth termed ['standard types]):
+
+* __string_view__
+* __memory_resource__, __polymorphic_allocator__
+* __error_category__, __error_code__, __error_condition__, __system_error__
+
+[heading Header-Only]
+
+To use as header-only; that is, to eliminate the requirement to
+link a program to a static or dynamic Boost.JSON library, simply
+place the following line in exactly one new or existing source
+file in your project.
+```
+#include <boost/json/src.hpp>
+```
+
+MSVC users must also define the macro `BOOST_JSON_NO_LIB` to disable
+auto-linking. Note, that if you also want to avoid linking to Boost.Container,
+which is a dependency of Boost.JSON, you have to define
+`BOOST_CONTAINER_NO_LIB`. In order to disable auto-linking to Boost libraries
+completely you can define `BOOST_ALL_NO_LIB` instead.
+
+[heading Disabling Exceptions]
+
+In order to support building with exceptions disabled this library uses another
+Boost library,
+[@https://www.boost.org/doc/libs/release/libs/throw_exception
+Boost.ThrowException]. This allows to automatically discover whether exception
+support is available. On the other hand, as explained in Boost.ThrowException's
+documentation, if exceptions are disabled, the users need to provide their own
+implementation for `boost::throw_exception`, in order to link their binaries
+successfully. Here's a very simple example of such implementation:
+```
+void throw_exception( const std::exception&, const boost::source_location& )
+{
+    std::printf("Exceptions are not supported!");
+    std::abort();
+}
+```
+
+[heading Embedded]
+
+Boost.JSON works great on embedded devices. The library uses local
+stack buffers to increase the performance of some operations. On
+Intel platforms these buffers are large (4KB), while on non-Intel
+platforms they are small (256 bytes). To adjust the size of the
+stack buffers for embedded applications define this macro when
+building the library or including the function definitions:
+```
+#define BOOST_JSON_STACK_BUFFER_SIZE 1024
+#include <boost/json/src.hpp>
+```
+
+[heading Endianness]
+
+Boost.JSON uses
+[@https://www.boost.org/doc/libs/release/libs/endian/doc/html/endian.html
+Boost.Endian] in order to support both little endian and big endian platforms.
+
+[heading Supported Compilers]
+
+Boost.JSON has been tested with the following compilers:
+
+* clang: 3.8, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+* gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+* msvc: 14.0, 14.1, 14.2, 14.3
+
+[important Support for GCC 4.8 and 4.9 is deprecated and will stop in
+Boost 1.88.0.]
+
+[heading Supported JSON Text]
+
+The library expects input text to be encoded using UTF-8, which is a
+requirement put on all JSON exchanged between systems by the
+[@https://datatracker.ietf.org/doc/html/rfc8259#section-8.1 RFC]. Similarly,
+the text generated by the library is valid UTF-8.
+
+The RFC does not allow byte order marks (BOM) to appear in JSON text, so the
+library considers BOM syntax errors.
+
+The library supports several popular JSON extensions. These have to be
+[link json.input_output.parsing.non_standard_json explicitly enabled].
+
+[endsect]
+
+[/-----------------------------------------------------------------------------]
+
+[section Quality Assurance]
+
+The development infrastructure for the library includes
+these per-commit analyses:
+
+* Coverage reports
+* Benchmark performance comparisons
+* Compilation and tests on Drone.io, Azure Pipelines, Appveyor
+* Fuzzing using clang-llvm and machine learning
+
+[heading Security Review (Bishop Fox)]
+
+As part of our commitment to producing the very finest C++ libraries that
+application developers can trust, the C++ Alliance has commissioned Bishop
+Fox to perform a security audit of the Boost.JSON library. The report
+is linked here:
+
+[@https://cppalliance.org/pdf/C%20Plus%20Plus%20Alliance%20-%20Boost%20JSON%20Security%20Assessment%202020%20-%20Assessment%20Report%20-%2020210317.pdf C Plus Plus Alliance - Boost JSON Security Assessment 2020 - Assessment Report - 20210317]
+
+[endsect]
+
+[/-----------------------------------------------------------------------------]
+
+[h1 Credits]
+
+This library wouldn't be where it is today without the help of
+[@https://github.com/pdimov Peter Dimov]
+for design advice and optimization assistance.
+
+[endsect]

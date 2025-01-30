@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template function_input_iterator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.function__input__iterator_8hpp" title="Header &lt;boost/compute/iterator/function_input_iterator.hpp&gt;">
+<link rel="prev" href="discard__iterator_8hpp_1af15cd15e6d5a86ef15966709a5ac5fe6.html" title="Function make_discard_iterator">
+<link rel="next" href="function__input__iterator_8hpp_1a23fd765ee4fd190a2345ddb2ec438d67.html" title="Function template make_function_input_iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="discard__iterator_8hpp_1af15cd15e6d5a86ef15966709a5ac5fe6.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.function__input__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="function__input__iterator_8hpp_1a23fd765ee4fd190a2345ddb2ec438d67.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template function_input_iterator</span></h2>
+<p>boost::compute::function_input_iterator — Iterator which returns the result of a function when dereferenced. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.function__input__iterator_8hpp" title="Header &lt;boost/compute/iterator/function_input_iterator.hpp&gt;">boost/compute/iterator/function_input_iterator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Function<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                 <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1ad75fcd503520b2bab2ee4c6fd6aad432"></a><span class="identifier">super_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">reference</span>       <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a0d0865af242aeb6c323c2367e09c17ac"></a><span class="identifier">reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">difference_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1ac65c82cc065c2b500cf3c1620b185d58"></a><span class="identifier">difference_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">Function</span>                    <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a53b60978d9863094dbc020d82dd34d9a"></a><span class="identifier">function</span><span class="special">;</span>       
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#id61-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a68f35681634bd54c7c926a948894befc"><span class="identifier">function_input_iterator</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Function</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a044b53d4d91396bf7903ecd53752e233"><span class="identifier">function_input_iterator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+  <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a590904b23a7af0e8bfb43ecd3db26597"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a5df0480f40909d0d0ec080bee49ccdb4"><span class="special">~</span><span class="identifier">function_input_iterator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a3d88b15e70058b1e9cb9bbe43094e725"><span class="identifier">get_index</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Expr<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a3d7ca0b630cfaae8dc67c9cbc6a9852a"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Expr</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#id62-bb">private member functions</a></span>
+  <span class="identifier">reference</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a692553bd8818174d885fd6f80866f875"><span class="identifier">dereference</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a49de1ce7afe8c445e403d0d424449c6f"><span class="identifier">equal</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a0b29281351d5a68a3f0a3b65d158a6e9"><span class="identifier">increment</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a0a5d6bb2148cd6cf8bb40df02a29a0d4"><span class="identifier">decrement</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1af5b2eaeb3a97fc36a70f02d966782342"><span class="identifier">advance</span></a><span class="special">(</span><span class="identifier">difference_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">difference_type</span> 
+  <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1aa53c16b5e1ad845516a08526ab81556c"><span class="identifier">distance_to</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id32880"></a><h2>Description</h2>
+<p>For example:</p>
+<pre class="programlisting"></pre>
+<p><b>See Also: </b>make_function_input_iterator() </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id32889"></a><h3>
+<a name="id61-bb"></a><code class="computeroutput">function_input_iterator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a68f35681634bd54c7c926a948894befc"></a><span class="identifier">function_input_iterator</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Function</span> <span class="special">&amp;</span> function<span class="special">,</span> <span class="identifier">size_t</span> index <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a044b53d4d91396bf7903ecd53752e233"></a><span class="identifier">function_input_iterator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span> 
+<a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a590904b23a7af0e8bfb43ecd3db26597"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a5df0480f40909d0d0ec080bee49ccdb4"></a><span class="special">~</span><span class="identifier">function_input_iterator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">size_t</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a3d88b15e70058b1e9cb9bbe43094e725"></a><span class="identifier">get_index</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Expr<span class="special">&gt;</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a3d7ca0b630cfaae8dc67c9cbc6a9852a"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Expr</span> <span class="special">&amp;</span> expr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id32982"></a><h3>
+<a name="id62-bb"></a><code class="computeroutput">function_input_iterator</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="identifier">reference</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a692553bd8818174d885fd6f80866f875"></a><span class="identifier">dereference</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a49de1ce7afe8c445e403d0d424449c6f"></a><span class="identifier">equal</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a0b29281351d5a68a3f0a3b65d158a6e9"></a><span class="identifier">increment</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1a0a5d6bb2148cd6cf8bb40df02a29a0d4"></a><span class="identifier">decrement</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1af5b2eaeb3a97fc36a70f02d966782342"></a><span class="identifier">advance</span><span class="special">(</span><span class="identifier">difference_type</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">difference_type</span> 
+<a name="doxygen.header_reference.classboost_1_1compute_1_1function__input__iterator_1aa53c16b5e1ad845516a08526ab81556c"></a><span class="identifier">distance_to</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1function__input__iterator.html" title="Class template function_input_iterator">function_input_iterator</a><span class="special">&lt;</span> <span class="identifier">Function</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="discard__iterator_8hpp_1af15cd15e6d5a86ef15966709a5ac5fe6.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.function__input__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="function__input__iterator_8hpp_1a23fd765ee4fd190a2345ddb2ec438d67.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

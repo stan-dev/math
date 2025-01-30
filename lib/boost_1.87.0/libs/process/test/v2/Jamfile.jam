@@ -1,0 +1,63 @@
+# Copyright (c) 2022 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+
+lib ws2_32 ;
+lib shell32 ;
+lib Advapi32 ;
+lib Ntdll ;
+lib user32 ;
+lib Bcrypt ;
+
+project : requirements
+  <library>/boost/process//boost_process
+  <define>BOOST_ASIO_NO_DEPRECATED
+  <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+  <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE
+  <toolset>msvc:<cxxflags>/bigobj
+  <target-os>windows:<define>WIN32_LEAN_AND_MEAN
+  <target-os>windows:<define>_WIN32_WINNT=0x0601
+  <target-os>linux:<linkflags>-lpthread
+  <target-os>freebsd:<linkflags>-lpthread
+  <target-os>freebsd:<linkflags>-lkvm
+  <target-os>bsd:<linkflags>-lpthread
+  <target-os>bsd:<linkflags>-lkvm
+  <target-os>netbsd:<linkflags>-lpthread
+  <target-os>netbsd:<linkflags>-lkvm
+  <target-os>openbsd:<linkflags>-lpthread
+  <target-os>openbsd:<linkflags>-lkvm
+  <target-os>solaris:<linkflags>-lpthread
+  <target-os>solaris:<linkflags>-lkvm
+  <os>NT,<toolset>cw:<library>ws2_32
+  <os>NT,<toolset>gcc:<library>ws2_32
+  <os>NT,<toolset>gcc:<library>Bcrypt
+  <define>BOOST_PROCESS_V2_SEPARATE_COMPILATION=1
+  <library>/boost/test//included
+;
+
+import testing ;
+
+exe target : target.cpp :
+    <warnings>off <target-os>windows:<source>shell32
+                  <target-os>windows:<source>Ntdll
+
+    ;
+
+local test_impl = test_impl.cpp /boost/process//boost_process /boost/test//boost_unit_test_framework ;
+
+test-suite standalone :
+    [ run utf8.cpp        $(test_impl) ]
+    [ run cstring_ref.cpp $(test_impl) ]
+    [ run environment.cpp $(test_impl) ]
+    [ run shell.cpp       $(test_impl) ]
+    ;
+
+test-suite with_target :
+    [ run pid.cpp     $(test_impl) : --log_level=all --catch_system_errors=no -- : target ]
+    [ run process.cpp $(test_impl) : --log_level=all --catch_system_errors=no -- : target ]
+    [ run windows.cpp $(test_impl) : --log_level=all --catch_system_errors=no -- : target : <build>no <target-os>windows:<build>yes <target-os>windows:<source>Advapi32 ]
+    [ run ext.cpp     $(test_impl) : --log_level=all --catch_system_errors=no -- : target : <target-os>darwin:<build>no ]
+    ;
+

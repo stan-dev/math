@@ -1,0 +1,35 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# http://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/integer//boost_integer
+    /boost/move//boost_move
+    /boost/mpl//boost_mpl
+    /boost/predef//boost_predef
+    /boost/ratio//boost_ratio
+    /boost/static_assert//boost_static_assert
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_traits//boost_type_traits
+    /boost/typeof//boost_typeof
+    /boost/utility//boost_utility
+    /boost/winapi//boost_winapi
+    ;
+
+project /boost/chrono ;
+
+explicit
+    [ alias boost_chrono : build//boost_chrono ]
+    [ alias all : boost_chrono test ]
+    ;
+
+call-if : boost-library chrono
+    : install boost_chrono
+    ;

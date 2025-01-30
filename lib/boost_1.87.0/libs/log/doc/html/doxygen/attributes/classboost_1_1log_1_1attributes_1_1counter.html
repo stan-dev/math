@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template counter</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../attributes.html#doxygen.attributes.counter_8hpp" title="Header &lt;boost/log/attributes/counter.hpp&gt;">
+<link rel="prev" href="constant_8hpp_1ad543f2143ade8eba73f797367a5ed40d.html" title="Function template make_constant">
+<link rel="next" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html" title="Class impl">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="constant_8hpp_1ad543f2143ade8eba73f797367a5ed40d.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.counter_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template counter</span></h2>
+<p>boost::log::attributes::counter — A class of an attribute that counts an integral value. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../attributes.html#doxygen.attributes.counter_8hpp" title="Header &lt;boost/log/attributes/counter.hpp&gt;">boost/log/attributes/counter.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1counter.html" title="Class template counter">counter</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">attribute</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1a265a253612b46abed17c61b0a5e5ce30"></a><span class="identifier">value_type</span><span class="special">;</span>  <span class="comment">// A counter value type. </span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="comment">// Factory implementation.</span>
+
+  <span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html" title="Class impl">impl</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">attribute</span><span class="special">::</span><span class="identifier">impl</span> <span class="special">{</span>
+  <span class="keyword">public</span><span class="special">:</span>
+
+    <span class="comment">// <a class="link" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html#id36-bb">public member functions</a></span>
+    <a class="link" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1_1impl_1a673799f76d1f74e960478376e1d1c979"><span class="identifier">impl</span></a><span class="special">(</span><span class="identifier">value_type</span><span class="special">,</span> <span class="identifier">value_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+    <span class="keyword">virtual</span> <a class="link" href="classboost_1_1log_1_1attribute__value.html" title="Class attribute_value">attribute_value</a> <a class="link" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1_1impl_1a5eb9da3b0518847f0b7ad02731ff47f0"><span class="identifier">get_value</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1attributes_1_1counter.html#id37-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1counter.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1aeb008859a56f33a02e0ca2e639b59b0a"><span class="identifier">counter</span></a><span class="special">(</span><span class="identifier">value_type</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">value_type</span><span class="special">)</span> <span class="number">0</span><span class="special">,</span> <span class="identifier">value_type</span> <span class="special">=</span> <span class="special">(</span><span class="identifier">value_type</span><span class="special">)</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1counter.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1ac3f16bf25ac56bd06c15291f0cf64957"><span class="identifier">counter</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html" title="Class cast_source">cast_source</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id34189"></a><h2>Description</h2>
+<p>This attribute acts as a counter - it returns a monotonously changing value each time requested. The attribute value type can be specified as a template parameter. The type must be an integral type. </p>
+<div class="refsect2">
+<a name="id34192"></a><h3>
+<a name="id37-bb"></a><code class="computeroutput">counter</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1aeb008859a56f33a02e0ca2e639b59b0a"></a><span class="identifier">counter</span><span class="special">(</span><span class="identifier">value_type</span> initial <span class="special">=</span> <span class="special">(</span><span class="identifier">value_type</span><span class="special">)</span> <span class="number">0</span><span class="special">,</span> 
+                 <span class="identifier">value_type</span> step <span class="special">=</span> <span class="special">(</span><span class="identifier">value_type</span><span class="special">)</span> <span class="number">1</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">initial</code></span></p></td>
+<td><p>Initial value of the counter </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">step</code></span></p></td>
+<td><p>Changing step of the counter. Each value acquired from the attribute will be greater than the previous one by this amount. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1counter_1ac3f16bf25ac56bd06c15291f0cf64957"></a><span class="identifier">counter</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html" title="Class cast_source">cast_source</a> <span class="keyword">const</span> <span class="special">&amp;</span> source<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor for casting support </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="constant_8hpp_1ad543f2143ade8eba73f797367a5ed40d.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.counter_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1attributes_1_1counter_1_1impl.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

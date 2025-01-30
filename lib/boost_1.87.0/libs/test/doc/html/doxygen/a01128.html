@@ -1,0 +1,73 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template array</title>
+<link rel="stylesheet" href="../boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Boost.Test">
+<link rel="up" href="a00788.html" title="Header &lt;boost/test/data/monomorphic/array.hpp&gt;">
+<link rel="prev" href="a00788.html" title="Header &lt;boost/test/data/monomorphic/array.hpp&gt;">
+<link rel="next" href="a01132.html" title="Struct template is_dataset&lt;array&lt; T &gt;&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00788.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="a00788.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a01132.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.a01128"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template array</span></h2>
+<p>boost::unit_test::data::monomorphic::array — Dataset view of a C array. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="a00788.html" title="Header &lt;boost/test/data/monomorphic/array.hpp&gt;">boost/test/data/monomorphic/array.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="a01128.html" title="Class template array">array</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>         <a name="doxygen.a01128_1a0c4bfa5a49dacc7e32cb102cc95bf1e8"></a><span class="identifier">sample</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">*</span> <a name="doxygen.a01128_1a8ebdd843607f58878ce112fec6bad12e"></a><span class="identifier">iterator</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="a01128.html#id1-bb">public member functions</a></span>
+  <a class="link" href="a01128.html#doxygen.a01128_1aac4ae7aca3d275ec1cef1ca5983aa388"><span class="identifier">array</span></a><span class="special">(</span><span class="identifier">T</span> <span class="keyword">const</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="a01096.html" title="Class size_t">data::size_t</a> <a class="link" href="a01128.html#doxygen.a01128_1acd1e9006ddd738497ae0c2e4adf49de8"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="a01128.html#doxygen.a01128_1aca07d056b602faa5e035fc51419e84b9"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> <span class="identifier">arity</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id44514"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id44516"></a><h3>
+<a name="id1-bb"></a><code class="computeroutput">array</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.a01128_1aac4ae7aca3d275ec1cef1ca5983aa388"></a><span class="identifier">array</span><span class="special">(</span><span class="identifier">T</span> <span class="keyword">const</span> <span class="special">*</span> arr_<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> size_<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="a01096.html" title="Class size_t">data::size_t</a> <a name="doxygen.a01128_1acd1e9006ddd738497ae0c2e4adf49de8"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.a01128_1aca07d056b602faa5e035fc51419e84b9"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2001-2022 Boost.Test contributors<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="a00788.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="a00788.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="a01132.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

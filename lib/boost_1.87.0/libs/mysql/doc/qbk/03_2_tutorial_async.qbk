@@ -1,0 +1,105 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:tutorial_async Tutorial 2: going async with C++20 coroutines]
+
+In the [link mysql.tutorial_sync previous tutorial] we used
+synchronous functions. They are simple, but have a number of limitations:
+
+* They aren't as versatile as async functions. For example, there is no way
+  to set a timeout to a sync operation.
+* They don't scale well. Since sync functions block the calling thread until they complete,
+  you need to create OS threads to achieve parallelism. This doesn't scale well
+  and leads to the inherent complexities of multi-threaded programs.
+* Some classes (like [reflink connection_pool]) only offer an async interface.
+
+For this reason, we recommend to always use async functions.
+All Asio-compatible libraries (including this one) allow async
+programming using a variety of styles. In this chapter, we will
+explain how to use C++20 coroutines because they are the simplest to use.
+
+[note
+  Still not using C++20? Don't worry, you can use
+  [link mysql.examples.coroutines_cpp11 stackful coroutines] and
+  [link mysql.examples.callbacks callbacks] even in C++11.
+]
+
+
+
+[heading What is a coroutine?]
+
+Roughly speaking, it's a function that can suspend and resume, keeping local variables
+alive in the process. Suspension happens when reaching a `co_await` expression.
+These usually appear when the program performs an I/O operation.
+When an expression like this is encountered, the following happens:
+
+# The coroutine initiates the I/O operation.
+# The coroutine suspends, passing control back to the `io_context` (that is, the event loop).
+# While the I/O operation is in progress, the `io_context` may run other operations,
+  like other coroutines.
+# When the I/O operation completes, the `io_context` resumes the coroutine
+  immediately after the `co_await` expression.
+
+
+
+
+
+[heading Transforming sync code into coroutines]
+
+Recall the following code from our previous tutorial:
+
+[tutorial_sync_main]
+
+To transform this code into a coroutine, we need to:
+
+* Extract it to a separate function returning `boost::asio::awaitable<void>`.
+* Replace sync functions (like [refmem any_connection connect]) by async ones
+  (like [refmem any_connection async_connect]).
+* Place a `co_await` operator in front of each I/O operation.
+
+Doing this, we have:
+
+[tutorial_async_coro]
+
+Note that the coroutine doesn't create or return explicitly any
+`boost::asio::awaitable<void>` object - this is handled by the compiler.
+The return type actually marks the function as being a coroutine.
+`void` here means that the coroutine doesn't return anything.
+
+If any of the above I/O operations fail, an exception is thrown.
+You can prevent this by [link mysql.overview.errors using `asio::redirect_error`].
+
+
+
+
+[heading Running our coroutine]
+
+As in the previous tutorial, we first need to create an `io_context` and a connection:
+
+[tutorial_async_connection]
+
+To run a coroutine, use [asioreflink co_spawn co_spawn]:
+
+[tutorial_async_co_spawn]
+
+Note that this will only schedule the coroutine. To actually run
+it, we need to call `io_context::run`. This will block the calling
+thread until all the scheduled coroutines and I/O operations complete:
+
+[tutorial_async_run]
+
+
+
+
+
+[heading Next steps]
+
+Full program listing for this tutorial is [link mysql.examples.tutorial_async here].
+
+You can now proceed to [link mysql.tutorial_with_params the next tutorial].
+
+[endsect]

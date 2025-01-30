@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/boostorg/url
+#
+
+name: url
+version: ~
+title: Boost.URL
+start_page: index.adoc
+asciidoc:
+  attributes:
+    source-language: asciidoc@
+    table-caption: false
+nav:
+  - modules/ROOT/nav.adoc
+ext:
+  cpp-reference:
+    config: doc/mrdocs.yml
+  cpp-tagfiles:
+    files:
+      - file: ./doc/tagfiles/boost-url-doxygen.tag.xml
+        base_url: 'xref:reference:'
+      - file: ./doc/tagfiles/boost-system-doxygen.tag.xml
+        base_url: https://www.boost.org/doc/libs/master/libs/system/doc/html/
+      - file: ./doc/tagfiles/boost-core-doxygen.tag.xml
+        base_url: https://www.boost.org/doc/libs/master/libs/core/doc/html/
+      - file: ./doc/tagfiles/boost-filesystem-doxygen.tag.xml
+        base_url: https://www.boost.org/doc/libs/master/libs/filesystem/doc/
+    using-namespaces:
+      - boost::urls
+      - boost::urls::grammar
+      - boost::system
+      - boost::core
+

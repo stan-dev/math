@@ -1,0 +1,290 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Overview</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.JSON">
+<link rel="prev" href="../index.html" title="Chapter 1. Boost.JSON">
+<link rel="next" href="quick_look.html" title="Quick Look">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../index.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="quick_look.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="json.overview"></a><a class="link" href="overview.html" title="Overview">Overview</a>
+</h2></div></div></div>
+<p>
+      Boost.JSON is a portable C++ library which provides containers and algorithms
+      that implement <a href="https://json.org/" target="_top">JavaScript Object Notation</a>,
+      or simply "JSON", a lightweight data-interchange format. This format
+      is easy for humans to read and write, and easy for machines to parse and generate.
+      It is based on a subset of the JavaScript Programming Language (<a href="https://www.ecma-international.org/ecma-262/10.0/index.html" target="_top">Standard
+      ECMA-262</a>), and is currently standardised in <a href="https://datatracker.ietf.org/doc/html/rfc8259" target="_top">RFC
+      8259</a>. JSON is a text format that is language-independent but uses conventions
+      that are familiar to programmers of the C-family of languages, including C,
+      C++, C#, Java, JavaScript, Perl, Python, and many others. These properties
+      make JSON an ideal data-interchange language.
+    </p>
+<p>
+      This library focuses on a common and popular use-case: parsing and serializing
+      to and from a container called <a class="link" href="ref/boost__json__value.html" title="value"><code class="computeroutput"><span class="identifier">value</span></code></a> which holds JSON types. Any
+      <a class="link" href="ref/boost__json__value.html" title="value"><code class="computeroutput"><span class="identifier">value</span></code></a>
+      which you build can be serialized and then deserialized, guaranteeing that
+      the result will be equal to the original value. Whatever JSON output you produce
+      with this library will be readable by most common JSON implementations in any
+      language.
+    </p>
+<p>
+      The <a class="link" href="ref/boost__json__value.html" title="value"><code class="computeroutput"><span class="identifier">value</span></code></a>
+      container is designed to be well suited as a vocabulary type appropriate for
+      use in public interfaces and libraries, allowing them to be composed. The library
+      restricts the representable data types to the ranges which are almost universally
+      accepted by most JSON implementations, especially JavaScript. The parser and
+      serializer are both highly performant, meeting or exceeding the benchmark performance
+      of the best comparable libraries. Allocators are very well supported. Code
+      which uses these types will be easy to understand, flexible, and performant.
+    </p>
+<p>
+      Boost.JSON offers these features:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Fast compilation
+        </li>
+<li class="listitem">
+          Require only C++11
+        </li>
+<li class="listitem">
+          Fast streaming parser and serializer
+        </li>
+<li class="listitem">
+          Constant-time key lookup for objects
+        </li>
+<li class="listitem">
+          Options to allow non-standard JSON
+        </li>
+<li class="listitem">
+          Easy and safe modern API with allocator support
+        </li>
+<li class="listitem">
+          Optional header-only, without linking to a library
+        </li>
+</ul></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="json.overview.requirements"></a><a class="link" href="overview.html#json.overview.requirements" title="Requirements">Requirements</a>
+</h3></div></div></div>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Requires only C++11
+          </li>
+<li class="listitem">
+            Link to a built static or dynamic Boost library (build instructions can
+            be found <a href="https://www.boost.org/doc/libs/release/more/getting_started/index.html" target="_top">here</a>),
+            or use header-only (see below)
+          </li>
+<li class="listitem">
+            Additional link to Boost.Container may be required (as described in its
+            <a href="https://www.boost.org/doc/libs/release/doc/html/container.html#container.intro.introduction_building_container" target="_top">documentation</a>)
+          </li>
+<li class="listitem">
+            Supports <code class="computeroutput"><span class="special">-</span><span class="identifier">fno</span><span class="special">-</span><span class="identifier">exceptions</span></code>,
+            detected automatically (but read <a class="link" href="overview.html#json.overview.requirements.disabling_exceptions">the
+            relevant section</a> on this page).
+          </li>
+</ul></div>
+<p>
+        The library relies heavily on these well known C++ types in its interfaces
+        (henceforth termed <span class="emphasis"><em>standard types</em></span>):
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <a class="link" href="ref/boost__json__string_view.html" title="string_view"><code class="computeroutput"><span class="identifier">string_view</span></code></a>
+          </li>
+<li class="listitem">
+            <a href="https://boost.org/doc/libs/release/doc/html/doxygen/boost_container_header_reference/classboost_1_1container_1_1pmr_1_1memory__resource.html" target="_top"><code class="computeroutput"><span class="identifier">memory_resource</span></code></a>, <a href="https://boost.org/doc/libs/release/doc/html/doxygen/boost_container_header_reference/classboost_1_1container_1_1pmr_1_1polymorphic__allocator.html" target="_top"><code class="computeroutput"><span class="identifier">polymorphic_allocator</span></code></a>
+          </li>
+<li class="listitem">
+            <a href="https://boost.org/doc/libs/release/libs/system/doc/html/system.html#ref_error_category" target="_top"><code class="computeroutput"><span class="identifier">error_category</span></code></a>, <a href="https://boost.org/doc/libs/release/libs/system/doc/html/system.html#ref_error_code" target="_top"><code class="computeroutput"><span class="identifier">error_code</span></code></a>, <a href="https://boost.org/doc/libs/release/libs/system/doc/html/system.html#ref_error_condition" target="_top"><code class="computeroutput"><span class="identifier">error_condition</span></code></a>, <a href="https://boost.org/doc/libs/release/libs/system/doc/html/system.html#ref_system_error" target="_top"><code class="computeroutput"><span class="identifier">system_error</span></code></a>
+          </li>
+</ul></div>
+<h5>
+<a name="json.overview.requirements.h0"></a>
+        <span class="phrase"><a name="json.overview.requirements.header_only"></a></span><a class="link" href="overview.html#json.overview.requirements.header_only">Header-Only</a>
+      </h5>
+<p>
+        To use as header-only; that is, to eliminate the requirement to link a program
+        to a static or dynamic Boost.JSON library, simply place the following line
+        in exactly one new or existing source file in your project.
+      </p>
+<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">json</span><span class="special">/</span><span class="identifier">src</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+</pre>
+<p>
+        MSVC users must also define the macro <code class="computeroutput"><span class="identifier">BOOST_JSON_NO_LIB</span></code>
+        to disable auto-linking. Note, that if you also want to avoid linking to
+        Boost.Container, which is a dependency of Boost.JSON, you have to define
+        <code class="computeroutput"><span class="identifier">BOOST_CONTAINER_NO_LIB</span></code>. In
+        order to disable auto-linking to Boost libraries completely you can define
+        <code class="computeroutput"><span class="identifier">BOOST_ALL_NO_LIB</span></code> instead.
+      </p>
+<h5>
+<a name="json.overview.requirements.h1"></a>
+        <span class="phrase"><a name="json.overview.requirements.disabling_exceptions"></a></span><a class="link" href="overview.html#json.overview.requirements.disabling_exceptions">Disabling
+        Exceptions</a>
+      </h5>
+<p>
+        In order to support building with exceptions disabled this library uses another
+        Boost library, <a href="https://www.boost.org/doc/libs/release/libs/throw_exception" target="_top">Boost.ThrowException</a>.
+        This allows to automatically discover whether exception support is available.
+        On the other hand, as explained in Boost.ThrowException's documentation,
+        if exceptions are disabled, the users need to provide their own implementation
+        for <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">throw_exception</span></code>, in order to link their
+        binaries successfully. Here's a very simple example of such implementation:
+      </p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">throw_exception</span><span class="special">(</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">exception</span><span class="special">&amp;,</span> <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">source_location</span><span class="special">&amp;</span> <span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">printf</span><span class="special">(</span><span class="string">"Exceptions are not supported!"</span><span class="special">);</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">abort</span><span class="special">();</span>
+<span class="special">}</span>
+</pre>
+<h5>
+<a name="json.overview.requirements.h2"></a>
+        <span class="phrase"><a name="json.overview.requirements.embedded"></a></span><a class="link" href="overview.html#json.overview.requirements.embedded">Embedded</a>
+      </h5>
+<p>
+        Boost.JSON works great on embedded devices. The library uses local stack
+        buffers to increase the performance of some operations. On Intel platforms
+        these buffers are large (4KB), while on non-Intel platforms they are small
+        (256 bytes). To adjust the size of the stack buffers for embedded applications
+        define this macro when building the library or including the function definitions:
+      </p>
+<pre class="programlisting"><span class="preprocessor">#define</span> <span class="identifier">BOOST_JSON_STACK_BUFFER_SIZE</span> <span class="number">1024</span>
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">json</span><span class="special">/</span><span class="identifier">src</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+</pre>
+<h5>
+<a name="json.overview.requirements.h3"></a>
+        <span class="phrase"><a name="json.overview.requirements.endianness"></a></span><a class="link" href="overview.html#json.overview.requirements.endianness">Endianness</a>
+      </h5>
+<p>
+        Boost.JSON uses <a href="https://www.boost.org/doc/libs/release/libs/endian/doc/html/endian.html" target="_top">Boost.Endian</a>
+        in order to support both little endian and big endian platforms.
+      </p>
+<h5>
+<a name="json.overview.requirements.h4"></a>
+        <span class="phrase"><a name="json.overview.requirements.supported_compilers"></a></span><a class="link" href="overview.html#json.overview.requirements.supported_compilers">Supported
+        Compilers</a>
+      </h5>
+<p>
+        Boost.JSON has been tested with the following compilers:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            clang: 3.8, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+          </li>
+<li class="listitem">
+            gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+          </li>
+<li class="listitem">
+            msvc: 14.0, 14.1, 14.2, 14.3
+          </li>
+</ul></div>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          Support for GCC 4.8 and 4.9 is deprecated and will stop in Boost 1.88.0.
+        </p></td></tr>
+</table></div>
+<h5>
+<a name="json.overview.requirements.h5"></a>
+        <span class="phrase"><a name="json.overview.requirements.supported_json_text"></a></span><a class="link" href="overview.html#json.overview.requirements.supported_json_text">Supported
+        JSON Text</a>
+      </h5>
+<p>
+        The library expects input text to be encoded using UTF-8, which is a requirement
+        put on all JSON exchanged between systems by the <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-8.1" target="_top">RFC</a>.
+        Similarly, the text generated by the library is valid UTF-8.
+      </p>
+<p>
+        The RFC does not allow byte order marks (BOM) to appear in JSON text, so
+        the library considers BOM syntax errors.
+      </p>
+<p>
+        The library supports several popular JSON extensions. These have to be <a class="link" href="input_output.html#json.input_output.parsing.non_standard_json">explicitly enabled</a>.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="json.overview.quality_assurance"></a><a class="link" href="overview.html#json.overview.quality_assurance" title="Quality Assurance">Quality Assurance</a>
+</h3></div></div></div>
+<p>
+        The development infrastructure for the library includes these per-commit
+        analyses:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Coverage reports
+          </li>
+<li class="listitem">
+            Benchmark performance comparisons
+          </li>
+<li class="listitem">
+            Compilation and tests on Drone.io, Azure Pipelines, Appveyor
+          </li>
+<li class="listitem">
+            Fuzzing using clang-llvm and machine learning
+          </li>
+</ul></div>
+<h5>
+<a name="json.overview.quality_assurance.h0"></a>
+        <span class="phrase"><a name="json.overview.quality_assurance.security_review_bishop_fox"></a></span><a class="link" href="overview.html#json.overview.quality_assurance.security_review_bishop_fox">Security
+        Review (Bishop Fox)</a>
+      </h5>
+<p>
+        As part of our commitment to producing the very finest C++ libraries that
+        application developers can trust, the C++ Alliance has commissioned Bishop
+        Fox to perform a security audit of the Boost.JSON library. The report is
+        linked here:
+      </p>
+<p>
+        <a href="https://cppalliance.org/pdf/C%20Plus%20Plus%20Alliance%20-%20Boost%20JSON%20Security%20Assessment%202020%20-%20Assessment%20Report%20-%2020210317.pdf" target="_top">C
+        Plus Plus Alliance - Boost JSON Security Assessment 2020 - Assessment Report
+        - 20210317</a>
+      </p>
+</div>
+<h2>
+<a name="json.overview.h0"></a>
+      <span class="phrase"><a name="json.overview.credits"></a></span><a class="link" href="overview.html#json.overview.credits">Credits</a>
+    </h2>
+<p>
+      This library wouldn't be where it is today without the help of <a href="https://github.com/pdimov" target="_top">Peter
+      Dimov</a> for design advice and optimization assistance.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../index.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="quick_look.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

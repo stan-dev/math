@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Params :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/urls/params.html">
+    <link rel="prev" href="segments.html">
+    <link rel="next" href="normalization.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="segments.html">Segments</a>
+        </li>
+              <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">URLs</a></li>
+    <li><a href="params.html">Params</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="segments.html"><span class="material-symbols-outlined" title="Previous: Segments">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: URLs">arrow_upward</span></a>
+    <a accesskey="p" href="normalization.html"><span class="material-symbols-outlined" title="Next: Normalization">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Params</h1>
+  <div class="paragraph">
+<p>While the query is specified as a plain string, it is usually interpreted as a set of key-value pairs commonly referred to as
+<a href="https://en.wikipedia.org/wiki/Query_string" target="blank_"><em>URL Parameters</em></a>, although here we use the term <em>query parameters</em> or <em>params</em>
+for short.
+There is no official, standard specification of the query parameters format, but the W3C recommendations and HTML 5 have this to say:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The query string is composed of a series of key-value pairs.</p>
+</li>
+<li>
+<p>Within each pair, the field name and value are separated by an equals sign, "=".</p>
+</li>
+<li>
+<p>The series of pairs is separated by the ampersand, "&amp;".</p>
+</li>
+<li>
+<p>Most web frameworks allow multiple values to have the same key.</p>
+</li>
+<li>
+<p>Key comparisons are usually case-sensitive, but the receiving authority is ultimately responsible for deciding this.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This URL has two query parameters, <code>first</code> and <code>last</code> whose values are "John" and "Doe" respectively:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">https://www.example.com?first=John&amp;last=Doe</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">s</th>
+<th class="tableblock halign-left valign-top"><code>params( s )</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?first=John&amp;last=Doe"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "first", "John" }, { "last", "Doe" } }</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Like the path, the library permits access to the params as using these separate, bidirectional view types which reference the underlying URL:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Accessor</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_view.html" class="xref page">params_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/params.html" class="xref page">params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A read-only range of decoded params.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_ref.html" class="xref page">params_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/params.html" class="xref page">params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A modifiable range of decoded params.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_encoded_view.html" class="xref page">params_encoded_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_params.html" class="xref page">encoded_params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A read-only range of params.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/params_encoded_ref.html" class="xref page">params_encoded_ref</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/url_view_base/encoded_params.html" class="xref page">encoded_params</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A modifiable range of params.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A param always has a key, even if it is the empty string.
+The value is optional; an empty string is distinct from no value.
+The lack of an <code>=</code> character in the query param is interpreted as no value, while an <code>=</code> character with no value is interpreted as an empty string.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">s</th>
+<th class="tableblock halign-left valign-top"><code>params( s )</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?name=John"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "name", "John" } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?=John"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "", "John" } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?name="</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "name", "" } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?name"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "name", no_value } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "", no_value } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>""</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{}</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>To represent individual params the library uses these types, distinguished by their ownership model and whether percent-escapes are possible:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">String Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/param.html" class="xref page">param</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/string/basic_string" target="_blank" rel="noopener">std::string</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A key-value pair with ownership of the strings.
+This can be used to hold decoded strings, or to
+allow the caller to take ownership of a param
+by making a copy.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/param_view.html" class="xref page">param_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A key-value pair without percent-escapes,
+referencing externally managed character buffers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/param_pct_view.html" class="xref page">param_pct_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../reference/boost/urls/pct_string_view.html" class="xref page">pct_string_view</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A key-value pair which may contain percent-escapes,
+referencing externally managed character buffers.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Param types can be constructed from initializer lists, allowing for convenient notation.
+To represent a missing value, the constant
+<code><a href="../reference/boost/urls/no_value.html" class="xref page">no_value</a></code>
+or <code>nullptr</code> may be used.
+This table shows some examples of initializer lists used to construct a param type, and the resulting data members:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Statement</th>
+<th class="tableblock halign-left valign-top"><code>qp.key</code></th>
+<th class="tableblock halign-left valign-top"><code>qp.value</code></th>
+<th class="tableblock halign-left valign-top"><code>qp.has_value</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param qp = { "first", "John" };</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"First"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"John"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param qp = { "first", "" };</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"First"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>""</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param qp = { "first", no_value };</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"First"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>""</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">false</a></code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>param qp = { "", "Doe" };</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>""</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"Doe"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/language/types#Boolean_type" target="_blank" rel="noopener">true</a></code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>To understand the relationship between the query and the resulting range of params, first we define this function <code>parms</code> which returns a list of params corresponding to the elements in a container of params:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto parms( core::string_view s ) -&gt; std::list&lt; param &gt;
+{
+    url_view u( s );
+    std::list&lt; param &gt; seq;
+    for( auto qp : u.params() )
+        seq.push_back( qp );
+    return seq;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the table below we show the result of invoking <code>parms</code> with different queries.
+This demonstrates how the syntax of the query maps to the parameter structure:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">s</th>
+<th class="tableblock halign-left valign-top"><code>params( s )</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?first=John&amp;last=Doe"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "first", "John" }, { "last", "Doe" } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?id=42&amp;unsorted"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "id", "42" }, { "last", no_value } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?col=cust&amp;row="</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "col", "cust" }, { "row", "" } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?justify=left&amp;"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "justify", "left" }, { "", no_value } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>"?"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ { "", no_value } }</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>""</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>{ }</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>It may be surprising that an empty query string ("?") produces a sequence with one empty param.
+This is by design, otherwise the sequence would not be distinguishable from the case where there is no query string (last two rows of the table above).</p>
+</div>
+<div class="paragraph">
+<p>For complete details on containers used to represent query strings as params please view the reference.</p>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/urls/params.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="segments.html">Segments</a></span>
+        <span class="next"><a href="normalization.html">Normalization</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

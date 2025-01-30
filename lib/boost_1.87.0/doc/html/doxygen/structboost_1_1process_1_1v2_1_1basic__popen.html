@@ -1,0 +1,528 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template basic_popen</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../boost_process/v2.html#doxygen.popen_8hpp" title="Header &lt;boost/process/v2/popen.hpp&gt;">
+<link rel="prev" href="exit__code_8hpp_1ad152ed40a7edebed0857169be2b7b96c.html" title="Type definition native_exit_code_type">
+<link rel="next" href="structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor.html" title="Struct template rebind_executor">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="exit__code_8hpp_1ad152ed40a7edebed0857169be2b7b96c.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_process/v2.html#doxygen.popen_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template basic_popen</span></h2>
+<p>boost::process::v2::basic_popen — A subprocess with automatically assigned pipes. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../boost_process/v2.html#doxygen.popen_8hpp" title="Header &lt;boost/process/v2/popen.hpp&gt;">boost/process/v2/popen.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">any_io_executor</span><span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">:</span>
+  <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">process</span><span class="special">::</span><span class="identifier">v2</span><span class="special">::</span><span class="identifier">basic_process</span><span class="special">&lt;</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">any_io_executor</span> <span class="special">&gt;</span>
+<span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">Executor</span>                             <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ac469ea8cd53841eb00998d51fdf82838"></a><span class="identifier">executor_type</span><span class="special">;</span>  <span class="comment">// The executor of the process. </span>
+  <span class="keyword">typedef</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">basic_writable_pipe</span><span class="special">&lt;</span> <span class="identifier">Executor</span> <span class="special">&gt;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a9ae92789c4e365398ef13802fea4487a"></a><span class="identifier">stdin_type</span><span class="special">;</span>     <span class="comment">// The type used for stdin on the parent process side. </span>
+  <span class="keyword">typedef</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">basic_readable_pipe</span><span class="special">&lt;</span> <span class="identifier">Executor</span> <span class="special">&gt;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ae4244d84ea220d1fe5a294a509f03ce2"></a><span class="identifier">stdout_type</span><span class="special">;</span>    <span class="comment">// The type used for stdout on the parent process side. </span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="comment">// Rebinds the popen type to another executor.</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor1<span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor.html" title="Struct template rebind_executor">rebind_executor</a> <span class="special">{</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a><span class="special">&lt;</span> <span class="identifier">Executor1</span> <span class="special">&gt;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor_1a63b62fc2367bd156e5b6e7477c040e6c"><span class="identifier">other</span></a><span class="special">;</span>  <span class="comment">// The pipe type when rebound to the specified executor. </span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="boost_container_header_reference/classboost_1_1container_1_1list.html#id45-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a0dad34a7ef9abb72d1ee29bfe611bde4"><span class="identifier">basic_popen</span></a><span class="special">(</span><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">&amp;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a1dca6bcea299fe617b852221b13eb9aa"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor1<span class="special">&gt;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a2952705eddc35989adfe12fe05c10c75"><span class="identifier">basic_popen</span></a><span class="special">(</span><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a><span class="special">&lt;</span> <span class="identifier">Executor1</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a9f2dfd70fd5d033994d6b0b314fe2c92"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">executor_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5a0de57704bf1a38e66953d0700a7b8f"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">=</span> <span class="keyword">nullptr</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ae58f6c5c8460d3bc3f6894845377db72"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">executor_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a307c433e66107c8dd6af664c42f662c2"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">executor_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a47c85e2537756bd9ff5eb2d55a994b96"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">executor_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">,</span> 
+                         <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> Args<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1af056a9f074c9b93e9d8e811e4ce7a907"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">executor_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ada205375c03938e9e7407172de9495bf"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                         <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ad3da53fc60b1bb23460d4476b328c88c"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                         <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> Args<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a72a0c2f3ff5f3d010ade60f3d7e897f9"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                         <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> Args<span class="special">,</span> 
+           <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+    <span class="keyword">explicit</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ada72761bc96b375ff69f602b9367db98"><span class="identifier">basic_popen</span></a><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span><span class="special">,</span> 
+                         <span class="identifier">Args</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">stdin_type</span> <span class="special">&amp;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5df5f8358107ead2ca5689c32f450524"><span class="identifier">get_stdin</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">stdout_type</span> <span class="special">&amp;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a8f3e27a694d674c2c54cdcee6aff3b88"><span class="identifier">get_stdout</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">stdin_type</span> <span class="special">&amp;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1aa0ad2a235908b03d8572bc02af456750"><span class="identifier">get_stdin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">stdout_type</span> <span class="special">&amp;</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ad4a300b5149606d40a4e67569f3fae25"><span class="identifier">get_stdout</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1afd76da0184b100a2dd39b3b812bf36cb"><span class="identifier">write_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a7c6657ac84a3cb4bb0fc366ceca218d4"><span class="identifier">write_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span><span class="special">,</span> 
+                           <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">,</span> 
+           <span class="identifier">WriteToken</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span><span class="identifier">executor_type</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">auto</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a007c63c1e7d0d26dd57fb4632801e738"><span class="identifier">async_write_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span><span class="special">,</span> 
+                          <span class="identifier">WriteToken</span> <span class="special">&amp;&amp;</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span> <span class="identifier">executor_type</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a6632258132fc1588035a24aaa76c1e96"><span class="identifier">read_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a3cfa01946239e6ee3d4cf6aa523c2777"><span class="identifier">read_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span><span class="special">,</span> 
+                          <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">,</span> 
+           <span class="identifier">ReadToken</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span><span class="identifier">executor_type</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">auto</span> <a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html#doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5c9af23db8b856653136ce2813225b10"><span class="identifier">async_read_some</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="identifier">BOOST_ASIO_MOVE_ARG</span><span class="special">(</span><span class="identifier">ReadToken</span><span class="special">)</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span> <span class="identifier">executor_type</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.30.5.8.10.3.4"></a><h2>Description</h2>
+<p>The purpose os the popen is to provide a convenient way to use the stdin &amp; stdout of a process.</p>
+<pre class="programlisting"><span class="identifier">popen</span> <span class="identifier">proc</span><span class="special">(</span><span class="identifier">executor</span><span class="special">,</span> <a class="link" href="namespaceboost_1_1process_1_1v2_1_1environment_1ab884a5b0a65e938c90ba7d7b56d480b8.html" title="Function template find_executable"><span class="identifier">find_executable</span></a><span class="special">(</span><span class="string">"addr2line"</span><span class="special">)</span><span class="special">,</span> <span class="special">{</span><span class="identifier">argv</span><span class="special">[</span><span class="number">0</span><span class="special">]</span><span class="special">}</span><span class="special">)</span><span class="special">;</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">write</span><span class="special">(</span><span class="identifier">proc</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="string">"main\n"</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">line</span><span class="special">;</span>
+<span class="identifier">asio</span><span class="special">::</span><span class="identifier">read_until</span><span class="special">(</span><span class="identifier">proc</span><span class="special">,</span> <span class="identifier">asio</span><span class="special">::</span><span class="identifier">dynamic_buffer</span><span class="special">(</span><span class="identifier">line</span><span class="special">)</span><span class="special">,</span> <span class="char">'\n'</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p>Popen can be used as a stream object in other protocols. </p>
+<div class="refsect2">
+<a name="id-1.3.30.5.8.10.3.4.5"></a><h3>
+<a name="id45-bb"></a><code class="computeroutput">basic_popen</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a0dad34a7ef9abb72d1ee29bfe611bde4"></a><span class="identifier">basic_popen</span><span class="special">(</span><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Move construct a popen. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">&amp;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a1dca6bcea299fe617b852221b13eb9aa"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre>Move assign a popen. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Executor1<span class="special">&gt;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a2952705eddc35989adfe12fe05c10c75"></a><span class="identifier">basic_popen</span><span class="special">(</span><a class="link" href="structboost_1_1process_1_1v2_1_1basic__popen.html" title="Struct template basic_popen">basic_popen</a><span class="special">&lt;</span> <span class="identifier">Executor1</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> lhs<span class="special">)</span><span class="special">;</span></pre>Move construct a popen and change the executor type. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a9f2dfd70fd5d033994d6b0b314fe2c92"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">executor_type</span> exec<span class="special">)</span><span class="special">;</span></pre>Create a closed process handle. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5a0de57704bf1a38e66953d0700a7b8f"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> context<span class="special">,</span> 
+                       <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <span class="special">=</span> <span class="keyword">nullptr</span><span class="special">)</span><span class="special">;</span></pre>Create a closed process handle. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ae58f6c5c8460d3bc3f6894845377db72"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">executor_type</span> executor<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> exe<span class="special">,</span> 
+                       <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span> args<span class="special">,</span> 
+                       <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a307c433e66107c8dd6af664c42f662c2"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span> launcher<span class="special">,</span> <span class="identifier">executor_type</span> executor<span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> exe<span class="special">,</span> 
+                       <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span> args<span class="special">,</span> 
+                       <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a47c85e2537756bd9ff5eb2d55a994b96"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">executor_type</span> executor<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> exe<span class="special">,</span> 
+                       <span class="identifier">Args</span> <span class="special">&amp;&amp;</span> args<span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> Args<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1af056a9f074c9b93e9d8e811e4ce7a907"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span> launcher<span class="special">,</span> <span class="identifier">executor_type</span> executor<span class="special">,</span> 
+                       <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> exe<span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;&amp;</span> args<span class="special">,</span> 
+                       <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ada205375c03938e9e7407172de9495bf"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> context<span class="special">,</span> 
+                       <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> exe<span class="special">,</span> 
+                       <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span> args<span class="special">,</span> 
+                       <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ad3da53fc60b1bb23460d4476b328c88c"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span> launcher<span class="special">,</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> context<span class="special">,</span> 
+                       <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> exe<span class="special">,</span> 
+                       <span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">string_view</span> <span class="special">&gt;</span> args<span class="special">,</span> 
+                       <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> Args<span class="special">,</span> <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a72a0c2f3ff5f3d010ade60f3d7e897f9"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> context<span class="special">,</span> 
+                       <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> exe<span class="special">,</span> 
+                       <span class="identifier">Args</span> <span class="special">&amp;&amp;</span> args<span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Launcher<span class="special">,</span> <span class="keyword">typename</span> ExecutionContext<span class="special">,</span> <span class="keyword">typename</span> Args<span class="special">,</span> 
+         <span class="keyword">typename</span> <span class="special">...</span> Inits<span class="special">&gt;</span> 
+  <span class="keyword">explicit</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ada72761bc96b375ff69f602b9367db98"></a><span class="identifier">basic_popen</span><span class="special">(</span><span class="identifier">Launcher</span> <span class="special">&amp;&amp;</span> launcher<span class="special">,</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span> context<span class="special">,</span> 
+                       <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span> <span class="identifier">ExecutionContext</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">execution_context</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> exe<span class="special">,</span> 
+                       <span class="identifier">Args</span> <span class="special">&amp;&amp;</span> args<span class="special">,</span> <span class="identifier">Inits</span> <span class="special">&amp;&amp;</span><span class="special">...</span> inits<span class="special">)</span><span class="special">;</span></pre>Construct a child from a property list and launch it using the default process launcher. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">stdin_type</span> <span class="special">&amp;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5df5f8358107ead2ca5689c32f450524"></a><span class="identifier">get_stdin</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Get the stdin pipe. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">stdout_type</span> <span class="special">&amp;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a8f3e27a694d674c2c54cdcee6aff3b88"></a><span class="identifier">get_stdout</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Get the stdout pipe. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">stdin_type</span> <span class="special">&amp;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1aa0ad2a235908b03d8572bc02af456750"></a><span class="identifier">get_stdin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Get the stdin pipe. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">stdout_type</span> <span class="special">&amp;</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1ad4a300b5149606d40a4e67569f3fae25"></a><span class="identifier">get_stdout</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Get the stdout pipe. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1afd76da0184b100a2dd39b3b812bf36cb"></a><span class="identifier">write_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">)</span><span class="special">;</span></pre>Write some data to the pipe. <p>This function is used to write data to the pipe. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.</p>
+<p>
+
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The write_some operation may not transmit all of the data to the peer. Consider using the write function if you need to ensure that all data is written before the blocking operation completes.</p></td></tr>
+</table></div>
+<p>
+</p>
+<p><b>Example. </b>To write a single data buffer use the buffer function as follows: </p>
+<pre class="programlisting"><span class="identifier">pipe</span><span class="special">.</span><span class="identifier">write_some</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">data</span><span class="special">,</span> <span class="identifier">size</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> See the buffer documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">buffers</code></span></p></td>
+<td><p>One or more data buffers to be written to the pipe.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The number of bytes written.</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>boost::system::system_error Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the subprocess.</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a7c6657ac84a3cb4bb0fc366ceca218d4"></a><span class="identifier">write_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">,</span> 
+                         <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>Write some data to the pipe. <p>This function is used to write data to the pipe. The function call will block until one or more bytes of the data has been written successfully, or until an error occurs.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The write_some operation may not transmit all of the data to the subprocess. Consider using the write function if you need to ensure that all data is written before the blocking operation completes. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">buffers</code></span></p></td>
+<td><p>One or more data buffers to be written to the pipe.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ec</code></span></p></td>
+<td><p>Set to indicate what error occurred, if any.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The number of bytes written. Returns 0 if an error occurred.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ConstBufferSequence<span class="special">,</span> 
+         <span class="identifier">WriteToken</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span><span class="identifier">executor_type</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">auto</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a007c63c1e7d0d26dd57fb4632801e738"></a><span class="identifier">async_write_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">ConstBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">,</span> 
+                        <span class="identifier">WriteToken</span> <span class="special">&amp;&amp;</span> token <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span> <span class="identifier">executor_type</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Start an asynchronous write. <p>This function is used to asynchronously write data to the pipe. It is an initiating function for an asynchronous_operation, and always returns immediately.</p>
+<p>
+</p>
+<p><b>Completion Signature. </b></p>
+<pre class="programlisting"><span class="keyword">void</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> 
+</pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The write operation may not transmit all of the data to the peer. Consider using the async_write function if you need to ensure that all data is written before the asynchronous operation completes.</p></td></tr>
+</table></div>
+<p>
+</p>
+<p><b>Example. </b>To write a single data buffer use the buffer function as follows: </p>
+<pre class="programlisting"><span class="identifier">popen</span><span class="special">.</span><span class="identifier">async_write_some</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">data</span><span class="special">,</span> <span class="identifier">size</span><span class="special">)</span><span class="special">,</span> <span class="identifier">handler</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> See the buffer documentation for information on writing multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">buffers</code></span></p></td>
+<td><p>One or more data buffers to be written to the pipe. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">token</code></span></p></td>
+<td>
+<p>The completion_token that will be used to produce a completion handler, which will be called when the write completes. Potential completion tokens include use_future, use_awaitable, yield_context, or a function object with the correct completion signature. The function signature of the completion handler must be: </p>
+<pre class="programlisting"> <span class="keyword">void</span> <span class="identifier">handler</span><span class="special">(</span>
+  <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">&amp;</span> <span class="identifier">error</span><span class="special">,</span> <span class="comment">// Result of operation.</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_transferred</span> <span class="comment">// Number of bytes written.</span>
+<span class="special">)</span><span class="special">;</span> 
+</pre>
+<p> Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using boost::asio::post().</p>
+</td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a6632258132fc1588035a24aaa76c1e96"></a><span class="identifier">read_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">)</span><span class="special">;</span></pre>Read some data from the pipe. <p>This function is used to read data from the pipe. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.</p>
+<p>
+
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The read_some operation may not read all of the requested number of bytes. Consider using the read function if you need to ensure that the requested amount of data is read before the blocking operation completes.</p></td></tr>
+</table></div>
+<p>
+</p>
+<p><b>Example. </b>To read into a single data buffer use the buffer function as follows: </p>
+<pre class="programlisting"><span class="identifier">basic_readable_pipe</span><span class="special">.</span><span class="identifier">read_some</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">data</span><span class="special">,</span> <span class="identifier">size</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> See the buffer documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">buffers</code></span></p></td>
+<td><p>One or more buffers into which the data will be read.</p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The number of bytes read.</p></td>
+</tr>
+<tr>
+<td><p><span class="term">Throws:</span></p></td>
+<td>boost::system::system_error Thrown on failure. An error code of boost::asio::error::eof indicates that the connection was closed by the peer.</td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a3cfa01946239e6ee3d4cf6aa523c2777"></a><span class="identifier">read_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">,</span> 
+                        <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="special">&amp;</span> ec<span class="special">)</span><span class="special">;</span></pre>Read some data from the pipe. <p>This function is used to read data from the pipe. The function call will block until one or more bytes of data has been read successfully, or until an error occurs.</p>
+<p>
+
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The read_some operation may not read all of the requested number of bytes. Consider using the read function if you need to ensure that the requested amount of data is read before the blocking operation completes. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">buffers</code></span></p></td>
+<td><p>One or more buffers into which the data will be read.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ec</code></span></p></td>
+<td><p>Set to indicate what error occurred, if any.</p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The number of bytes read. Returns 0 if an error occurred.</p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutableBufferSequence<span class="special">,</span> 
+         <span class="identifier">ReadToken</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span><span class="identifier">executor_type</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">auto</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1basic__popen_1a5c9af23db8b856653136ce2813225b10"></a><span class="identifier">async_read_some</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">MutableBufferSequence</span> <span class="special">&amp;</span> buffers<span class="special">,</span> 
+                       <span class="identifier">BOOST_ASIO_MOVE_ARG</span><span class="special">(</span><span class="identifier">ReadToken</span><span class="special">)</span> token <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">default_completion_token_t</span><span class="special">&lt;</span> <span class="identifier">executor_type</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Start an asynchronous read. <p>This function is used to asynchronously read data from the pipe. It is an initiating function for an asynchronous_operation, and always returns immediately.</p>
+<p>
+</p>
+<p><b>Completion Signature. </b></p>
+<pre class="programlisting"><span class="keyword">void</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">)</span> 
+</pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The read operation may not read all of the requested number of bytes. Consider using the async_read function if you need to ensure that the requested amount of data is read before the asynchronous operation completes.</p></td></tr>
+</table></div>
+<p>
+</p>
+<p><b>Example. </b>To read into a single data buffer use the buffer function as follows: </p>
+<pre class="programlisting"><span class="identifier">basic_readable_pipe</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">data</span><span class="special">,</span> <span class="identifier">size</span><span class="special">)</span><span class="special">,</span> <span class="identifier">handler</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> See the buffer documentation for information on reading into multiple buffers in one go, and how to use it with arrays, boost::array or std::vector. </p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">buffers</code></span></p></td>
+<td><p>One or more buffers into which the data will be read. Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">token</code></span></p></td>
+<td>
+<p>The completion_token that will be used to produce a completion handler, which will be called when the read completes. Potential completion tokens include use_future, use_awaitable, yield_context, or a function object with the correct completion signature. The function signature of the completion handler must be: </p>
+<pre class="programlisting"> <span class="keyword">void</span> <span class="identifier">handler</span><span class="special">(</span>
+  <span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">&amp;</span> <span class="identifier">error</span><span class="special">,</span> <span class="comment">// Result of operation.</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_transferred</span> <span class="comment">// Number of bytes read.</span>
+<span class="special">)</span><span class="special">;</span> 
+</pre>
+<p> Regardless of whether the asynchronous operation completes immediately or not, the completion handler will not be invoked from within this function. On immediate completion, invocation of the handler will be performed in a manner equivalent to using boost::asio::post().</p>
+</td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling<br>Copyright © 2016 Klemens D. Morgenstern<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="exit__code_8hpp_1ad152ed40a7edebed0857169be2b7b96c.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_process/v2.html#doxygen.popen_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1process_1_1v2_1_1basic__popen_1_1rebind__executor.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

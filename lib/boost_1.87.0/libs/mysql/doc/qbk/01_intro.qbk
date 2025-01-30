@@ -1,0 +1,115 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:intro Introduction]
+[nochunk]
+
+__Self__ is a C++11 client for the __Mysql__ and [@https://mariadb.com/ MariaDB] database servers, based on __Asio__.
+
+[heading Motivation]
+
+MySQL and MariaDB are widespread SQL database servers. MySQL
+clients connect to the server in order to issue SQL queries. For this
+purpose, MySQL employs a dedicated protocol. __Self__ is an
+implementation of the client side of this protocol.
+
+This library is a full implementation of the
+[@https://dev.mysql.com/doc/dev/mysql-server/latest/PAGE_PROTOCOL.html MySQL client/server protocol].
+It aims to expose the protocol primitives in an efficient but easy-to-use way.
+It is similar in scope to the official [@https://dev.mysql.com/doc/c-api/8.0/en/ libmysqlclient],
+but interoperable with Asio, safer and more expressive. Note that __Self__
+[*does not use libmysqlclient]: it's a full implementation of the MySQL protocol, which makes
+it natively compatible with Asio.
+
+This library is relatively low level. It gives you access to text SQL queries and
+prepared statements. Don't expect an ORM. [link mysql.overview This section] presents a quick tour
+over the main library capabilities.
+
+The design goals of this library are:
+
+* [*Interoperability with Asio]: this library employs the same principles as __Asio__ and __Beast__.
+  Users of any of these libraries will immediately understand Boost.MySQL, and will have it easy
+  to integrate it in their programs.
+* [*Basis for further abstraction]: it allows efficient access to the MySQL client/server protocol
+  so it can be used by higher level components as a building block. Do a single thing and do it well.
+* [*Efficiency].
+* [*Ease of use]: the MySQL protocol is full of pitfalls. We believe in simplicity. While retaining
+  control over the important parts, the library hides as much complexity from the protocol as possible.
+
+Non-goals:
+
+* [*Being an ORM].
+* [*Being a SQL query generator]. The library doesn't focus on utilities to generate queries.
+  Don't expect syntax sugar like `table("orders").select(["id", "quantity"]).where("id", 42)`.
+* [*Portability to other SQL databases]. This library focuses on MySQL. It won't work with Postgres
+  or SQLite.
+
+[heading When to use]
+
+If any of the following statements is true, you may consider using __Self__:
+
+* Your application uses __Asio__ and you need to access a MySQL server.
+* You need asynchronous access to a MySQL server from a C++ application.
+* You need efficient access to a MySQL server from a C++ application.
+* You need a BSL-licensed library to access your MySQL server.
+* You are writing a higher-level database access library, like an ORM.
+
+Use cases may include web servers, ETL processes and IoT systems.
+
+It may not be a good fit for you if:
+
+* You only need synchronous access to a MySQL server and efficiency doesn't matter
+  to your application. The official client libraries may be better suited for you, in this case.
+* You need homogeneous SQL access to different SQL databases (and not only MySQL access).
+  You may find more value in using [@https://github.com/rbock/sqlpp11 sqlpp11] or a similar wrapper
+  library.
+
+
+
+[heading Tested compilers and systems]
+
+Boost.MySQL is tested under the following compilers:
+
+* gcc 5.4 (Linux)
+* gcc 6.5 (Linux)
+* gcc 10.3 (Linux)
+* gcc 11.2 (Linux)
+* gcc 13.0 (Linux)
+* gcc 14.0 (Linux)
+* clang 3.6 (Linux)
+* clang 7.0 (Linux)
+* clang 11.0 (Linux)
+* clang 14.0 (Linux)
+* clang 16.0 (Linux)
+* clang 17.0 (Linux)
+* clang 18.0 (Linux)
+* Apple clang 14.0 (OSX)
+* MSVC 14.1 - Visual Studio 2017 (Windows)
+* MSVC 14.2 - Visual Studio 2019 (Windows)
+* MSVC 14.3 - Visual Studio 2022 (Windows)
+
+And with the following RDBMS systems:
+
+* MySQL v5.7.41.
+* MySQL v8.4.1.
+* MariaDB v11.4.2.
+
+[heading Acknowledgements]
+
+I would like to specially acknowledge [@https://github.com/madmongo1 Richard Hodges] (hodges.r@gmail.com)
+for his invaluable technical guidance during development. Thanks also to
+Christian Mazakas for his ideas in early stages, and to
+[@https://github.com/klemens-morgenstern Klemens Morgenstern] and
+and [@https://github.com/vinniefalco Vinnie Falco] for his techincal advice.
+Without you, this library would not exist.
+
+Finally, thanks to [@https://github.com/chriskohlhoff Christopher Kohlhoff]
+for his awesome __Asio__ library, and to [@https://github.com/HowardHinnant
+Howard Hinnant] for his date algorithms, shamelessly copied in this lib.
+
+
+[endsect] [/intro]

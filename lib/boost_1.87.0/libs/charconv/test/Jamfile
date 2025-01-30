@@ -1,0 +1,72 @@
+# Copyright 2022 Peter Dimov
+# Copyright 2023 Matt Borland
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.0.1 ;
+import-search /boost/config/checks ;
+
+import testing ;
+import config : requires ;
+
+project : requirements
+
+    <library>/boost/charconv//boost_charconv
+
+    <warnings>extra
+
+    <toolset>gcc:<cxxflags>-Wsign-conversion
+    <toolset>gcc:<cxxflags>-Wconversion
+    <toolset>gcc:<cxxflags>-Wundef
+    <toolset>gcc:<cxxflags>-Wold-style-cast
+    <toolset>gcc:<cxxflags>-Woverflow
+
+    <toolset>clang:<cxxflags>-Wsign-conversion
+    <toolset>clang:<cxxflags>-Wconversion
+    <toolset>clang:<cxxflags>-Wundef
+    <toolset>clang:<cxxflags>-Wold-style-cast
+
+    <toolset>msvc:<warnings-as-errors>on
+    <toolset>clang:<warnings-as-errors>on
+    <toolset>gcc:<warnings-as-errors>on ;
+
+lib quadmath ;
+lib double-conversion ;
+
+run quick.cpp ;
+
+run from_chars.cpp ;
+run to_chars.cpp ;
+run roundtrip.cpp ;
+run from_chars_STL_comp.cpp : : : [ requires cxx17_hdr_charconv ] ;
+run to_chars_integer_STL_comp.cpp : : : [ requires cxx17_hdr_charconv ] ;
+run limits.cpp ;
+run to_chars_sprintf.cpp ;
+run test_num_digits.cpp ;
+run limits_link_1.cpp limits_link_2.cpp limits_link_3.cpp ;
+run test_128bit_native.cpp ;
+run test_128bit_emulation.cpp ;
+run test_compute_float80.cpp ;
+run test_compute_float64.cpp ; 
+run test_compute_float32.cpp ;
+run test_parser.cpp ;
+run from_chars_float.cpp ;
+run to_chars_float.cpp ;
+run test_boost_json_values.cpp ;
+run to_chars_float_STL_comp.cpp : : : [ requires cxx17_hdr_charconv ] ;
+run from_chars_float2.cpp ;
+run-fail STL_benchmark.cpp : : : [ requires cxx17_hdr_charconv ] [ check-target-builds ../config//has_double_conversion "Google double-coversion support" : <library>"double-conversion" ] ;
+run test_float128.cpp : : : [ check-target-builds ../config//has_float128 "GCC libquadmath and __float128 support" : <library>"quadmath" ] ;
+run P2497.cpp ;
+run github_issue_110.cpp ;
+run github_issue_122.cpp ;
+run from_chars_string_view.cpp ;
+run github_issue_152.cpp /boost/random//boost_random ;
+run github_issue_152_float128.cpp : : : [ check-target-builds ../config//has_float128 "GCC libquadmath and __float128 support" : <library>"quadmath" ] ;
+run github_issue_154.cpp ;
+#run github_issue_156.cpp ;
+run github_issue_158.cpp ;
+run github_issue_166.cpp ;
+run github_issue_166_float128.cpp ;
+run github_issue_186.cpp ;
+run github_issue_212.cpp ;

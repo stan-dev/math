@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Parse Rules :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/grammar/rules.html">
+    <link rel="prev" href="index.html">
+    <link rel="next" href="charset.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="index.html">Customization</a></li>
+    <li><a href="rules.html">Parse Rules</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Previous: Customization">arrow_back</span></a>
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Up: Customization">arrow_upward</span></a>
+    <a accesskey="p" href="charset.html"><span class="material-symbols-outlined" title="Next: Character Sets">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Parse Rules</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <em>Rule</em> is an object which tries to match the beginning of an input character buffer against a particular syntax.
+It returns a <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_resultt_e" target="_blank" rel="noopener">boost::system::result</a></code> containing a value if the match was successful, or an <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_error_code" target="_blank" rel="noopener">error_code</a></code> if the match failed.
+Rules are not invoked directly.
+Instead they are passed as values to a <code><a href="../reference/boost/urls/grammar/parse.html" class="xref page">parse</a></code> function, along with the input character buffer to process.
+The first overload requires that the entire input string match, otherwise else an error occurs.
+The second overload advances the input buffer pointer to the first unconsumed character upon success, allowing a stream of data to be parsed sequentially:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">template&lt; class Rule &gt;
+auto parse( core::string_view s, Rule const&amp; r)
+    -&gt; system::result&lt; typename Rule::value_type &gt;;
+
+template&lt; class Rule &gt;
+auto parse( char const *&amp; it, char const* end, Rule const&amp; r)
+    -&gt; system::result&lt; typename Rule::value_type &gt;;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To satisfy the <em>Rule</em> concept, a <code>class</code> or <code>struct</code> must declare the nested type <code>value_type</code> indicating the type of value returned upon success, and a <code>const</code> member function <code><a href="../reference/boost/urls/grammar/parse.html" class="xref page">parse</a></code> with a prescribed signature.
+In the following code we define a rule that matches a single comma:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct comma_rule_t
+{
+    // The type of value returned upon success
+    using value_type = core::string_view;
+
+    // The algorithm which checks for a match
+    system::result&lt; value_type &gt;
+    parse( char const*&amp; it, char const* end ) const
+    {
+        if( it != end &amp;&amp; *it == ',')
+            return core::string_view( it++, 1 );
+
+        return error::mismatch;
+    }
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Since rules are passed by value, we declare a <code>constexpr</code> variable of the type for syntactical convenience.
+Variable names for rules are usually suffixed with <code>_rule</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">constexpr comma_rule_t comma_rule{};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we can call <code><a href="../reference/boost/urls/grammar/parse.html" class="xref page">parse</a></code> with the string of input and the rule variable thusly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">system::result&lt; core::string_view &gt; rv = parse( ",", comma_rule );
+
+assert( rv.has_value() &amp;&amp; rv.value() == "," );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Rule expressions can come in several styles.
+The rule defined above is a compile-time constant.
+The <code><a href="../reference/boost/urls/grammar/unsigned_rule.html" class="xref page">unsigned_rule</a></code> matches an unsigned decimal integer.
+Here we construct the rule at run time and specify the type of unsigned integer used to hold the result with a template parameter:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">system::result&lt; unsigned short &gt; rv =
+    parse( "16384", unsigned_rule&lt; unsigned short &gt;{} );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The function <code><a href="../reference/boost/urls/grammar/delim_rule.html" class="xref page">delim_rule</a></code> returns a rule which matches the passed character literal.
+This is a more general version of the comma rule which we defined earlier.
+There is also an overload which matches exactly one character from a character set.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">system::result&lt; core::string_view &gt; rv = parse( ",", delim_rule(',') );</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_error_handling"><a class="anchor" href="#_error_handling"></a>Error Handling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a rule fails to match, or if the rule detects a unrecoverable problem with the input, it returns a result assigned from an <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_error_code" target="_blank" rel="noopener">error_code</a></code> indicating the failure.
+When using overloads of <code><a href="../reference/boost/urls/grammar/parse.html" class="xref page">parse</a></code> which have a character pointer as both an in and out parameter, it is up to the rule to define which character is pointed to upon error.
+When the rule matches successfully, the pointer is always changed to point to the first unconsumed character in the input, or to the <code><a href="https://en.cppreference.com/w/cpp/iterator/end" target="_blank" rel="noopener">end</a></code> pointer if all input was consumed.</p>
+</div>
+<div class="paragraph">
+<p>It is the responsibilty of library and user-defined implementations of <em>compound rules</em> (explained later) to rewind their internal pointer if a parsing operation was unsuccessful, and they wish to attempt parsing the same input using a different rule.
+Users who extend the library&#8217;s grammar by defining their own custom rules should follow the behaviors described above regarding the handling of errors and the modification of the caller&#8217;s input pointer.</p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/grammar/rules.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="index.html">Customization</a></span>
+        <span class="next"><a href="charset.html">Character Sets</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

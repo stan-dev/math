@@ -1,0 +1,8 @@
+[#acknowledgements]
+== Acknowledgements
+
+:idprefix: acknowledgements_
+
+A number of people on the https://www.boost.org/[boost.org] mailing list provided useful comments and greatly helped to shape the library.
+
+The documentation was converted to Asciidoc format by Christian Mazakas.

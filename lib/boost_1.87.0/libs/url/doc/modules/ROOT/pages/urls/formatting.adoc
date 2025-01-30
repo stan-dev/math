@@ -1,0 +1,83 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+= Formatting
+
+Algorithms to format URLs construct a mutable URL by parsing and applying arguments to a URL template.
+The following example uses the cpp:format[]
+function to construct an absolute URL:
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_1,indent=0]
+----
+
+The rules for a format URL string are the same as for a cpp:std::format_string[], where replacement fields are delimited by curly braces.
+The URL type is inferred from the format string.
+
+The URL components to which replacement fields belong are identified before replacement is applied and any invalid characters for that formatted argument are percent-escaped:
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_2,indent=0]
+----
+
+Delimiters in the URL template, such as cpp:":"[], cpp:"//"[], cpp:"?"[], and cpp:"#"[], unambiguously associate each replacement field to a URL component.
+All other characters are normalized to ensure the URL is valid:
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_3a,indent=0]
+----
+
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_3b,indent=0]
+----
+
+The function cpp:format_to[] can be used to format URLs into any modifiable URL container.
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_4,indent=0]
+----
+
+As with cpp:std::format[], positional and named arguments are supported.
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_5a,indent=0]
+----
+
+The cpp:arg[] function can be used to associate names with arguments:
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_5b,indent=0]
+----
+
+A second overload based on cpp:std::initializer_list[]
+is provided for both cpp:format[] and cpp:format_to[].
+These overloads can help with lists of named arguments:
+
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_format_5c,indent=0]
+----
+

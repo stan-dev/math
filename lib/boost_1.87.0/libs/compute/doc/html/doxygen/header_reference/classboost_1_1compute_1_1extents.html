@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template extents</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.extents_8hpp" title="Header &lt;boost/compute/utility/extents.hpp&gt;">
+<link rel="prev" href="dim_8hpp_1af6310f0b069f0950524a9acf2b831f6e.html" title="Function template dim">
+<link rel="next" href="invoke_8hpp_1a5466e1d6a89e69a8f028b3ec5a86039d.html" title="Function template invoke">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="dim_8hpp_1af6310f0b069f0950524a9acf2b831f6e.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.extents_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="invoke_8hpp_1a5466e1d6a89e69a8f028b3ec5a86039d.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1extents"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template extents</span></h2>
+<p>boost::compute::extents</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.extents_8hpp" title="Header &lt;boost/compute/utility/extents.hpp&gt;">boost/compute/utility/extents.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">size_t</span> N<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">size_t</span>                     <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a04b590206787ac71a3a2753128f73018"></a><span class="identifier">size_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span> <span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">N</span> <span class="special">&gt;</span>  <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1aed1468ed0f041de58373c3b58eb7b6e5"></a><span class="identifier">array_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="identifier">array_type</span><span class="special">::</span><span class="identifier">iterator</span>       <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a3aab20f3c69e9000ffc8b46350dc4172"></a><span class="identifier">iterator</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">array_type</span><span class="special">::</span><span class="identifier">const_iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1af4a621a4858210ae95f2e26e452f1253"></a><span class="identifier">const_iterator</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1extents.html#id87-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a3b690142c5152a19830eec0a0181a077"><span class="identifier">extents</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1ab1e9c402e45fc53b3fa9498f66313b37"><span class="identifier">extents</span></a><span class="special">(</span><span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a0dc627c0b01016ccf7126a12ade2f9f0"><span class="identifier">extents</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">size_t</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a22e365d98888e189b77f640ad4ec9b12"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a510151db8a7ef28762ba3c904db2017f"><span class="identifier">linear</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <span class="special">*</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a1c6047a8b920b2cf1e8fcd8849aafbee"><span class="identifier">data</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">size_t</span> <span class="special">*</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a89bd8f8e9cde9eba5f8b1ad27f59f2c4"><span class="identifier">data</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a9f6233ecfdca59f6b9525fe5501d81c5"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a2750e96d051a2ca73dae34865bbb5458"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1ab1b2e3342f3a3b0cbbe949d1363c7809"><span class="identifier">cbegin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">iterator</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a3c199085d32e406bf2c419db03983024"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1add846baaf181014b05d427138027aa4c"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">const_iterator</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1ae7b785a02ed4f12e2f44bdccba58b5a8"><span class="identifier">cend</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_t</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a3a944849aa794e5cabf54ddd9b3d1d49"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">size_t</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">size_t</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1a7ad4409a6fcf73abc374f2fd376cfba8"><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span></a><span class="special">(</span><span class="identifier">size_t</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1ad0558ae0433736dac114a2a3439dae28"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1compute_1_1extents.html#doxygen.header_reference.classboost_1_1compute_1_1extents_1ac124b9221e8629f265fc887631e1dcb7"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">size_type</span> <span class="identifier">static_size</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id38888"></a><h2>Description</h2>
+<p>The extents class contains an array of n-dimensional extents.</p>
+<p><b>See Also: </b>dim() </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id38895"></a><h3>
+<a name="id87-bb"></a><code class="computeroutput">extents</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a3b690142c5152a19830eec0a0181a077"></a><span class="identifier">extents</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates an extents object with each component set to zero.</p>
+<p>For example: </p>
+<pre class="programlisting"><span class="identifier">extents</span><span class="special">&lt;</span><span class="number">3</span><span class="special">&gt;</span> <span class="identifier">exts</span><span class="special">(</span><span class="special">)</span><span class="special">;</span> <span class="comment">// (0, 0, 0)</span>
+</pre>
+<p> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1ab1e9c402e45fc53b3fa9498f66313b37"></a><span class="identifier">extents</span><span class="special">(</span><span class="identifier">size_t</span> value<span class="special">)</span><span class="special">;</span></pre>
+<p>Creates an extents object with each component set to <code class="computeroutput">value</code>.</p>
+<p>For example: </p>
+<pre class="programlisting"><span class="identifier">extents</span><span class="special">&lt;</span><span class="number">3</span><span class="special">&gt;</span> <span class="identifier">exts</span><span class="special">(</span><span class="number">1</span><span class="special">)</span><span class="special">;</span> <span class="comment">// (1, 1, 1)</span>
+</pre>
+<p> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a0dc627c0b01016ccf7126a12ade2f9f0"></a><span class="identifier">extents</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">initializer_list</span><span class="special">&lt;</span> <span class="identifier">size_t</span> <span class="special">&gt;</span> values<span class="special">)</span><span class="special">;</span></pre>Creates an extents object with <code class="computeroutput">values</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a22e365d98888e189b77f640ad4ec9b12"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the size (i.e. dimensionality) of the extents array. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a510151db8a7ef28762ba3c904db2017f"></a><span class="identifier">linear</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the linear size of the extents. This is equivalent to the product of each extent in each dimension. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_t</span> <span class="special">*</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a1c6047a8b920b2cf1e8fcd8849aafbee"></a><span class="identifier">data</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a pointer to the extents data array.</p>
+<p>This is useful for passing the extents data to OpenCL APIs which expect an array of <code class="computeroutput">size_t</code>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">size_t</span> <span class="special">*</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a89bd8f8e9cde9eba5f8b1ad27f59f2c4"></a><span class="identifier">data</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a9f6233ecfdca59f6b9525fe5501d81c5"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a2750e96d051a2ca73dae34865bbb5458"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1ab1b2e3342f3a3b0cbbe949d1363c7809"></a><span class="identifier">cbegin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a3c199085d32e406bf2c419db03983024"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1add846baaf181014b05d427138027aa4c"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">const_iterator</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1ae7b785a02ed4f12e2f44bdccba58b5a8"></a><span class="identifier">cend</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_t</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a3a944849aa794e5cabf54ddd9b3d1d49"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">size_t</span> index<span class="special">)</span><span class="special">;</span></pre>Returns a reference to the extent at <code class="computeroutput">index</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">size_t</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1a7ad4409a6fcf73abc374f2fd376cfba8"></a><span class="keyword">operator</span><span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">size_t</span> index<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1ad0558ae0433736dac114a2a3439dae28"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns <code class="computeroutput">true</code> if the extents in <code class="computeroutput">*this</code> are the same as <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1extents_1ac124b9221e8629f265fc887631e1dcb7"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a> <span class="special">&amp;</span> other<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns <code class="computeroutput">true</code> if the extents in <code class="computeroutput">*this</code> are not the same as <code class="computeroutput">other</code>. </li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="dim_8hpp_1af6310f0b069f0950524a9acf2b831f6e.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.extents_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="invoke_8hpp_1a5466e1d6a89e69a8f028b3ec5a86039d.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

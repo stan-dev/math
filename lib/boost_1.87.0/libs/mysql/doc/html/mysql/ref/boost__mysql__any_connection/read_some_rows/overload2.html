@@ -1,0 +1,100 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_connection::read_some_rows (2 of 4 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../read_some_rows.html" title="any_connection::read_some_rows">
+<link rel="prev" href="overload1.html" title="any_connection::read_some_rows (1 of 4 overloads)">
+<link rel="next" href="overload3.html" title="any_connection::read_some_rows (3 of 4 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../read_some_rows.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload3.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="mysql.ref.boost__mysql__any_connection.read_some_rows.overload2"></a><a class="link" href="overload2.html" title="any_connection::read_some_rows (2 of 4 overloads)">any_connection::read_some_rows
+          (2 of 4 overloads)</a>
+</h6></div></div></div>
+<p>
+            Reads a batch of rows.
+          </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.read_some_rows.overload2.h0"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.read_some_rows.overload2.synopsis"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__any_connection.read_some_rows.overload2.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">SpanElementType</span><span class="special">,</span>
+    <span class="keyword">class</span><span class="special">...</span> <span class="identifier">StaticRow</span><span class="special">&gt;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span>
+<span class="identifier">read_some_rows</span><span class="special">(</span>
+    <a class="link" href="../../boost__mysql__static_execution_state.html" title="static_execution_state"><code class="literal">static_execution_state</code></a><span class="special">&lt;</span> <span class="identifier">StaticRow</span><span class="special">...</span> <span class="special">&gt;&amp;</span> <span class="identifier">st</span><span class="special">,</span>
+    <span class="identifier">span</span><span class="special">&lt;</span> <span class="identifier">SpanElementType</span> <span class="special">&gt;</span> <span class="identifier">output</span><span class="special">,</span>
+    <a class="link" href="../../boost__mysql__error_code.html" title="error_code"><code class="literal">error_code</code></a><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">,</span>
+    <a class="link" href="../../boost__mysql__diagnostics.html" title="diagnostics"><code class="literal">diagnostics</code></a><span class="special">&amp;</span> <span class="identifier">diag</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_connection.read_some_rows.overload2.h1"></a>
+            <span class="phrase"><a name="mysql.ref.boost__mysql__any_connection.read_some_rows.overload2.description"></a></span><a class="link" href="overload2.html#mysql.ref.boost__mysql__any_connection.read_some_rows.overload2.description">Description</a>
+          </h6>
+<p>
+            Reads a batch of rows of unspecified size into the storage given by
+            <code class="computeroutput"><span class="identifier">output</span></code>. At most <code class="computeroutput"><span class="identifier">output</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span></code>
+            rows will be read. If the operation represented by <code class="computeroutput"><span class="identifier">st</span></code>
+            has still rows to read, and <code class="computeroutput"><span class="identifier">output</span><span class="special">.</span><span class="identifier">size</span><span class="special">()</span> <span class="special">&gt;</span> <span class="number">0</span></code>, at least one row will be read.
+          </p>
+<p>
+            Returns the number of read rows.
+          </p>
+<p>
+            If there are no more rows, or <code class="computeroutput"><span class="identifier">st</span><span class="special">.</span><span class="identifier">should_read_rows</span><span class="special">()</span> <span class="special">==</span> <span class="keyword">false</span></code>, this function is a no-op and returns
+            zero.
+          </p>
+<p>
+            The number of rows that will be read depends on the connection's buffer
+            size. The bigger the buffer, the greater the batch size (up to a maximum).
+            You can set the initial buffer size in the constructor. The buffer may
+            be grown bigger by other read operations, if required.
+          </p>
+<p>
+            Rows read by this function are owning objects, and don't hold any reference
+            to the connection's internal buffers (contrary what happens with the
+            dynamic interface's counterpart).
+          </p>
+<p>
+            The type <code class="computeroutput"><span class="identifier">SpanElementType</span></code>
+            must be the underlying row type for one of the types in the <code class="computeroutput"><span class="identifier">StaticRow</span></code> parameter pack (i.e., one
+            of the types in <code class="computeroutput"><span class="identifier">underlying_row_t</span><span class="special">&lt;</span><span class="identifier">StaticRow</span><span class="special">&gt;...</span></code>). The type must match the resultset
+            that is currently being processed by <code class="computeroutput"><span class="identifier">st</span></code>.
+            For instance, given <code class="computeroutput"><span class="identifier">static_execution_state</span><span class="special">&lt;</span><span class="identifier">T1</span><span class="special">,</span> <span class="identifier">T2</span><span class="special">&gt;</span></code>, when reading rows for the second
+            resultset, <code class="computeroutput"><span class="identifier">SpanElementType</span></code>
+            must exactly be <code class="computeroutput"><span class="identifier">underlying_row_t</span><span class="special">&lt;</span><span class="identifier">T2</span><span class="special">&gt;</span></code>. If this is not the case, a runtime
+            error will be issued.
+          </p>
+<p>
+            This function can report schema mismatches.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload1.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../read_some_rows.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload3.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

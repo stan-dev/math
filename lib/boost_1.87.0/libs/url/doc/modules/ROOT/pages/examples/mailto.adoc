@@ -1,0 +1,22 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= mailto URLs
+
+`mailto` is a URL scheme for email addresses. `mailto` URL are used on websites to allow users to email a specific address directly from an HTML document.
+
+This example parses a mailto URL into a new view type and prints its components to standard output.
+
+// example_mailto
+[source,cpp]
+----
+include::example$example/mailto.cpp[tag=example_mailto,indent=0]
+----
+
+

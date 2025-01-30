@@ -1,0 +1,835 @@
+{#
+Copyright (c) 2024 Dmitry Arkhipov (grisumbras@yandex.ru)
+
+Distributed under the Boost Software License, Version 1.0. (See accompanying
+file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+Official repository: https://github.com/boostorg/json
+#}
+
+{% macro write_entity(entity) -%}
+    {% if entity.access != Access.private or Config.include_private -%}
+        {%- if entity is Namespace -%}
+            {{ write_namespace(entity) }}
+        {%- elif entity is Type -%}
+            {{ write_type(entity) }}
+        {%- elif entity is OverloadSet -%}
+            {{ write_overload_set(entity) }}
+        {%- elif entity is Variable -%}
+            {{ write_variable(entity) }}
+        {%- elif entity is Function -%}
+            {{ write_function(entity) }}
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro write_namespace(entity) -%}
+    {%- for m in entity.members.values() | select("Type") | sort -%}
+        {{ write_type(m) }}
+    {%- endfor -%}
+
+    {%- for m in entity.members.values() | select("OverloadSet") | sort -%}
+        {{ write_overload_set(m) }}
+    {%- endfor -%}
+
+    {%- for m in entity.members.values() | select("Variable") | sort -%}
+        {{ write_variable(m) }}
+    {%- endfor -%}
+{%- endmacro %}
+
+
+{% macro write_type(entity) %}
+{% call(segment) section(entity) %}
+
+{%- if segment == "summary" -%}
+{%- if entity is Scope -%}
+{#- public members -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Type")
+        | selectattr("access", "eq", Access.public),
+    'Types') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.public)
+        | selectattr("kind", "eq", FunctionKind.nonstatic),
+    'Member Functions') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.public)
+        | selectattr("kind", "eq", FunctionKind.static),
+    'Static Member Functions') }} {#- -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Variable")
+        | selectattr("access", "eq", Access.public)
+        | rejectattr("is_static"),
+    'Data Members') }} {#- -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Variable")
+        | selectattr("access", "eq", Access.public)
+        | selectattr("is_static")
+        | reject("in", entity.objects),
+    'Static Members') }}  {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.public)
+        | selectattr("kind", "eq", FunctionKind.friend),
+    'Friends') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.public)
+        | selectattr("kind", "eq", FunctionKind.free),
+    'Related Non-member Functions') }} {#- -#}
+{#- protected members -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Type")
+        | selectattr("access", "eq", Access.protected),
+    'Protected Types') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.protected)
+        | selectattr("kind", "eq", FunctionKind.nonstatic),
+    'Protected Member Functions') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.protected)
+        | selectattr("kind", "eq", FunctionKind.static),
+    'Protected Static Member Functions') }} {#- -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Variable")
+        | selectattr("access", "eq", Access.protected)
+        | rejectattr("is_static"),
+    'Protected Data Members') }}  {#- -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Variable")
+        | selectattr("access", "eq", Access.protected)
+        | selectattr("is_static")
+        | reject("in", entity.objects),
+    'Protected Static Members') }} {#- -#}
+{#- private members -#}
+{%- if Config.get('include_private') %}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Type")
+        | selectattr("access", "eq", Access.private),
+    'Private Types') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.private)
+        | selectattr("kind", "eq", FunctionKind.nonetatic),
+    'Private Member Functions') }} {#- -#}
+{{ function_summary_table(
+    entity.members.values()
+        | select("OverloadSet")
+        | selectattr("access", "eq", Access.private)
+        | selectattr("kind", "eq", FunctionKind.static),
+    'Private Static Member Functions') }} {#- -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Variable")
+        | selectattr("access", "eq", Access.private)
+        | rejectattr("is_static"),
+    'Private Data Members') }} {#- -#}
+{{ simple_summary_table(
+    entity.members.values()
+        | select("Variable")
+        | selectattr("access", "eq", Access.private)
+        | selectattr("is_static")
+        | reject("in", entity.objects),
+    'Private Static Members') }} {#- -#}
+{%- endif -%}
+{%- endif -%}
+
+{% if entity is Enum -%}
+{%- call(member) summary_table(entity.objects, "Values") -%}
+    [[^{{ escape(member.name) }}]
+    ]
+    [{{ description(member.brief) | trim }}
+    ]
+{%- endcall -%}
+{%- else -%}
+{{ simple_summary_table(entity.objects, 'Values') }}
+{%- endif -%}
+{%- endif -%}
+
+{%- if segment == "members" -%}
+{%- if entity is Scope -%}
+{#- public member subsections -#}
+{% for member in entity.members.values()
+    | select("Type")
+    | selectattr("access", "eq", Access.public) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.public)
+    | selectattr("kind", "eq", FunctionKind.nonstatic) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.public)
+    | selectattr("kind", "eq", FunctionKind.static) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("Variable")
+    | selectattr("access", "eq", Access.public)
+    | rejectattr("is_static") -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("Variable")
+    | selectattr("access", "eq", Access.public)
+    | selectattr("is_static")
+    | reject("in", entity.objects) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.public)
+    | selectattr("kind", "eq", FunctionKind.friend) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.public)
+    | selectattr("kind", "eq", FunctionKind.free) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{#- protected member subsections -#}
+{%- for member in entity.members.values()
+    | select("Type")
+    | selectattr("access", "eq", Access.protected) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.protected)
+    | selectattr("kind", "eq", FunctionKind.nonstatic) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.protected)
+    | selectattr("kind", "eq", FunctionKind.static) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("Variable")
+    | selectattr("access", "eq", Access.protected)
+    | rejectattr("is_static") -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("Variable")
+    | selectattr("access", "eq", Access.protected)
+    | selectattr("is_static")
+    | reject("in", entity.objects) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{#- private members -#}
+{%- if Config.get('include_private') %}
+{%- for member in entity.members.values()
+    | select("Type")
+    | selectattr("access", "eq", Access.private) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.private)
+    | selectattr("kind", "eq", FunctionKind.nonstatic) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("OverloadSet")
+    | selectattr("access", "eq", Access.private)
+    | selectattr("kind", "eq", FunctionKind.static) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("Variable")
+    | selectattr("access", "eq", Access.private)
+    | rejectattr("is_static") -%}
+{{ write_entity(member) }}
+{% endfor %}
+{%- for member in entity.members.values()
+    | select("Variable")
+    | selectattr("access", "eq", Access.private)
+    | selectattr("is_static")
+    | reject("in", entity.objects) -%}
+{{ write_entity(member) }}
+{% endfor %}
+{% endif -%}
+{%- endif -%}
+
+{% if entity is not Enum -%}
+{%- for object in entity.objects -%}
+{{ write_entity(object) }}
+{% endfor %}
+{%- endif -%}
+{%- endif -%}
+
+{% endcall %}
+{% endmacro %}
+
+
+{% macro write_overload_set(oset) -%}
+{%- if (oset | length) == 1 -%}
+    {{ write_function(oset[0]) }}
+{%- else %}
+[section:{{ anchor(oset) }} {{ abridged_fqn(oset) }}]
+{% if oset.scope is Namespace -%}
+    [indexterm1 {{ escape(oset.name) }}]
+{% else -%}
+    [indexterm2 {{ escape(oset.name) }}..{{ escape(oset.scope.name) }}]
+{%- endif %}
+{% for func in oset -%}
+
+{%- set brief = description(func.brief) | trim -%}
+{%- if loop.changed(brief) -%}
+{%- if not loop.first -%}
+```
+{% endif -%}
+{{ brief }}
+```
+{%- endif %}
+{{ function_declaration(func, linked=True) }}
+  ``[''''&raquo;''' [link {{ link(func) }} `more...`]]``
+{% endfor -%}
+```
+
+{% for func in oset %}{{ write_function(func) }}{% endfor -%}
+
+[endsect]
+{% endif %}
+{% endmacro %}
+
+
+{% macro write_function(entity) -%}
+{%- call(segment) section(entity, extra=overload_counter(entity)) -%}
+{%- endcall -%}
+{%- endmacro %}
+
+
+{% macro write_variable(entity) -%}
+{%- call(segment) section(entity) %}{% endcall -%}
+{%- endmacro %}
+
+
+{% macro overload_counter(entity) -%}
+{%- if entity.overload_index >= 0 %} ({{ entity.overload_index + 1 }} of {{ entity.overload_set | length }} overloads)
+{%- else -%}{%- endif -%}
+{%- endmacro %}
+
+
+{% macro section(entity, extra='') -%}
+[section:{{ anchor(entity) }} {{ abridged_fqn(entity) }}{{extra }}]
+{%- if entity.scope is not Namespace
+    and (entity is not Function or entity.is_sole_overload) %}
+[indexterm2 {{ escape(entity.name) }}..{{ escape(entity.scope.name) }}]
+{%- elif entity is not Class
+    and (entity is not Function or entity.is_sole_overload) %}
+[indexterm1 {{ escape(entity.name) }}]
+{%- endif %}
+{{ description(entity.brief) }}
+
+{{ heading('Synopsis') }}
+{% if entity.location
+    and (entity.scope is Namespace
+        or (entity is Function and entity.is_friend)) -%}
+    Defined in header {{ source_header(entity.location.file) }}
+{%- endif %}
+
+```
+{% if entity is Function -%}
+    {{ function_declaration(entity) }}
+{%- else -%}
+    {{ entity_declaration(entity) }}
+{%- endif %}
+```
+{{ caller("summary") }}
+{% if entity.description -%}
+{{ description(entity.description, title='Description') }}
+{%- endif %}
+
+{% if Config.get('convenience_header')
+    and entity.location
+    and (entity.scope is Namespace
+        or (entity is Function
+            and entity.kind in (FunctionKind.free, FunctionKind.friend))) -%}
+Convenience header {{ source_header(Config.convenience_header) }}
+{%- endif %}
+{{ caller("members") }}
+[endsect]
+{% endmacro %}
+
+
+{% macro function_declaration(entity, linked=False) -%}
+{{ template_parameters(entity) }}
+{%- set sp = joiner(' ') -%}
+{%- if entity.is_explicit %}{{ sp() }}explicit{% endif -%}
+{%- if entity.is_static %}{{ sp() }}static{% endif -%}
+{%- if entity.is_constexpr %}{{ sp() }}constexpr{% endif %}
+{%- set ret = phrase(entity.return_type, in_code=True) -%}
+{%- if ret %}{{ sp() }}{{ ret }}{% endif -%}
+{%- if sp() %}
+{% endif -%}
+{%- if linked -%}
+    ``[link {{ link(entity) }} {{ escape(entity.name) }}]``
+{%- else -%}
+    {{ entity.name }}
+{%- endif -%}
+(
+{%- for param in entity.parameters %}
+    {{ phrase(param.type, in_code=True) }}
+    {%- if param.array %} (&{% endif -%}
+    {%- if param.name -%}
+        {%- if not param.array %} {% endif -%}
+        {{ param.name }}
+    {%- endif -%}
+    {%- if param.array %}) {{ phrase(param.array, in_code=True) }}{% endif -%}
+    {%- if param.default_value %} = {{ phrase(param.default_value, in_code=True) }}{% endif -%}
+
+    {%- if not loop.last %},{% endif -%}
+{%- endfor -%}
+)
+{%- if entity.refqual or entity.is_const -%}
+    {{ " " }}
+    {%- if entity.is_const %}const{% endif -%}
+    {%- if "lvalue" == entity.refqual %}&
+    {%- elif "rvalue" == entity.refqual %}&&
+    {%- endif -%}
+{%- endif -%}
+{%- if entity.is_noexcept and not entity.is_destructor %} noexcept
+{%- if entity.noexcept_condition -%}
+    ({{ entity.noexcept_condition }})
+{%- endif -%}
+{%- endif -%}
+{%- if not entity.is_noexcept and entity.is_destructor %} noexcept(false){% endif -%}
+{%- if entity.is_deleted %} = delete
+{%- elif entity.is_defaulted and Config.get('show_defaulted') %} = default
+{%- endif -%}
+;
+{%- endmacro %}
+
+
+{% macro entity_declaration(entity) -%}
+{{ template_parameters(entity) }}
+{%- if entity is Variable -%}
+{%- set sp = joiner(' ') -%}
+{%- if entity.is_static %}{{ sp() }}static{% endif -%}
+{%- if entity.is_constexpr %}{{ sp() }}constexpr{% endif %}
+{%- if sp() %}
+{% endif -%}
+{{ phrase(entity.type, in_code=True) }}
+{%- if entity.args %}(*{% else %} {% endif -%}
+{%- endif -%}
+{%- if entity is Type %}{{ entity.declarator }} {% endif -%}
+{{ entity.name }}
+{%- if entity is Variable and entity.args -%}
+){{ phrase(entity.args, in_code=True) }}
+{%- endif -%}
+{%- if entity is Class -%}
+{% for entry in entity.bases %}
+    {% if loop.first %}:{% else %},{% endif -%}
+    {{ ' ' ~ entry.access ~ ' ' }}
+    {%- if entry.is_virtual %}virtual {% endif -%}
+    {{ phrase(entry.base, in_code=True) }}
+{%- endfor -%}
+{%- endif -%}
+{%- if entity is Enum and entity.underlying_type %}
+    : {{ phrase(entity.underlying_type, in_code=True) }}
+{%- endif -%}
+{%- if entity is TypeAlias %} = {{ phrase(entity.aliased, in_code=True) }}{% endif -%}
+{%- if entity is Variable and entity.value %} {{ phrase(entity.value, in_code=True) }}{% endif -%}
+;
+{%- endmacro %}
+
+
+{% macro source_header(path) -%}
+[include_file {{ path }}]
+{%- endmacro %}
+
+
+{% macro template_parameters(entity) -%}
+{%- if entity.template_parameters or entity.is_specialization -%}template<{%- endif -%}
+{%- for tparam in entity.template_parameters %}
+    {{ phrase(tparam.type, in_code=True) }}
+    {%- if tparam.array %} (&{% endif -%}
+    {%- if tparam.name -%}
+        {%- if not tparam.array %} {% endif -%}
+        {{ phrase_part(tparam.name, in_code=True) }}
+    {%- endif -%}
+    {%- if tparam.array %}) {{ phrase(tparam.array, in_code=True) }}{% endif -%}
+    {%- if tparam.default_value %} = {{ phrase(tparam.default_value, in_code=True) }}{% endif -%}
+
+{%- if loop.last -%}
+>
+{% else -%}
+,
+{%- endif -%}
+
+{%- else -%}
+{%- if entity.is_specialization -%}
+>
+{% endif -%}
+{%- endfor %}
+{%- endmacro %}
+
+
+{% macro function_summary_table(sequence, title) -%}
+{%- call(member) summary_table(
+    sequence | sort, title, cols=['Name', 'Description']) -%}
+    [[*[link {{ link(member) }} {{ escape(member.name) }}]
+    {%- if member.is_constructor %}\u00A0[role silver \[constructor\]]{% endif -%}
+    {%- if member.is_destructor %}\u00A0[role silver \[destructor\]]{% endif -%}
+    ]
+    ]
+    [
+    {%- for part in member.brief -%}
+        {%- set line = description(part) | trim -%}
+        {%- if not loop.changed(line) %}{% continue %}{% endif -%}
+        {%- if not loop.first %} '''<sbr/>'''[role silver \u2014]'''<sbr/>'''
+        {%- endif -%}
+        {{ line }}
+    {%- endfor %}
+    ]
+{%- endcall -%}
+{%- endmacro %}
+
+
+{% macro simple_summary_table(sequence, title) -%}
+{%- call(member) summary_table(sequence | sort, title) -%}
+    [[*[link {{ link(member) }} {{ escape(member.name) }}]]
+    ]
+    [{{ description(member.brief) | trim }}
+    ]
+{%- endcall -%}
+{%- endmacro %}
+
+
+{% macro summary_table(sequence, title, cols=['Name', 'Description']) -%}
+{%- for row in sequence -%}
+{% if loop.first -%}
+{{ heading(title) }}
+[table [{% for col in cols %}[{{col}}]{% endfor %}]
+{%- endif %}
+  [
+    {{ caller(row) }}
+  ]
+{%- if loop.last %}
+]
+{% endif %}
+{%- endfor -%}
+{%- endmacro %}
+
+
+{% macro heading(title) -%}
+    [heading {{ title }}]
+{%- endmacro %}
+
+
+{% macro subsection(sub) -%}
+{%- if sub.title -%}
+    [heading {{ phrase(sub.title) }}]
+{%- elif sub.kind -%}
+    [heading
+    {%- if sub.kind == 'see' %} See Also
+    {%- elif sub.kind == 'return' %} Return Value
+    {%- elif sub.kind == 'author' %} Author
+    {%- elif sub.kind == 'authors' %} Authors
+    {%- elif sub.kind == 'version' %} Version
+    {%- elif sub.kind == 'since' %} Since
+    {%- elif sub.kind == 'date' %} Date
+    {%- elif sub.kind == 'note' %} Remarks
+    {%- elif sub.kind == 'warning' %} Warning
+    {%- elif sub.kind == 'pre' %} Preconditions
+    {%- elif sub.kind == 'post' %} Postconditions
+    {%- elif sub.kind == 'copyright' %} Copyright
+    {%- elif sub.kind == 'invariant' %} Invariants
+    {%- elif sub.kind == 'remark' %} Remarks
+    {%- elif sub.kind == 'attention' %} Attention
+    {%- elif sub.kind == 'par' %} Paragraph
+    {%- elif sub.kind == 'rcs'%} RCS
+    {%- else %} Unknown
+    {%- endif -%}
+    ]
+{%- endif %}
+{{ description(sub) }}
+{%- endmacro %}
+
+
+{% macro parameter_list(part) -%}
+{%- set ns = namespace(title="", col="") -%}
+{%- if part.kind == ParameterList.Parameters -%}
+    {%- set ns.title = "Parameters" -%}
+    {%- set ns.col1 = "Name" -%}
+    {%- set ns.col2 = "Description" -%}
+{%- elif part.kind == ParameterList.TemplateParameters -%}
+    {%- set ns.title = "Template Parameters" -%}
+    {%- set ns.col1 = "Type" -%}
+    {%- set ns.col2 = "Description" -%}
+{%- elif part.kind == ParameterList.Exceptions -%}
+    {%- set ns.title = "Exceptions" -%}
+    {%- set ns.col1 = "Type" -%}
+    {%- set ns.col2 = "Thrown On" -%}
+{%- elif part.kind == ParameterList.ReturnValues -%}
+    {%- set ns.title = "Return Values" -%}
+    {%- set ns.col1 = "Type" -%}
+    {%- set ns.col2 = "Description" -%}
+{%- endif -%}
+{% call(param_block) summary_table(part, ns.title, cols=[ns.col1, ns.col2]) -%}
+{%- set sep = joiner(", ") %}[
+{%- for item in param_block -%}
+{{ sep() }}`
+{%- if item.type %}{{ phrase(item.type) }} {% endif -%}
+{{ phrase(item.name) }}`
+{%- endfor %}
+    ]
+    [
+{{ description(param_block.description) }}
+    ]
+{%- endcall -%}
+
+{%- endmacro %}
+
+
+{% macro table(part) -%}
+[table {% if part.caption %}{{ phrase(part.caption) }}{% endif %}
+{%- for row in part %}
+  [{% for cell in row %}
+    [ {{ description(cell, nesting='      ') }}    ]
+  {%- endfor %}
+  ]
+  {%- endfor %}
+]
+{% endmacro %}
+
+
+{%- macro itemised(lst, nesting='') -%}
+    {%- for item in lst -%}
+        {{ nesting }}
+        {%- if lst.is_ordered -%}
+            #
+        {%- else -%}
+            *
+        {%- endif %} {{ description(item, nesting + '       ') }}
+    {%- endfor -%}
+{%- endmacro %}
+
+
+{% macro description(parts, nesting='', title=None) -%}
+{%- for part in parts -%}
+{%- if loop.first and title
+    and part is not Section and part is not ParameterList
+    -%}
+    {{ heading(title) }}
+{% endif -%}
+
+{%- if part is Paragraph -%}
+{{ phrase(part) }}
+
+{% elif part is List -%}
+{{ itemised(part, nesting) }}
+{%- elif part is Section -%}
+{{ subsection(part) }}
+{%- elif part is CodeBlock %}
+{{ nesting }}```
+{% for line in part -%}
+{{nesting}}{{line}}
+{% endfor -%}
+{{ nesting }}```
+{% elif part is ParameterList -%}
+{{ parameter_list(part) }}
+{% elif part is Table -%}
+{{ table(part) }}
+{%- else -%}
+{{ part.unhandled_type() }}
+{%- endif -%}
+{%- endfor -%}
+{%- endmacro %}
+
+
+{% macro phrase(para, in_code=False) -%}
+{%- if Config.legacy_behavior and in_code -%}{{ phrase_part(para.text, in_code=in_code) }}{%- else -%}
+{%- for part in para -%}{{ phrase_part(part, in_code=in_code) }}{%- endfor -%}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro phrase_part(part, in_code=False) -%}
+    {%- if part is string -%}
+        {{ text_helper(part, in_code=in_code) }}
+    {%- elif part is Monospaced -%}
+        `{{ phrase(part, in_code=True) }}`
+    {%- elif part is Emphasised -%}
+        ['{{ phrase(part, in_code=in_code) }}]
+    {%- elif part is Strong -%}
+        [*{{ phrase(part, in_code=in_code) }}]
+    {%- elif part is EntityRef -%}
+        {%- if in_code %}``{% endif -%}
+        {%- if Config.get('external_marker')
+            and (part.entity.brief | map(attribute="text") | join | trim)
+                == Config.get('external_marker') -%}
+            [@
+            {%- for part in part.entity.description -%}
+                {%- if part is Section and part.kind == Section.See -%}
+                    {{ part | map(attribute="text") | join | trim }}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- else -%}
+            [link {{ link(part.entity, prefer_overload=True) }}
+        {%- endif -%}
+        {%- if in_code %} [^{{ abridged_fqn(part.entity) }}]]``
+        {%- else %} `{{ phrase(part, in_code=True) }}`]
+        {%- endif -%}
+    {%- elif part is UrlLink -%}
+        [@{{ part.url }} {{ phrase(part, in_code=in_code) }}]
+    {%- elif part is Linebreak %}{# indent is intentional here #}
+
+{% elif part is Phrase -%}
+    {{ phrase(part, in_code=in_code) }}
+    {%- else -%}
+        {{ part.unhandled_type() }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro anchor(entity) -%}
+    {%- if entity is Function and not entity.is_sole_overload -%}
+        overload{{ entity.overload_index + 1 }}
+    {%- elif entity.scope and not entity.scope is Namespace -%}
+        {{ sanitize_path_segment(entity.name) }}
+        {%- if (entity is Function or entity is OverloadSet) and entity.is_friend -%}_fr{%- endif -%}
+        {%- if (entity is Function or entity is OverloadSet) and entity.is_free -%}_fe{%- endif -%}
+    {%- else -%}
+        {%- set sep = joiner("__") -%}
+        {%- for segment in entity.path -%}
+            {{ sep() }}{{ sanitize_path_segment(segment.name) }}
+        {%- endfor -%}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro link(entity, prefer_overload=False) -%}
+    {%- if entity is Enumerator -%}
+        {{ link(entity.enum) }}
+    {%- elif entity is Namespace -%}
+        {%- if 'link_prefix' in Config %}{{ Config.link_prefix }}{% endif -%}
+        {%- set sep = joiner('__') -%}
+        {%- for segment in entity.path -%}
+            {{ sep() }}{{ sanitize_path_segment(segment.name) }}
+        {%- endfor -%}
+    {%- else -%}
+        {%- if entity.scope -%}
+            {{ link(entity.scope, prefer_overload=prefer_overload) }}
+            {%- if entity.scope is Namespace %}__{% else %}.{% endif -%}
+        {%- endif -%}
+        {{ sanitize_path_segment(entity.name) }}
+        {%- if (entity is Function or entity is OverloadSet) -%}
+            {%- if entity.is_friend -%}
+                _fr
+            {%- elif entity.is_free and entity.scope is Type -%}
+                _fe
+            {%- endif -%}
+        {%- endif -%}
+        {%- if entity is Function %}
+            {%- if not prefer_overload and not entity.is_sole_overload -%}
+                .overload{{ entity.overload_index + 1 }}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro sanitize_path_segment(segment) -%}
+    {{ segment.replace("[", "__lb_")
+              .replace("]", "_rb_")
+              .replace("(", "_lp_")
+              .replace(")", "_rp_")
+              .replace("<=>", "_spshp_")
+              .replace("operator>", "operator__gt_")
+              .replace("operator~", "operator_bnot_")
+              .replace("->", "__arrow_")
+              .replace("=", "_eq_")
+              .replace("!", "__not_")
+              .replace("+", "_plus_")
+              .replace("-", "_minus_")
+              .replace("&", "_and_")
+              .replace("|", "_or_")
+              .replace("^", "_xor_")
+              .replace("*", "__star_")
+              .replace("/", "_slash_")
+              .replace("%", "_mod_")
+              .replace("<", "_lt_")
+              .replace(">", "_gt_")
+              .replace("~", "_dtor_")
+              .replace(",", "_comma_")
+              .replace(":", "_")
+              .replace(" ", "_") }}
+{%- endmacro %}
+
+
+{% macro abridged_fqn(entity) -%}
+    {%- set prefix = Config.default_namespace + '::'
+        if Config.get('default_namespace')
+        else ''
+    -%}
+    {%- set s = entity.fully_qualified_name -%}
+    {%- if s.startswith(prefix) -%}
+        {{ escape( s[prefix | length:] ) }}
+    {%- else -%}
+        {{ escape(s) }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro text_helper(s, in_code=False) -%}
+    {%- if s -%}
+        {%- set replacements=Config.get('replace_strings', {}) if in_code else {} -%}
+
+        {%- set ns = namespace(s=s) -%}
+        {%- if in_code -%}
+            {%- set ns.s = re.sub("\\s+", " ", ns.s, re.U) -%}
+            {%- if ns.s.endswith(" &") -%}
+                {%- set ns.s = ns.s[:-2] + "&" -%}
+            {%- elif ns.s.endswith(" *") -%}
+                {%- set ns.s = ns.s[:-2] + "*" -%}
+            {%- elif ns.s.endswith(" &&") -%}
+                {%- set ns.s = ns.s[:-3] + "&&" -%}
+            {%- elif ns.s.endswith(" &...") -%}
+                {%- set ns.s = ns.s[:-5] + "&..." -%}
+            {%- elif ns.s.endswith(" *...") -%}
+                {%- set ns.s = ns.s[:-5] + "*..." -%}
+            {%- elif ns.s.endswith(" &&...") -%}
+                {%- set ns.s = ns.s[:-6] + "&&..." -%}
+            {%- endif -%}
+        {%- else -%}
+            {%- set ns.s = escape(s) -%}
+        {%- endif -%}
+        {%- for src, tgt in replacements.items() -%}
+            {%- set ns.s = re.sub(src, tgt,  ns.s, flags=re.U) -%}
+        {%- endfor -%}
+        {{ ns.s }}
+    {%- else -%}
+        {{ s }}
+    {%- endif -%}
+{%- endmacro %}
+
+
+{% macro escape(s) -%}
+    {{ s.replace("[", "\\[").replace("]", "\\]") }}
+{%- endmacro %}
