@@ -55,7 +55,12 @@ namespace math {
  * @param a Second argument
  * @return Owen's T function applied to the arguments.
  */
-inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
+inline double owens_t(double h, double a) {
+  if (unlikely(std::isnan(h) || std::isnan(a))) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+  return boost::math::owens_t(h, a);
+}
 
 /**
  * Enables the vectorized application of the owens_t
