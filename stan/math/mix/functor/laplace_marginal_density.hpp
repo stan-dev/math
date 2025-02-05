@@ -170,6 +170,17 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
             = W.coeff(i * block_size + j, i * block_size + k);
       }
     }
+    Eigen::RealSchur<Eigen::MatrixXd> schur(local_block);
+    for (int i = 0; i < local_block.rows(); ++i) {
+      if (schur.matrixT().coeff(i, i) < 0) {
+        auto pos = std::to_string(i);
+        std::string msg("T(" + pos + std::string(", ") + pos + ") is negative");
+        throw std::domain_error(msg);
+      }
+    }
+    std::cout << "local block: \n" << local_block << std::endl;
+    // Here issue here, sqrt is done over T of the complex schur
+
     local_block_sqrt = local_block.sqrt();
     for (int k = 0; k < block_size; k++) {
       for (int j = 0; j < block_size; j++) {
@@ -213,10 +224,10 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
  * @tparam CovarFun Type with a valid `operator(InnerCovarArgs)` where
- * `InnerCovarArgs` are a parameter pack of the element types of `CovarArgs`
+ * `InnerCovarArgs` are a parameter pack of the element types of `CovarTupleArgs`
  * @tparam Theta Type derived from `Eigen::EigenBase` with dynamic rows and a
  * single column
- * @tparam CovarArgs A tuple whose elements follow the types required for
+ * @tparam CovarTupleArgs A tuple whose elements follow the types required for
  * `CovarFun`
  * @param[in] ll_fun A log likelihood functor
  * @param[in] ll_args Tuple containing parameters for `LLFun`
@@ -241,13 +252,13 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  *
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename Theta, typename CovarArgs,
-          require_t<is_all_arithmetic_scalar<Theta, CovarArgs>>* = nullptr,
+          typename Theta, typename CovarTupleArgs,
+          require_t<is_all_arithmetic_scalar<Theta, CovarTupleArgs>>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr>
 inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                          Theta&& theta_0,
                                          CovarFun&& covariance_function,
-                                         CovarArgs&& covar_args,
+                                         CovarTupleArgs&& covar_args,
                                          const laplace_options& options,
                                          std::ostream* msgs) {
   using Eigen::MatrixXd;
@@ -272,27 +283,38 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         std::string("laplace_marginal_density: max number of iterations: ")
         + std::to_string(max_num_steps) + " exceeded.");
   };
-  auto line_search = [](auto& objective_new, auto& a, auto& theta,
+  auto line_search = [](auto& objective_new, auto&& a, auto&& theta,
                         const auto& a_old, const auto& covariance,
                         const auto& ll_fun, auto&& ll_args,
                         const auto max_steps_line_search,
                         const auto objective_old, auto* msgs) mutable {
-    for (int j = 0;
-         j < max_steps_line_search && (objective_new < objective_old); ++j) {
-      a = (a + a_old) * 0.5;  // TODO(Charles) -- generalize for any factor
-      theta = covariance * a;
-      if (Eigen::isfinite(theta.array()).sum()) {
-        objective_new = -0.5 * a.dot(theta)
-                        + laplace_likelihood::log_likelihood(ll_fun, theta,
+    Eigen::VectorXd a_tmp;
+    double objective_new_tmp = 0;
+    Eigen::VectorXd theta_tmp;
+    for (int j = 0; j < max_steps_line_search && (objective_new < objective_old); ++j) {
+      a_tmp = (a + a_old) * 0.5;  // TODO(Charles) -- generalize for any factor
+      theta_tmp = covariance * a_tmp;
+      if (Eigen::isfinite(theta_tmp.array()).sum()) {
+        objective_new_tmp = -0.5 * a.dot(theta_tmp)
+                        + laplace_likelihood::log_likelihood(ll_fun, theta_tmp,
                                                              value_of(ll_args), msgs);
+        if (objective_new_tmp < objective_old) {
+          a = a_tmp;
+          theta = theta_tmp;
+          objective_new = objective_new_tmp;
+        } else {
+          return std::make_tuple(objective_new, std::move(a), std::move(theta));
+        }
       } else {
-        break;
+        return std::make_tuple(objective_new, std::move(a), std::move(theta));
       }
     }
+    return std::make_tuple(objective_new, std::move(a), std::move(theta));
+
   };
   const Eigen::Index theta_size = theta_0.size();
   std::decay_t<Theta> theta = theta_0;
-  double objective_old = std::numeric_limits<double>::lowest();  
+  double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest();
   Eigen::VectorXd a_old;
   if (options.solver == 1 && options.hessian_block_size == 1) {
@@ -303,8 +325,11 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // Compute matrix square-root of W. If all elements of W are positive,
       // do an element wise square-root. Else try a matrix square-root
       bool W_is_spd = true;
-      for (Eigen::Index i = 0; i < theta_0.size(); i++) {
-        W_is_spd &= (W.coeff(i, i) < 0);
+      for (Eigen::Index i = 0; i < W.rows(); i++) {
+        if (W.coeff(i, i) < 0) {
+        throw std::domain_error(
+            "laplace_marginal_density: Hessian matrix is not positive definite");
+        }
       }
       Eigen::SparseMatrix<double> W_r;
       // TODO(Charles): Need better way to handle negative diagonals
@@ -339,7 +364,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                                              value_of(ll_args), msgs);
       }
       if (options.max_steps_line_search && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, ll_fun, ll_args,
+        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
                     options.max_steps_line_search, objective_old, msgs);
       }
       a_old = a;
@@ -363,6 +388,12 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
+      for (Eigen::Index i = 0; i < W.rows(); i++) {
+        if (W.coeff(i, i) <= 0) {
+        throw std::domain_error(
+            "laplace_marginal_density: Hessian matrix is not positive definite");
+        }
+      }
       Eigen::SparseMatrix<double> W_r
           = block_matrix_sqrt(W, options.hessian_block_size);
       auto B = MatrixXd::Identity(theta_size, theta_size)
@@ -388,7 +419,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                                              value_of(ll_args), msgs);
       }
       if (options.max_steps_line_search > 0 && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, ll_fun, ll_args,
+        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
                     options.max_steps_line_search, objective_old, msgs);
       }
       a_old = a;
@@ -437,7 +468,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       }
       // linesearch
       if (options.max_steps_line_search > 0 && i != 0) {
-        line_search(objective_new, a, theta, a_old, covariance, ll_fun, ll_args,
+        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
                     options.max_steps_line_search, objective_old, msgs);
       }
       a_old = a;
@@ -499,10 +530,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-    //  std::cout << "lmd: " << __LINE__ << std::endl;
-        line_search(objective_new, a, theta, a_old, covariance, ll_fun, ll_args,
+        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
                     options.max_steps_line_search, objective_old, msgs);
-    //  std::cout << "lmd: " << __LINE__ << std::endl;
       }
       a_old = a;
       // Check for convergence
@@ -549,11 +578,11 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  * where `InnerLLTupleArgs` are the elements of `LLTupleArgs`
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
- * @tparam CovarFun Type with a valid `operator(InnerCovarArgs)` where
- * `InnerCovarArgs` are a parameter pack of the element types of `CovarArgs`
+ * @tparam CovarFun Type with a valid `operator(InnerCovarTupleArgs)` where
+ * `InnerCovarTupleArgs` are a parameter pack of the element types of `CovarTupleArgs`
  * @tparam Theta Type derived from `Eigen::EigenBase` with dynamic rows and a
  * single column
- * @tparam CovarArgs A tuple whose elements follow the types required for
+ * @tparam CovarTupleArgs A tuple whose elements follow the types required for
  * `CovarFun`
  * @param[in] ll_fun A log likelihood functor
  * @param[in] ll_args Tuple containing parameters for `LLFun`
@@ -565,21 +594,21 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  * functor
  * @return the log maginal density, p(y | phi)
  */
-template <typename LLFun, typename LLArgs, typename CovarFun,
-          typename Theta, typename CovarArgs,
-          require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr,
+template <typename LLFun, typename LLTupleArgs, typename CovarFun,
+          typename Theta, typename CovarTupleArgs,
+          require_t<is_all_arithmetic_scalar<Theta, CovarTupleArgs, LLTupleArgs>>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr>
-inline double laplace_marginal_density(LLFun&& ll_fun, LLArgs&& ll_args,
+inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                        Theta&& theta_0,
                                        CovarFun&& covariance_function,
-                                       CovarArgs&& covar_args,
+                                       CovarTupleArgs&& covar_args,
                                        const laplace_options& options,
                                        std::ostream* msgs) {
   return laplace_marginal_density_est(
-             std::forward<LLFun>(ll_fun), std::forward<LLArgs>(ll_args),
+             std::forward<LLFun>(ll_fun), std::forward<LLTupleArgs>(ll_args),
              std::forward<Theta>(theta_0),
              std::forward<CovarFun>(covariance_function),
-             std::forward<CovarArgs>(covar_args), options, msgs)
+             std::forward<CovarTupleArgs>(covar_args), options, msgs)
       .lmd;
 }
 
@@ -613,11 +642,11 @@ inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
  * where `InnerLLTupleArgs` are the elements of `LLTupleArgs`
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
- * @tparam CovarFun Type with a valid `operator(InnerCovarArgs)` where
- * `InnerCovarArgs` are a parameter pack of the element types of `CovarArgs`
+ * @tparam CovarFun Type with a valid `operator(InnerCovarTupleArgs)` where
+ * `InnerCovarTupleArgs` are a parameter pack of the element types of `CovarTupleArgs`
  * @tparam Theta Type derived from `Eigen::EigenBase` with dynamic rows and a
  * single column
- * @tparam CovarArgs A tuple whose elements follow the types required for
+ * @tparam CovarTupleArgs A tuple whose elements follow the types required for
  * `CovarFun`
  * @param[in] ll_fun A log likelihood functor
  * @param[in] ll_args Tuple containing parameters for `LLFun`
@@ -630,16 +659,16 @@ inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
  * @return the log maginal density, p(y | phi)
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename Theta, typename CovarArgs,
-          require_t<is_any_var_scalar<Theta, CovarArgs, LLTupleArgs>>* = nullptr,
+          typename Theta, typename CovarTupleArgs,
+          require_t<is_any_var_scalar<Theta, LLTupleArgs, CovarTupleArgs>>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr>
 inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      Theta&& theta_0,
                                      CovarFun&& covariance_function,
-                                     CovarArgs&& covar_args,
+                                     CovarTupleArgs&& covar_args,
                                      const laplace_options& options,
                                      std::ostream* msgs) {
-  auto covar_args_refs = to_ref(std::forward<CovarArgs>(covar_args));
+  auto covar_args_refs = to_ref(std::forward<CovarTupleArgs>(covar_args));
   auto md_est = laplace_marginal_density_est(
       ll_fun, ll_args, value_of(theta_0),
       covariance_function, value_of(covar_args_refs), options, msgs);
@@ -701,7 +730,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         options.hessian_block_size, ll_args, msgs);
   }
   var ret(md_est.lmd);
-  if constexpr (is_any_var_scalar_v<scalar_type_t<CovarArgs>>) {
+  if constexpr (is_any_var_scalar_v<scalar_type_t<CovarTupleArgs>>) {
     auto covar_arg_adj_arena = [&covar_args_refs, &md_est, &R, &s2,&covariance_function, &msgs]() {
       const nested_rev_autodiff nested;
       auto copy_covar_args = laplace_likelihood::internal::conditional_copy_and_promote<is_any_var_scalar, var>(covar_args_refs);
