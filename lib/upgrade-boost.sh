@@ -123,7 +123,7 @@ for lib in $UNUSED; do
     git rm -rf boost/$lib/ boost/$lib.hpp libs/$lib/ --ignore-unmatch
 done
 
-git rm -rf **/*.svg **/*.png **/*.jpg **/*.html **/*.htm **/*.gold **/*.json --ignore-unmatch
+git rm -rf **/*.svg **/*.png **/*.jpg **/*.html **/*.htm **/*.gold --ignore-unmatch
 git rm -rf **/*.pdf **/*.manifest **/*.css **/*.md **/*.qbk **/*.rst **/*.txt --ignore-unmatch
 git commit -m "upgrading to boost v${boost_version}; pruning files"
 
