@@ -1,6 +1,0 @@
-.. _limitations:
-
-Limitations
-===========
-
-*TODO*
