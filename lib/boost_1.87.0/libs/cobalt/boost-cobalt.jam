@@ -1,0 +1,19 @@
+# Copyright (c) 2023 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+
+import feature ;
+
+
+feature.feature boost.cobalt.pmr : std boost-container custom no : propagated composite ;
+feature.compose <boost.cobalt.pmr>std             : <define>BOOST_COBALT_USE_STD_PMR=1 ;
+feature.compose <boost.cobalt.pmr>boost-container : <define>BOOST_COBALT_USE_BOOST_CONTAINER_PMR=1 ;
+feature.compose <boost.cobalt.pmr>custom          : <define>BOOST_COBALT_USE_CUSTOM_PMR=1 ;
+feature.compose <boost.cobalt.pmr>no              : <define>BOOST_COBALT_NO_PMR=1 ;
+
+feature.feature boost.cobalt.executor : any_io_executor use_io_context custom : propagated composite ;
+feature.compose <boost.cobalt.executor>any_io_executor : ;
+feature.compose <boost.cobalt.executor>use_io_context  : <define>BOOST_COBALT_USE_IO_CONTEXT=1 ;
+feature.compose <boost.cobalt.executor>custom_executor : <define>BOOST_COBALT_CUSTOM_EXECUTOR=1 ;

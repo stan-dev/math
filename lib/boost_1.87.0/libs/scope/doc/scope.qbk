@@ -1,0 +1,325 @@
+[library Boost.Scope
+    [quickbook 1.7]
+    [authors [Semashev, Andrey]]
+    [copyright 2022-2024 Andrey Semashev]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@https://www.boost.org/LICENSE_1_0.txt]).
+    ]
+    [id scope]
+    [source-mode c++]
+]
+
+[c++]
+
+[/ Links to external resources /]
+[def __boost_config__ [@https://www.boost.org/doc/libs/release/libs/config/doc/html/index.html Boost.Config]]
+[def __boost_core__ [@https://www.boost.org/doc/libs/release/libs/core/doc/html/index.html Boost.Core]]
+[def __boost_core_functor__ [@https://www.boost.org/doc/libs/release/libs/core/doc/html/core/functor.html `functor`]]
+[def __boost_function__ [@https://www.boost.org/doc/libs/release/doc/html/function.html Boost.Function]]
+[def __boost_outcome__ [@https://www.boost.org/doc/libs/release/libs/outcome/doc/html/index.html Boost.Outcome]]
+[def __boost_scope_exit__ [@https://www.boost.org/doc/libs/release/libs/scope_exit/doc/html/index.html Boost.ScopeExit]]
+[def __boost_smart_ptr__ [@https://www.boost.org/doc/libs/release/libs/smart_ptr/doc/html/smart_ptr.html Boost.SmartPtr]]
+[def __boost_system__ [@https://www.boost.org/doc/libs/release/libs/system/doc/html/system.html Boost.System]]
+
+[template github_issue[key][@https://github.com/boostorg/scope/issues/[key] #[key]]]
+[template github_pr[key][@https://github.com/boostorg/scope/pull/[key] PR#[key]]]
+
+[/ Auto-generated macros that refer to Reference sections /]
+[import tmp/top_level_reference.qbk]
+
+[section:intro Introduction]
+
+The Boost.Scope library is a collection of utilities helping with code execution upon leaving a scope and automatic resource management. The library contains
+components that are similar to those specified in the [@https://cplusplus.github.io/fundamentals-ts/v3.html C++ Extensions for Library Fundamentals, Version 3]
+technical specification (or TS, for short), in the [@https://cplusplus.github.io/fundamentals-ts/v3.html#scope.syn `<experimental/scope>`] standard library header,
+originally defined in [@https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0052r10.pdf P0052R10]. The library also contains extensions to the TS that
+improve usability and efficiency of the components.
+
+The components provided by the library can be divided into two categories:
+
+* A set of scope guards that allow executing arbitrary code when the scope guard is destroyed,
+* A generic resource wrapper that automatically frees the owned resource upon destruction.
+
+The library defines its components in namespace `boost::scope`. For brevity, the namespace qualification may be omitted in this documentation; readers should assume
+that unqualified names like `scope_exit` or `unique_resource` are defined in `boost::scope`.
+
+Scope guards allow the user to execute a piece of code (an action) upon leaving the scope where the scope guard is declared. Depending on the scope guard, the action
+can be executed unconditionally, upon leaving the scope normally or due to an exception, or even according to a user-specified condition. This can be useful in
+a variety of use cases, some of which are illustrated below.
+
+[table Syntax overview of Boost.Scope scope guards
+[[C++11][C++17]]
+[[
+```
+class adder
+{
+    int x, y;
+
+public:
+    // Computes a sum of integers
+    int compute()
+    {
+        // Reset variables on return or exception
+        auto cleanup = boost::scope::make_scope_exit([this]
+        {
+            x = 0;
+            y = 0;
+        });
+
+        long long int sum = static_cast< long long int >(x) +
+            static_cast< long long int >(y);
+        if (sum < std::numeric_limits< int >::min() ||
+            sum > std::numeric_limits< int >::max())
+        {
+            throw std::overflow_error("Integer overflow");
+        }
+
+        return static_cast< int >(sum);
+    }
+};
+```
+]
+[
+```
+class adder
+{
+    int x, y;
+
+public:
+    // Computes a sum of integers
+    int compute()
+    {
+        // Reset variables on return or exception.
+        // Anonymous scope guard.
+        BOOST_SCOPE_DEFER [this]
+        {
+            x = 0;
+            y = 0;
+        };
+
+        long long int sum = static_cast< long long int >(x) +
+            static_cast< long long int >(y);
+        if (sum < std::numeric_limits< int >::min() ||
+            sum > std::numeric_limits< int >::max())
+        {
+            throw std::overflow_error("Integer overflow");
+        }
+
+        return static_cast< int >(sum);
+    }
+};
+```
+]]
+[[
+```
+template< typename Object >
+class collection
+{
+    std::set< Object > objects;
+
+public:
+    // Adds a new object to the collection
+    Object& add_object()
+    {
+        auto it = objects.emplace();
+
+        // Revert object insertion on exception
+        auto cleanup = boost::scope::make_scope_fail([this, it]
+        {
+            objects.erase(it);
+        });
+
+        // Throws on error
+        it->on_added(*this);
+
+        return *it;
+    }
+};
+```
+]
+[
+```
+template< typename Object >
+class collection
+{
+    std::set< Object > objects;
+
+public:
+    // Adds a new object to the collection
+    Object& add_object()
+    {
+        auto it = objects.emplace();
+
+        // Revert object insertion on exception
+        boost::scope::scope_fail cleanup{[this, it]
+        {
+            objects.erase(it);
+        }};
+
+        // Throws on error
+        it->on_added(*this);
+
+        return *it;
+    }
+};
+```
+]]
+[[
+```
+// Writes a list of strings to the file, in CSV format
+bool save_as_csv(std::vector< std::string > const& strings,
+    std::string const& filename)
+{
+    std::ofstream file(filename.c_str(),
+        std::ios_base::out | std::ios_base::trunc);
+    if (!file.is_open())
+        return false;
+
+    // Set a scope guard to remove the partially written file
+    // in case of error - exception or not
+    auto remove_guard = boost::scope::make_scope_exit([&file, &filename]
+    {
+        file.close(); // close the file to allow remove() to succeed on Windows
+        std::remove(filename.c_str());
+    });
+
+    bool first = true;
+    for (auto const& str : strings)
+    {
+        if (!first)
+            file << ',';
+        else
+            first = false;
+
+        file << '"' << str << '"';
+
+        if (file.fail())
+            return false;
+    }
+
+    file << std::endl;
+    if (file.fail())
+        return false;
+
+    // Commit the operation
+    remove_guard.set_active(false);
+
+    return true;
+}
+```
+]
+[
+```
+// Writes a list of strings to the file, in CSV format
+bool save_as_csv(std::vector< std::string > const& strings,
+    std::string const& filename)
+{
+    std::ofstream file(filename.c_str(),
+        std::ios_base::out | std::ios_base::trunc);
+    if (!file.is_open())
+        return false;
+
+    // Set a scope guard to remove the partially written file
+    // in case of error - exception or not
+    boost::scope::scope_exit remove_guard{[&file, &filename]
+    {
+        file.close(); // close the file to allow remove() to succeed on Windows
+        std::remove(filename.c_str());
+    }};
+
+    bool first = true;
+    for (auto const& str : strings)
+    {
+        if (!first)
+            file << ',';
+        else
+            first = false;
+
+        file << '"' << str << '"';
+
+        if (file.fail())
+            return false;
+    }
+
+    file << std::endl;
+    if (file.fail())
+        return false;
+
+    // Commit the operation
+    remove_guard.set_active(false);
+
+    return true;
+}
+```
+]]
+]
+
+There is some overlap between scope guards provided by this library and __boost_scope_exit__. Compared to __boost_scope_exit__, Boost.Scope offers simpler syntax
+(especially with C++17 capable compilers) and new features for specific use cases. Detailed comparison between scope guards provided by Boost.Scope and
+__boost_scope_exit__ is given in a [link scope.scope_guards.comparison_with_boost_scope_exit separate section].
+
+Unique resource wrapper provided by Boost.Scope is a generalization of smart pointers like `std::unique_ptr` and `boost::scoped_ptr` from __boost_smart_ptr__. While
+smart pointers are suitable for managing resources represented by pointers (e.g. objects in dynamically allocated memory), unique resource wrapper can be used
+with many more kinds of resource types, such as integers (e.g. POSIX file descriptors) and user-defined types.
+
+    // Fills the buffer with random bytes from system RNG. Returns 0 on success, otherwise an error code.
+    int get_random_bytes(unsigned char* bytes, std::size_t size)
+    {
+        // Open RNG device and wrap the returned POSIX file descriptor in unique_resource.
+        // This wrapper will automatically close the file descriptor upon destruction by invoking fd_deleter on it.
+        boost::scope::unique_resource< int, boost::scope::fd_deleter, boost::scope::fd_resource_traits > fd(open("/dev/urandom", O_RDONLY));
+
+        // fd_resource_traits allows the unique_resource to recognize when open() returns a valid file descriptor
+        // and when it fails and returns -1. In the latter case, the constructed unique_resource is unallocated,
+        // which we test below.
+        if (!fd)
+            return errno;
+
+        // Read random bytes until the buffer is filled or an error occurs
+        std::size_t read_size = 0u;
+        while (read_size < size)
+        {
+            ssize_t res = read(fd.get(), bytes + read_size, size - read_size);
+            if (res < 0)
+            {
+                int err = errno;
+                if (err == EINTR)
+                    continue;
+
+                return err;
+            }
+
+            if (res == 0)
+                return ENODATA;
+
+            read_size += res;
+        }
+
+        return 0;
+    }
+
+[endsect]
+
+[section:install_compat Installation and compatibility]
+
+This library is header-only, it does not require separate compilation. You can add the path to Boost headers to your project, include the required Boost.Scope header
+and then use the component provided by that header in your code.
+
+The library requires a C++11 compiler at the minimum. For certain fetures, C++17 support is required. The following compilers were tested with the library:
+
+* gcc 4.8 and newer
+* clang 3.5 and newer
+* MSVC 14.0 and newer
+
+The library components are agnostic to the operating system.
+
+[endsect]
+
+[include scope_guards.qbk]
+[include unique_resource.qbk]
+
+[xinclude tmp/top_level_reference.xml]
+
+[include changelog.qbk]

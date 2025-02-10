@@ -1,0 +1,76 @@
+# Input
+source-root: ..
+input:
+  # Directories that contain documented source files
+  include:
+    - ../include
+  # Patterns to filter out the source-files in the directories
+  file-patterns:
+    - '*.hpp'
+
+# Filters
+filters:
+  symbols:
+    exclude:
+      # We don't want namespace pages for other libraries
+      - 'std'
+      - 'std::*'
+      - 'boost::system'
+      - 'boost::empty_'
+      - 'boost::system::*'
+      # Exclude implementation details
+      - 'boost::urls::detail'
+      - 'boost::urls::*::detail'
+      # Exclude implementation details defined elsewhere
+      - 'boost::urls::*_unsafe'
+      - 'boost::urls::*_t'
+      - 'boost::urls::make_error_code'
+      - 'boost::urls::make_void'
+      - 'boost::urls::grammar::*_t'
+      - 'boost::urls::grammar::make_error_*'
+      - 'boost::urls::grammar::operator_*'
+      - 'boost::urls::string_token::*_t'
+    include:
+      - 'boost::urls::no_value_t'
+inaccessible-members: never
+inaccessible-bases: never
+implementation-defined:
+  - 'boost::urls::implementation_defined'
+  - 'boost::urls::grammar::implementation_defined'
+  - 'boost::urls::string_token::implementation_defined'
+see-below:
+  - 'boost::urls::see_below'
+  - 'boost::urls::grammar::see_below'
+  - 'boost::urls::string_token::see_below'
+
+# Generator
+generate: adoc
+base-url: https://www.github.com/boostorg/url/blob/develop/include/ # boost/url/url_view.hpp
+
+# Style
+verbose: true
+multipage: true
+
+# The target for MrDocs simply includes all symbols defined in all
+# headers with the appropriate compilation options.
+# Nothing else should be included in the MrDocs configuration or 
+# would be useful to MrDocs.
+#
+# This single source file not only includes all symbols (the source
+# files do not collectively include all headers) but also makes MrDocs
+# run much faster than relying on the entire library.
+#
+# The time to extract the declarations went from ~8m6s to ~3s in our
+# experiments: a 162x speedup while including all symbols!
+#
+# In practice, this special target is simply emulating the
+# default behavior of the standardese tool with MrDocs, which
+# requires the user to clearly specify the targets via the
+# compilation database.
+#
+# The BOOST_URL_MRDOCS_BUILD=ON is the only option we usually need
+# here.
+# The other options are set just to ensure other targets are
+# ignored even if these options are set as ON in the cache.
+#
+cmake: '-D BOOST_URL_MRDOCS_BUILD=ON -D CMAKE_CXX_STANDARD=20 -D BOOST_URL_BUILD_FUZZERS=OFF -D BOOST_URL_BUILD_EXAMPLES=OFF -D BOOST_URL_BUILD_TESTS=OFF -D BUILD_TESTING=OFF'

@@ -1,0 +1,287 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>pool_params</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__pipeline_request/clear.html" title="pipeline_request::clear">
+<link rel="next" href="boost__mysql__pool_params/server_address.html" title="pool_params::server_address">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__pipeline_request/clear.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__pool_params/server_address.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__pool_params"></a><a class="link" href="boost__mysql__pool_params.html" title="pool_params">pool_params</a>
+</h4></div></div></div>
+<p>
+        Configuration parameters for <a class="link" href="boost__mysql__connection_pool.html" title="connection_pool"><code class="computeroutput"><span class="identifier">connection_pool</span></code></a>.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__pool_params.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__pool_params.synopsis"></a></span><a class="link" href="boost__mysql__pool_params.html#mysql.ref.boost__mysql__pool_params.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/pool_params.hpp" target="_top">boost/mysql/pool_params.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">pool_params</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__pool_params.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__pool_params.data_members"></a></span><a class="link" href="boost__mysql__pool_params.html#mysql.ref.boost__mysql__pool_params.data_members">Data
+        Members</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/connect_timeout.html" title="pool_params::connect_timeout">connect_timeout</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The timeout to use when connecting.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/connection_executor.html" title="pool_params::connection_executor">connection_executor</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The executor to be used by individual connections created by the
+                  pool.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/database.html" title="pool_params::database">database</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Database name that connections created by the pool will use when
+                  connecting.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/initial_buffer_size.html" title="pool_params::initial_buffer_size">initial_buffer_size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Initial size (in bytes) of the internal buffer for the connections
+                  created by the pool.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/initial_size.html" title="pool_params::initial_size">initial_size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Initial number of connections to create.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/max_size.html" title="pool_params::max_size">max_size</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Max number of connections to create.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/multi_queries.html" title="pool_params::multi_queries">multi_queries</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Whether to enable support for semicolon-separated text queries
+                  for connections created by the pool.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/password.html" title="pool_params::password">password</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Password that connections created by the pool should use.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/ping_interval.html" title="pool_params::ping_interval">ping_interval</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The health-check interval.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/ping_timeout.html" title="pool_params::ping_timeout">ping_timeout</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The timeout to use for pings and session resets.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/retry_interval.html" title="pool_params::retry_interval">retry_interval</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The interval between connect attempts.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/server_address.html" title="pool_params::server_address">server_address</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Determines how to establish a physical connection to the MySQL
+                  server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/ssl.html" title="pool_params::ssl">ssl</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Controls whether connections created by the pool will use TLS or
+                  not.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/ssl_ctx.html" title="pool_params::ssl_ctx">ssl_ctx</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The SSL context to use for connections using TLS.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/thread_safe.html" title="pool_params::thread_safe">thread_safe</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Enables or disables thread-safety.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__pool_params/username.html" title="pool_params::username">username</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  User name that connections created by the pool should use to authenticate
+                  as.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__pool_params.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__pool_params.description"></a></span><a class="link" href="boost__mysql__pool_params.html#mysql.ref.boost__mysql__pool_params.description">Description</a>
+      </h5>
+<p>
+        This is an owning type.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__pipeline_request/clear.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__pool_params/server_address.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

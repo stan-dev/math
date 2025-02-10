@@ -1,0 +1,17 @@
+////
+Copyright 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+[#acknowledgments]
+= Acknowledgments
+:idprefix: ack_
+
+Special thanks to the following people (non-inclusive list):
+
+    - Peter Dimov for providing technical guidance and contributing to the library throughout development.
+    - Junekey Jeon for developing and answering my questions about his integer-formatting, Dragonbox, and Floff.
+    - Chris Kormanyos for serving as the library review manager.
+    - Stephan T. Lavavej for providing the basis for the benchmarks.
+    - All that reviewed the library and provided feedback to make it better.

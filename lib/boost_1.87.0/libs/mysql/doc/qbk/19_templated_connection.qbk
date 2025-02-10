@@ -1,0 +1,337 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:templated_connection The legacy connection class]
+[nochunk]
+
+You may encounter code using [reflink connection] or its aliases,
+[reflink tcp_connection], [reflink tcp_ssl_connection],
+[reflink unix_connection]. This was the
+main way to create client connections until Boost 1.87, when
+[reflink any_connection] became stable.
+
+`connection` is not deprecated, but we don't recommend using it in new code.
+[reflink any_connection] is simpler to use and provides the same
+level of efficiency.
+
+
+
+[heading Streams and type aliases]
+
+[reflink connection] is templated on the [reflink Stream] class,
+which implements the transport layer to read and write wire bytes.
+
+The library provides helper type aliases for the most common cases:
+
+[table
+    [
+        [Transport]
+        [Stream type]
+        [Type alias]
+    ]
+    [
+        [SSL over TCP]
+        [`boost::asio::ssl::stream<boost::asio::ip::tcp::socket>`]
+        [
+            [reflink tcp_ssl_connection]
+        ]
+    ]
+    [
+        [Plaintext TCP]
+        [`boost::asio::ip::tcp::socket`]
+        [
+            [reflink tcp_connection]
+        ]
+    ]
+    [
+        [UNIX sockets]
+        [`boost::asio::local::stream_protocol::socket`]
+        [
+            [reflink unix_connection]
+
+            Only available if `BOOST_ASIO_HAS_LOCAL_SOCKETS` is defined.
+        ]
+    ]
+]
+
+In contrast, [reflink any_connection] is not templated.
+The same three transports above can be used with `any_connection`.
+
+
+
+
+
+[heading Constructing a connection]
+
+`connection`'s constructor takes the same arguments as the underlying `Stream` constructor.
+For a [reflink tcp_ssl_connection], we need to pass an execution context and
+a __ssl_context__:
+
+[templated_connection_creation]
+
+
+
+
+
+[heading Connection establishment]
+
+Use [refmem connection connect] or [refmem connection async_connect] to perform connection
+establishment. This function takes two parameters:
+
+* An endpoint to connect to. The endpoint type depends on the stream type.
+  For TCP connections, it's an [asioreflink ip__tcp/endpoint asio::ip::tcp::endpoint],
+  which holds an IP address and a port. For UNIX sockets, it'd be an
+  [asioreflink local__stream_protocol/endpoint asio::local::stream_protocol::endpoint],
+  holding a UNIX path.
+* A [reflink handshake_params] instance, containing all the parameters required
+  to perform the MySQL handshake.
+
+If you're using TCP, you must perform hostname resolution yourself.
+For example:
+
+[templated_connection_connect]
+
+As opposed to `connect_params`, [reflink handshake_params] does not own
+the strings it contains (like the username and the password). It's your responsibility
+to keep them alive until the connect operation completes.
+
+All functionality in [reflink handshake_params] has an equivalent in
+[reflink connect_params]. See the [link mysql.templated_connection.reference reference table]
+for more info.
+
+
+
+
+[heading Using a connection]
+
+Once connected, [reflink connection] and [reflink any_connection] can
+be used almost equivalently:
+
+[templated_connection_use]
+
+Some differences:
+
+* Some newer APIs, like [refmemunq any_connection async_set_character_set]
+  and [refmemunq any_connection async_run_pipeline], are not present
+  in [reflink connection].
+* By default, `connection`'s completion token is `asio::deferred`
+  instead of `mysql::with_diagnostics(asio::deferred)`. When using
+  coroutines with exceptions, you need to pass `mysql::with_diagnostics`
+  explicitly if you want exceptions with extra info.
+
+
+
+
+
+[heading Terminating a connection]
+
+As with `any_connection`, use [refmem connection close] or [refmemunq connection async_close]:
+
+
+
+
+
+[heading TLS support]
+
+To use TLS, you must use a [reflink connection] with a 
+[reflink Stream] that supports TLS.
+A ['TLS-enabled stream] must inherit from
+[asioreflink ssl__stream_base ssl::stream_base].
+The most common is
+[asioreflink ssl__stream ssl::stream] (used by [reflink tcp_ssl_connection]).
+
+When using a stream type that does not support TLS, like [reflink tcp_connection]
+or [reflink unix_connection], [refmem handshake_params ssl] is ignored.
+
+
+
+
+[heading UNIX sockets]
+
+
+To use UNIX sockets, use [reflink unix_connection]:
+
+[templated_connection_unix]
+
+
+
+
+[heading Handshake and quit]
+
+In addition to [refmemunq connection connect] and [refmemunq connection close],
+`connection` exposes two additional I/O operations:
+
+* [refmem connection handshake] is like `connect`, but doesn't connect
+  the underlying `Stream`.
+* [refmem connection quit] is like `close`, but doesn't close
+  the underlying `Stream`.
+
+You can use them like this:
+
+[templated_connection_handshake_quit]
+
+These functions can be useful in the following cases:
+
+* When you want to perform stream connection establishment yourself.
+  For example, when you want to use the range `asio::connect`
+  overloads, as in the example above.
+* When using an exotic `Stream` type. `connect` and `close`
+  can only be used if the `Stream` type satisfies [reflink SocketStream] - 
+  that is, when its lowest layer type is a socket. This holds for
+  all the stream types in the table above, but is not the case
+  for [asioreflink windows__stream_handle windows::stream_handle].
+
+
+
+
+[heading Reconnection]
+
+The reconnection capabilities of `connection` are more limited than those of `any_connection`.
+Concretely, when using TLS-capable streams, a `connection` can't be re-used after
+it's closed or encounters a fatal error. This is because [asioreflink ssl__stream ssl::stream]
+can't be re-used. This limitation is not present in [reflink any_connection].
+
+If you are using [reflink tcp_connection] or [reflink unix_connection],
+or any other stream supporting reconnection, and you want to re-use a connection:
+
+* Call [refmem connection close], or manually close the underlying stream,
+  even if you encountered a fatal error.
+* Call [refmem connection connect] normally, even if the close operation failed.
+* If your [refmem connection connect] operation failed, you can try opening it again
+  by simply calling [refmem connection connect] again.
+
+
+If your `Stream` type doesn't fulfill the [reflink SocketStream] concept,
+you need to use [refmemunq connection handshake] and [refmemunq connection quit]
+instead of `connect` and `close`, and perform transport connection establishment yourself.
+
+As with `any_connection`, `connection` doesn't perform any built-in retry strategy.
+
+
+
+
+
+[heading Migrating to any_connection]
+
+We recommend migrating code using templated connections to `any_connection`.
+In most cases, you only need to change connection establishment code
+to use [reflink connect_params] instead of [reflink handshake_params].
+
+The following table summarizes all the differences between the
+two connection types, and provides migration paths for each feature
+you may use:
+
+[table:reference
+    [
+        [Feature]
+        [any_connection]
+        [connection]
+    ]
+    [
+        [Hostname resolution]
+        [Performed by [refmem any_connection async_connect]]
+        [Needs to be performed manually]
+    ]
+    [
+        [Credentials]
+        [
+            [refmem connect_params username], [refmem connect_params password]
+        ]
+        [
+            [refmem handshake_params username], [refmem handshake_params password]
+        ]
+    ]
+    [
+        [Database to use]
+        [[refmem connect_params database]]
+        [[refmem handshake_params database]]
+    ]
+    [
+        [Setting TLS options]
+        [
+            [refmem any_connection_params ssl_context]
+        ]
+        [
+            Pass a __ssl_context__ to [reflink tcp_ssl_connection]'s constructor.
+        ]
+    ]
+    [
+        [TLS negotiation]
+        [[refmem connect_params ssl]. Ignored for if using UNIX sockets. Defaults to `mysql::ssl_mode::enable`.]
+        [[refmem handshake_params ssl]. Ignored if `Stream` is not TLS-enabled. Defaults to `mysql::ssl_mode::require`.]
+    ]
+    [
+        [Connection collation]
+        [[refmem connect_params connection_collation]]
+        [[refmem handshake_params connection_collation]]
+    ]
+    [
+        [Enabling multi-queries]
+        [[refmem connect_params multi_queries]]
+        [[refmem handshake_params multi_queries]]
+    ]
+    [
+        [UNIX sockets]
+        [Use a UNIX socket path in [refmem connect_params server_address]]
+        [Use [reflink unix_connection] and pass a UNIX endpoint to [refmem connection connect]]
+    ]
+    [
+        [Windows named pipes]
+        [Not available yet]
+        [Use [asioreflink windows__stream_handle windows::stream_handle] as stream type]
+    ]
+    [
+        [Changing the initial size of the internal network buffer]
+        [[refmem any_connection_params initial_buffer_size]]
+        [Pass a [reflink buffer_params] instance to connection's constructor]
+    ]
+    [
+        [Changing the network buffer size limit]
+        [[refmem any_connection_params max_buffer_size]]
+        [Not available: no limit on the network buffer size]
+    ]
+    [
+        [Access the underlying stream]
+        [Unavailable]
+        [[refmem connection stream]]
+    ]
+    [
+        [Raw handshake and quit]
+        [Unavailable]
+        [[refmem connection handshake], [refmem connection quit]]
+    ]
+    [
+        [Reconnection]
+        [[refmem any_connection async_connect] can always be used]
+        [
+            Requires closing the current connection first.
+            Unavailable for [reflink tcp_ssl_connection].
+        ]
+    ]
+    [
+        [Changing the connection's character set]
+        [[refmem any_connection async_set_character_set]]
+        [Unavailable]
+    ]
+    [
+        [Running pipelines]
+        [[refmem any_connection async_run_pipeline]]
+        [Unavailable]
+    ]
+    [
+        [Including diagnostics in coroutine exceptions]
+        [Enabled by default]
+        [[templated_connection_with_diagnostics]]
+    ]
+    [
+        [Connection pooling]
+        [[reflink connection_pool]]
+        [Unavailable]
+    ]
+]
+
+[endsect]

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Quick Look :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/quicklook.html">
+    <link rel="prev" href="index.html">
+    <link rel="next" href="urls/index.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../_/css/boostlook.css">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class=" is-current-page" data-depth="1">
+            <a class="nav-link" href="quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="quicklook.html">Quick Look</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="index.html"><span class="material-symbols-outlined" title="Previous: Boost.URL">arrow_back</span></a>
+    <a accesskey="p" href="urls/index.html"><span class="material-symbols-outlined" title="Next: URLs">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Quick Look</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section is intended to give the reader a brief overview of the features and interface style of the library.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_integration"><a class="anchor" href="#_integration"></a>Integration</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Sample code and identifiers used throughout are written as if the following declarations are in effect:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/url.hpp&gt;
+using namespace boost::urls;</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We begin by including the library header file which brings all the symbols into scope.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">#include &lt;boost/url.hpp&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, individual headers may be included to obtain the declarations for specific types.</p>
+</div>
+<div class="paragraph">
+<p>Boost.URL is a compiled library.
+You need to link your program with the Boost.URL built library.
+You must install binaries in a location that can be found by your linker.</p>
+</div>
+<div class="paragraph">
+<p>If you followed the <a href="http://www.boost.org/doc/libs/release/more/getting_started/index.html" target="blank_">Boost Getting Started</a>
+instructions, that&#8217;s already been done for you.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parsing"><a class="anchor" href="#_parsing"></a>Parsing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Say you have the following URL that you want to parse:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::core::string_view s = "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor";</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example, we use the <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code> type provided by <a href="https://www.boost.org/libs/core">Boost.Core</a>.
+This is a
+<code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code> implementation that is implicitly convertible to <code><a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank" rel="noopener">std::string_view</a></code>.
+The library namespace includes the aliases <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code>, <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_error_code" target="_blank" rel="noopener">error_code</a></code>, and
+<code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_resultt_e" target="_blank" rel="noopener">result</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>You can parse the string by calling this function:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::system::result&lt;url_view&gt; r = parse_uri( s );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The function <code><a href="reference/boost/urls/parse_uri.html" class="xref page">parse_uri</a></code> returns an object of type <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_resultt_e" target="_blank" rel="noopener">result</a>&#x3C;<a href="reference/boost/urls/url_view.html" class="xref page">url_view</a>&#x3E;</code> which is a container resembling a variant that holds either an error or an object.
+A number of functions are available to parse different types of URL.</p>
+</div>
+<div class="paragraph">
+<p>We can immediately call <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_checked_value_access_2" target="_blank" rel="noopener">result::value</a></code> to obtain a <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u = r.value();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or simply</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u = *r;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When there are no errors, <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_checked_value_access_2" target="_blank" rel="noopener">result::value</a></code>
+returns an instance of <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code>, which holds the parsed result.
+<code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_checked_value_access_2" target="_blank" rel="noopener">result::value</a></code>
+throws an exception on a parsing error.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, the functions
+<code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_queries_2" target="_blank" rel="noopener">result::has_value</a></code> and
+<code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_queries_2" target="_blank" rel="noopener">result::has_error</a></code> could also be used to check if the string has been parsed without errors.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is worth noting that <code><a href="reference/boost/urls/parse_uri.html" class="xref page">parse_uri</a></code> does not allocate any memory dynamically.
+Like a <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code>, a <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code> does not retain ownership of the underlying string buffer.</p>
+</div>
+<div class="paragraph">
+<p>As long as the contents of the original string are unmodified, constructed URL views always contain a valid URL in its correctly serialized form.</p>
+</div>
+<div class="paragraph">
+<p>If the input does not match the URL grammar, an error code is reported through <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_resultt_e" target="_blank" rel="noopener">result</a></code> rather than exceptions.
+Exceptions only thrown on excessive input length.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_accessing"><a class="anchor" href="#_accessing"></a>Accessing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Accessing the parts of the URL is easy:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u( "https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor" );
+assert(u.scheme() == "https");
+assert(u.authority().buffer() == "user:pass@example.com:443");
+assert(u.userinfo() == "user:pass");
+assert(u.user() == "user");
+assert(u.password() == "pass");
+assert(u.host() == "example.com");
+assert(u.port() == "443");
+assert(u.path() == "/path/to/my-file.txt");
+assert(u.query() == "id=42&amp;name=John Doe Jingleheimer-Schmidt");
+assert(u.fragment() == "page anchor");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>URL paths can be further divided into path segments with the function <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view::segments</a></code>.
+Although URL query strings are often used to represent key/value pairs, this interpretation is not defined by <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>.
+Users can treat the query as a single entity.
+<code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code> provides the function
+<code><a href="reference/boost/urls/url_view.html" class="xref page">url_view::params</a></code> to extract this view of key/value pairs.</p>
+</div>
+<div id="_tabs_1" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_1_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_1_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_1_code--panel" class="tabpanel" aria-labelledby="_tabs_1_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">for (auto seg: u.segments())
+    std::cout &lt;&lt; seg &lt;&lt; "\n";
+std::cout &lt;&lt; "\n";
+
+for (auto param: u.params())
+    std::cout &lt;&lt; param.key &lt;&lt; ": " &lt;&lt; param.value &lt;&lt; "\n";
+std::cout &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_1_output--panel" class="tabpanel" aria-labelledby="_tabs_1_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">path
+to
+my-file.txt
+
+id: 42
+name: John Doe Jingleheimer-Schmidt</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>These functions return views referring to substrings and sub-ranges of the underlying URL.
+By simply referencing the relevant portion of the URL string internally, its components can represent percent-decoded strings and be converted to other types without any previous memory allocation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::string h = u.host();
+assert(h == "example.com");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A special <code><a href="reference/boost/urls/string_token.html" class="xref page">string_token</a></code> type can also be used to specify how a portion of the URL should be encoded and returned.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::string h = "host: ";
+u.host(string_token::append_to(h));
+assert(h == "host: example.com");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These functions might also return empty strings</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u1 = parse_uri( "http://www.example.com" ).value();
+assert(u1.fragment().empty());
+assert(!u1.has_fragment());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>for both empty and absent components</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url_view u2 = parse_uri( "http://www.example.com/#" ).value();
+assert(u2.fragment().empty());
+assert(u2.has_fragment());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Many components do not have corresponding functions such as
+<code><a href="reference/boost/urls/url_view.html" class="xref page">url_view::has_authority</a></code>
+to check for their existence.
+This happens because some URL components are mandatory.</p>
+</div>
+<div class="paragraph">
+<p>When applicable, the encoded components can also be directly accessed through a <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">string_view</a></code> without any need to allocate memory:</p>
+</div>
+<div id="_tabs_2" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_2_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_2_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_2_code--panel" class="tabpanel" aria-labelledby="_tabs_2_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::cout &lt;&lt;
+    "url       : " &lt;&lt; u                     &lt;&lt; "\n"
+    "scheme    : " &lt;&lt; u.scheme()            &lt;&lt; "\n"
+    "authority : " &lt;&lt; u.encoded_authority() &lt;&lt; "\n"
+    "userinfo  : " &lt;&lt; u.encoded_userinfo()  &lt;&lt; "\n"
+    "user      : " &lt;&lt; u.encoded_user()      &lt;&lt; "\n"
+    "password  : " &lt;&lt; u.encoded_password()  &lt;&lt; "\n"
+    "host      : " &lt;&lt; u.encoded_host()      &lt;&lt; "\n"
+    "port      : " &lt;&lt; u.port()              &lt;&lt; "\n"
+    "path      : " &lt;&lt; u.encoded_path()      &lt;&lt; "\n"
+    "query     : " &lt;&lt; u.encoded_query()     &lt;&lt; "\n"
+    "fragment  : " &lt;&lt; u.encoded_fragment()  &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_2_output--panel" class="tabpanel" aria-labelledby="_tabs_2_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">url       : https://user:pass@example.com:443/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt#page%20anchor
+scheme    : https
+authority : user:pass@example.com:443
+userinfo  : user:pass
+user      : user
+password  : pass
+host      : example.com
+port      : 443
+path      : /path/to/my%2dfile.txt
+query     : id=42&amp;name=John%20Doe+Jingleheimer%2DSchmidt
+fragment  : page%20anchor</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_percent_encoding"><a class="anchor" href="#_percent_encoding"></a>Percent-Encoding</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An instance of <code><a href="reference/boost/urls/decode_view.html" class="xref page">decode_view</a></code> provides a number of functions to persist a decoded string:</p>
+</div>
+<div id="_tabs_3" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_3_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_3_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_3_code--panel" class="tabpanel" aria-labelledby="_tabs_3_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">decode_view dv("id=42&amp;name=John%20Doe%20Jingleheimer%2DSchmidt");
+std::cout &lt;&lt; dv &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_3_output--panel" class="tabpanel" aria-labelledby="_tabs_3_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">id=42&amp;name=John Doe Jingleheimer-Schmidt</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><code><a href="reference/boost/urls/decode_view.html" class="xref page">decode_view</a></code> and its decoding functions are designed to perform no memory allocations unless the algorithm where its being used needs the result to be in another container.
+The design also permits recycling objects to reuse their memory, and at least minimize the number of allocations by deferring them until the result is in fact needed by the application.</p>
+</div>
+<div class="paragraph">
+<p>In the example above, the memory owned by <code>str</code> can be reused to store other results.
+This is also useful when manipulating URLs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">u1.set_host(u2.host());</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If <code>u2.host()</code> returned a value type, then two memory allocations would be necessary for this operation.
+Another common use case is converting URL path segments into filesystem paths:</p>
+</div>
+<div id="_tabs_4" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_4_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_4_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_4_code--panel" class="tabpanel" aria-labelledby="_tabs_4_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">boost::filesystem::path p;
+for (auto seg: u.segments())
+    p.append(seg.begin(), seg.end());
+std::cout &lt;&lt; "path: " &lt;&lt; p &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_4_output--panel" class="tabpanel" aria-labelledby="_tabs_4_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">path: "path/to/my-file.txt"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example, only the internal allocations of
+<code><a href="https://www.boost.org/doc/libs/master/libs/filesystem/doc/reference.html#class-path" target="_blank" rel="noopener">filesystem::path</a></code> need to happen.
+In many common use cases, no allocations are necessary at all, such as finding the appropriate route for a URL in a web server:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto match = [](
+    std::vector&lt;std::string&gt; const&amp; route,
+    url_view u)
+{
+    auto segs = u.segments();
+    if (route.size() != segs.size())
+        return false;
+    return std::equal(
+        route.begin(),
+        route.end(),
+        segs.begin());
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This allows us to easily match files in the document root directory of a web server:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">std::vector&lt;std::string&gt; route =
+    {"community", "reviews.html"};
+if (match(route, u))
+{
+    handle_route(route, u);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_compound_elements"><a class="anchor" href="#_compound_elements"></a>Compound elements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The path and query parts of the URL are treated specially by the library.
+While they can be accessed as individual encoded strings, they can also be accessed through special view types.</p>
+</div>
+<div class="paragraph">
+<p>This code calls
+<code><a href="reference/boost/urls/url_view.html" class="xref page">url_view::encoded_segments</a></code>
+to obtain the path segments as a container that returns encoded strings:</p>
+</div>
+<div id="_tabs_5" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_5_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_5_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_5_code--panel" class="tabpanel" aria-labelledby="_tabs_5_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">segments_encoded_view segs = u.encoded_segments();
+for( auto v : segs )
+{
+    std::cout &lt;&lt; v &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_5_output--panel" class="tabpanel" aria-labelledby="_tabs_5_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">path
+to
+my-file.txt</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>As with other <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code> functions which return encoded strings, the encoded segments container does not allocate memory.
+Instead, it returns views to the corresponding portions of the underlying encoded buffer referenced by the URL.</p>
+</div>
+<div class="paragraph">
+<p>As with other library functions, <code><a href="reference/boost/urls/decode_view.html" class="xref page">decode_view</a></code> permits accessing elements of composed elements while avoiding memory allocations entirely:</p>
+</div>
+<div id="_tabs_6" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_6_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_6_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_6_code--panel" class="tabpanel" aria-labelledby="_tabs_6_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">segments_encoded_view segs = u.encoded_segments();
+
+for( pct_string_view v : segs )
+{
+    decode_view dv = *v;
+    std::cout &lt;&lt; dv &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_6_output--panel" class="tabpanel" aria-labelledby="_tabs_6_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">path
+to
+my-file.txt</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="_tabs_7" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_7_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_7_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_7_code--panel" class="tabpanel" aria-labelledby="_tabs_7_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">params_encoded_view params_ref = u.encoded_params();
+
+for( auto v : params_ref )
+{
+    decode_view dk(v.key);
+    decode_view dv(v.value);
+
+    std::cout &lt;&lt;
+        "key = " &lt;&lt; dk &lt;&lt;
+        ", value = " &lt;&lt; dv &lt;&lt; "\n";
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_7_output--panel" class="tabpanel" aria-labelledby="_tabs_7_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">key = id, value = 42
+key = name, value = John Doe</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_modifying"><a class="anchor" href="#_modifying"></a>Modifying</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The library provides the containers <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> and <code><a href="reference/boost/urls/static_url.html" class="xref page">static_url</a></code> which supporting modification of the URL contents.
+A <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> or <code><a href="reference/boost/urls/static_url.html" class="xref page">static_url</a></code> must be constructed from an existing <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>Unlike the <code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code>, which does not gain ownership of the underlying character buffer, the <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> container uses the default allocator to control a resizable character buffer which it owns.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">url u = parse_uri( s ).value();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On the other hand, a <code><a href="reference/boost/urls/static_url.html" class="xref page">static_url</a></code> has fixed-capacity storage and does not require dynamic memory allocations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">static_url&lt;1024&gt; su = parse_uri( s ).value();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Objects of type <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> are <a href="https://en.cppreference.com/w/cpp/concepts/regular" target="blank_">std::regular</a>.
+Similarly to built-in types, such as <code><a href="https://en.cppreference.com/w/cpp/language/types#Standard_integer_types" target="_blank" rel="noopener">int</a></code>, a <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> is copyable, movable, assignable, default constructible, and equality comparable.
+They support all the inspection functions of
+<code><a href="reference/boost/urls/url_view.html" class="xref page">url_view</a></code>, and also provide functions to modify all components of the URL.</p>
+</div>
+<div class="paragraph">
+<p>Changing the scheme is easy:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">u.set_scheme( "https" );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or we can use a predefined constant:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">u.set_scheme_id( scheme::https ); // equivalent to u.set_scheme( "https" );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The scheme must be valid, however, or an exception is thrown.
+All modifying functions perform validation on their input.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Attempting to set the URL scheme or port to an invalid string results in an exception.</p>
+</li>
+<li>
+<p>Attempting to set other URL components to invalid strings will get the original input properly percent-encoded for that component.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It is not possible for a <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> to hold syntactically illegal text.</p>
+</div>
+<div class="paragraph">
+<p>Modification functions return a reference to the object, so chaining is possible:</p>
+</div>
+<div id="_tabs_8" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_8_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_8_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_8_code--panel" class="tabpanel" aria-labelledby="_tabs_8_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">u.set_host_ipv4( ipv4_address( "192.168.0.1" ) )
+    .set_port_number( 8080 )
+    .remove_userinfo();
+std::cout &lt;&lt; u &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_8_output--panel" class="tabpanel" aria-labelledby="_tabs_8_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&amp;name=John%20Doe#page%20anchor</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>All non-const operations offer the strong exception safety guarantee.</p>
+</div>
+<div class="paragraph">
+<p>The path segment and query parameter containers returned by a <code><a href="reference/boost/urls/url.html" class="xref page">url</a></code> offer modifiable range functionality, using member functions of the container:</p>
+</div>
+<div id="_tabs_9" class="openblock tabs is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_9_code" class="tab">
+<p>Code</p>
+</li>
+<li id="_tabs_9_output" class="tab">
+<p>Output</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_9_code--panel" class="tabpanel" aria-labelledby="_tabs_9_code">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">params_ref p = u.params();
+p.replace(p.find("name"), {"name", "John Doe"});
+std::cout &lt;&lt; u &lt;&lt; "\n";</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_9_output--panel" class="tabpanel" aria-labelledby="_tabs_9_output">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">https://192.168.0.1:8080/path/to/my%2dfile.txt?id=42&amp;name=Vinnie%20Falco#page%20anchor</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/quicklook.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="index.html">Boost.URL</a></span>
+        <span class="next"><a href="urls/index.html">URLs</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script async src="../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

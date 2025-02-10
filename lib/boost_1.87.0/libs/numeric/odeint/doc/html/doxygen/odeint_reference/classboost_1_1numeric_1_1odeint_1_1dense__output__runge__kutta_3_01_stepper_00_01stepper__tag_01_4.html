@@ -1,0 +1,373 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template dense_output_runge_kutta&lt;Stepper, stepper_tag&gt;</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Numeric.Odeint">
+<link rel="up" href="dense__output__runge__kutta_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/dense_output_runge_kutta.hpp&gt;">
+<link rel="prev" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01explicit__controlled__stepper__fsal__tag_01_4.html" title="Class template dense_output_runge_kutta&lt;Stepper, explicit_controlled_stepper_fsal_tag&gt;">
+<link rel="next" href="euler_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/euler.hpp&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../logo.jpg"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01explicit__controlled__stepper__fsal__tag_01_4.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="dense__output__runge__kutta_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="euler_8hpp.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template dense_output_runge_kutta&lt;Stepper, stepper_tag&gt;</span></h2>
+<p>boost::numeric::odeint::dense_output_runge_kutta&lt;Stepper, stepper_tag&gt; — The class representing dense-output Runge-Kutta steppers. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="dense__output__runge__kutta_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/dense_output_runge_kutta.hpp&gt;">boost/numeric/odeint/stepper/dense_output_runge_kutta.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Stepper<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html" title="Class template dense_output_runge_kutta&lt;Stepper, stepper_tag&gt;">dense_output_runge_kutta</a><span class="special">&lt;</span><span class="identifier">Stepper</span><span class="special">,</span> <span class="identifier">stepper_tag</span><span class="special">&gt;</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">Stepper</span>                             <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a4772b2c7e7522581c51d648acf7dfae2"></a><span class="identifier">stepper_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">state_type</span>            <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a11e32927af665204afd8c84e770b84a1"></a><span class="identifier">state_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">wrapped_state_type</span>    <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1aa3b01a4474400e77a91c667923bc372b"></a><span class="identifier">wrapped_state_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">value_type</span>            <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a824897a44decf4d1680751cd637fac94"></a><span class="identifier">value_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">deriv_type</span>            <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1afb213a60c3dc12a5b9912e8c2bf62d7b"></a><span class="identifier">deriv_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">wrapped_deriv_type</span>    <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1aa74aeba88e1ea353d283a07bfbd81e4a"></a><span class="identifier">wrapped_deriv_type</span><span class="special">;</span>       
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">time_type</span>             <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a8c44cf53e325e951093c05c1c5db0cb9"></a><span class="identifier">time_type</span><span class="special">;</span>                
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">algebra_type</span>          <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a139c83844e5539e0f157eed4a60b0728"></a><span class="identifier">algebra_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">operations_type</span>       <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1afa26845971f9b773e81c212f3502a0c2"></a><span class="identifier">operations_type</span><span class="special">;</span>          
+  <span class="keyword">typedef</span> <span class="identifier">stepper_type</span><span class="special">::</span><span class="identifier">resizer_type</span>          <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a907c045210f864759605b0f984b81434"></a><span class="identifier">resizer_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">dense_output_stepper_tag</span>            <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a511166111b81ad59e7a70cba1f613546"></a><span class="identifier">stepper_category</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">dense_output_runge_kutta</span><span class="special">&lt;</span> <span class="identifier">Stepper</span> <span class="special">&gt;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ab7c7420ba0160387607b2fbd165d153d"></a><span class="identifier">dense_output_stepper_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#id109-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a0b833c205648c7b4cfedcaee9dfab4cf"><span class="identifier">dense_output_runge_kutta</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">stepper_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">stepper_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateType<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1aa9464d647c5eb0790ecd81f5b3b8369f"><span class="identifier">initialize</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateType</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">&gt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a05f42cbd8d212d6c88ed8d6f07ac1fd5"><span class="identifier">do_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateOut<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a6c6b267cd8fb46d259a5c5d8f31e37f1"><span class="identifier">calc_state</span></a><span class="special">(</span><span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateOut<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a5401fd1194cf1ef829a996b1ac05259b"><span class="identifier">calc_state</span></a><span class="special">(</span><span class="identifier">time_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateType<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a553a02be6b1a45a062249b0b0fb8ffd6"><span class="identifier">adjust_size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateType</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a73eef261addfc717da0e2d36dda82a45"><span class="identifier">current_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">time_type</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a4eb784541816d81806d7f01e40b54b00"><span class="identifier">current_time</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a2445df890d0a16443c38bdbf33d6eee9"><span class="identifier">previous_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">time_type</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ab64c828c4ee6add71918ede8d549d352"><span class="identifier">previous_time</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">time_type</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ad4e2fd92f6222fe2fa6ed447aceec9fd"><span class="identifier">current_time_step</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#id110-bb">private member functions</a></span>
+  <span class="identifier">state_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ace207dd273e372778244077254c8f0a3"><span class="identifier">get_current_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1af3b2f7037842cb13846e231fcebb1d83"><span class="identifier">get_current_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">state_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1abd5aca69a2ee71593f414ca7593ce98c"><span class="identifier">get_old_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ae01dcabe91086e0bc2ab744522e292be"><span class="identifier">get_old_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a4aea44b37017407f40ce8e6110539614"><span class="identifier">toggle_current_state</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a09e1c2cc7ce42c15c74605438dac41bf"><span class="identifier">resize_impl</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id42543"></a><h2>Description</h2>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>In this stepper, the initialize method has to be called before using the do_step method.</p></td></tr>
+</table></div>
+<p>
+The dense-output functionality allows to interpolate the solution between subsequent integration points using intermediate results obtained during the computation. This version works based on a normal stepper without step-size control.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id42549"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Stepper</pre>
+<p>The stepper type of the underlying algorithm. </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id42558"></a><h3>
+<a name="id109-bb"></a><code class="computeroutput">dense_output_runge_kutta</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a0b833c205648c7b4cfedcaee9dfab4cf"></a><span class="identifier">dense_output_runge_kutta</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">stepper_type</span> <span class="special">&amp;</span> stepper <span class="special">=</span> <span class="identifier">stepper_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Constructs the dense_output_runge_kutta class. An instance of the underlying stepper can be provided. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">stepper</code></span></p></td>
+<td><p>An instance of the underlying stepper. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateType<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1aa9464d647c5eb0790ecd81f5b3b8369f"></a><span class="identifier">initialize</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateType</span> <span class="special">&amp;</span> x0<span class="special">,</span> <span class="identifier">time_type</span> t0<span class="special">,</span> <span class="identifier">time_type</span> dt0<span class="special">)</span><span class="special">;</span></pre>Initializes the stepper. Has to be called before do_step can be used to set the initial conditions and the step size. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x0</code></span></p></td>
+<td><p>The initial state of the ODE which should be solved. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t0</code></span></p></td>
+<td><p>The initial time, at which the step should be performed. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt0</code></span></p></td>
+<td><p>The step size. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">&gt;</span> 
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span> <span class="special">&gt;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a05f42cbd8d212d6c88ed8d6f07ac1fd5"></a><span class="identifier">do_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">)</span><span class="special">;</span></pre>Does one time step. <div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>initialize has to be called before using this method to set the initial conditions x,t and the stepsize. </p></td></tr>
+</table></div>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ordinary differential equation. It must fulfill the Simple System concept. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Pair with start and end time of the integration step. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateOut<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a6c6b267cd8fb46d259a5c5d8f31e37f1"></a><span class="identifier">calc_state</span><span class="special">(</span><span class="identifier">time_type</span> t<span class="special">,</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span> x<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Calculates the solution at an intermediate point. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The time at which the solution should be calculated, has to be in the current time interval. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The output variable where the result is written into. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateOut<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a5401fd1194cf1ef829a996b1ac05259b"></a><span class="identifier">calc_state</span><span class="special">(</span><span class="identifier">time_type</span> t<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateOut</span> <span class="special">&amp;</span> x<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Calculates the solution at an intermediate point. Solves the forwarding problem. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The time at which the solution should be calculated, has to be in the current time interval. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The output variable where the result is written into, can be a boost range. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateType<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a553a02be6b1a45a062249b0b0fb8ffd6"></a><span class="identifier">adjust_size</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateType</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>Adjust the size of all temporaries in the stepper manually. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>A state from which the size of the temporaries to be resized is deduced. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a73eef261addfc717da0e2d36dda82a45"></a><span class="identifier">current_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the current state of the solution. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The current state of the solution x(t). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">time_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a4eb784541816d81806d7f01e40b54b00"></a><span class="identifier">current_time</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the current time of the solution. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The current time of the solution t. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a2445df890d0a16443c38bdbf33d6eee9"></a><span class="identifier">previous_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the last state of the solution. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The last state of the solution x(t-dt). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">time_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ab64c828c4ee6add71918ede8d549d352"></a><span class="identifier">previous_time</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the last time of the solution. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The last time of the solution t-dt. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">time_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ad4e2fd92f6222fe2fa6ed447aceec9fd"></a><span class="identifier">current_time_step</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the current time step. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>dt. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id42853"></a><h3>
+<a name="id110-bb"></a><code class="computeroutput">dense_output_runge_kutta</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="identifier">state_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ace207dd273e372778244077254c8f0a3"></a><span class="identifier">get_current_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1af3b2f7037842cb13846e231fcebb1d83"></a><span class="identifier">get_current_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">state_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1abd5aca69a2ee71593f414ca7593ce98c"></a><span class="identifier">get_old_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">state_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1ae01dcabe91086e0bc2ab744522e292be"></a><span class="identifier">get_old_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a4aea44b37017407f40ce8e6110539614"></a><span class="identifier">toggle_current_state</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01stepper__tag_01_4_1a09e1c2cc7ce42c15c74605438dac41bf"></a><span class="identifier">resize_impl</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2015 Karsten Ahnert and Mario Mulansky<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1numeric_1_1odeint_1_1dense__output__runge__kutta_3_01_stepper_00_01explicit__controlled__stepper__fsal__tag_01_4.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="dense__output__runge__kutta_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="euler_8hpp.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

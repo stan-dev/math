@@ -1,0 +1,90 @@
+[#debuggability]
+:idprefix: debuggability_
+
+= Debuggability
+
+== Visual Studio Natvis
+
+All containers and iterators have custom visualizations in the Natvis framework.
+
+=== Using in your project
+
+To visualize Boost.Unordered containers in the Natvis framework in your project, simply add the file link:https://github.com/boostorg/unordered/blob/develop/extra/boost_unordered.natvis[/extra/boost_unordered.natvis] to your Visual Studio project as an "Existing Item".
+
+=== Visualization structure
+
+The visualizations mirror those for the standard unordered containers. A container has a maximum of 100 elements displayed at once. Each set element has its item name listed as `[i]`, where `i` is the index in the display, starting at `0`. Each map element has its item name listed as `[\{key-display}]` by default. For example, if the first element is the pair `("abc", 1)`, the item name will be `["abc"]`. This behaviour can be overridden by using the view "ShowElementsByIndex", which switches the map display behaviour to name the elements by index. This same view name is used in the standard unordered containers.
+
+By default, the closed-addressing containers will show the `[hash_function]` and `[key_eq]`, the `[spare_hash_function]` and `[spare_key_eq]` if applicable, the `[allocator]`, and the elements. Using the view "detailed" adds the `[bucket_count]` and `[max_load_factor]`. Conversely, using the view "simple" shows only the elements, with no other items present.
+
+By default, the open-addressing containers will show the `[hash_function]`, `[key_eq]`, `[allocator]`, and the elements. Using the view "simple" shows only the elements, with no other items present. Both the SIMD and the non-SIMD implementations are viewable through the Natvis framework.
+
+Iterators are displayed similarly to their standard counterparts. An iterator is displayed as though it were the element that it points to. An end iterator is simply displayed as `{ end iterator }`.
+
+=== Fancy pointers
+
+The container visualizations also work if you are using fancy pointers in your allocator, such as `boost::interprocess::offset_ptr`. While this is rare, Boost.Unordered has natvis customization points to support any type of fancy pointer. `boost::interprocess::offset_ptr` has support already defined in the Boost.Interprocess library, and you can add support to your own type by following the instructions contained in a comment near the end of the file link:https://github.com/boostorg/unordered/blob/develop/extra/boost_unordered.natvis[/extra/boost_unordered.natvis].
+
+== GDB Pretty-Printers
+
+All containers and iterators have a custom GDB pretty-printer.
+
+=== Using in your project
+
+Always, when using pretty-printers, you must enable pretty-printing like below. This is typically a one-time setup.
+
+```plaintext
+(gdb) set print pretty on
+```
+
+By default, if you compile into an ELF binary format, your binary will contain the Boost.Unordered pretty-printers. To use the embedded pretty-printers, ensure you allow auto-loading like below. This must be done every time you load GDB, or add it to a ".gdbinit" file.
+
+```plaintext
+(gdb) add-auto-load-safe-path [/path/to/executable]
+```
+
+You can choose to compile your binary _without_ embedding the pretty-printers by defining `BOOST_ALL_NO_EMBEDDED_GDB_SCRIPTS`, which disables the embedded GDB pretty-printers for all Boost libraries that have this feature.
+
+You can load the pretty-printers externally from the non-embedded Python script. Add the script, link:https://github.com/boostorg/unordered/blob/develop/extra/boost_unordered_printers.py[/extra/boost_unordered_printers.py], using the `source` command as shown below.
+
+```plaintext
+(gdb) source [/path/to/boost]/libs/unordered/extra/boost_unordered_printers.py
+```
+
+=== Visualization structure
+
+The visualizations mirror the standard unordered containers. The map containers display an association from key to mapped value. The set containers display an association from index to value. An iterator is either displayed with its item, or as an end iterator. Here is what may be shown for an example `boost::unordered_map`, an example `boost::unordered_set`, and their respective begin and end iterators. 
+
+```plaintext
+(gdb) print example_unordered_map
+$1 = boost::unordered_map with 3 elements = {["C"] = "c", ["B"] = "b", ["A"] = "a"}
+(gdb) print example_unordered_map_begin
+$2 = iterator = { {first = "C", second = "c"} }
+(gdb) print example_unordered_map_end
+$3 = iterator = { end iterator }
+(gdb) print example_unordered_set
+$4 = boost::unordered_set with 3 elements = {[0] = "c", [1] = "b", [2] = "a"}
+(gdb) print example_unordered_set_begin
+$5 = iterator = { "c" }
+(gdb) print example_unordered_set_end
+$6 = iterator = { end iterator }
+```
+
+The other containers are identical other than replacing "`boost::unordered_{map|set}`" with the appropriate template name when displaying the container itself. Note that each sub-element (i.e. the key, the mapped value, or the value) is displayed based on its own printing settings which may include its own pretty-printer.
+
+Both the SIMD and the non-SIMD implementations are viewable through the GDB pretty-printers.
+
+For open-addressing containers where xref:#hash_quality_container_statistics[container statistics] are enabled, you can obtain these statistics by calling `get_stats()` on the container, from within GDB. This is overridden in GDB as an link:https://sourceware.org/gdb/current/onlinedocs/gdb.html/Xmethod-API.html[xmethod], so it will not invoke any C++ synchronization code. See the following printout as an example for the expected format.
+
+```plaintext
+(gdb) print example_flat_map.get_stats()
+$1 = [stats] = {[insertion] = {[count] = 5, [probe_length] = {avg = 1.0, var = 0.0, dev = 0.0}}, 
+  [successful_lookup] = {[count] = 0, [probe_length] = {avg = 0.0, var = 0.0, dev = 0.0},
+    [num_comparisons] = {avg = 0.0, var = 0.0, dev = 0.0}}, [unsuccessful_lookup] = {[count] = 5,
+    [probe_length] = {avg = 1.0, var = 0.0, dev = 0.0},
+    [num_comparisons] = {avg = 0.0, var = 0.0, dev = 0.0}}}
+```
+
+=== Fancy pointers
+
+The pretty-printers also work if you are using fancy pointers in your allocator, such as `boost::interprocess::offset_ptr`. While this is rare, Boost.Unordered has GDB pretty-printer customization points to support any type of fancy pointer. `boost::interprocess::offset_ptr` has support already defined in the Boost.Interprocess library, and you can add support to your own type by following the instructions contained in a comment near the end of the file link:https://github.com/boostorg/unordered/blob/develop/extra/boost_unordered_printers.py[/extra/boost_unordered_printers.py].

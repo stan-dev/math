@@ -1,0 +1,112 @@
+[#string_generator]
+== <boost/uuid/string_generator.hpp>
+
+:idprefix: string_generator_
+
+=== Synopsis
+
+[source,c++]
+----
+namespace boost {
+namespace uuids {
+
+struct string_generator
+{
+    using result_type = uuid;
+
+    template<class Ch, class Traits, class Alloc>
+      uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
+
+    uuid operator()( char const* s ) const;
+    uuid operator()( wchar_t const* s ) const;
+
+    template<class CharIterator>
+      uuid operator()( CharIterator begin, CharIterator end ) const;
+};
+
+}} // namespace boost::uuids
+----
+
+=== string_generator
+
+The `string_generator` class generates a `uuid` from a string.
+
+The standards-defined string format in https://www.ietf.org/rfc/rfc4122.txt[RFC 4122] (p. 3) is supported, as well as a few variants.
+
+Valid strings match the following PCRE regular expression:
+
+```txt
+^({)?([0-9a-fA-F]{8})(?-)?([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{4})(?(DASH)-)([0-9a-fA-F]{12})(?(1)})$
+```
+
+Or more generally, the following formats are accepted as valid string formats, where h is hexadecimal, without case sensitivity, and without any leading or trailing whitespace:
+
+```txt
+hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh
+{hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh}
+hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
+{hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh}
+```
+
+Invalid input will generate a `std::runtime_error` exception.
+
+```
+template<class Ch, class Traits, class Alloc>
+  uuid operator()( std::basic_string<Ch, Traits, Alloc> const& s ) const;
+```
+
+Requires: :: The character type `Ch` of `s` must be either `char` or `wchar_t`.
+
+Effects: :: Parses the string `s` into a `uuid` and returns the result.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+string_generator gen;
+
+uuid u1 = gen( std::string( "0123456789abcdef0123456789abcdef" ) );
+uuid u2 = gen( std::wstring( L"01234567-89AB-CDEF-0123-456789ABCDEF" ) );
+```
+
+```
+uuid operator()( char const* s ) const;
+uuid operator()( wchar_t const* s ) const;
+```
+
+Effects: :: Parses the string `s` into a `uuid` and returns the result.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+string_generator gen;
+
+uuid u1 = gen( "{01234567-89ab-cdef-0123-456789abcdef}" );
+uuid u2 = gen( L"01234567-89ab-cdef-0123-456789abcdef" );
+```
+
+```
+template<class CharIterator>
+  uuid operator()( CharIterator begin, CharIterator end ) const;
+```
+
+Requires: :: `CharIterator` must be an input iterator with a value type of either `char` or `wchar_t`.
+
+Effects: :: Parses the character sequence `[begin, end)` into a `uuid` and returns the result.
+
+Example: ::
++
+```
+using namespace boost::uuids;
+
+string_generator gen;
+
+std::string s1( "0123456789abcdef0123456789abcdef" );
+uuid u1 = gen( s1.begin(), s1.end() );
+
+std::wstring s2( L"01234567-89AB-CDEF-0123-456789ABCDEF" );
+uuid u2 = gen( s2.begin(), s2.end() );
+```

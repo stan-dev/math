@@ -1,0 +1,185 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+= RFC 3986
+
+Functions like cpp:parse_uri[] are sufficient for converting URLs, but they require that the entire string is consumed.
+When URLs appear as components of a larger grammar, it is desired to use composition of rules based parsing to process these along with other elements potentially unrelated to resource locators.
+To achieve this, the library provides rules for the top-level BNF productions found in https://tools.ietf.org/html/rfc3986[rfc3986,window=blank_] and a rule for matching percent-encoded strings.
+
+== Percent Encoding
+
+The percent-encoding mechanism is used to represent a data octet in a component when the corresponding character is outside the allowed set or is being used as a delimiter of, or within, the component.
+An encoded octet (also called an __escape__) is encoded as the percent character ('%') followed by a two-digit hexadecimal number representing the octet's numeric value:
+
+[source,cpp]
+----
+pct-encoded   = "%" HEXDIG HEXDIG
+----
+
+URL components with possible percent-encoded characters are specified in the components BNF using the __pct-encoded__
+production, along with the characters which are not considered to be part of the reserved set.
+For example, this is how path characters are described in
+https://datatracker.ietf.org/doc/html/rfc3986#section-3.3[3.3 Path,window=blank_]
+of the RFC:
+
+[source,cpp]
+----
+pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+----
+
+The library provides the cpp:pct_encoded_rule[] for matching strings which are percent-encoded.
+This function is passed the set of characters that may be used without escapes and returns a suitable rule.
+If the input is valid; that is, if there are no invalid escape sequences, the rule returns a
+cpp:decode_view[].
+This is a forward range of characters which performs percent-decoding when iterated.
+It also supports equality and comparison to unencoded strings, without allocating memory.
+In the example below we parse the string cpp:s[] as a series of zero or more cpp:pchars[]:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_5_1,indent=0]
+----
+
+These constants are used and provided by the library to specify rules for percent-encoded URL components:
+
+[cols="1,3a"]
+|===
+// Headers
+|Name|BNF
+
+// Row 1, Column 1
+|cpp:gen_delim_chars[]
+// Row 1, Column 2
+|
+[source]
+----
+gen-delims    = ":" / "/" / "?" / "#" / "[" / "]" / "@"
+----
+
+// Row 2, Column 1
+|cpp:pchars[]
+// Row 2, Column 2
+|
+[source]
+----
+pchar     = unreserved / pct-encoded / sub-delims / ":" / "@"
+----
+
+// Row 3, Column 1
+|cpp:reserved_chars[]
+// Row 3, Column 2
+|(everything but cpp:unreserved_chars[])
+
+// Row 4, Column 1
+|cpp:sub_delim_chars[]
+// Row 4, Column 2
+|
+[source]
+----
+sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+              / "*" / "+" / "," / ";" / "="
+----
+
+// Row 5, Column 1
+|cpp:unreserved_chars[]
+// Row 5, Column 2
+|
+[source]
+----
+unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+----
+
+|===
+
+== URL Rules
+
+When a URL can appear in the context of a larger grammar, it may be desired to express the enclosing grammar in a single rule that incoporates the URL as an element.
+To achieve this, the library makes public the rules used to implement high-level parsing of complete strings as URL components, so that these components may be parsed as part of a larger string containing non-URL elements.
+Here we present a rule suitable for parsing the the HTTP
+https://datatracker.ietf.org/doc/html/rfc7230#section-3.1.1[__request-line__,window=blank_]:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_5_2,indent=0]
+----
+
+The library offers these rules to allow custom rule definitions to integrate the various styles of valid URL rules:
+
+[cols="1,3a"]
+|===
+// Headers
+|Name|BNF
+
+// Row 1, Column 1
+|cpp:absolute_uri_rule[]
+// Row 1, Column 2
+|
+[source]
+----
+absolute-URI    = scheme ":" hier-part [ "?" query ]
+
+hier-part       = "//" authority path-abempty
+                / path-absolute
+                / path-rootless
+                / path-empty
+----
+
+// Row 2, Column 1
+|cpp:authority_rule[]
+// Row 2, Column 3
+|
+[source,cpp]
+----
+authority       = [ userinfo "@" ] host [ ":" port ]
+----
+
+// Row 3, Column 1
+|cpp:origin_form_rule[]
+// Row 3, Column 2
+|
+[source]
+----
+origin-form    = absolute-path [ "?" query ]
+
+absolute-path = 1*( "/" segment )
+----
+
+// Row 4, Column 1
+|cpp:relative_ref_rule[]
+// Row 4, Column 2
+|
+[source]
+----
+relative-ref    = relative-part [ "?" query ] [ "#" fragment ]
+----
+
+// Row 5, Column 1
+|cpp:uri_reference_rule[]
+// Row 5, Column 2
+|
+[source,cpp]
+----
+URI-reference   = URI / relative-ref
+----
+
+// Row 6, Column 1
+|cpp:uri_rule[]
+// Row 6, Column 2
+|
+[source,cpp]
+----
+URI     = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
+----
+
+|===
+
+
+

@@ -1,0 +1,99 @@
+== Coroutines
+
+Coroutines are resumable functions. 
+Resumable means that a function can suspend, 
+i.e. pass the control back to the caller multiple times.
+
+A regular function yields control back to the caller with the `return` function, where it also returns the value. 
+
+A coroutine on the other hand might yield control to the caller and get resumed multiple times.
+
+A coroutine has three control keywords akin to co_return 
+(of which only `co_return` has to be supported). 
+
+ - `co_return`
+ - `co_yield`
+ - `co_await`
+
+
+
+=== `co_return`
+
+This is similar to `return`, but marks the function as a coroutine.
+
+=== `co_await`
+
+The `co_await` expression suspends for an <<awaitable>>, 
+i.e. stops execution until the `awaitable` resumes it.
+
+E.g.: 
+
+[source,cpp]
+----
+cobalt::promise<void> delay(std::chrono::milliseconds);
+
+cobalt::task<void> example()
+{
+  co_await delay(std::chrono::milliseconds(50));
+}
+----
+
+A `co_await` expression can yield a value, depending on what it is awaiting.
+
+[source,cpp]
+----
+cobalt::promise<std::string> read_some();
+
+cobalt::task<void> example()
+{
+  std::string res = co_await read_some();
+}
+----
+
+NOTE: In `cobalt` most coroutine primitives are also <<awaitables>>.
+
+=== `co_yield` 
+
+The `co_yield` expression is similar to the `co_await`,
+but it yields control to the caller and carries a value.
+
+For example:
+
+[source,cpp]
+----
+cobalt::generator<int> iota(int max)
+{
+  int i = 0;
+  while (i < max)
+    co_yield i++;
+
+  co_return i;
+}
+----
+
+A `co_yield` expression can also produce a value,
+which allows the user of yielding coroutine to push values into it.
+
+[source,cpp]
+----
+cobalt::generator<int> iota()
+{
+  int i = 0;
+  bool more = false;
+  do
+  {
+    more = co_yield i++;
+  }
+  while(more);
+  co_return -1;
+}
+----
+
+
+.Stackless
+****
+C++ coroutine are stack-less, which means they only allocate their own function frame.
+
+See <<stackless>> for more details.
+****
+

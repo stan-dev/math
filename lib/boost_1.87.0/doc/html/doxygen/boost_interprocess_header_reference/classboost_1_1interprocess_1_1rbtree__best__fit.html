@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template rbtree_best_fit</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.rbtree__best__fit_8hpp" title="Header &lt;boost/interprocess/mem_algo/rbtree_best_fit.hpp&gt;">
+<link rel="prev" href="classboost_1_1interprocess_1_1mapped__region_1ac06a91187a899ed7a7a1644a5b9d8b86.html" title="Type advice_types">
+<link rel="next" href="classboost_1_1interprocess_1_1simple__seq__fit.html" title="Class template simple_seq_fit">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1mapped__region_1ac06a91187a899ed7a7a1644a5b9d8b86.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.rbtree__best__fit_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1simple__seq__fit.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template rbtree_best_fit</span></h2>
+<p>boost::interprocess::rbtree_best_fit</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.rbtree__best__fit_8hpp" title="Header &lt;boost/interprocess/mem_algo/rbtree_best_fit.hpp&gt;">boost/interprocess/mem_algo/rbtree_best_fit.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutexFamily<span class="special">,</span> <span class="keyword">typename</span> VoidPointer<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> MemAlignment<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html" title="Class template rbtree_best_fit">rbtree_best_fit</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">MutexFamily</span>                                                   <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1afa6ca63161eacb04ad23f1b7f63b69dd"></a><span class="identifier">mutex_family</span><span class="special">;</span>           <span class="comment">// Shared mutex family used for the rest of the Interprocess framework. </span>
+  <span class="keyword">typedef</span> <span class="identifier">VoidPointer</span>                                                   <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a6b8fcc8b787ccbd6157271fe0a36ca24"></a><span class="identifier">void_pointer</span><span class="special">;</span>           <span class="comment">// Pointer type to be used with the rest of the Interprocess framework. </span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                                                   <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a0b8b375fcba6ff801afe1152549b2ac2"></a><span class="identifier">multiallocation_chain</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">intrusive</span><span class="special">::</span><span class="identifier">pointer_traits</span><span class="special">&lt;</span> <span class="identifier">char_ptr</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">difference_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a533f417ed2c53be17300f255beca982b"></a><span class="identifier">difference_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">make_unsigned</span><span class="special">&lt;</span> <span class="identifier">difference_type</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a90aeb4c4e95229942499999d4e9e2ff9"></a><span class="identifier">size_type</span><span class="special">;</span>            
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#id44-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a169fdeeb90eb349dc98a86b96164b230"><span class="identifier">rbtree_best_fit</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1abf80e440bd6955a9259ce9d359eae4fc"><span class="special">~</span><span class="identifier">rbtree_best_fit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1af2b8957eb90c8a891f43b159cf87c246"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a80dae2508733e291ba9f6747c190d83c"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a91d5575348eb0acf7234c7a69c4b79cc"><span class="identifier">get_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a5862e2e88c2277a86b20d2441df99bc4"><span class="identifier">get_free_memory</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a59e20e4fc79cb1c9c549a6237ad18abc"><span class="identifier">zero_free_memory</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1aebfba195f413f54a6ee907344613a0f2"><span class="identifier">grow</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a1a37ef364899e98b7520b125d27a04e8"><span class="identifier">shrink_to_fit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a47dfda91bd69963009f5e557db063184"><span class="identifier">all_memory_deallocated</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1aea36f952d3106f51f9694f454f9c96ed"><span class="identifier">check_sanity</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a3bc059116b5dc3636f5dd956b3699553"><span class="identifier">size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a28d48105c94ee852d291209e55949131"><span class="identifier">allocate_aligned</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="../boost_container_header_reference/classboost_1_1container_1_1list.html#id45-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1rbtree__best__fit.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1aa6573d2d29aebc5ef100a45930fe1aed"><span class="identifier">get_min_size</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">size_type</span> <span class="identifier">PayloadPerAllocation</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.41.4.4"></a><h2>Description</h2>
+<p>This class implements an algorithm that stores the free nodes in a red-black tree to have logarithmic search/insert times. </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.41.4.4.3"></a><h3>
+<a name="id44-bb"></a><code class="computeroutput">rbtree_best_fit</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a169fdeeb90eb349dc98a86b96164b230"></a><span class="identifier">rbtree_best_fit</span><span class="special">(</span><span class="identifier">size_type</span> size<span class="special">,</span> <span class="identifier">size_type</span> extra_hdr_bytes<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor. "size" is the total size of the managed memory segment, "extra_hdr_bytes" indicates the extra bytes beginning in the sizeof(rbtree_best_fit) offset that the allocator should not use at all. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1abf80e440bd6955a9259ce9d359eae4fc"></a><span class="special">~</span><span class="identifier">rbtree_best_fit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destructor. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1af2b8957eb90c8a891f43b159cf87c246"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">size_type</span> nbytes<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates bytes, returns 0 if there is not more memory. Returned memory is aligned to Alignment bytes. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a80dae2508733e291ba9f6747c190d83c"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span> addr<span class="special">)</span><span class="special">;</span></pre>Deallocates previously allocated bytes. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a91d5575348eb0acf7234c7a69c4b79cc"></a><span class="identifier">get_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the size of the memory segment. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a5862e2e88c2277a86b20d2441df99bc4"></a><span class="identifier">get_free_memory</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the number of free bytes of the segment. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a59e20e4fc79cb1c9c549a6237ad18abc"></a><span class="identifier">zero_free_memory</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Initializes to zero all the memory that's not in use. This function is normally used for security reasons. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1aebfba195f413f54a6ee907344613a0f2"></a><span class="identifier">grow</span><span class="special">(</span><span class="identifier">size_type</span> extra_size<span class="special">)</span><span class="special">;</span></pre>
+<p>Increases managed memory in extra_size bytes more </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a1a37ef364899e98b7520b125d27a04e8"></a><span class="identifier">shrink_to_fit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Decreases managed memory as much as possible. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a47dfda91bd69963009f5e557db063184"></a><span class="identifier">all_memory_deallocated</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Returns true if all allocated memory has been deallocated. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1aea36f952d3106f51f9694f454f9c96ed"></a><span class="identifier">check_sanity</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Makes an internal sanity check and returns true if success </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a3bc059116b5dc3636f5dd956b3699553"></a><span class="identifier">size</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> ptr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the size of the buffer previously allocated pointed by ptr. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1a28d48105c94ee852d291209e55949131"></a><span class="identifier">allocate_aligned</span><span class="special">(</span><span class="identifier">size_type</span> nbytes<span class="special">,</span> <span class="identifier">size_type</span> alignment<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates aligned bytes, returns 0 if there is not more memory. Alignment must be power of 2 </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.41.4.4.4"></a><h3>
+<a name="id45-bb"></a><code class="computeroutput">rbtree_best_fit</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1rbtree__best__fit_1aa6573d2d29aebc5ef100a45930fe1aed"></a><span class="identifier">get_min_size</span><span class="special">(</span><span class="identifier">size_type</span> extra_hdr_bytes<span class="special">)</span><span class="special">;</span></pre>Obtains the minimum size needed by the algorithm. </li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1interprocess_1_1mapped__region_1ac06a91187a899ed7a7a1644a5b9d8b86.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.rbtree__best__fit_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1simple__seq__fit.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

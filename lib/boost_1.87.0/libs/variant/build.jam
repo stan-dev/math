@@ -1,0 +1,35 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/container_hash//boost_container_hash
+    /boost/core//boost_core
+    /boost/detail//boost_detail
+    /boost/integer//boost_integer
+    /boost/mpl//boost_mpl
+    /boost/preprocessor//boost_preprocessor
+    /boost/static_assert//boost_static_assert
+    /boost/throw_exception//boost_throw_exception
+    /boost/type_index//boost_type_index
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/variant
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_variant : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_variant test ]
+    ;
+
+call-if : boost-library variant
+    ;
+

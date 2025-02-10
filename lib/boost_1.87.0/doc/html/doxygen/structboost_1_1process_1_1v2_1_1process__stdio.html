@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct process_stdio</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../boost_process/v2.html#doxygen.stdio_8hpp" title="Header &lt;boost/process/v2/stdio.hpp&gt;">
+<link rel="prev" href="structboost_1_1process_1_1v2_1_1process__start__dir.html" title="Struct process_start_dir">
+<link rel="next" href="../boost_process/acknowledgements.html" title="Acknowledgements">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1process_1_1v2_1_1process__start__dir.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_process/v2.html#doxygen.stdio_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost_process/acknowledgements.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.structboost_1_1process_1_1v2_1_1process__stdio"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct process_stdio</span></h2>
+<p>boost::process::v2::process_stdio — The initializer for the stdio of a subprocess. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../boost_process/v2.html#doxygen.stdio_8hpp" title="Header &lt;boost/process/v2/stdio.hpp&gt;">boost/process/v2/stdio.hpp</a>&gt;
+
+</span>
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1process_1_1v2_1_1process__stdio.html" title="Struct process_stdio">process_stdio</a> <span class="special">{</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1intrusive_1_1linear__slist__algorithms.html#id52-bb">public member functions</a></span>
+  <span class="identifier">error_code</span> <a class="link" href="structboost_1_1process_1_1v2_1_1process__stdio.html#doxygen.structboost_1_1process_1_1v2_1_1process__stdio_1a823a36fc59da74d1341a7b46dc92e03c"><span class="identifier">on_exec_setup</span></a><span class="special">(</span><span class="identifier">posix</span><span class="special">::</span><span class="identifier">default_launcher</span> <span class="special">&amp;</span><span class="special">,</span> 
+                           <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="keyword">const</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <span class="identifier">in</span><span class="special">;</span>
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <span class="identifier">out</span><span class="special">;</span>
+  <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <span class="identifier">err</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.30.5.8.15.3.4"></a><h2>Description</h2>
+<p>The subprocess initializer has three members:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>in for stdin</p></li>
+<li class="listitem"><p>out for stdout</p></li>
+<li class="listitem"><p>err for stderr</p></li>
+</ul></div>
+<p>
+</p>
+<p>If the initializer is present all three will be set for the subprocess. By default they will inherit the stdio handles from the parent process. This means that this will forward stdio to the subprocess:</p>
+<pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+<span class="identifier">v2</span><span class="special">::</span><span class="identifier">process</span> <span class="identifier">proc</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="string">"/bin/bash"</span><span class="special">,</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> <span class="identifier">v2</span><span class="special">::</span><span class="identifier">process_stdio</span><span class="special">{</span><span class="special">}</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p>No constructors are provided in order to support designated initializers in later version of C++.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><pre class="programlisting"><span class="identifier">asio</span><span class="special">::</span><span class="identifier">io_context</span> <span class="identifier">ctx</span><span class="special">;</span>
+<span class="identifier">v2</span><span class="special">::</span><span class="identifier">process</span> <span class="identifier">proc17</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="string">"/bin/bash"</span><span class="special">,</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> <span class="identifier">v2</span><span class="special">::</span><span class="identifier">process_stdio</span><span class="special">{</span><span class="special">.</span><span class="identifier">stderr</span><span class="special">=</span><span class="keyword">nullptr</span><span class="special">}</span><span class="special">)</span><span class="special">;</span>
+<span class="identifier">v2</span><span class="special">::</span><span class="identifier">process</span> <span class="identifier">proc17</span><span class="special">(</span><span class="identifier">ctx</span><span class="special">,</span> <span class="string">"/bin/bash"</span><span class="special">,</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> <span class="identifier">v2</span><span class="special">::</span><span class="identifier">process_stdio</span><span class="special">{</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> <span class="special">{</span><span class="special">}</span><span class="special">,</span> <span class="keyword">nullptr</span><span class="special">}</span><span class="special">)</span><span class="special">;</span>
+                                                       <span class="identifier">stdin</span> <span class="special">^</span>  <span class="special">^</span> <span class="identifier">stderr</span>
+</pre></li></ul></div>
+<p>
+</p>
+<p>Valid initializers for any stdio are:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput">std::nullptr_t</code> assigning a null-device</p></li>
+<li class="listitem"><p><code class="computeroutput">FILE*</code> any open file, including <code class="computeroutput">stdin</code>, <code class="computeroutput">stdout</code> and <code class="computeroutput">stderr</code></p></li>
+<li class="listitem"><p>a filesystem::path, which will open a readable or writable depending on the direction of the stream</p></li>
+<li class="listitem"><p><code class="computeroutput">native_handle</code> any native file handle (<code class="computeroutput">HANDLE</code> on windows) or file descriptor (<code class="computeroutput">int</code> on posix)</p></li>
+<li class="listitem"><p>any io-object with a .native_handle() function that is compatible with the above. E.g. a asio::ip::tcp::socket</p></li>
+<li class="listitem"><p>an asio::basic_writeable_pipe for stdin or asio::basic_readable_pipe for stderr/stdout. </p></li>
+</ul></div>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.30.5.8.15.3.4.10"></a><h3>
+<a name="id52-bb"></a><code class="computeroutput">process_stdio</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><span class="identifier">error_code</span> <a name="doxygen.structboost_1_1process_1_1v2_1_1process__stdio_1a823a36fc59da74d1341a7b46dc92e03c"></a><span class="identifier">on_exec_setup</span><span class="special">(</span><span class="identifier">posix</span><span class="special">::</span><span class="identifier">default_launcher</span> <span class="special">&amp;</span> launcher<span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">filesystem</span><span class="special">::</span><span class="identifier">path</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span><span class="keyword">const</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2006-2012 Julio M. Merino Vidal, Ilya Sokolov,
+      Felipe Tanus, Jeff Flinn, Boris Schaeling<br>Copyright © 2016 Klemens D. Morgenstern<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1process_1_1v2_1_1process__start__dir.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost_process/v2.html#doxygen.stdio_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../boost_process/acknowledgements.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

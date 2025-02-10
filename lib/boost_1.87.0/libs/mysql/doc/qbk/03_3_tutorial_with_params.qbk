@@ -1,0 +1,149 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:tutorial_with_params Tutorial 3: queries with parameters]
+
+Until now, our SQL queries were hard-coded string literals.
+However, most real-world use cases involve 
+running queries containing user-supplied parameters.
+
+In this tutorial, we will be using an employee database.
+You can obtain this sample database by sourcing the `example/db_setup.sql`
+file in Boost.MySQL source code repository.
+
+The employee table is defined as:
+
+[!teletype]
+```
+    CREATE TABLE employee(
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        first_name VARCHAR(100) NOT NULL,
+        last_name VARCHAR(100) NOT NULL,
+        ... -- other fields not relevant for us
+    );
+```
+
+We will write a program that retrieves an employee by ID
+and prints their full name. The employee ID will be supplied
+by the user as a command line argument. In more realistic
+examples, you may get it from a file or HTTP request.
+
+
+
+
+[heading Avoiding SQL injection]
+
+We need to build a query like the following:
+
+[!teletype]
+```
+    SELECT first_name, last_name FROM employee WHERE id = <actual-id>
+```
+
+Replacing `<actual-id>` by the value passed by the user.
+
+Since we don't control the employee ID, we must consider it [*untrusted].
+We must [*never use raw string concatenation] to build queries.
+Otherwise, malicious values can cause SQL injection vulnerabilities,
+which are extremely severe.
+
+Boost.MySQL offers two options to deal with this:
+
+# Compose the query dynamically in the client, using specialized tools
+  to avoid SQL injection. This option is versatile, simple and
+  appropriate for general use.
+# Perform parameter substitution server side using
+  [link mysql.prepared_statements prepared statements]. This is more complex
+  and better suited for cases involving lots of numeric data or
+  executing same query repeatedly.
+
+In this tutorial, we will use client-side generation
+(termed [link mysql.sql_formatting client-side SQL formatting] throughout the documentation).
+
+
+
+
+[heading Using with_params]
+
+[refmem any_connection async_execute]
+can also deal with queries with parameters.
+We need to replace the string literal by a call
+to [reflink with_params], passing a query template
+and the actual values of the parameters:
+
+[tutorial_with_params_execute]
+
+The query template uses a syntax similar to `std::format`.
+You can use numbers, strings,
+dates, times and many other types as parameters.
+More information about client-side SQL formatting
+is available in [link mysql.sql_formatting this page].
+
+
+
+[heading Using the retrieved rows]
+
+Our query might return either one row (if an employee is found)
+or none (if no employee with the given ID exists).
+Accounting for this:
+
+[tutorial_with_params_results]
+
+
+
+
+
+[heading Connecting with database]
+
+If you've run `example/db_setup.sql`, the `employee` table
+exists within the `boost_mysql_examples` database.
+To use this table without qualification, we need to specify
+a database name when connecting. This is achieved by
+setting [refmem connect_params database]:
+
+[tutorial_with_params_connect_params]
+
+
+
+
+
+[heading Creating the connection inside the coroutine]
+
+Since we're connecting and closing the connection in our coroutine, it
+makes sense to make it a local variable, instead of passing it as parameter.
+Recall that we need a reference to an execution context (i.e. `io_context`)
+to build a connection. We could pass the `io_context` as a parameter
+to our coroutine, but there's a simpler way: coroutines
+already hold a reference to where they are executing:
+
+[tutorial_with_params_connection]
+
+The expression `co_await asio::this_coro::executor` retrieves the [*executor]
+that our coroutine is using. An executor is a lightweight handle
+to an execution context, and can be used to create our connection.
+
+[note
+  `co_await asio::this_coro::executor` does not perform any I/O.
+  It only retrieves the current coroutine's executor.
+]
+
+
+
+
+
+[heading Wrapping up]
+
+With all these changes, this is how our coroutine looks like:
+
+[tutorial_with_params_coroutine]
+
+Full program listing for this tutorial is [link mysql.examples.tutorial_with_params here].
+
+You can now proceed to [link mysql.tutorial_static_interface the next tutorial].
+
+
+[endsect]

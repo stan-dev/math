@@ -1,0 +1,122 @@
+#
+# Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import os ;
+import sequence ;
+
+path-constant this_dir : . ;
+
+# The hostname to use for examples
+local hostname = [ os.environ BOOST_MYSQL_SERVER_HOST ] ;
+if $(hostname) = ""
+{
+    hostname = "127.0.0.1" ;
+}
+
+# Builds and run an example
+rule run_example (
+    example_name :
+    sources * :
+    args * :
+    python_runner ? :
+    requirements *
+)
+{
+    # If we're using a Python runner, don't use Valgrind
+    local valgrind_target = /boost/mysql/test//launch_with_valgrind ;
+    local launcher = ;
+    if python_runner {
+        valgrind_target = ;
+        launcher = <testing.launcher>"python $(this_dir)/private/$(python_runner)" ;
+    }
+
+    # Join the supplied command-line arguments
+    local arg_str = [ sequence.join $(args) : " " ] ;
+
+    run
+        /boost/mysql/test//boost_mysql_compiled
+        $(valgrind_target)
+        $(sources)
+    : requirements
+        <testing.arg>$(arg_str)
+        $(launcher)
+        $(requirements)
+    : target-name $(example_name)
+    ;
+}
+
+
+local regular_args = example_user example_password $(hostname) ;
+
+# Tutorials
+run_example tutorial_sync                 : 1_tutorial/1_sync.cpp                 : $(regular_args) ;
+run_example tutorial_async                : 1_tutorial/2_async.cpp                : $(regular_args) ;
+run_example tutorial_with_params          : 1_tutorial/3_with_params.cpp          : $(regular_args) 1 ;
+run_example tutorial_static_interface     : 1_tutorial/4_static_interface.cpp     : $(regular_args) 1 ;
+run_example tutorial_updates_transactions : 1_tutorial/5_updates_transactions.cpp : $(regular_args) 1 "John" ;
+run_example tutorial_connection_pool      : 1_tutorial/6_connection_pool.cpp      : $(hostname)
+    : run_tutorial_connection_pool.py ;
+run_example tutorial_error_handling       : 1_tutorial/7_error_handling.cpp       : $(hostname) --test-errors
+    : run_tutorial_connection_pool.py :  ;
+
+# Simple examples
+run_example inserts : 2_simple/inserts.cpp
+    : $(regular_args) "John" "Doe" "HGS" 50000 ;
+run_example deletes : 2_simple/deletes.cpp
+    : $(regular_args) 20 ;
+run_example callbacks : 2_simple/callbacks.cpp
+    : $(regular_args) ;
+run_example coroutines_cpp11 : 2_simple/coroutines_cpp11.cpp /boost/mysql/test//boost_context_lib
+    : $(regular_args) ;
+run_example batch_inserts : 2_simple/batch_inserts.cpp /boost/mysql/test//boost_json_lib
+    : $(hostname) : run_batch_inserts.py ;
+run_example batch_inserts_generic : 2_simple/batch_inserts_generic.cpp /boost/mysql/test//boost_json_lib
+    : $(hostname) : run_batch_inserts.py ;
+run_example patch_updates : 2_simple/patch_updates.cpp
+    : $(hostname) : run_patch_updates.py ;
+run_example dynamic_filters : 2_simple/dynamic_filters.cpp
+    : $(hostname) : run_dynamic_filters.py ;
+run_example disable_tls : 2_simple/disable_tls.cpp
+    : $(regular_args) ;
+run_example tls_certificate_verification : 2_simple/tls_certificate_verification.cpp
+    : $(regular_args) ;
+run_example metadata : 2_simple/metadata.cpp 
+    : $(regular_args) ;
+run_example prepared_statements : 2_simple/prepared_statements.cpp 
+    : $(regular_args) "HGS" ;
+run_example multi_function : 2_simple/multi_function.cpp
+    : $(regular_args) ;
+run_example pipeline : 2_simple/pipeline.cpp
+    : $(regular_args) "HGS" ;
+run_example source_script : 2_simple/source_script.cpp
+    : $(regular_args) $(this_dir)/private/test_script.sql ;
+run_example unix_socket : 2_simple/unix_socket.cpp
+    : example_user example_password
+    :
+    :
+        <target-os>windows:<build>no
+    ;
+
+# Advanced
+run_example connection_pool :
+        3_advanced/connection_pool/main.cpp
+        3_advanced/connection_pool/repository.cpp
+        3_advanced/connection_pool/handle_request.cpp
+        3_advanced/connection_pool/server.cpp
+        /boost/mysql/test//boost_context_lib
+        /boost/mysql/test//boost_json_lib
+        /boost/url//boost_url
+        /boost/mysql/test//boost_beast_lib
+    : $(hostname)
+    : run_connection_pool.py
+    :
+        # MSVC 14.1 fails with an internal compiler error while building server.cpp for this config
+        <toolset>msvc-14.1,<address-model>32,<cxxstd>17,<variant>release:<build>no
+        # Uses heavily Boost.Context coroutines, which aren't fully supported by asan
+        <address-sanitizer>norecover:<build>no
+        <address-sanitizer>enable:<build>no
+    ;

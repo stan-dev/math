@@ -1,0 +1,18 @@
+#==============================================================================
+#   Copyright (c) 2015 Rene Rivera
+#
+#   Use, modification and distribution is subject to the Boost Software
+#   License, Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+#   http://www.boost.org/LICENSE_1_0.txt)
+#==============================================================================
+
+exe auto_index :
+   ../src/auto_index.cpp
+   ../src/file_scanning.cpp
+   ../src/index_generator.cpp
+   ../src/tiny_xml.cpp
+   /boost/regex//boost_regex
+   /boost/filesystem//boost_filesystem
+   /boost/system//boost_system
+   /boost/program_options//boost_program_options
+   : <define>BOOST_ALL_NO_LIB=1 <link>static release ;

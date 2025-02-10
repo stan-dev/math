@@ -1,0 +1,557 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Prepared statements</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="sql_formatting.html" title="Text queries and client-side SQL formatting">
+<link rel="next" href="dynamic_interface.html" title="The dynamic interface">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="sql_formatting.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="dynamic_interface.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.prepared_statements"></a><a class="link" href="prepared_statements.html" title="Prepared statements">Prepared statements</a>
+</h2></div></div></div>
+<p>
+      This section covers using <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-prepared-statements.html" target="_top">server-side
+      prepared statements</a>. You should use them whenever a query contains
+      parameters not known at compile-time.
+    </p>
+<h4>
+<a name="mysql.prepared_statements.h0"></a>
+      <span class="phrase"><a name="mysql.prepared_statements.preparing_a_statement"></a></span><a class="link" href="prepared_statements.html#mysql.prepared_statements.preparing_a_statement">Preparing
+      a statement</a>
+    </h4>
+<p>
+      To prepare a statement, call <a class="link" href="ref/boost__mysql__connection/prepare_statement.html" title="connection::prepare_statement"><code class="literal">connection::prepare_statement</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/async_prepare_statement.html" title="connection::async_prepare_statement"><code class="literal">connection::async_prepare_statement</code></a>,
+      passing your statement as a string. This yields a <a class="link" href="ref/boost__mysql__statement.html" title="statement"><code class="literal">statement</code></a>
+      object:
+    </p>
+<pre class="programlisting"><span class="comment">// Table setup</span>
+<span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">table_definition</span> <span class="special">=</span> <span class="identifier">R</span><span class="string">"%(
+    CREATE TEMPORARY TABLE products (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        description VARCHAR(256),
+        price INT NOT NULL,
+        show_in_store TINYINT
+    )
+)%"</span><span class="special">;</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">table_definition</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Prepare a statement to insert into this table</span>
+<span class="identifier">statement</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span>
+    <span class="string">"INSERT INTO products (description, price, show_in_store) VALUES (?, ?, ?)"</span>
+<span class="special">);</span>
+</pre>
+<p>
+      The question mark characters (<code class="computeroutput"><span class="special">?</span></code>)
+      represent parameters (as described <a href="https://dev.mysql.com/doc/refman/8.0/en/prepare.html" target="_top">here</a>).
+      When you execute the statement (next section), you provide values for each
+      of the parameters you declared, and the server will use these values to run
+      the statement.
+    </p>
+<h4>
+<a name="mysql.prepared_statements.h1"></a>
+      <span class="phrase"><a name="mysql.prepared_statements.executing_a_statement"></a></span><a class="link" href="prepared_statements.html#mysql.prepared_statements.executing_a_statement">Executing
+      a statement</a>
+    </h4>
+<p>
+      To execute a statement, use any of the following functions:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__connection/execute.html" title="connection::execute"><code class="literal">connection::execute</code></a>
+          or <a class="link" href="ref/boost__mysql__connection/async_execute.html" title="connection::async_execute"><code class="literal">connection::async_execute</code></a>,
+          which execute the statement and read the generated rows.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__mysql__connection/start_execution.html" title="connection::start_execution"><code class="literal">connection::start_execution</code></a>
+          and <a class="link" href="ref/boost__mysql__connection/async_start_execution.html" title="connection::async_start_execution"><code class="literal">connection::async_start_execution</code></a>,
+          which initiate a statement execution as a multi-function operation.
+        </li>
+</ul></div>
+<p>
+      For example:
+    </p>
+<pre class="programlisting"><span class="comment">// description, price and show_in_store are not trusted, since they may</span>
+<span class="comment">// have been read from a file or an HTTP endpoint</span>
+<span class="keyword">void</span> <span class="identifier">insert_product</span><span class="special">(</span>
+    <span class="identifier">tcp_connection</span><span class="special">&amp;</span> <span class="identifier">conn</span><span class="special">,</span>
+    <span class="keyword">const</span> <span class="identifier">statement</span><span class="special">&amp;</span> <span class="identifier">stmt</span><span class="special">,</span>
+    <span class="identifier">string_view</span> <span class="identifier">description</span><span class="special">,</span>
+    <span class="keyword">int</span> <span class="identifier">price</span><span class="special">,</span>
+    <span class="keyword">bool</span> <span class="identifier">show_in_store</span>
+<span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">description</span><span class="special">,</span> <span class="identifier">price</span><span class="special">,</span> <span class="identifier">show_in_store</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<p>
+      Some observations:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          You must pass in <span class="bold"><strong>exactly as many parameters as the
+          statement has</strong></span>. Failing to do so will result in an error.
+        </li>
+<li class="listitem">
+          You don't need to sanitize the parameters anyhow. The server takes care
+          of it.
+        </li>
+<li class="listitem">
+          Actual parameters are matched to <code class="computeroutput"><span class="special">?</span></code>
+          placeholders by order.
+        </li>
+<li class="listitem">
+          You can pass types like built-in integers, <code class="computeroutput"><span class="keyword">float</span></code>,
+          <a class="link" href="ref/boost__mysql__date.html" title="date"><code class="literal">date</code></a>
+          or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>, with the expected effects. <a class="link" href="prepared_statements.html#mysql.prepared_statements.writable_field_reference">This table</a>
+          contains a reference with all the allowed types.
+        </li>
+<li class="listitem">
+          You can also use the static interface to execute statements by replacing
+          <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+          by <a class="link" href="ref/boost__mysql__static_results.html" title="static_results"><code class="literal">static_results</code></a>.
+        </li>
+</ul></div>
+<p>
+      You can pass <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code> and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span></code>
+      for parameters that may be <code class="computeroutput"><span class="identifier">NULL</span></code>.
+      If the optional doesn't have a value, <code class="computeroutput"><span class="identifier">NULL</span></code>
+      will be sent to the server. For example:
+    </p>
+<pre class="programlisting"><span class="comment">// description, price and show_in_store are not trusted, since they may</span>
+<span class="comment">// have been read from a file or an HTTP endpoint</span>
+<span class="keyword">void</span> <span class="identifier">insert_product</span><span class="special">(</span>
+    <span class="identifier">tcp_connection</span><span class="special">&amp;</span> <span class="identifier">conn</span><span class="special">,</span>
+    <span class="keyword">const</span> <span class="identifier">statement</span><span class="special">&amp;</span> <span class="identifier">stmt</span><span class="special">,</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">string_view</span><span class="special">&gt;</span> <span class="identifier">description</span><span class="special">,</span>
+    <span class="keyword">int</span> <span class="identifier">price</span><span class="special">,</span>
+    <span class="keyword">bool</span> <span class="identifier">show_in_store</span>
+<span class="special">)</span>
+<span class="special">{</span>
+    <span class="comment">// If description has a value, a string will be sent to the server; otherwise, a NULL will</span>
+    <span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">description</span><span class="special">,</span> <span class="identifier">price</span><span class="special">,</span> <span class="identifier">show_in_store</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.prepared_statements.h2"></a>
+      <span class="phrase"><a name="mysql.prepared_statements.type_casting_with_statement_para"></a></span><a class="link" href="prepared_statements.html#mysql.prepared_statements.type_casting_with_statement_para">Type casting
+      with statement parameters</a>
+    </h4>
+<p>
+      MySQL is quite permissive with the type of statement parameters. In most cases,
+      it will perform the required casts for you. For example, given this table definition:
+    </p>
+<pre class="programlisting"><span class="keyword">const</span> <span class="keyword">char</span><span class="special">*</span> <span class="identifier">table_definition</span> <span class="special">=</span> <span class="string">"CREATE TEMPORARY TABLE my_table(my_field TINYINT)"</span><span class="special">;</span>
+</pre>
+<p>
+      We can write:
+    </p>
+<pre class="programlisting"><span class="keyword">int</span> <span class="identifier">value</span> <span class="special">=</span> <span class="identifier">get_int_value_from_user</span><span class="special">();</span>
+<span class="keyword">auto</span> <span class="identifier">stmt</span> <span class="special">=</span> <span class="identifier">conn</span><span class="special">.</span><span class="identifier">prepare_statement</span><span class="special">(</span><span class="string">"INSERT INTO my_table VALUES (?)"</span><span class="special">);</span>
+
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">value</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<p>
+      MySQL expects a <code class="computeroutput"><span class="identifier">TINYINT</span></code>, but
+      we're sending an <code class="computeroutput"><span class="keyword">int</span></code>, which is
+      bigger. As long as the value is in range, this won't cause any trouble. If
+      the value is out-of-range, <code class="computeroutput"><span class="identifier">execute</span></code>
+      will fail with an error.
+    </p>
+<h4>
+<a name="mysql.prepared_statements.h3"></a>
+      <span class="phrase"><a name="mysql.prepared_statements.executing_a_statement_with_a_var"></a></span><a class="link" href="prepared_statements.html#mysql.prepared_statements.executing_a_statement_with_a_var">Executing
+      a statement with a variable number of parameters</a>
+    </h4>
+<p>
+      The above approach works when you know at compile time how many parameters
+      the statement has. In some scenarios (e.g. a graphical interface), this may
+      not be the case. For these cases, you can <code class="computeroutput"><span class="identifier">bind</span></code>
+      a statement to a <code class="computeroutput"><span class="identifier">field</span></code> or
+      <code class="computeroutput"><span class="identifier">field_view</span></code> iterator range:
+    </p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">exec_statement</span><span class="special">(</span><span class="identifier">tcp_connection</span><span class="special">&amp;</span> <span class="identifier">conn</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">statement</span><span class="special">&amp;</span> <span class="identifier">stmt</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="identifier">field</span><span class="special">&gt;&amp;</span> <span class="identifier">params</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">params</span><span class="special">.</span><span class="identifier">begin</span><span class="special">(),</span> <span class="identifier">params</span><span class="special">.</span><span class="identifier">end</span><span class="special">()),</span> <span class="identifier">result</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.prepared_statements.h4"></a>
+      <span class="phrase"><a name="mysql.prepared_statements.closing_a_statement"></a></span><a class="link" href="prepared_statements.html#mysql.prepared_statements.closing_a_statement">Closing
+      a statement</a>
+    </h4>
+<p>
+      Prepared statements are created server-side, and thus consume server resources.
+      If you don't need a <a class="link" href="ref/boost__mysql__statement.html" title="statement"><code class="literal">statement</code></a>
+      anymore, you can call <a class="link" href="ref/boost__mysql__connection/close_statement.html" title="connection::close_statement"><code class="literal">connection::close_statement</code></a>
+      or <a class="link" href="ref/boost__mysql__connection/async_close_statement.html" title="connection::async_close_statement"><code class="literal">connection::async_close_statement</code></a>
+      to instruct the server to deallocate it.
+    </p>
+<p>
+      Prepared statements are managed by the server on a per-connection basis. Once
+      you close your connection with the server, all prepared statements you have
+      created using this connection will be automatically deallocated.
+    </p>
+<p>
+      If you are creating your prepared statements at the beginning of your program
+      and keeping them alive until the connection is closed, then there is no need
+      to call <code class="computeroutput"><span class="identifier">close_statement</span><span class="special">()</span></code>,
+      as closing the connection will do the cleanup for you. If you are creating
+      and destroying prepared statements dynamically, then it is advised to use
+      <code class="computeroutput"><span class="identifier">close_statement</span><span class="special">()</span></code>
+      to prevent excessive resource usage in the server.
+    </p>
+<p>
+      Finally, note that <a class="link" href="ref/boost__mysql__statement.html" title="statement"><code class="literal">statement</code></a>'s
+      destructor does not perform any server-side deallocation of the statement.
+      This is because closing a statement involves a network operation that may block
+      or fail.
+    </p>
+<h4>
+<a name="mysql.prepared_statements.h5"></a>
+      <span class="phrase"><a name="mysql.prepared_statements.type_mapping_reference_for_prepa"></a></span><a class="link" href="prepared_statements.html#mysql.prepared_statements.type_mapping_reference_for_prepa">Type mapping
+      reference for prepared statement parameters</a>
+    </h4>
+<p>
+      The following table contains a reference of the types that can be used when
+      binding a statement. If a type can be used this way, we say to satisfy the
+      <code class="computeroutput"><span class="identifier">WritableField</span></code> concept. The
+      table shows how a parameter <code class="computeroutput"><span class="identifier">v</span></code>
+      in a expression <code class="computeroutput"><span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">stmt</span><span class="special">.</span><span class="identifier">bind</span><span class="special">(</span><span class="identifier">v</span><span class="special">),</span>
+      <span class="identifier">result</span><span class="special">)</span></code>
+      is interpreted by MySQL, depeding on <code class="computeroutput"><span class="identifier">v</span></code>'s
+      type.
+    </p>
+<div class="informaltable">
+<a name="mysql.prepared_statements.writable_field_reference"></a><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                C++ type
+              </p>
+            </th>
+<th>
+              <p>
+                MySQL type
+              </p>
+            </th>
+<th>
+              <p>
+                Compatible with...
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">signed</span> <span class="keyword">char</span></code>,
+                <code class="computeroutput"><span class="keyword">short</span></code>, <code class="computeroutput"><span class="keyword">int</span></code>, <code class="computeroutput"><span class="keyword">long</span></code>,
+                <code class="computeroutput"><span class="keyword">long</span> <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BIGINT</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Signed <code class="computeroutput"><span class="identifier">TINYINT</span></code>,
+                <code class="computeroutput"><span class="identifier">SMALLINT</span></code>, <code class="computeroutput"><span class="identifier">MEDIUMINT</span></code>, <code class="computeroutput"><span class="identifier">INT</span></code>,
+                <code class="computeroutput"><span class="identifier">BIGINT</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">char</span></code>,
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">short</span></code>,
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">int</span></code>,
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span></code>,
+                <code class="computeroutput"><span class="keyword">unsigned</span> <span class="keyword">long</span>
+                <span class="keyword">long</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">UNSIGNED</span> <span class="identifier">BIGINT</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Unsigned <code class="computeroutput"><span class="identifier">TINYINT</span></code>,
+                <code class="computeroutput"><span class="identifier">SMALLINT</span></code>, <code class="computeroutput"><span class="identifier">MEDIUMINT</span></code>, <code class="computeroutput"><span class="identifier">INT</span></code>,
+                <code class="computeroutput"><span class="identifier">BIGINT</span></code>, <code class="computeroutput"><span class="identifier">YEAR</span></code>, <code class="computeroutput"><span class="identifier">BIT</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">bool</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BIGINT</span></code> (<code class="computeroutput"><span class="number">1</span></code> if <code class="computeroutput"><span class="keyword">true</span></code>,
+                <code class="computeroutput"><span class="number">0</span></code> if <code class="computeroutput"><span class="keyword">false</span></code>)
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">TINYINT</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">char_traits</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">&gt;,</span>
+                <span class="identifier">Allocator</span><span class="special">&gt;</span></code>
+                (including <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>), <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>,
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code>, <code class="computeroutput"><span class="keyword">const</span>
+                <span class="keyword">char</span><span class="special">*</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">VARCHAR</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">CHAR</span></code>, <code class="computeroutput"><span class="identifier">VARCHAR</span></code>, <code class="computeroutput"><span class="identifier">TEXT</span></code>
+                (all sizes), <code class="computeroutput"><span class="identifier">ENUM</span></code>,
+                <code class="computeroutput"><span class="identifier">SET</span></code>, <code class="computeroutput"><span class="identifier">JSON</span></code>, <code class="computeroutput"><span class="identifier">DECIMAL</span></code>,
+                <code class="computeroutput"><span class="identifier">NUMERIC</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_vector</span><span class="special">&lt;</span><span class="keyword">unsigned</span> <span class="keyword">char</span><span class="special">,</span> <span class="identifier">Allocator</span><span class="special">&gt;</span></code> (including <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>),
+                <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BLOB</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">BINARY</span></code>, <code class="computeroutput"><span class="identifier">VARBINARY</span></code>, <code class="computeroutput"><span class="identifier">BLOB</span></code>
+                (all sizes), <code class="computeroutput"><span class="identifier">GEOMETRY</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">float</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">FLOAT</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">FLOAT</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">double</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">DOUBLE</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">DOUBLE</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__date.html" title="date"><code class="literal">date</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">DATE</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">DATE</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__datetime.html" title="datetime"><code class="literal">datetime</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">DATETIME</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">DATETIME</span></code>, <code class="computeroutput"><span class="identifier">TIMESTAMP</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__time.html" title="time"><code class="literal">time</code></a><br>
+                Any <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">duration</span></code> convertible to <code class="computeroutput"><span class="identifier">time</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">TIME</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">TIME</span></code>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">nullptr_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">NULL</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Any of the other types. Used to insert <code class="computeroutput"><span class="identifier">NULL</span></code>s,
+                for example.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Applies <code class="computeroutput"><span class="identifier">T</span></code>'s type
+                mapping if the optional has a value.<br> <code class="computeroutput"><span class="identifier">NULL</span></code>
+                otherwise
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Applies <code class="computeroutput"><span class="identifier">T</span></code>'s type
+                mapping if the optional has a value.<br> <code class="computeroutput"><span class="identifier">NULL</span></code>
+                otherwise
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view.html" title="field_view"><code class="literal">field_view</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Depends on the actual type stored by the field
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field.html" title="field"><code class="literal">field</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                Depends on the actual type stored by the field
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="sql_formatting.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="dynamic_interface.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+[/
+                 Copyright Andrey Semashev 2024.
+     Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+              http://www.boost.org/LICENSE_1_0.txt)
+
+    This document is a part of Boost.Log library documentation.
+/]
+
+[section:intro Introduction]
+
+[section:moti Motivation]
+
+Today applications grow rapidly, becoming complicated and difficult to test and debug. Most of the time applications run on a remote site, leaving the developer little chance to monitor their execution and figure out the reasons for their failure, once it should happen. Moreover, even the local debugging may become problematic if the application behavior depends heavily on asynchronous side events, such as a device feedback or another process activity.
+
+This is where logging can help. The application stores all essential information about its execution to a log, and when something goes wrong this information can be used to analyze the program behavior and make the necessary corrections. There are other very useful applications of logging, such as gathering statistical information and highlighting events (i.e. indicating that some situation has occurred or that the application is experiencing some problems). These tasks have proved to be vital for many real-world industrial applications.
+
+This library aims to make logging significantly easier for the application developer. It provides a wide range of out-of-the-box tools along with public interfaces for extending the library. The main goals of the library are:
+
+* Simplicity. A small example code snippet should be enough to get the feel of the library and be ready to use its basic features.
+* Extensibility. A user should be able to extend functionality of the library for collecting and storing information into logs.
+* Performance. The library should have as little performance impact on the user's application as possible.
+
+[endsect]
+
+[section:how_to_read How to read the documentation]
+
+The documentation is oriented to both new and experienced library users. However, users are expected to be familiar with commonly used Boost components, such as `shared_ptr`, `make_shared` (see __boost_smart_ptr__), and `function` (__boost_function__). Some parts of the documentation will refer to other Boost libraries, as needed.
+
+If this is your first experience with the library, it is recommended to read the [link log.design Design overview] section for a first glance at the library's capabilities and architecture. The [link log.installation Installation] and [link log.tutorial Tutorial] sections will help to get started experimenting with the library. The tutorial gives an overview of the library features with sample code snippets. Some tutorial steps are presented in two forms: simple and advanced. The simple form typically describes the most common and easy way to do the task and it is being recommended to be read by new users. The advanced form usually gives an expanded way to do the same thing but with an in-depth explanation and the ability to do some extra customization. This form may come in handy for more experienced users and should generally be read if the easy way does not satisfy your needs.
+
+Besides the tutorial there is a [link log.detailed Detailed features description] chapter. This part describes other tools provided by the library that were not covered by the tutorial. This chapter is best read on a case by case basis.
+
+Last, but not least, there is a [link log.reference Reference] section which gives the formal description of library component interfaces.
+
+To keep the code snippets in this documentation simple, the following namespace aliases are assumed to be defined:
+
+    namespace logging = boost::log;
+    namespace sinks = boost::log::sinks;
+    namespace src = boost::log::sources;
+    namespace expr = boost::log::expressions;
+    namespace attrs = boost::log::attributes;
+    namespace keywords = boost::log::keywords;
+
+Note that most of the examples are followed by a link to a complete compilable code sample, with all the necessary includes and auxiliary code, if any, that was stripped from the documentation for brevity. Relevant includes are also listed at the beginning of sections.
+
+[endsect]
+
+[section:defs Definitions]
+
+Here are definitions of some terms that will be used widely throughout the documentation:
+
+[variablelist
+    [[Log record][A single bundle of information, collected from the user's application, that is a candidate to be put into the log. In a simple case the log record will be represented as a line of text in the log file after being processed by the logging library.]]
+    [[Attribute][An "attribute" is a piece of meta-information that can be used to specialize a log record. In Boost.Log, attributes are represented by function objects with a specific interface, which return the actual attribute value when invoked. Some example of attributes are a function returning current clock time, a function returning a monotonously increading log record counter, etc.]]
+    [[Attribute value][Attribute values are the actual data acquired from attributes. This data is attached to the specific log record and processed by the library. Values can have different types (integers, strings and more complex, including user defined types). Some examples of attribute values: current time stamp value, file name, line number, current scope name, etc. Attribute values are enveloped in a type erasing wrapper, so the actual type of the attribute is not visible in the interface. The actual (erased) type of the value is sometimes called the stored type.]]
+    [[(Attribute) value visitation][A way of processing the attribute value. This approach involves a function object (a visitor) which is applied to the attribute value. The visitor should know the stored type of the attribute value in order to process it.]]
+    [[(Attribute) value extraction][A way of processing the attribute value when the caller attempts to obtain a reference to the stored value. The caller should know the stored type of the attribute value in order to be able to extract it.]]
+    [[Log source][An entry point for the user's application to put log records to. In a simple case it is an object (logger) which maintains a set of attributes that will be used to form a log record upon the user's request. However, one can surely create a source that would emit log records on some side events (for example, by intercepting and parsing console output of another application).]]
+    [[Log sink][A target, to which all log records are fed after being collected from the user's application. The sink defines where and how the log records are going to be stored or processed.]]
+    [[Log filter][A predicate that takes a log record and tells whether this record should be passed through for further processing or discarded. The predicate typically forms its decision based on the attribute values attached to the record.]]
+    [[Log formatter][A function object that generates the final textual output from a log record. Some sinks, e.g. a binary logging sink, may not need it, although almost any text-based sink would use a formatter to compose its output.]]
+    [[Logging core][A global entity that maintains a list of sinks and applies filters to records generated by log sources. In the user's application, it is mainly used when the logging library is configured. There is only one instance of the logging core in an application.]]
+    [[i18n][Internationalization. The ability to manipulate wide characters.]]
+    [[TLS][Thread-local storage. The concept of having a variable that has independent values for each thread that attempts to access it.]]
+    [[RTTI][Run-time type information. This is the C++ language support data structures required for `dynamic_cast` and `typeid` operators to function properly.]]
+]
+
+[endsect]
+
+[endsect]

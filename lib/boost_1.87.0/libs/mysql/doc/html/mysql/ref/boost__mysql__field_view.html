@@ -1,0 +1,610 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>field_view</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__field_kind.html" title="field_kind">
+<link rel="next" href="boost__mysql__field_view/field_view.html" title="field_view::field_view">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__field_kind.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__field_view/field_view.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__field_view"></a><a class="link" href="boost__mysql__field_view.html" title="field_view">field_view</a>
+</h4></div></div></div>
+<p>
+        Non-owning variant-like class that can represent of any of the allowed database
+        types.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__field_view.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__field_view.synopsis"></a></span><a class="link" href="boost__mysql__field_view.html#mysql.ref.boost__mysql__field_view.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/field_view.hpp" target="_top">boost/mysql/field_view.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">field_view</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__field_view.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__field_view.member_functions"></a></span><a class="link" href="boost__mysql__field_view.html#mysql.ref.boost__mysql__field_view.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_blob.html" title="field_view::as_blob">as_blob</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a blob or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_date.html" title="field_view::as_date">as_date</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="identifier">date</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_datetime.html" title="field_view::as_datetime">as_datetime</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="identifier">datetime</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_double.html" title="field_view::as_double">as_double</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="keyword">double</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_float.html" title="field_view::as_float">as_float</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="keyword">float</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_int64.html" title="field_view::as_int64">as_int64</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as an <code class="computeroutput"><span class="identifier">int64</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_string.html" title="field_view::as_string">as_string</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a string or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_time.html" title="field_view::as_time">as_time</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="identifier">time</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/as_uint64.html" title="field_view::as_uint64">as_uint64</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as an <code class="computeroutput"><span class="identifier">uint64</span></code>
+                  or throws an exception.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/field_view.html" title="field_view::field_view">field_view</a> <span class="silver">[constructor]</span></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Constructs a <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  holding NULL. <br><span class="silver">—</span><br>Constructs
+                  a <code class="computeroutput"><span class="identifier">field_view</span></code> holding
+                  an <code class="computeroutput"><span class="identifier">int64</span></code>. <br><span class="silver">—</span><br>Constructs a <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  holding a <code class="computeroutput"><span class="identifier">uint64</span></code>.
+                  <br><span class="silver">—</span><br>Constructors from character
+                  types would incorrectly construct a <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  holding an integer, so they are not allowed. <br><span class="silver">—</span><br>Constructs
+                  a <code class="computeroutput"><span class="identifier">field_view</span></code> holding
+                  a string. <br><span class="silver">—</span><br>Constructs a
+                  <code class="computeroutput"><span class="identifier">field_view</span></code> holding
+                  a blob. <br><span class="silver">—</span><br>Constructs a <code class="computeroutput"><span class="identifier">field_view</span></code> holding a <code class="computeroutput"><span class="keyword">float</span></code>. <br><span class="silver">—</span><br>Constructs
+                  a <code class="computeroutput"><span class="identifier">field_view</span></code> holding
+                  a <code class="computeroutput"><span class="keyword">double</span></code>. <br><span class="silver">—</span><br>Constructs a <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  holding a <code class="computeroutput"><span class="identifier">date</span></code>.
+                  <br><span class="silver">—</span><br>Constructs a <code class="computeroutput"><span class="identifier">field_view</span></code> holding a <code class="computeroutput"><span class="identifier">datetime</span></code>. <br><span class="silver">—</span><br>Constructs
+                  a <code class="computeroutput"><span class="identifier">field_view</span></code> holding
+                  a <code class="computeroutput"><span class="identifier">time</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_blob.html" title="field_view::get_blob">get_blob</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a blob (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_date.html" title="field_view::get_date">get_date</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="identifier">date</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_datetime.html" title="field_view::get_datetime">get_datetime</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="identifier">datetime</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_double.html" title="field_view::get_double">get_double</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="keyword">double</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_float.html" title="field_view::get_float">get_float</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="keyword">float</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_int64.html" title="field_view::get_int64">get_int64</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as an <code class="computeroutput"><span class="identifier">int64</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_string.html" title="field_view::get_string">get_string</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a string (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_time.html" title="field_view::get_time">get_time</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as a <code class="computeroutput"><span class="identifier">time</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/get_uint64.html" title="field_view::get_uint64">get_uint64</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Retrieves the underlying value as an <code class="computeroutput"><span class="identifier">uint64</span></code>
+                  (unchecked access).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_blob.html" title="field_view::is_blob">is_blob</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a binary blob.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_date.html" title="field_view::is_date">is_date</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="identifier">date</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_datetime.html" title="field_view::is_datetime">is_datetime</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="identifier">datetime</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_double.html" title="field_view::is_double">is_double</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="keyword">double</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_float.html" title="field_view::is_float">is_float</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="keyword">float</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_int64.html" title="field_view::is_int64">is_int64</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="identifier">int64</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_null.html" title="field_view::is_null">is_null</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="identifier">NULL</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_string.html" title="field_view::is_string">is_string</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a string value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_time.html" title="field_view::is_time">is_time</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="identifier">time</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/is_uint64.html" title="field_view::is_uint64">is_uint64</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns whether this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  points to a <code class="computeroutput"><span class="identifier">uint64</span></code>
+                  value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/kind.html" title="field_view::kind">kind</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Returns the type of the value this <code class="computeroutput"><span class="identifier">field_view</span></code>
+                  is pointing to.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/operator__not__eq_.html" title="field_view::operator!=">operator!=</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Tests for inequality.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/operator_eq__eq_.html" title="field_view::operator==">operator==</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Tests for equality.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__field_view.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__field_view.related_non_member_functions"></a></span><a class="link" href="boost__mysql__field_view.html#mysql.ref.boost__mysql__field_view.related_non_member_functions">Related
+        Non-member Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__field_view/operator_lt__lt__fe.html" title="field_view::operator&lt;&lt;">operator&lt;&lt;</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Streams a <code class="computeroutput"><span class="identifier">field_view</span></code>.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__field_view.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__field_view.description"></a></span><a class="link" href="boost__mysql__field_view.html#mysql.ref.boost__mysql__field_view.description">Description</a>
+      </h5>
+<p>
+        This is a variant-like class, similar to <a class="link" href="boost__mysql__field.html" title="field"><code class="computeroutput"><span class="identifier">field</span></code></a>, but semi-owning and read-only.
+        Values of this type are usually created by the library, not directly by the
+        user. It's cheap to construct and copy, and it's the main library interface
+        when reading values from MySQL.
+      </p>
+<p>
+        Like a variant, at any point, a <code class="computeroutput"><span class="identifier">field_view</span></code>
+        always points to a value of certain type. You can query the type using <a class="link" href="boost__mysql__field_view/kind.html" title="field_view::kind"><code class="computeroutput"><span class="identifier">field_view</span><span class="special">::</span><span class="identifier">kind</span></code></a>
+        and the <code class="computeroutput"><span class="identifier">is_xxx</span></code> functions
+        like <a class="link" href="boost__mysql__field_view/is_int64.html" title="field_view::is_int64"><code class="computeroutput"><span class="identifier">field_view</span><span class="special">::</span><span class="identifier">is_int64</span></code></a>. Use <code class="computeroutput"><span class="identifier">as_xxx</span></code>
+        and <code class="computeroutput"><span class="identifier">get_xxx</span></code> for checked and
+        unchecked value access, respectively. As opposed to <a class="link" href="boost__mysql__field.html" title="field"><code class="computeroutput"><span class="identifier">field</span></code></a>, these functions return values
+        instead of references.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__field_view.h4"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__field_view.object_lifetimes"></a></span><a class="link" href="boost__mysql__field_view.html#mysql.ref.boost__mysql__field_view.object_lifetimes">Object
+        lifetimes</a>
+      </h5>
+<p>
+        Depending on how it was constructed, <code class="computeroutput"><span class="identifier">field_view</span></code>
+        can have value or reference semantics:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            If it was created by the library, the <code class="computeroutput"><span class="identifier">field_view</span></code>
+            will have an associated <a class="link" href="boost__mysql__row.html" title="row"><code class="computeroutput"><span class="identifier">row</span></code></a>, <a class="link" href="boost__mysql__rows.html" title="rows"><code class="computeroutput"><span class="identifier">rows</span></code></a> or <a class="link" href="boost__mysql__results.html" title="results"><code class="computeroutput"><span class="identifier">results</span></code></a> object holding memory
+            to which the <code class="computeroutput"><span class="identifier">field_view</span></code>
+            points. It will be valid as long as the memory allocated by that object
+            is valid.
+          </li>
+<li class="listitem">
+            If it was created from a <a class="link" href="boost__mysql__field.html" title="field"><code class="computeroutput"><span class="identifier">field</span></code></a> (by calling <code class="computeroutput"><span class="keyword">operator</span> <span class="identifier">field_view</span></code>),
+            the <code class="computeroutput"><span class="identifier">field_view</span></code> acts as
+            a reference to that <code class="computeroutput"><span class="identifier">field</span></code>
+            object, and will be valid as long as the <code class="computeroutput"><span class="identifier">field</span></code>
+            is.
+          </li>
+<li class="listitem">
+            If it was created from a scalar (null, integral, floating point, date,
+            datetime or time), the <code class="computeroutput"><span class="identifier">field_view</span></code>
+            has value semnatics and will always be valid.
+          </li>
+<li class="listitem">
+            If it was created from a string or blob type, the <code class="computeroutput"><span class="identifier">field_view</span></code>
+            acts as a <code class="computeroutput"><span class="identifier">string_view</span></code>
+            or <code class="computeroutput"><span class="identifier">blob_view</span></code>, and will
+            be valid as long as the original string/blob is.
+          </li>
+</ul></div>
+<p>
+        Calling any member function on a <code class="computeroutput"><span class="identifier">field_view</span></code>
+        that has been invalidated results in undefined behavior.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__field_kind.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__field_view/field_view.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

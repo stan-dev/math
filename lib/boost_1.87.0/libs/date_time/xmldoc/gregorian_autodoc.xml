@@ -1,0 +1,1939 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="gregorian_reference"><title>Gregorian Reference</title><header id="doxygen.gregorian_reference.conversion_8hpp" name="boost/date_time/gregorian/conversion.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ae085288cac44f0f21ea2e8624f074530" name="to_tm"><type>std::tm</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>Converts a date to a tm struct. Throws out_of_range exception if date is a special value. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad9966b001672ddd5031e6a4f358fe2fb" name="date_from_tm"><type><classname>date</classname></type><parameter name="datetm"><paramtype>const std::tm &amp;</paramtype></parameter><purpose>Converts a tm structure into a date dropping the any time values. </purpose></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.formatters_8hpp" name="boost/date_time/gregorian/formatters.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a25e4e6c78c7463245efee86afd3efa96" name="to_simple_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1abd561008424019850774db3e114d9911" name="to_simple_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="d"><paramtype>const date_period &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8cf841ee7d06e22d82770879b1caf516" name="to_iso_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="d"><paramtype>const date_period &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab8a9b4a696a1757f04182f7e39c46630" name="to_iso_extended_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a4525218db44d315b021f51de6a59a911" name="to_iso_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a5d99e726b64e67e4454280e1b9f51217" name="to_sql_string_type"><type>std::basic_string&lt; charT &gt;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1add3f5dcbace619890e8b51366c9a60b5" name="to_simple_wstring"><type>std::wstring</type><parameter name="d"><paramtype>const date_period &amp;</paramtype></parameter><purpose>Convert date period to simple string. Example: [2002-Jan-01/2002-Jan-02]. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a4e6a0ab4955b986985d4f1aa89bf811b" name="to_simple_wstring"><type>std::wstring</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>To YYYY-mmm-DD string where mmm 3 char month name. Example: 2002-Jan-01. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a7cf4ad50bd5413580363bc9f84d7b042" name="to_iso_wstring"><type>std::wstring</type><parameter name="d"><paramtype>const date_period &amp;</paramtype></parameter><purpose>Date period to iso standard format CCYYMMDD/CCYYMMDD. Example: 20021225/20021231. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a459e206f0c76990cf25d2120dd61431d" name="to_iso_extended_wstring"><type>std::wstring</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>Convert to iso extended format string CCYY-MM-DD. Example 2002-12-31. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a948211d6bbea7efdab2d0f03ae34ba6c" name="to_iso_wstring"><type>std::wstring</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>Convert to iso standard string YYYYMMDD. Example: 20021231. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aae2fe8f8ab41c3ab511cb82b21039b36" name="to_sql_wstring"><type>std::wstring</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.formatters__limited_8hpp" name="boost/date_time/gregorian/formatters_limited.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a3bd9857ed3fdce6fcd9a1760ddf6ff11" name="to_iso_string"><type>std::string</type><parameter name=""><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>Convert to ISO 8601 standard string YYYYMMDD. Example: 20021231. </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad59fafcb4a69c9c48b51b33794dcabad" name="to_simple_string"><type>std::string</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>To YYYY-mmm-DD string where mmm 3 char month name. Example: 2002-Jan-01. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1affc3470eadd10c2ab56ea17543a50517" name="to_simple_string"><type>std::string</type><parameter name="d"><paramtype>const date_period &amp;</paramtype></parameter><purpose>Convert date period to simple string. Example: [2002-Jan-01/2002-Jan-02]. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a01b7da99781f6685814d6df1711f900d" name="to_iso_string"><type>std::string</type><parameter name="d"><paramtype>const date_period &amp;</paramtype></parameter><purpose>Date period to ISO 8601 standard format CCYYMMDD/CCYYMMDD. Example: 20021225/20021231. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a67d381fbf390731b2a7f77bb705d6be6" name="to_iso_extended_string"><type>std::string</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>Convert to ISO 8601 extended format string CCYY-MM-DD. Example 2002-12-31. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a86b753ae035193c0d90d28ac799b8281" name="to_sql_string"><type>std::string</type><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__calendar_8hpp" name="boost/date_time/gregorian/greg_calendar.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1gregorian__calendar" name="gregorian_calendar"><inherit access="public">date_time::gregorian_calendar_base&lt; greg_year_month_day, fancy_date_rep::int_type &gt;</inherit><purpose>Gregorian calendar for this implementation, hard work in the base. </purpose><typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1gregorian__calendar_1ab0fe43ec747b8e364e763b419d10cbe8" name="day_of_week_type"><purpose>Type to hold a weekday (eg: Sunday, Monday,...) </purpose><type><classname>greg_weekday</classname></type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1gregorian__calendar_1a758375b5ad4ed8b6eef5be837e3022c6" name="day_of_year_type"><purpose>Counter type from 1 to 366 for gregorian dates. </purpose><type>greg_day_of_year_rep</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1gregorian__calendar_1aa647f53aaf42f6da3be5b75e33cd5c6f" name="date_rep_type"><purpose>Internal date representation that handles infinity, not a date. </purpose><type>fancy_date_rep</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1gregorian__calendar_1a944990e7ee0145c759c76c511142050f" name="date_traits_type"><purpose>Date rep implements the traits stuff as well. </purpose><type>fancy_date_rep</type></typedef>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a150bd17d1dfe4b3676aee970bd59e3d4" name="fancy_date_rep"><purpose>An internal date representation that includes infinities, not a date. </purpose><type>date_time::int_adapter&lt; uint32_t &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__date_8hpp" name="boost/date_time/gregorian/greg_date.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date" name="date"><inherit access="public">date_time::date&lt; date, gregorian_calendar, date_duration &gt;</inherit><purpose>A date type based on <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1gregorian__calendar">gregorian_calendar</link>. </purpose><description><para>This class is the primary interface for programming with greogorian dates. The is a lightweight type that can be freely passed by value. All comparison operators are supported. </para></description><typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a172967630b489f85f3e01f58bf49fcd6" name="year_type"><type>gregorian_calendar::year_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1af1cea8f70cbf819a625738a2b6db3c01" name="month_type"><type>gregorian_calendar::month_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1acb1d46a29039f83fbffbd20bd1c8ba81" name="day_type"><type>gregorian_calendar::day_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a256e4e7c3dcb9adfb38cf5354db7c195" name="day_of_year_type"><type>gregorian_calendar::day_of_year_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1ab9dcd7e0331c85df8aaa36e643476333" name="ymd_type"><type>gregorian_calendar::ymd_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1ad99afb5ceb2306c1a1b4b47ab79f1e66" name="date_rep_type"><type>gregorian_calendar::date_rep_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a2ebeb887495d8d9820129307970ee6c4" name="date_int_type"><type>gregorian_calendar::date_int_type</type></typedef>
+<typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a6224598a60fc7eacab05d4c88e242484" name="duration_type"><type><classname>date_duration</classname></type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a5e67c8774352cd0c915ddaf5713a8762"><purpose>Default constructor constructs with not_a_date_time. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a10dc8c6e4e3be2683e292005ff74da7c"><parameter name="y"><paramtype>year_type</paramtype></parameter><parameter name="m"><paramtype>month_type</paramtype></parameter><parameter name="d"><paramtype>day_type</paramtype></parameter><purpose>Main constructor with year, month, day. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1aa44aff0fa4af9452f782c6fb64bf592a" specifiers="explicit"><parameter name="ymd"><paramtype>const ymd_type &amp;</paramtype></parameter><purpose>Constructor from a ymd_type structure. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1aeb63e235d192cc83d1e0dae54cf10cdc" specifiers="explicit"><parameter name="rhs"><paramtype>const date_int_type &amp;</paramtype></parameter><purpose>Needed copy constructor. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1af63a1051b0f684da8aa933f913af4b32" specifiers="explicit"><parameter name="rhs"><paramtype>date_rep_type</paramtype></parameter><purpose>Needed copy constructor. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a400e37b784ea1c7d54723045e41fe666" specifiers="explicit"><parameter name="sv"><paramtype>special_values</paramtype></parameter><purpose>Constructor for infinities, not a date, max and min date. </purpose></constructor>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1ad69e7e8ff54f3796600c74f7759f4143" name="julian_day" cv="const"><type>BOOST_CXX14_CONSTEXPR date_int_type</type><purpose>Return the Julian Day number for the date. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1afaf2d9bfded59123dc30b0c28691a0e9" name="day_of_year" cv="const"><type>BOOST_CXX14_CONSTEXPR day_of_year_type</type><purpose>Return the day of year 1..365 or 1..366 (for leap year) </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a9f350249be1b9ce0783a3c0e1a57f25b" name="modjulian_day" cv="const"><type>BOOST_CXX14_CONSTEXPR date_int_type</type><purpose>Return the Modified Julian Day number for the date. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a2b5e17c1ce13ed330b82a971769852d6" name="week_number" cv="const"><type>BOOST_CXX14_CONSTEXPR int</type><purpose>Return the ISO 8601 week number 1..53. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a26027288d4619494fcbe53d5ecec94f2" name="day_number" cv="const"><type>BOOST_CXX14_CONSTEXPR date_int_type</type><purpose>Return the day number from the calendar. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a01d27430746f6c3ea9f32c08065c1aca" name="end_of_month" cv="const"><type>BOOST_CXX14_CONSTEXPR <classname>date</classname></type><purpose>Return the last day of the current month. </purpose></method>
+</method-group>
+<method-group name="private member functions">
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date_1a1ac6b4fe5ad06b53493e5ab1c791e763" name="from_special_adjusted"><type>BOOST_CXX14_CONSTEXPR date_rep_type</type><parameter name="sv"><paramtype>special_values</paramtype></parameter></method>
+</method-group>
+</class>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a295c634029f5274cf4cd278f1667c303" name="operator=="><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="lhs"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><parameter name="rhs"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__day_8hpp" name="boost/date_time/gregorian/greg_day.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__day__of__month" name="bad_day_of_month"><inherit access="public">std::out_of_range</inherit><purpose>Exception type for gregorian day of month (1..31) </purpose><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__day__of__month_1a787c5f57f61a38432f006b01475aadd2"/>
+<constructor id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__day__of__month_1ac985c7be482bef190b5f7291ee8374c4"><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>Allow other classes to throw with unique string for bad day like Feb 29. </purpose></constructor>
+</method-group>
+</struct><class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day" name="greg_day"><inherit access="public">greg_day_rep</inherit><purpose>Represent a day of the month (range 1 - 31) </purpose><description><para>This small class allows for simple conversion an integer value into a day of the month for a standard gregorian calendar. The type is automatically range checked so values outside of the range 1-31 will cause a <link linkend="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__day__of__month">bad_day_of_month</link> exception </para></description><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day_1ae8248cbf0108c25d8e83344e23331b44"><parameter name="day_of_month"><paramtype>value_type</paramtype></parameter></constructor>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day_1ad4dc7fc985ae60774d69ef5c5a150dcf" name="as_number" cv="const"><type>BOOST_CXX14_CONSTEXPR value_type</type></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day_1a43b42f483abfd55e0c4abff1c7db8f7e" name="operator value_type" cv="const"><type>BOOST_CXX14_CONSTEXPR</type></method>
+</method-group>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a2f6e18be54214146c02589859b0bae10" name="greg_day_policies"><purpose>Policy class that declares error handling and day of month ranges. </purpose><type>CV::simple_exception_policy&lt; unsigned short, 1, 31, <classname>bad_day_of_month</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a69ef9af742583fca1f6ce1ce6405b75d" name="greg_day_rep"><purpose>Generated represetation for gregorian day of month. </purpose><type>CV::constrained_value&lt; greg_day_policies &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__day__of__year_8hpp" name="boost/date_time/gregorian/greg_day_of_year.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__day__of__year" name="bad_day_of_year"><inherit access="public">std::out_of_range</inherit><purpose>Exception type for day of year (1..366) </purpose><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__day__of__year_1a23bcf44b30bc08177505c76563471c54"/>
+</method-group>
+</struct><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a6b091fb15d7232a662bb7ab8f5687d5f" name="greg_day_of_year_policies"><purpose>A day of the year range (1..366) </purpose><type>CV::simple_exception_policy&lt; unsigned short, 1, 366, <classname>bad_day_of_year</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a15f57a33bb1219d4b1582d95cb9483ca" name="greg_day_of_year_rep"><purpose>Define a range representation type for the day of the year 1..366. </purpose><type>CV::constrained_value&lt; greg_day_of_year_policies &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__duration_8hpp" name="boost/date_time/gregorian/greg_duration.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration" name="date_duration"><inherit access="public">boost::date_time::date_duration&lt; date_duration_rep &gt;</inherit><purpose>Durations in days for gregorian system. </purpose><typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a9fdbafe7bf76a7a070742b5090f093a9" name="duration_rep"><type>base_type::duration_rep</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a5a85ed827af10dd255b057db0037019e" specifiers="explicit"><parameter name="day_count"><paramtype>duration_rep</paramtype><default>0</default></parameter><purpose>Construct from a day count. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1acd35a24bc7ed6ccbb9e0460486399bca"><parameter name="sv"><paramtype>date_time::special_values</paramtype></parameter><purpose>construct from special_values </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a79754fec8ce89da2498d80d27c214bd3"><parameter name="other"><paramtype>const base_type &amp;</paramtype></parameter><purpose>Construct from another <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration">date_duration</link>. </purpose></constructor>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a164b1dfadfb969e21add911af1a25455" name="operator==" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1aa1c238a53ae95b5c02b8520e29542ef9" name="operator!=" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a5afc290e67ae87d0fb37d52d54ffb8e9" name="operator&lt;" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a125032c69079ef16f5cb2220e766efe7" name="operator&gt;" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1abe3a4ddaca5529ba26b94e87a4dce4ee" name="operator&lt;=" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1aaf4ee7fc9faf3178e16c808c106c5f48" name="operator&gt;=" cv="const"><type>BOOST_CXX14_CONSTEXPR bool</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a7543dfd7a43486e9e8bfa5340f80eace" name="operator-="><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname> &amp;</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter><purpose>Subtract another duration – result is signed. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a1858b57125c5951490d62b3ee7e831e6" name="operator+="><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname> &amp;</type><parameter name="rhs"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter><purpose>Add a duration – result is signed. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a8077152653bcca0c2f930cff4ee1d34a" name="operator-" cv="const"><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname></type><purpose>unary- Allows for dd = -date_duration(2); -&gt; dd == -2 </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1afc58bf55356384b42810705e7fb4e97a" name="operator/="><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname> &amp;</type><parameter name="divisor"><paramtype>int</paramtype></parameter><purpose>Division operations on a duration with an integer. </purpose></method>
+</method-group>
+<method-group name="public static functions">
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration_1a137e99b235004fda6e455c80a2ad393f" name="unit" specifiers="static"><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname></type><purpose>Returns the smallest duration – used by to calculate 'end'. </purpose></method>
+</method-group>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a1ddb01acee65bb3944466754f8279094" name="date_duration_rep"><purpose>An internal date representation that includes infinities, not a date. </purpose><type>boost::date_time::duration_traits_adapted</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a2af0470599a9e5c5e8cce986a9bbea7c" name="days"><purpose>Shorthand for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration">date_duration</link>. </purpose><type><classname>date_duration</classname></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aec6b99cfa562329b8a64108f8846d6a6" name="operator-"><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname></type><parameter name="rhs"><paramtype><classname>date_duration</classname></paramtype></parameter><parameter name="lhs"><paramtype><classname>date_duration</classname> const &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a53fce3371508de36554d81bab17a1fbf" name="operator+"><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname></type><parameter name="rhs"><paramtype><classname>date_duration</classname></paramtype></parameter><parameter name="lhs"><paramtype><classname>date_duration</classname> const &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a168b433d172f5e765b25f0c5a9b71356" name="operator/"><type>BOOST_CXX14_CONSTEXPR <classname>date_duration</classname></type><parameter name="rhs"><paramtype><classname>date_duration</classname></paramtype></parameter><parameter name="lhs"><paramtype>int</paramtype></parameter></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__duration__types_8hpp" name="boost/date_time/gregorian/greg_duration_types.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__durations__config" name="greg_durations_config"><purpose>config struct for additional duration types (ie months_duration&lt;&gt; &amp; years_duration&lt;&gt;) </purpose><typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__durations__config_1a817f6208bf51f067ab8a860c80660c81" name="date_type"><type><classname>date</classname></type></typedef>
+<typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__durations__config_1a6c6b1362c7e6e5bce7b65415a7a71425" name="int_rep"><type>date_time::int_adapter&lt; int &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__durations__config_1a1dbf3e5c6ef6d15641cf9978aeb1cef6" name="month_adjustor_type"><type>date_time::month_functor&lt; <classname>date_type</classname> &gt;</type></typedef>
+</struct><class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1weeks__duration" name="weeks_duration"><inherit access="public">boost::gregorian::date_duration</inherit><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1weeks__duration_1a81d5ffbe285a1e3bddbb7a3598d0548e"><parameter name="w"><paramtype>duration_rep</paramtype></parameter></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1weeks__duration_1ae3a852692d20ab4f9cd75dad95469b97"><parameter name="sv"><paramtype>date_time::special_values</paramtype></parameter></constructor>
+</method-group>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ac4056268a2ab6db089c887a2a04177ca" name="months"><type>date_time::months_duration&lt; <classname>greg_durations_config</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a4c65a9e9869a5c2e40d9bda7e0bf8816" name="years"><type>date_time::years_duration&lt; <classname>greg_durations_config</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a114c4bcda36ac42aca69f18669f59c20" name="weeks"><type><classname>weeks_duration</classname></type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__facet_8hpp" name="boost/date_time/gregorian/greg_facet.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__facet__config" name="greg_facet_config"><purpose>Configuration of the output facet template. </purpose><typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__facet__config_1a5a278e37b744e4bbe1c527be1033a619" name="month_type"><type><classname>boost::gregorian::greg_month</classname></type></typedef>
+<typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__facet__config_1a5982cc037487c37e08ccea7b30ac3bb0" name="special_value_enum"><type>boost::date_time::special_values</type></typedef>
+<typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__facet__config_1a5bf15726f95be911dbf1344a96c4881d" name="month_enum"><type>boost::gregorian::months_of_year</type></typedef>
+<typedef id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1greg__facet__config_1a01ef7bab9da334c4b63e45d71fb3a238" name="weekday_enum"><type>boost::date_time::weekdays</type></typedef>
+</struct><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a0a01826120acb9d21e2d05cc6e5c1a26" name="greg_base_facet"><purpose>Create the base facet type for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date">gregorian::date</link>. </purpose><type>boost::date_time::date_names_put&lt; <classname>greg_facet_config</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a9756b661f82435641836455a820a4cf6" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="d"><paramtype>const <classname>date</classname> &amp;</paramtype></parameter><purpose>ostream operator for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date">gregorian::date</link> </purpose><description><para>Uses the date facet to determine various output parameters including:<itemizedlist>
+<listitem><para>string values for the month (eg: Jan, Feb, Mar) (default: English)</para>
+</listitem><listitem><para>string values for special values (eg: not-a-date-time) (default: English)</para>
+</listitem><listitem><para>selection of long, short strings, or numerical month representation (default: short string)</para>
+</listitem><listitem><para>month day year order (default yyyy-mmm-dd) </para>
+</listitem></itemizedlist>
+</para></description></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab51acf638fe8297c5ac459aba234f12c" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="m"><paramtype>const <classname>greg_month</classname> &amp;</paramtype></parameter><purpose>operator&lt;&lt; for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month">gregorian::greg_month</link> typically streaming: Jan, Feb, Mar... </purpose><description><para>Uses the date facet to determine output string as well as selection of long or short strings. Default if no facet is installed is to output a 2 wide numeric value for the month eg: 01 == Jan, 02 == Feb, ... 12 == Dec. </para></description></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a9b38cabf17d2a28947a47850a5a24174" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="wd"><paramtype>const <classname>greg_weekday</classname> &amp;</paramtype></parameter><purpose>operator&lt;&lt; for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday">gregorian::greg_weekday</link> typically streaming: Sun, Mon, Tue, ... </purpose><description><para>Uses the date facet to determine output string as well as selection of long or short string. Default if no facet is installed is to output a 3 char english string for the day of the week. </para></description></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aeedfae61d46efe4c093f9fc64cf15cf2" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="dp"><paramtype>const date_period &amp;</paramtype></parameter><purpose>operator&lt;&lt; for <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8a656ab74319ba5a6a7901594a0638be">gregorian::date_period</link> typical output: [2002-Jan-01/2002-Jan-31] </purpose><description><para>Uses the date facet to determine output string as well as selection of long or short string fr dates. Default if no facet is installed is to output a 3 char english string for the day of the week. </para></description></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a56b298a8a3d33de36b3365fabd622013" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="dd"><paramtype>const <classname>date_duration</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aa12c5a130c9b9caf7923df3c4fa46faf" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="pd"><paramtype>const partial_date &amp;</paramtype></parameter><purpose>operator&lt;&lt; for <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a0c397248263d2aa3d7890ffa4c828456">gregorian::partial_date</link>. Output: "Jan 1" </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a887e1b48f0a57315410f0eaf46de343a" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="nkd"><paramtype>const nth_kday_of_month &amp;</paramtype></parameter><purpose>operator&lt;&lt; for gregorian::nth_kday_of_month. Output: "first Mon of Jun" </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab58171e9e172b7c91129098569f27f6d" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="fkd"><paramtype>const first_kday_of_month &amp;</paramtype></parameter><purpose>operator&lt;&lt; for gregorian::first_kday_of_month. Output: "first Mon of Jun" </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a2364a0d83bc7c2696ddd2667cfc1f1f9" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="lkd"><paramtype>const last_kday_of_month &amp;</paramtype></parameter><purpose>operator&lt;&lt; for gregorian::last_kday_of_month. Output: "last Mon of Jun" </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab91760ae07f1d37910a390ec2ef277c1" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="fka"><paramtype>const first_kday_after &amp;</paramtype></parameter><purpose>operator&lt;&lt; for gregorian::first_kday_after. Output: "first Mon after" </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a38bd2ac0f0838f5567a91377f109a3cb" name="operator&lt;&lt;"><type>std::basic_ostream&lt; charT, traits &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+          <template-type-parameter name="traits"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; charT, traits &gt; &amp;</paramtype></parameter><parameter name="fkb"><paramtype>const first_kday_before &amp;</paramtype></parameter><purpose>operator&lt;&lt; for gregorian::first_kday_before. Output: "first Mon before" </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a56973c096ac502dc298de97a6e73d4e0" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="d"><paramtype><classname>date</classname> &amp;</paramtype></parameter><purpose>operator&gt;&gt; for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date">gregorian::date</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a412fa4497db285bc6f2e9f33930f8104" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="dd"><paramtype><classname>date_duration</classname> &amp;</paramtype></parameter><purpose>operator&gt;&gt; for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration">gregorian::date_duration</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1acc9df351f6fa014d43df3894ca09ad75" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="dp"><paramtype>date_period &amp;</paramtype></parameter><purpose>operator&gt;&gt; for <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8a656ab74319ba5a6a7901594a0638be">gregorian::date_period</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a5ea7674b3372b8c5fdd4c4f4db96cc7f" name="generate_locale"><type>BOOST_DATE_TIME_DECL std::locale</type><parameter name="loc"><paramtype>std::locale &amp;</paramtype></parameter><parameter name="type"><paramtype>char</paramtype></parameter><purpose>generates a locale with the set of gregorian name-strings of type char* </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad2bda1a59bc92c9ea0751a86b93306fa" name="create_facet_def"><type>BOOST_DATE_TIME_DECL boost::date_time::all_date_names_put&lt; <classname>greg_facet_config</classname>, char &gt; *</type><parameter name="type"><paramtype>char</paramtype></parameter><purpose>Returns a pointer to a facet with a default set of names (English) </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1acd3e2eda1a0a6da0da5ca2037d6d0629" name="generate_locale"><type>BOOST_DATE_TIME_DECL std::locale</type><parameter name="loc"><paramtype>std::locale &amp;</paramtype></parameter><parameter name="type"><paramtype>wchar_t</paramtype></parameter><purpose>generates a locale with the set of gregorian name-strings of type wchar_t* </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a3534638372adbac7572a361fd1ec09f2" name="create_facet_def"><type>BOOST_DATE_TIME_DECL boost::date_time::all_date_names_put&lt; <classname>greg_facet_config</classname>, wchar_t &gt; *</type><parameter name="type"><paramtype>wchar_t</paramtype></parameter><purpose>Returns a pointer to a facet with a default set of names (English) </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a96c5f8dd4e3b75f48488e3e48aecf386" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="m"><paramtype><classname>greg_month</classname> &amp;</paramtype></parameter><purpose>operator&gt;&gt; for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month">gregorian::greg_month</link> - throws exception if invalid month given </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aa866a63e06a62263f81ba62a60aa93ba" name="operator&gt;&gt;"><type>std::basic_istream&lt; charT &gt; &amp;</type><template>
+          <template-type-parameter name="charT"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; charT &gt; &amp;</paramtype></parameter><parameter name="wd"><paramtype><classname>greg_weekday</classname> &amp;</paramtype></parameter><purpose>operator&gt;&gt; for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday">gregorian::greg_weekday</link> - throws exception if invalid weekday given </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__month_8hpp" name="boost/date_time/gregorian/greg_month.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__month" name="bad_month"><inherit access="public">std::out_of_range</inherit><purpose>Exception thrown if a <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month">greg_month</link> is constructed with a value out of range. </purpose><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__month_1af44321ea2d7d45eb219d19839c913f5b"/>
+</method-group>
+</struct><class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month" name="greg_month"><inherit access="public">greg_month_rep</inherit><purpose>Wrapper class to represent months in gregorian based calendar. </purpose><typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a98dd266465b1e39df025db1f17d6dd00" name="month_enum"><type>date_time::months_of_year</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a52b873098e83de21ae61d4ccf62df5ec"><parameter name="theMonth"><paramtype>month_enum</paramtype></parameter><purpose>Construct a month from the months_of_year enumeration. </purpose></constructor>
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a2b39b80647cb03fe2b3601f8538c544f"><parameter name="theMonth"><paramtype>value_type</paramtype></parameter><purpose>Construct from a short value. </purpose></constructor>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1ad1e06a5f7d5636704621e0c4f6d416d1" name="operator value_type" cv="const"><type>BOOST_CXX14_CONSTEXPR</type><purpose>Convert the value back to a short. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a4eb04e4553202c5cbb7ddf8dcbb7f644" name="as_number" cv="const"><type>BOOST_CXX14_CONSTEXPR value_type</type><purpose>Returns month as number from 1 to 12. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a98722ff80a2ee22c0f83f32aa9eabb88" name="as_enum" cv="const"><type>BOOST_CXX14_CONSTEXPR month_enum</type></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a987483cb063ac3efb3d7fb0fb26ca9c1" name="as_short_string" cv="const"><type>const char *</type><purpose>Returns 3 char english string for the month ex: Jan, Feb, Mar, Apr. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1adaeb220a4778261a4712975e4b96c62f" name="as_long_string" cv="const"><type>const char *</type><purpose>Returns full name of month as string in english ex: January, February. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a48d2333a631d60c51c6bb9b3acd987f7" name="as_short_wstring" cv="const"><type>const wchar_t *</type><purpose>Returns 3 wchar_t english string for the month ex: Jan, Feb, Mar, Apr. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1ada42bd4a2124fc732bd6fcb9b8a475dd" name="as_long_wstring" cv="const"><type>const wchar_t *</type><purpose>Returns full name of month as wchar_t string in english ex: January, February. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1ab5674a8d841fc0038c7d9d4a4a079e08" name="as_short_string" cv="const"><type>const char *</type><parameter name=""><paramtype>char</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a612e9ff92d3a6039b3d9a84420a7255e" name="as_long_string" cv="const"><type>const char *</type><parameter name=""><paramtype>char</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1a56991006b4c1f3136f8519d97ef2cffd" name="as_short_string" cv="const"><type>const wchar_t *</type><parameter name=""><paramtype>wchar_t</paramtype></parameter></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month_1accf0817a4d48763355ec94aff97957ed" name="as_long_string" cv="const"><type>const wchar_t *</type><parameter name=""><paramtype>wchar_t</paramtype></parameter></method>
+</method-group>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1adc9bb4b0128f3c1e8f073ce97e5472fe" name="months_of_year"><type>date_time::months_of_year</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a179f4a28ace18a732ba8914b326bc8d1" name="greg_month_policies"><purpose>Build a policy class for the greg_month_rep. </purpose><type>CV::simple_exception_policy&lt; unsigned short, 1, 12, <classname>bad_month</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a87b065fe3dfa8ec8432a432be7aa6c6b" name="greg_month_rep"><purpose>A constrained range that implements the gregorian_month rules. </purpose><type>CV::constrained_value&lt; greg_month_policies &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__serialize_8hpp" name="boost/date_time/gregorian/greg_serialize.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+<namespace name="serialization">
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a820d06c46f5be2355665318dfdf07816" name="BOOST_DATE_TIME_SPLIT_FREE"><type/><parameter name=""><paramtype><classname>::boost::gregorian::date</classname></paramtype></parameter><description><para>Method that does serialization for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date">gregorian::date</link> – splits to load/save</para><para>Dates are serialized into a string for transport and storage. While it would be more efficient to store the internal integer used to manipulate the dates, it is an unstable solution. <sbr/>
+ </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a959c3d619d22481b624f96bd6764a752" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="d"><paramtype><classname>::boost::gregorian::date</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date">gregorian::date</link> objects using serialization lib. </purpose><description><para>Dates are serialized into a string for transport and storage. While it would be more efficient to store the internal integer used to manipulate the dates, it is an unstable solution. <sbr/>
+ </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a2938e7486fb2436cc33084ff2e92c7ce" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="dp"><paramtype><classname>::boost::gregorian::date</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a21d0087acdf47ee5aad43093e1d20aff" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="dd"><paramtype>const <classname>gregorian::date_duration</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration">gregorian::date_duration</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a88a7470307bd69668b992bcb71e46149" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="dd"><paramtype><classname>gregorian::date_duration</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration">gregorian::date_duration</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ad1e64f3bdea30c7e8f62614ce9646999" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="dd"><paramtype><classname>gregorian::date_duration</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a51baa54b8f0df234e66f4899cffbee08" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="dr"><paramtype>const gregorian::date_duration::duration_rep &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>helper unction to save date_duration objects using serialization lib </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a4a2b3e92aadafa510e8753155951ccfb" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="dr"><paramtype>gregorian::date_duration::duration_rep &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>helper function to load date_duration objects using serialization lib </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a267e861272ddf52d0e69c389793ac12d" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="dr"><paramtype>gregorian::date_duration::duration_rep *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a1476321267c5769a91c41f5693722e22" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="dp"><paramtype>const gregorian::date_period &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8a656ab74319ba5a6a7901594a0638be">gregorian::date_period</link> objects using serialization lib. </purpose><description><para>date_period objects are broken down into 2 parts for serialization: the begining date object and the end date object </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a09e90d61df106014552092ef21362ece" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="dp"><paramtype>gregorian::date_period &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8a656ab74319ba5a6a7901594a0638be">gregorian::date_period</link> objects using serialization lib. </purpose><description><para>date_period objects are broken down into 2 parts for serialization: the begining date object and the end date object </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a7436bcceca31863c62329d806c5ea5a4" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="dp"><paramtype>gregorian::date_period *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a48b9f7698b7f657d091b0e7bbd8266a6" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gy"><paramtype>const <classname>gregorian::greg_year</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__year">gregorian::greg_year</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1af2568589ac2a224802d20afdf86c06db" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gy"><paramtype><classname>gregorian::greg_year</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__year">gregorian::greg_year</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a472a92c1c0f5c4296b4c8bd87180dd22" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="gy"><paramtype><classname>gregorian::greg_year</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1acaa835275e2ba34fd7d124a7c5657744" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gm"><paramtype>const <classname>gregorian::greg_month</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month">gregorian::greg_month</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ae184ac4b2e3a453051dad5e09da902a6" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gm"><paramtype><classname>gregorian::greg_month</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month">gregorian::greg_month</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a746a44d71fc95a761de7899d4a28298f" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="gm"><paramtype><classname>gregorian::greg_month</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a9141178e0124c043fafcc9a5b71e103c" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gd"><paramtype>const <classname>gregorian::greg_day</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day">gregorian::greg_day</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1aea0d571c3472a94cf35b51141127bf2f" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gd"><paramtype><classname>gregorian::greg_day</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day">gregorian::greg_day</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1aff542d8ed3e8d427589aa1b19810dce7" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="gd"><paramtype><classname>gregorian::greg_day</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a4519abf6e6532cd00c9b8a8d5f36735f" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gd"><paramtype>const <classname>gregorian::greg_weekday</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday">gregorian::greg_weekday</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ad94097e8c3713248ea233a5ef21469a0" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="gd"><paramtype><classname>gregorian::greg_weekday</classname> &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday">gregorian::greg_weekday</link> objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1aef7875745dcde01a6203625c78ade8db" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="gd"><paramtype><classname>gregorian::greg_weekday</classname> *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ab2053310faab9368c0adaf1f6b37e962" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="pd"><paramtype>const gregorian::partial_date &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a0c397248263d2aa3d7890ffa4c828456">gregorian::partial_date</link> objects using serialization lib. </purpose><description><para>partial_date objects are broken down into 2 parts for serialization: the day (typically greg_day) and month (typically greg_month) objects </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ac8aafcfaaa9fa2b3f96bbd6c8b2f9aa1" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="pd"><paramtype>gregorian::partial_date &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load <link linkend="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a0c397248263d2aa3d7890ffa4c828456">gregorian::partial_date</link> objects using serialization lib. </purpose><description><para>partial_date objects are broken down into 2 parts for serialization: the day (greg_day) and month (greg_month) objects </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a42cd1e7b390811379c3a74cd77f8647c" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="pd"><paramtype>gregorian::partial_date *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a8353edf4f445cbe3b7667491891887ee" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="nkd"><paramtype>const gregorian::nth_kday_of_month &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save nth_day_of_the_week_in_month objects using serialization lib. </purpose><description><para>nth_day_of_the_week_in_month objects are broken down into 3 parts for serialization: the week number, the day of the week, and the month </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a9aab3b2d242cbcfd2c00d7cdeb5c2ef8" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="nkd"><paramtype>gregorian::nth_kday_of_month &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load nth_day_of_the_week_in_month objects using serialization lib. </purpose><description><para>nth_day_of_the_week_in_month objects are broken down into 3 parts for serialization: the week number, the day of the week, and the month </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a2eb9e04d616a73f8f68f1a0531019214" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="nkd"><paramtype>gregorian::nth_kday_of_month *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1aef58e81ffb13ba07c7c7a81922102fae" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkd"><paramtype>const gregorian::first_kday_of_month &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save first_day_of_the_week_in_month objects using serialization lib. </purpose><description><para>first_day_of_the_week_in_month objects are broken down into 2 parts for serialization: the day of the week, and the month </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a266ddf1d5eb7eadd5f615745c2a002fe" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkd"><paramtype>gregorian::first_kday_of_month &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load first_day_of_the_week_in_month objects using serialization lib. </purpose><description><para>first_day_of_the_week_in_month objects are broken down into 2 parts for serialization: the day of the week, and the month </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a4ecb9ab89392caad94750eb2dde37730" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkd"><paramtype>gregorian::first_kday_of_month *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1aaa830c763eba4f630c234775ed42cf5c" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="lkd"><paramtype>const gregorian::last_kday_of_month &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save last_day_of_the_week_in_month objects using serialization lib. </purpose><description><para>last_day_of_the_week_in_month objects are broken down into 2 parts for serialization: the day of the week, and the month </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a91c9b037ffb96aa1ff66ba1d1a8c2df3" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="lkd"><paramtype>gregorian::last_kday_of_month &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load last_day_of_the_week_in_month objects using serialization lib. </purpose><description><para>last_day_of_the_week_in_month objects are broken down into 2 parts for serialization: the day of the week, and the month </para></description></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a997c3493a799a7122f2c8120ee28acf1" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="lkd"><paramtype>gregorian::last_kday_of_month *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ae4937e22d1e92c3b5a582ea1a313d1df" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkdb"><paramtype>const gregorian::first_kday_before &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save first_day_of_the_week_before objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a2c2d69387a17f9bacdc99bd879090bdf" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkdb"><paramtype>gregorian::first_kday_before &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load first_day_of_the_week_before objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ab25f2962b3cf6b1219acc6d9755edc70" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkdb"><paramtype>gregorian::first_kday_before *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a9f13bc422f10731fe240f1f85d876edd" name="save"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkda"><paramtype>const gregorian::first_kday_after &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to save first_day_of_the_week_after objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1ab14a74adfea09d3814814c2449b331ed" name="load"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name="ar"><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkda"><paramtype>gregorian::first_kday_after &amp;</paramtype></parameter><parameter name=""><paramtype>unsigned int</paramtype></parameter><purpose>Function to load first_day_of_the_week_after objects using serialization lib. </purpose></function>
+<function id="doxygen.gregorian_reference.greg__serialize_8hpp_1a918601dd2df0c0031d586ce382146b9b" name="load_construct_data"><type>void</type><template>
+          <template-type-parameter name="Archive"/>
+        </template><parameter name=""><paramtype>Archive &amp;</paramtype></parameter><parameter name="fkda"><paramtype>gregorian::first_kday_after *</paramtype></parameter><parameter name=""><paramtype>const unsigned int</paramtype></parameter><purpose>override needed b/c no default constructor </purpose></function>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__weekday_8hpp" name="boost/date_time/gregorian/greg_weekday.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__weekday" name="bad_weekday"><inherit access="public">std::out_of_range</inherit><purpose>Exception that flags that a weekday number is incorrect. </purpose><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__weekday_1a16e22a3cb8d7a6999dce1f4c3583797d"/>
+</method-group>
+</struct><class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday" name="greg_weekday"><inherit access="public">greg_weekday_rep</inherit><purpose>Represent a day within a week (range 0==Sun to 6==Sat) </purpose><typedef id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1aa03317a823a401f2af83c8ba6915e1e7" name="weekday_enum"><type>boost::date_time::weekdays</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1a3d8e580f3547c0387d3c4fefe852a8e8"><parameter name="day_of_week_num"><paramtype>value_type</paramtype></parameter></constructor>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1aa04217f55a2845bd3ee184dad87729d9" name="as_number" cv="const"><type>BOOST_CXX14_CONSTEXPR value_type</type></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1a6f1580d03958c57e857e8cdb3094f8ab" name="as_enum" cv="const"><type>BOOST_CXX14_CONSTEXPR weekday_enum</type></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1ae41ef76a36c0610ed7a6339717d40cec" name="as_short_string" cv="const"><type>const char *</type><purpose>Return a 3 digit english string of the day of week (eg: Sun) </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1a678920356418cf9a2851c99bb59e1627" name="as_long_string" cv="const"><type>const char *</type><purpose>Return a point to a long english string representing day of week. </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1a5c6ed82c13c6d21af3cd35c68b77b6ce" name="as_short_wstring" cv="const"><type>const wchar_t *</type><purpose>Return a 3 digit english wchar_t string of the day of week (eg: Sun) </purpose></method>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday_1a995e5a315c9b125dae021ce9c24b4181" name="as_long_wstring" cv="const"><type>const wchar_t *</type><purpose>Return a point to a long english wchar_t string representing day of week. </purpose></method>
+</method-group>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aff1d022e540e4cebb7c4bce3636f0d1b" name="greg_weekday_policies"><type>CV::simple_exception_policy&lt; unsigned short, 0, 6, <classname>bad_weekday</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aa1d0ee965438638b572a1b829d3ac6f7" name="greg_weekday_rep"><type>CV::constrained_value&lt; greg_weekday_policies &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__year_8hpp" name="boost/date_time/gregorian/greg_year.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<struct id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__year" name="bad_year"><inherit access="public">std::out_of_range</inherit><purpose>Exception type for gregorian year. </purpose><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.structboost_1_1gregorian_1_1bad__year_1a7c96d3b0f29209c807bd66daea4e0c94"/>
+</method-group>
+</struct><class id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__year" name="greg_year"><inherit access="public">greg_year_rep</inherit><purpose>Represent a year (range 1400 - 9999) </purpose><description><para>This small class allows for simple conversion an integer value into a year for the gregorian calendar. This currently only allows a range of 1400 to 9999. Both ends of the range are a bit arbitrary at the moment, but they are the limits of current testing of the library. As such they may be increased in the future. </para></description><method-group name="public member functions">
+<constructor id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__year_1a038b7bf65c11c52e3b574cc90d463455"><parameter name="year"><paramtype>value_type</paramtype></parameter></constructor>
+<method id="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__year_1ab9f8a71fed701e07d51deaf43078f741" name="operator value_type" cv="const"><type>BOOST_CXX14_CONSTEXPR</type></method>
+</method-group>
+</class><typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a0b133b1a4dd2a6cf2f62861dcbbabac4" name="greg_year_policies"><purpose>Policy class that declares error handling gregorian year type. </purpose><type>CV::simple_exception_policy&lt; unsigned short, 1400, 9999, <classname>bad_year</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ae94761be50fc064df60958aa6a78fa10" name="greg_year_rep"><purpose>Generated representation for gregorian year. </purpose><type>CV::constrained_value&lt; greg_year_policies &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.greg__ymd_8hpp" name="boost/date_time/gregorian/greg_ymd.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a42db42fe4e26241dd4339c923d025e7b" name="greg_year_month_day"><type>date_time::year_month_day_base&lt; <classname>greg_year</classname>, <classname>greg_month</classname>, <classname>greg_day</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.gregorian_8hpp" name="boost/date_time/gregorian/gregorian.hpp">
+<para>Single file header that provides overall include for all elements of the gregorian date-time system. This includes the various types defined, but also other functions for formatting and parsing. </para></header>
+<header id="doxygen.gregorian_reference.gregorian__io_8hpp" name="boost/date_time/gregorian/gregorian_io.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1af9d5b92bdc871c5f212e4e09695e35e8" name="wperiod_formatter"><type>boost::date_time::period_formatter&lt; wchar_t &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a3c52725ce598983fac62bcc789146785" name="period_formatter"><type>boost::date_time::period_formatter&lt; char &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ae1ef40de012fd99f9ee907cb9f2aca0b" name="wdate_facet"><type>boost::date_time::date_facet&lt; <classname>date</classname>, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ae8804501ca72c325595db505b88826b9" name="date_facet"><type>boost::date_time::date_facet&lt; <classname>date</classname>, char &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a2108c74810985d323c85dec5f5f873e3" name="period_parser"><type>boost::date_time::period_parser&lt; <classname>date</classname>, char &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a21418da77bd0e9138091d6efc37c0773" name="wperiod_parser"><type>boost::date_time::period_parser&lt; <classname>date</classname>, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8a29826f46253cc6d67d80e92a43bb02" name="special_values_formatter"><type>boost::date_time::special_values_formatter&lt; char &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a128e37daa22a858c1c8dd933912216bc" name="wspecial_values_formatter"><type>boost::date_time::special_values_formatter&lt; wchar_t &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aec65c78a2905b8a3ee557fa424ee4289" name="special_values_parser"><type>boost::date_time::special_values_parser&lt; <classname>date</classname>, char &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a1e0ce281ccc9e18c4cb96d91e08e2355" name="wspecial_values_parser"><type>boost::date_time::special_values_parser&lt; <classname>date</classname>, wchar_t &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aed3f4ebed03bad09f4e241c5f521013c" name="date_input_facet"><type>boost::date_time::date_input_facet&lt; <classname>date</classname>, char &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aa280bc955f6ce3fbfe2d06661354d4cc" name="wdate_input_facet"><type>boost::date_time::date_input_facet&lt; <classname>date</classname>, wchar_t &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1af8e19adda6c3d97306a79fccd040c5ca" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="d"><paramtype>const <classname>boost::gregorian::date</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a2c8882d31f52a3349a4f0f0555e4dd68" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="d"><paramtype><classname>date</classname> &amp;</paramtype></parameter><purpose>input operator for date </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a6c6511542b16237cea49cf0cbcb4afec" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="dd"><paramtype>const <classname>boost::gregorian::date_duration</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab70f1b969a310877de360c753bf7e10a" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="dd"><paramtype><classname>date_duration</classname> &amp;</paramtype></parameter><purpose>input operator for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1date__duration">date_duration</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a2b80253d67ab28f0b685798ea64b2e00" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="dp"><paramtype>const boost::gregorian::date_period &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a4566d89be22cbde56d3bfbe6638db168" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="dp"><paramtype>date_period &amp;</paramtype></parameter><purpose>input operator for date_period </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a4ab02d42edb331e60d5da3f1e6656f20" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="gm"><paramtype>const <classname>boost::gregorian::greg_month</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad3dfa1749bb3fa492ccb44ae392f5bcd" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="m"><paramtype><classname>greg_month</classname> &amp;</paramtype></parameter><purpose>input operator for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__month">greg_month</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a684dee80e945b834c3a6e6810b4c7d81" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="gw"><paramtype>const <classname>boost::gregorian::greg_weekday</classname> &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ac0337e9af3271a794cf7ebfe4f89292d" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="wd"><paramtype><classname>greg_weekday</classname> &amp;</paramtype></parameter><purpose>input operator for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__weekday">greg_weekday</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aa60f805d45c887f677a1daf3156ac1c9" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="gd"><paramtype><classname>greg_day</classname> &amp;</paramtype></parameter><purpose>input operator for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__day">greg_day</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a66c5ccac7831356e84fc8304be1a2af4" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="gy"><paramtype><classname>greg_year</classname> &amp;</paramtype></parameter><purpose>input operator for <link linkend="doxygen.gregorian_reference.classboost_1_1gregorian_1_1greg__year">greg_year</link> </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a3eab42104f1b0347c91430b8cb469ca6" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="pd"><paramtype>const boost::gregorian::partial_date &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad88e1a2459afb62859ec31feab97f032" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="pd"><paramtype>partial_date &amp;</paramtype></parameter><purpose>input operator for partial_date </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1af818725eace99c3d4b6eee87abbebd75" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="nkd"><paramtype>const boost::gregorian::nth_day_of_the_week_in_month &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a4194647edae649e9a1f258c37106173a" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="nday"><paramtype>nth_day_of_the_week_in_month &amp;</paramtype></parameter><purpose>input operator for nth_day_of_the_week_in_month </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a53d5e26d57182f83f3824836ef1e83b9" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="fkd"><paramtype>const boost::gregorian::first_day_of_the_week_in_month &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8cbb465a365e27fa56b89f15909f27e7" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="fkd"><paramtype>first_day_of_the_week_in_month &amp;</paramtype></parameter><purpose>input operator for first_day_of_the_week_in_month </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1afee34939b89cf157735670a6d5b5cef5" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="lkd"><paramtype>const boost::gregorian::last_day_of_the_week_in_month &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a60ffb6619209c044e13612c0f07d65c5" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="lkd"><paramtype>last_day_of_the_week_in_month &amp;</paramtype></parameter><purpose>input operator for last_day_of_the_week_in_month </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a6aeeaf78577be13ec95fe74eae339a65" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="fda"><paramtype>const boost::gregorian::first_day_of_the_week_after &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a5a6c0743132f12b9d4e523a5c11ad71f" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="fka"><paramtype>first_day_of_the_week_after &amp;</paramtype></parameter><purpose>input operator for first_day_of_the_week_after </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a94b508e1a0025a97dccb34e7795050ef" name="operator&lt;&lt;"><type>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="TraitsT"/>
+        </template><parameter name="os"><paramtype>std::basic_ostream&lt; CharT, TraitsT &gt; &amp;</paramtype></parameter><parameter name="fdb"><paramtype>const boost::gregorian::first_day_of_the_week_before &amp;</paramtype></parameter></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1acc1c5660c4064b656ae4148017d620ae" name="operator&gt;&gt;"><type>std::basic_istream&lt; CharT, Traits &gt; &amp;</type><template>
+          <template-type-parameter name="CharT"/>
+          <template-type-parameter name="Traits"/>
+        </template><parameter name="is"><paramtype>std::basic_istream&lt; CharT, Traits &gt; &amp;</paramtype></parameter><parameter name="fkb"><paramtype>first_day_of_the_week_before &amp;</paramtype></parameter><purpose>input operator for first_day_of_the_week_before </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.gregorian__types_8hpp" name="boost/date_time/gregorian/gregorian_types.hpp">
+<para>Single file header that defines most of the types for the gregorian date-time system. </para><namespace name="boost">
+<namespace name="gregorian">
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a8a656ab74319ba5a6a7901594a0638be" name="date_period"><purpose>Date periods for the gregorian system. </purpose><type>date_time::period&lt; <classname>date</classname>, <classname>date_duration</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a3bd60679aacd0332396e2f21af5fb475" name="year_based_generator"><purpose>A unifying date_generator base type. </purpose><description><para>A unifying date_generator base type for: partial_date, nth_day_of_the_week_in_month, first_day_of_the_week_in_month, and last_day_of_the_week_in_month </para></description><type>date_time::year_based_generator&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a0c397248263d2aa3d7890ffa4c828456" name="partial_date"><purpose>A date generation object type. </purpose><type>date_time::partial_date&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ac2929634b26f69ab6ea007e44ae4544e" name="nth_kday_of_month"><type>date_time::nth_kday_of_month&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ae2bc0855bc92f6ff368d785c7bf77e3d" name="nth_day_of_the_week_in_month"><type>nth_kday_of_month</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad564557308d2488a123460a870af85de" name="first_kday_of_month"><type>date_time::first_kday_of_month&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a45d3d1cfc5c7cb3ed7c9ed563df87e30" name="first_day_of_the_week_in_month"><type>first_kday_of_month</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a35069904a9319067cef59f1abe5e3e95" name="last_kday_of_month"><type>date_time::last_kday_of_month&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1acc07c7068f96baa1bd6a2038c64fed25" name="last_day_of_the_week_in_month"><type>last_kday_of_month</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a00e0de58d61701a7c8a8b6c4a698ca1c" name="first_kday_after"><type>date_time::first_kday_after&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1abca7039db080f923df33ce2e098c5fea" name="first_day_of_the_week_after"><type>first_kday_after</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a1dd3512c5c0659103904bdad8dc9d43e" name="first_kday_before"><type>date_time::first_kday_before&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a5ffda75219b3a06ac482ee3fcec220f3" name="first_day_of_the_week_before"><type>first_kday_before</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab3aa88bfa1e1112a06fb639c6149e7f6" name="day_clock"><purpose>A clock to get the current day from the local computer. </purpose><type>date_time::day_clock&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a47a5833e459a4eac5bab383ed5c12e02" name="date_iterator"><purpose>Base date_iterator type for gregorian types. </purpose><type>date_time::date_itr_base&lt; <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a01947388598705da93ee5b26d7b3616a" name="day_iterator"><purpose>A day level iterator. </purpose><type>date_time::date_itr&lt; date_time::day_functor&lt; <classname>date</classname> &gt;, <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ad25beea213c3a9a6d22935b0d2590622" name="week_iterator"><purpose>A week level iterator. </purpose><type>date_time::date_itr&lt; date_time::week_functor&lt; <classname>date</classname> &gt;, <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1aca1aadc695ee8432be8c574b982f0af9" name="month_iterator"><purpose>A month level iterator. </purpose><type>date_time::date_itr&lt; date_time::month_functor&lt; <classname>date</classname> &gt;, <classname>date</classname> &gt;</type></typedef>
+<typedef id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1ab8731de72a82cb2249b1b75d3a4e325b" name="year_iterator"><purpose>A year level iterator. </purpose><type>date_time::date_itr&lt; date_time::year_functor&lt; <classname>date</classname> &gt;, <classname>date</classname> &gt;</type></typedef>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.gregorian_reference.parsers_8hpp" name="boost/date_time/gregorian/parsers.hpp">
+<namespace name="boost">
+<namespace name="gregorian">
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a38d6f69a649f34a352ca903c367c9fc4" name="special_value_from_string"><type>date_time::special_values</type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>Return special_value from string argument. </purpose><description><para>Return special_value from string argument. If argument is not one of the special value names (defined in names.hpp), return 'not_special' </para></description></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a675a9216a1242134e054345e24962023" name="from_string"><type><classname>date</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>Deprecated: Use from_simple_string. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a450578d2bcfed7c246460dfa0da66c45" name="from_simple_string"><type><classname>date</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>From delimited date string where with order year-month-day eg: 2002-1-25 or 2003-Jan-25 (full month name is also accepted) </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a01b01915d6f2ccc5de2bd10bfc462989" name="from_us_string"><type><classname>date</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>From delimited date string where with order year-month-day eg: 1-25-2003 or Jan-25-2003 (full month name is also accepted) </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a34dfbbb62f1c37e2482669c8a5606958" name="from_uk_string"><type><classname>date</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>From delimited date string where with order day-month-year eg: 25-1-2002 or 25-Jan-2003 (full month name is also accepted) </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a5381faf6b120b5f2af12894c3f46316f" name="from_undelimited_string"><type><classname>date</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>From ISO 8601 type date string where with order year-month-day eg: 20020125. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a319061d594fbd5f6e3b41637bf18377f" name="date_from_iso_string"><type><classname>date</classname></type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>From ISO 8601 type date string where with order year-month-day eg: 20020125. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a5752c21c4f3845695cd24ae16f19d937" name="from_stream"><type><classname>date</classname></type><template>
+          <template-type-parameter name="iterator_type"/>
+        </template><parameter name="beg"><paramtype>iterator_type</paramtype></parameter><parameter name="end"><paramtype>iterator_type</paramtype></parameter><purpose>Stream should hold a date in the form of: 2002-1-25. Month number, abbrev, or name are accepted. </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a6c34319aa0785462cff3e369eaa9959f" name="date_period_from_string"><type>date_period</type><parameter name="s"><paramtype>const std::string &amp;</paramtype></parameter><purpose>Function to parse a date_period from a string (eg: [2003-Oct-31/2003-Dec-25]) </purpose></function>
+<function id="doxygen.gregorian_reference.namespaceboost_1_1gregorian_1a3e92de073c270cabe6aeea2ba9b0af0e" name="date_period_from_wstring"><type>date_period</type><parameter name="s"><paramtype>const std::wstring &amp;</paramtype></parameter><purpose>Function to parse a date_period from a wstring (eg: [2003-Oct-31/2003-Dec-25]) </purpose></function>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</namespace>
+</namespace>
+</header>
+</library-reference>

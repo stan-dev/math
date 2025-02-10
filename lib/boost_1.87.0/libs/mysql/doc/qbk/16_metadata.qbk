@@ -1,0 +1,35 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:meta Metadata]
+
+In the context of this library, metadata refers to information describing
+a column retrieved by the execution of a SQL query. The [reflink metadata] class
+contains information about an individual column.
+
+You may access metadata using [refmem results meta] or [refmem execution_state meta].
+There is a `metadata` object per column retrieved by the query. The metadata objects are
+present even if no row was returned by the query (e.g. a `SELECT` on an empty table).
+
+[reflink connection] objects have an associated [reflink metadata_mode] that describes
+how to handle metadata when running a query or a statement:
+
+* If [refmem connection meta_mode] is `metadata_mode::minimal` (the default), the library
+  will retain the minimal amout of data required to run the operation. Additional information,
+  like column names, won't be retained. Unless you are using metadata explicitly, you should keep
+  this default, as it consumes slightly less memory.
+* If [refmem connection meta_mode] is `metadata_mode::full`, the library will retain all the information
+  provided by the server, including column names.
+
+Only the [reflink metadata] members that are strings (database, table and field names)
+are affected by this setting. You may change this setting using [refmem connection set_meta_mode].
+
+For example:
+
+[metadata]
+
+[endsect]

@@ -1,0 +1,82 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+
+= Parse Rules
+
+A __Rule__ is an object which tries to match the beginning of an input character buffer against a particular syntax.
+It returns a cpp:boost::system::result[] containing a value if the match was successful, or an cpp:error_code[] if the match failed.
+Rules are not invoked directly.
+Instead they are passed as values to a cpp:grammar::parse[parse] function, along with the input character buffer to process.
+The first overload requires that the entire input string match, otherwise else an error occurs.
+The second overload advances the input buffer pointer to the first unconsumed character upon success, allowing a stream of data to be parsed sequentially:
+
+[source,cpp]
+----
+template< class Rule >
+auto parse( core::string_view s, Rule const& r)
+    -> system::result< typename Rule::value_type >;
+
+template< class Rule >
+auto parse( char const *& it, char const* end, Rule const& r)
+    -> system::result< typename Rule::value_type >;
+----
+
+To satisfy the __Rule__ concept, a cpp:class[] or cpp:struct[] must declare the nested type cpp:value_type[] indicating the type of value returned upon success, and a cpp:const[] member function cpp:parse[] with a prescribed signature.
+In the following code we define a rule that matches a single comma:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_1_2,indent=0]
+----
+
+Since rules are passed by value, we declare a cpp:constexpr[] variable of the type for syntactical convenience.
+Variable names for rules are usually suffixed with cpp:_rule[]:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_1_3,indent=0]
+----
+
+Now we can call cpp:grammar::parse[parse] with the string of input and the rule variable thusly:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_1_4,indent=0]
+----
+
+Rule expressions can come in several styles.
+The rule defined above is a compile-time constant.
+The cpp:grammar::unsigned_rule[unsigned_rule] matches an unsigned decimal integer.
+Here we construct the rule at run time and specify the type of unsigned integer used to hold the result with a template parameter:
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_1_5,indent=0]
+----
+
+The function cpp:grammar::delim_rule[delim_rule] returns a rule which matches the passed character literal.
+This is a more general version of the comma rule which we defined earlier.
+There is also an overload which matches exactly one character from a character set.
+
+[source,cpp]
+----
+include::example$unit/doc_grammar.cpp[tag=code_grammar_1_6,indent=0]
+----
+
+== Error Handling
+
+When a rule fails to match, or if the rule detects a unrecoverable problem with the input, it returns a result assigned from an cpp:error_code[] indicating the failure.
+When using overloads of cpp:grammar::parse[parse] which have a character pointer as both an in and out parameter, it is up to the rule to define which character is pointed to upon error.
+When the rule matches successfully, the pointer is always changed to point to the first unconsumed character in the input, or to the cpp:end[] pointer if all input was consumed.
+
+It is the responsibilty of library and user-defined implementations of __compound rules__ (explained later) to rewind their internal pointer if a parsing operation was unsuccessful, and they wish to attempt parsing the same input using a different rule.
+Users who extend the library's grammar by defining their own custom rules should follow the behaviors described above regarding the handling of errors and the modification of the caller's input pointer.
+
+

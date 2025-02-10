@@ -1,0 +1,98 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template buffer_allocator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__allocator_8hpp" title="Header &lt;boost/compute/allocator/buffer_allocator.hpp&gt;">
+<link rel="prev" href="upper__bound_8hpp_1a235d8a788fd04f09ac38aa5d883edec2.html" title="Function template upper_bound">
+<link rel="next" href="classboost_1_1compute_1_1pinned__allocator.html" title="Class template pinned_allocator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="upper__bound_8hpp_1a235d8a788fd04f09ac38aa5d883edec2.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__allocator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1pinned__allocator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template buffer_allocator</span></h2>
+<p>boost::compute::buffer_allocator — The <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a> class allocates memory with buffer objects. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__allocator_8hpp" title="Header &lt;boost/compute/allocator/buffer_allocator.hpp&gt;">boost/compute/allocator/buffer_allocator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>              <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a305d120673731e793fbc9715c738840a"></a><span class="identifier">value_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>    <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ae50e115fb1ae5f487f70df056eb162c6"></a><span class="identifier">pointer</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>    <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a19ca0ce091ca8f7c47dbe9f5a708764c"></a><span class="identifier">const_pointer</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span>    <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a4d34a02b3f256bc02419f00b27dcb53f"></a><span class="identifier">size_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a2cc319a66f23b15def873e72fe48c73d"></a><span class="identifier">difference_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#id1-bb">public member functions</a></span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a69aaec926bf2536d30c5f3824bae9c26"><span class="identifier">buffer_allocator</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a31ae2981384028bc84a2a3a2a11b239d"><span class="identifier">buffer_allocator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a3710324eeb9a854e68d2da4387172365"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ad07c3060e77bfe53b249d1b091dc040b"><span class="identifier">buffer_allocator</span></a><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ae130fff4af54b204d52bb5854ac47770"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a395b827e79cc4a6ba61d45f04b2390e5"><span class="special">~</span><span class="identifier">buffer_allocator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a4fd716510e084497e60c2c77ceafc30d"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1aa966ec3c9afd5c98eced7b16ba75adad"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="identifier">pointer</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1af2f5809df9b71d8e9384853e09eb0556"><span class="identifier">max_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">context</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ac5d380cea6cc465ad9e1b4d9f7531c8f"><span class="identifier">get_context</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#id2-bb">protected member functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html#doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1aa9cd16a1c358eca4dfe9e84da3f1179b"><span class="identifier">set_mem_flags</span></a><span class="special">(</span><span class="identifier">cl_mem_flags</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id14460"></a><h2>Description</h2>
+<p><b>See Also: </b>buffer </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id14466"></a><h3>
+<a name="id1-bb"></a><code class="computeroutput">buffer_allocator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a69aaec926bf2536d30c5f3824bae9c26"></a><span class="identifier">buffer_allocator</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span> context<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a31ae2981384028bc84a2a3a2a11b239d"></a><span class="identifier">buffer_allocator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a3710324eeb9a854e68d2da4387172365"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ad07c3060e77bfe53b249d1b091dc040b"></a><span class="identifier">buffer_allocator</span><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ae130fff4af54b204d52bb5854ac47770"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><a class="link" href="classboost_1_1compute_1_1buffer__allocator.html" title="Class template buffer_allocator">buffer_allocator</a><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> other<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a395b827e79cc4a6ba61d45f04b2390e5"></a><span class="special">~</span><span class="identifier">buffer_allocator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1a4fd716510e084497e60c2c77ceafc30d"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1aa966ec3c9afd5c98eced7b16ba75adad"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="identifier">pointer</span> p<span class="special">,</span> <span class="identifier">size_type</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1af2f5809df9b71d8e9384853e09eb0556"></a><span class="identifier">max_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">context</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1ac5d380cea6cc465ad9e1b4d9f7531c8f"></a><span class="identifier">get_context</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id14602"></a><h3>
+<a name="id2-bb"></a><code class="computeroutput">buffer_allocator</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1buffer__allocator_1aa9cd16a1c358eca4dfe9e84da3f1179b"></a><span class="identifier">set_mem_flags</span><span class="special">(</span><span class="identifier">cl_mem_flags</span> flags<span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="upper__bound_8hpp_1a235d8a788fd04f09ac38aa5d883edec2.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.buffer__allocator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1pinned__allocator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

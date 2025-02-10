@@ -1,0 +1,32 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/function//boost_function
+    /boost/fusion//boost_fusion
+    /boost/mp11//boost_mp11
+    /boost/mpl//boost_mpl
+    /boost/optional//boost_optional
+    /boost/preprocessor//boost_preprocessor
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility ;
+
+project /boost/parameter
+    : common-requirements
+        <include>include
+    ;
+
+explicit
+    [ alias boost_parameter : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_parameter test ]
+    ;
+
+call-if : boost-library parameter
+    ;
+

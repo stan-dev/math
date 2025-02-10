@@ -1,0 +1,176 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>connect_params</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__common_server_errc.html" title="common_server_errc">
+<link rel="next" href="boost__mysql__connect_params/server_address.html" title="connect_params::server_address">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__common_server_errc.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__connect_params/server_address.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__connect_params"></a><a class="link" href="boost__mysql__connect_params.html" title="connect_params">connect_params</a>
+</h4></div></div></div>
+<p>
+        Parameters to be used with <a class="link" href="boost__mysql__any_connection.html" title="any_connection"><code class="computeroutput"><span class="identifier">any_connection</span></code></a> connect functions.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__connect_params.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connect_params.synopsis"></a></span><a class="link" href="boost__mysql__connect_params.html#mysql.ref.boost__mysql__connect_params.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/connect_params.hpp" target="_top">boost/mysql/connect_params.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">connect_params</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__connect_params.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connect_params.data_members"></a></span><a class="link" href="boost__mysql__connect_params.html#mysql.ref.boost__mysql__connect_params.data_members">Data
+        Members</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation">connection_collation</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The ID of the collation to use for the connection.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/database.html" title="connect_params::database">database</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Database name to use, or empty string for no database (this is
+                  the default).
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/multi_queries.html" title="connect_params::multi_queries">multi_queries</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Whether to enable support for executing semicolon-separated text
+                  queries.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/password.html" title="connect_params::password">password</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Password for that username, possibly empty.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/server_address.html" title="connect_params::server_address">server_address</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Determines how to establish a physical connection to the MySQL
+                  server.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/ssl.html" title="connect_params::ssl">ssl</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Controls whether to use TLS or not.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <span class="bold"><strong><a class="link" href="boost__mysql__connect_params/username.html" title="connect_params::username">username</a></strong></span>
+                </p>
+              </td>
+<td>
+                <p>
+                  User name to authenticate as.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="mysql.ref.boost__mysql__connect_params.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__connect_params.description"></a></span><a class="link" href="boost__mysql__connect_params.html#mysql.ref.boost__mysql__connect_params.description">Description</a>
+      </h5>
+<p>
+        To be passed to <a class="link" href="boost__mysql__any_connection/connect.html" title="any_connection::connect"><code class="computeroutput"><span class="identifier">any_connection</span><span class="special">::</span><span class="identifier">connect</span></code></a> and <a class="link" href="boost__mysql__any_connection/async_connect.html" title="any_connection::async_connect"><code class="computeroutput"><span class="identifier">any_connection</span><span class="special">::</span><span class="identifier">async_connect</span></code></a>. Includes the server
+        address and MySQL handshake parameters. This is an owning type.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__common_server_errc.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__connect_params/server_address.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template lazy_variance_impl</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../accumulators/reference.html#doxygen.statistics_library_reference.variance_8hpp" title="Header &lt;boost/accumulators/statistics/variance.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1accumulators_1_1extract_1a2fd05c040d5430172d699f70dffd0ce1.html" title="Global variance">
+<link rel="next" href="structboost_1_1accumulators_1_1impl_1_1variance__impl.html" title="Struct template variance_impl">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1accumulators_1_1extract_1a2fd05c040d5430172d699f70dffd0ce1.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.variance_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1impl_1_1variance__impl.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template lazy_variance_impl</span></h2>
+<p>boost::accumulators::impl::lazy_variance_impl — Lazy calculation of variance. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../accumulators/reference.html#doxygen.statistics_library_reference.variance_8hpp" title="Header &lt;boost/accumulators/statistics/variance.hpp&gt;">boost/accumulators/statistics/variance.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Sample<span class="special">,</span> <span class="keyword">typename</span> MeanFeature<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl.html" title="Struct template lazy_variance_impl">lazy_variance_impl</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">accumulator_base</span> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">numeric</span><span class="special">::</span><span class="identifier">functional</span><span class="special">::</span><span class="identifier">fdiv</span><span class="special">&lt;</span> <span class="identifier">Sample</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a4c325baf8c9badadaa4afca7092e6f4b"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl.html#id-1_3_2_6_3_38_1_1_9_1_6-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a63e46c222da0dc8eea6b9af88c3879ae"><span class="identifier">lazy_variance_impl</span></a><span class="special">(</span><span class="identifier">dont_care</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="identifier">result_type</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a39fec76aca77aeb10f2597cc388a9ddb"><span class="identifier">result</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a6420ccac3e2ab7eb960cbe90fe3f1f69"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.2.6.3.37.5.4"></a><h2>Description</h2>
+<p>Default sample variance implementation based on the second moment <span class="inlinemediaobject"><img src="../../images/accumulators//form_51.png"></span> moment&lt;2&gt;, mean and count.  </p>
+<div class="equation">
+<a name="id-1.3.2.6.3.37.5.4.2.2"></a><p class="title"><b>Equation 1.29. </b></p>
+<div class="equation-contents"><div class="mediaobject" align="center"><img src="../../images/accumulators//form_52.png" align="middle"></div></div>
+</div>
+<p><br class="equation-break"> where  </p>
+<div class="equation">
+<a name="id-1.3.2.6.3.37.5.4.2.3"></a><p class="title"><b>Equation 1.30. </b></p>
+<div class="equation-contents"><div class="mediaobject" align="center"><img src="../../images/accumulators//form_53.png" align="middle"></div></div>
+</div>
+<p><br class="equation-break"> is the estimate of the sample mean and <span class="inlinemediaobject"><img src="../../images/accumulators//form_3.png"></span> is the number of samples. </p>
+<div class="refsect2">
+<a name="id-1.3.2.6.3.37.5.4.3"></a><h3>
+<a name="id-1_3_2_6_3_38_1_1_9_1_6-bb"></a><code class="computeroutput">lazy_variance_impl</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a63e46c222da0dc8eea6b9af88c3879ae"></a><span class="identifier">lazy_variance_impl</span><span class="special">(</span><span class="identifier">dont_care</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a39fec76aca77aeb10f2597cc388a9ddb"></a><span class="identifier">result</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1lazy__variance__impl_1a6420ccac3e2ab7eb960cbe90fe3f1f69"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005, 2006 Eric Niebler<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1accumulators_1_1extract_1a2fd05c040d5430172d699f70dffd0ce1.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.variance_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1impl_1_1variance__impl.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

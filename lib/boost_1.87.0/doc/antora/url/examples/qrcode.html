@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>QR Code :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/examples/qrcode.html">
+    <link rel="prev" href="../grammar/rfc3986.html">
+    <link rel="next" href="finicky.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class=" is-current-page" data-depth="2">
+            <a class="nav-link" href="qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="../concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li>Examples</li>
+    <li><a href="qrcode.html">QR Code</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="../grammar/rfc3986.html"><span class="material-symbols-outlined" title="Previous: RFC 3986">arrow_back</span></a>
+    <a accesskey="p" href="finicky.html"><span class="material-symbols-outlined" title="Next: Finicky">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">QR Code</h1>
+  <div class="paragraph">
+<p>A QR code is a machine-readable two-dimensional barcode.
+They might contain data for a identifier or a URL to a website.</p>
+</div>
+<div class="paragraph">
+<p>This example shows how to construct and modify URLs to consume a third party API to generate QR Codes.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">/*
+    This example shows how to construct and modify
+    URLs to consume a third party API to
+    generate QR Codes.
+    https://developers.google.com/chart/infographics/docs/qr_codes
+*/
+
+#include &lt;boost/url/url.hpp&gt;
+#include &lt;boost/core/detail/string_view.hpp&gt;
+#include &lt;boost/url/parse.hpp&gt;
+#include &lt;iostream&gt;
+
+namespace urls = boost::urls;
+namespace core = boost::core;
+
+int main(int argc, char** argv)
+{
+    if (argc &lt; 2) {
+        std::cout &lt;&lt; argv[0] &lt;&lt; "\n";
+        std::cout &lt;&lt; "Usage: qrcode &lt;data&gt; &lt;width&gt; &lt;height&gt; &lt;output encoding&gt; &lt;error correction&gt; &lt;border&gt;\n"
+                     "options:\n"
+                     "    &lt;data&gt;:             The data to encode (required)\n"
+                     "    &lt;width&gt;:            Image width (default: 100)\n"
+                     "    &lt;height&gt;:           Image height (default: width)\n"
+                     "    &lt;output encoding&gt;:  UTF-8, Shift_JIS, ISO-8859-1 (default: utf8)\n"
+                     "    &lt;error correction&gt;: percentage of error correction (default: 7)\n"
+                     "    &lt;margin&gt;:           border width (default: 4)\n"
+                     "examples:\n"
+                     "qrcode \"Hello world\"\n";
+        return EXIT_FAILURE;
+    }
+
+    urls::url u =
+        urls::parse_uri(
+            "https://chart.googleapis.com/chart?cht=qr").value();
+    auto ps = u.params();
+
+    // Data
+    ps.append({"chl", argv[1]});
+
+    // Size
+    std::size_t width = argc &lt; 3 ? 100 : std::stoll(argv[2]);
+    std::size_t height = argc &lt; 4 ? width : std::stoll(argv[3]);
+    ps.append({"chs", std::to_string(width) + "x" + std::to_string(height)});
+
+    // Encoding
+    if (argc &gt;= 5)
+    {
+         core::string_view output_encoding =
+            core::string_view(argv[3]) == "Shift_JIS" ||
+            core::string_view(argv[3]) == "ISO-8859-1" ?
+                argv[4] : "UTF-8";
+         ps.append({"choe", output_encoding});
+    }
+
+    // Error
+    if (argc &gt;= 6)
+    {
+        std::size_t err = std::stoll(argv[5]);
+        std::string chld;
+        if (err &lt; 11)
+            chld = "L";
+        else if (err &lt; 20)
+            chld = "M";
+        else if (err &lt; 27)
+            chld = "Q";
+        else
+            chld = "H";
+        std::size_t margin = argc &lt; 7 ? 4 : std::stoll(argv[6]);
+        chld += "|";
+        chld += std::to_string(margin);
+        ps.append({"chld", chld});
+    }
+
+    std::cout &lt;&lt; u &lt;&lt; '\n';
+
+    return EXIT_SUCCESS;
+}</code></pre>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/examples/qrcode.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="../grammar/rfc3986.html">RFC 3986</a></span>
+        <span class="next"><a href="finicky.html">Finicky</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

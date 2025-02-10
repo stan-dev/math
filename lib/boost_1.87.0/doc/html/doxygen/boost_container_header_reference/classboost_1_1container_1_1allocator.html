@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template allocator</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator_8hpp" title="Header &lt;boost/container/allocator.hpp&gt;">
+<link rel="prev" href="structboost_1_1container_1_1private__adaptive__pool_1_1rebind.html" title="Struct template rebind">
+<link rel="next" href="structboost_1_1container_1_1allocator_1_1rebind.html" title="Struct template rebind">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1container_1_1private__adaptive__pool_1_1rebind.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1container_1_1allocator_1_1rebind.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template allocator</span></h2>
+<p>boost::container::allocator</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator_8hpp" title="Header &lt;boost/container/allocator.hpp&gt;">boost/container/allocator.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">unsigned</span> Version <span class="special">=</span> <span class="number">2</span><span class="special">,</span> 
+         <span class="keyword">unsigned</span> <span class="keyword">int</span> AllocationDisableMask <span class="special">=</span> <span class="number">0</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">T</span>                                                      <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a9d2a72a592fb317bc7db363c099d51bb"></a><span class="identifier">value_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <span class="special">*</span>                                                    <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a18c0b81046568e21813652933309ae36"></a><span class="identifier">pointer</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">*</span>                                              <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a21eb54f57f8ed704ba885a0714680937"></a><span class="identifier">const_pointer</span><span class="special">;</span>  
+  <span class="keyword">typedef</span> <span class="identifier">T</span> <span class="special">&amp;</span>                                                    <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ad3d32ef25bf78b6adf1cdb73e676c4f1"></a><span class="identifier">reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span>                                              <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1af865517b86c0820fa27e44a98e5fddd6"></a><span class="identifier">const_reference</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span>                                            <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a484786d15d2619a547005b3639859633"></a><span class="identifier">size_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span>                                         <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a77875645c122faf5a5e1c3d18f1b228c"></a><span class="identifier">difference_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">container</span><span class="special">::</span><span class="identifier">dtl</span><span class="special">::</span><span class="identifier">version_type</span><span class="special">&lt;</span> <span class="identifier">self_t</span><span class="special">,</span> <span class="identifier">Version</span> <span class="special">&gt;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1afe533a34ad83cad57864b4e29cb24163"></a><span class="identifier">version</span><span class="special">;</span>        
+
+  <span class="comment">// member classes/structs/unions</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">&gt;</span> 
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1container_1_1allocator_1_1rebind.html" title="Struct template rebind">rebind</a> <span class="special">{</span>
+    <span class="comment">// types</span>
+    <span class="keyword">typedef</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span><span class="special">,</span> <span class="identifier">Version</span><span class="special">,</span> <span class="identifier">AllocationDisableMask</span> <span class="special">&gt;</span> <a class="link" href="structboost_1_1container_1_1allocator_1_1rebind.html#doxygen.boost_container_header_reference.structboost_1_1container_1_1allocator_1_1rebind_1a6bacaa8f34451058f907259babfdd2fa"><span class="identifier">other</span></a><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1allocator.html#id8-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a28e9526d4385523cb8db4c84f3ca8301"><span class="identifier">allocator</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ad41293dc6c7cf72b4008f1a6332ba15a"><span class="identifier">allocator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">&gt;</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1afee9a870aeca609aa280088d55de3027"><span class="identifier">allocator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a6d7b955fd42f4a5999dd5ab3acc4c034"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a0e7aa6efecb78b4e9732650b98a0f3ce"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="identifier">pointer</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a6839683f3d901510878412d3b1d2505f"><span class="identifier">max_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a2ec40227e2078e8f9e3181dc5c7bd28f"><span class="identifier">allocation_command</span></a><span class="special">(</span><span class="identifier">allocation_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                             <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a12706f7e94998f4f3bf929230f4a29f8"><span class="identifier">size</span></a><span class="special">(</span><span class="identifier">pointer</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ade82a2fb4494ba9ff0203f702d97dc1f"><span class="identifier">allocate_one</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ae9daf98d58199dbdab4554888d9956a3"><span class="identifier">allocate_individual</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aa21457cd59af0016ae9ce66df406d64f"><span class="identifier">deallocate_one</span></a><span class="special">(</span><span class="identifier">pointer</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aabc9526f3efa7bd72ed9ede0c63b0434"><span class="identifier">deallocate_individual</span></a><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a3c36887c06be36f5af4f462f15a82282"><span class="identifier">allocate_many</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a5796e98e6932c2542fe4e132812fee60"><span class="identifier">allocate_many</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">size_type</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ab1104767e3ff8daba2901d02720a9e29"><span class="identifier">deallocate_many</span></a><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1allocator.html#id9-bb">friend functions</a></span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aac6a701921416e1e6b5e33685a95a7c1"><span class="identifier">swap</span></a><span class="special">(</span><span class="identifier">self_t</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">self_t</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a1c923b7e894d9cf2a14dd278021e65f5"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a1f0ba8d66cbc541d18e9934dc950c9fd"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1container_1_1allocator.html#id10-bb">private member functions</a></span>
+  <span class="identifier">pointer</span> <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ae06af51997c20532d48460c4b16992f9"><span class="identifier">priv_allocation_command</span></a><span class="special">(</span><span class="identifier">allocation_type</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">,</span> <span class="identifier">size_type</span> <span class="special">&amp;</span><span class="special">,</span> 
+                                  <span class="identifier">pointer</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.9.14.3.3.4"></a><h2>Description</h2>
+<p>This class is an extended STL-compatible that offers advanced allocation mechanism (in-place expansion, shrinking, burst-allocation...)</p>
+<p>This allocator is a wrapper around a modified DLmalloc. If Version is 1, the allocator is a STL conforming allocator. If Version is 2, the allocator offers advanced expand in place and burst allocation capabilities.</p>
+<p>AllocationDisableMask works only if Version is 2 and it can be an inclusive OR of allocation types the user wants to disable. </p>
+<div class="refsect2">
+<a name="id-1.3.9.14.3.3.4.5"></a><h3>
+<a name="id8-bb"></a><code class="computeroutput">allocator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a28e9526d4385523cb8db4c84f3ca8301"></a><span class="identifier">allocator</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Default constructor Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ad41293dc6c7cf72b4008f1a6332ba15a"></a><span class="identifier">allocator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Constructor from other allocator. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T2<span class="special">&gt;</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1afee9a870aeca609aa280088d55de3027"></a><span class="identifier">allocator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a><span class="special">&lt;</span> <span class="identifier">T2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Constructor from related allocator. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a6d7b955fd42f4a5999dd5ab3acc4c034"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">size_type</span> count<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> hint <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates memory for an array of count elements. Throws bad_alloc if there is no enough memory If Version is 2, this allocated memory can only be deallocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a0e7aa6efecb78b4e9732650b98a0f3ce">deallocate()</a> or (for Version == 2) <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ab1104767e3ff8daba2901d02720a9e29">deallocate_many()</a> </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a0e7aa6efecb78b4e9732650b98a0f3ce"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="identifier">pointer</span> ptr<span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Deallocates previously allocated memory. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a6839683f3d901510878412d3b1d2505f"></a><span class="identifier">max_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Returns the maximum number of elements that could be allocated. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a2ec40227e2078e8f9e3181dc5c7bd28f"></a><span class="identifier">allocation_command</span><span class="special">(</span><span class="identifier">allocation_type</span> command<span class="special">,</span> <span class="identifier">size_type</span> limit_size<span class="special">,</span> 
+                           <span class="identifier">size_type</span> <span class="special">&amp;</span> prefer_in_recvd_out_size<span class="special">,</span> 
+                           <span class="identifier">pointer</span> <span class="special">&amp;</span> reuse<span class="special">)</span><span class="special">;</span></pre>
+<p>An advanced function that offers in-place expansion shrink to fit and new allocation capabilities. Memory allocated with this function can only be deallocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a0e7aa6efecb78b4e9732650b98a0f3ce">deallocate()</a> or <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ab1104767e3ff8daba2901d02720a9e29">deallocate_many()</a>. This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a12706f7e94998f4f3bf929230f4a29f8"></a><span class="identifier">size</span><span class="special">(</span><span class="identifier">pointer</span> p<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Returns maximum the number of objects the previously allocated memory pointed by p can hold. Memory must not have been allocated with allocate_one or allocate_individual. This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ade82a2fb4494ba9ff0203f702d97dc1f"></a><span class="identifier">allocate_one</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates just one object. Memory allocated with this function must be deallocated only with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aa21457cd59af0016ae9ce66df406d64f">deallocate_one()</a>. Throws bad_alloc if there is no enough memory This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ae9daf98d58199dbdab4554888d9956a3"></a><span class="identifier">allocate_individual</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> num_elements<span class="special">,</span> 
+                         <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates many elements of size == 1. Elements must be individually deallocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aa21457cd59af0016ae9ce66df406d64f">deallocate_one()</a> This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aa21457cd59af0016ae9ce66df406d64f"></a><span class="identifier">deallocate_one</span><span class="special">(</span><span class="identifier">pointer</span> p<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Deallocates memory previously allocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ade82a2fb4494ba9ff0203f702d97dc1f">allocate_one()</a>. You should never use deallocate_one to deallocate memory allocated with other functions different from <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ade82a2fb4494ba9ff0203f702d97dc1f">allocate_one()</a> or allocate_individual. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aabc9526f3efa7bd72ed9ede0c63b0434"></a><span class="identifier">deallocate_individual</span><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Deallocates memory allocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ade82a2fb4494ba9ff0203f702d97dc1f">allocate_one()</a> or <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ae9daf98d58199dbdab4554888d9956a3">allocate_individual()</a>. This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a3c36887c06be36f5af4f462f15a82282"></a><span class="identifier">allocate_many</span><span class="special">(</span><span class="identifier">size_type</span> elem_size<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> n_elements<span class="special">,</span> 
+                   <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates many elements of size elem_size. Elements must be individually deallocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a0e7aa6efecb78b4e9732650b98a0f3ce">deallocate()</a> This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a5796e98e6932c2542fe4e132812fee60"></a><span class="identifier">allocate_many</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">size_type</span> <span class="special">*</span> elem_sizes<span class="special">,</span> <span class="identifier">size_type</span> n_elements<span class="special">,</span> 
+                   <span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates n_elements elements, each one of size elem_sizes[i] Elements must be individually deallocated with <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a0e7aa6efecb78b4e9732650b98a0f3ce">deallocate()</a> This function is available only with Version == 2 </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ab1104767e3ff8daba2901d02720a9e29"></a><span class="identifier">deallocate_many</span><span class="special">(</span><span class="identifier">multiallocation_chain</span> <span class="special">&amp;</span> chain<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Deallocates several elements allocated by <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a3c36887c06be36f5af4f462f15a82282">allocate_many()</a>, <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a6d7b955fd42f4a5999dd5ab3acc4c034">allocate()</a>, or <a class="link" href="classboost_1_1container_1_1allocator.html#doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a2ec40227e2078e8f9e3181dc5c7bd28f">allocation_command()</a>. This function is available only with Version == 2 </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.3.3.4.6"></a><h3>
+<a name="id9-bb"></a><code class="computeroutput">allocator</code> friend functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1aac6a701921416e1e6b5e33685a95a7c1"></a><span class="identifier">swap</span><span class="special">(</span><span class="identifier">self_t</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">self_t</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Swaps two allocators, does nothing because this allocator is stateless </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a1c923b7e894d9cf2a14dd278021e65f5"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>An allocator always compares to true, as memory allocated with one instance can be deallocated by another instance </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1a1f0ba8d66cbc541d18e9934dc950c9fd"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="classboost_1_1container_1_1allocator.html" title="Class template allocator">allocator</a> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>An allocator always compares to false, as memory allocated with one instance can be deallocated by another instance </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.9.14.3.3.4.7"></a><h3>
+<a name="id10-bb"></a><code class="computeroutput">allocator</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem"><pre class="literallayout"><span class="identifier">pointer</span> <a name="doxygen.boost_container_header_reference.classboost_1_1container_1_1allocator_1ae06af51997c20532d48460c4b16992f9"></a><span class="identifier">priv_allocation_command</span><span class="special">(</span><span class="identifier">allocation_type</span> command<span class="special">,</span> 
+                                <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> limit_size<span class="special">,</span> 
+                                <span class="identifier">size_type</span> <span class="special">&amp;</span> prefer_in_recvd_out_size<span class="special">,</span> 
+                                <span class="identifier">pointer</span> <span class="special">&amp;</span> reuse_ptr<span class="special">)</span><span class="special">;</span></pre></li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2018 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1container_1_1private__adaptive__pool_1_1rebind.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_container_header_reference.html#doxygen.boost_container_header_reference.allocator_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1container_1_1allocator_1_1rebind.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

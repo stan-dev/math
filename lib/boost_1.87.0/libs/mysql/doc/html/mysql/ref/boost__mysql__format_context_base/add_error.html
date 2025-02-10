@@ -1,0 +1,76 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>format_context_base::add_error</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__format_context_base.html" title="format_context_base">
+<link rel="prev" href="append_value.html" title="format_context_base::append_value">
+<link rel="next" href="error_state.html" title="format_context_base::error_state">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="append_value.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="error_state.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__format_context_base.add_error"></a><a class="link" href="add_error.html" title="format_context_base::add_error">format_context_base::add_error</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id76576"></a>
+Adds an error to the current error state.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.add_error.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.add_error.synopsis"></a></span><a class="link" href="add_error.html#mysql.ref.boost__mysql__format_context_base.add_error.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">add_error</span><span class="special">(</span>
+    <a class="link" href="../boost__mysql__error_code.html" title="error_code"><code class="literal">error_code</code></a> <span class="identifier">ec</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.add_error.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.add_error.description"></a></span><a class="link" href="add_error.html#mysql.ref.boost__mysql__format_context_base.add_error.description">Description</a>
+        </h6>
+<p>
+          This function can be used by custom formatters to report that they received
+          a value that can't be formatted. For instance, it's used by the built-in
+          string formatter when a string with an invalid encoding is supplied.
+        </p>
+<p>
+          If the error state is not set before calling this function, the error state
+          is updated to <code class="computeroutput"><span class="identifier">ec</span></code>. Otherwise,
+          the error is ignored. This implies that once the error state is set, it
+          can't be reset.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.add_error.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.add_error.exception_safety"></a></span><a class="link" href="add_error.html#mysql.ref.boost__mysql__format_context_base.add_error.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          No-throw guarantee.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="append_value.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="error_state.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,827 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Reference</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Histogram">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Histogram">
+<link rel="prev" href="concepts.html" title="Concepts">
+<link rel="next" href="../doxygen/structboost_1_1histogram_1_1axis_1_1null__type.html" title="Struct null_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="concepts.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../doxygen/structboost_1_1histogram_1_1axis_1_1null__type.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="histogram.reference"></a>Reference</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="reference.html#doxygen.histogram_8hpp">Header &lt;boost/histogram.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.accumulators_8hpp">Header &lt;boost/histogram/accumulators.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.algorithm_8hpp">Header &lt;boost/histogram/algorithm.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.axis_8hpp">Header &lt;boost/histogram/axis.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.fwd_8hpp">Header &lt;boost/histogram/fwd.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.histogram_2histogram_8hpp">Header &lt;boost/histogram/histogram.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.indexed_8hpp">Header &lt;boost/histogram/indexed.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.literals_8hpp">Header &lt;boost/histogram/literals.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.make__histogram_8hpp">Header &lt;boost/histogram/make_histogram.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.make__profile_8hpp">Header &lt;boost/histogram/make_profile.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.multi__index_8hpp">Header &lt;boost/histogram/multi_index.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.ostream_8hpp">Header &lt;boost/histogram/ostream.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.sample_8hpp">Header &lt;boost/histogram/sample.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.serialization_8hpp">Header &lt;boost/histogram/serialization.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.storage__adaptor_8hpp">Header &lt;boost/histogram/storage_adaptor.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.unlimited__storage_8hpp">Header &lt;boost/histogram/unlimited_storage.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.unsafe__access_8hpp">Header &lt;boost/histogram/unsafe_access.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.weight_8hpp">Header &lt;boost/histogram/weight.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.count_8hpp">Header &lt;boost/histogram/accumulators/count.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.fraction_8hpp">Header &lt;boost/histogram/accumulators/fraction.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.is__thread__safe_8hpp">Header &lt;boost/histogram/accumulators/is_thread_safe.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.mean_8hpp">Header &lt;boost/histogram/accumulators/mean.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.accumulators_2ostream_8hpp">Header &lt;boost/histogram/accumulators/ostream.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.accumulators_2sum_8hpp">Header &lt;boost/histogram/accumulators/sum.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.weighted__mean_8hpp">Header &lt;boost/histogram/accumulators/weighted_mean.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.weighted__sum_8hpp">Header &lt;boost/histogram/accumulators/weighted_sum.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.empty_8hpp">Header &lt;boost/histogram/algorithm/empty.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.project_8hpp">Header &lt;boost/histogram/algorithm/project.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.reduce_8hpp">Header &lt;boost/histogram/algorithm/reduce.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.algorithm_2sum_8hpp">Header &lt;boost/histogram/algorithm/sum.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.boolean_8hpp">Header &lt;boost/histogram/axis/boolean.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.category_8hpp">Header &lt;boost/histogram/axis/category.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.integer_8hpp">Header &lt;boost/histogram/axis/integer.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.interval__view_8hpp">Header &lt;boost/histogram/axis/interval_view.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.iterator_8hpp">Header &lt;boost/histogram/axis/iterator.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.metadata__base_8hpp">Header &lt;boost/histogram/axis/metadata_base.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.option_8hpp">Header &lt;boost/histogram/axis/option.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.axis_2ostream_8hpp">Header &lt;boost/histogram/axis/ostream.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.polymorphic__bin_8hpp">Header &lt;boost/histogram/axis/polymorphic_bin.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.regular_8hpp">Header &lt;boost/histogram/axis/regular.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.traits_8hpp">Header &lt;boost/histogram/axis/traits.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.variable_8hpp">Header &lt;boost/histogram/axis/variable.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.variant_8hpp">Header &lt;boost/histogram/axis/variant.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.binomial__proportion__interval_8hpp">Header &lt;boost/histogram/utility/binomial_proportion_interval.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.clopper__pearson__interval_8hpp">Header &lt;boost/histogram/utility/clopper_pearson_interval.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.jeffreys__interval_8hpp">Header &lt;boost/histogram/utility/jeffreys_interval.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.wald__interval_8hpp">Header &lt;boost/histogram/utility/wald_interval.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+<dt><span class="section"><a href="reference.html#doxygen.wilson__interval_8hpp">Header &lt;boost/histogram/utility/wilson_interval.hpp&gt;</a></span></dt>
+<dd><dl></dl></dd>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.histogram_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram.hpp" target="_top">boost/histogram.hpp</a>&gt;</h3></div></div></div>
+<p>Includes all standard headers of the Boost.Histogram library. </p>
+<p>Extra headers not automatically included are:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><a href="reference.html#header.boost.histogram.ostream_hpp" target="_top">boost/histogram/ostream.hpp</a></p></li>
+<li class="listitem"><p><a href="reference.html#header.boost.histogram.axis.ostream_hpp" target="_top">boost/histogram/axis/ostream.hpp</a></p></li>
+<li class="listitem"><p><a href="reference.html#header.boost.histogram.accumulators.ostream_hpp" target="_top">boost/histogram/accumulators/ostream.hpp</a></p></li>
+<li class="listitem"><p><a href="reference.html#header.boost.histogram.serialization_hpp" target="_top">boost/histogram/serialization.hpp</a></p></li>
+</ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.accumulators_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators.hpp" target="_top">boost/histogram/accumulators.hpp</a>&gt;</h3></div></div></div>
+<p>Includes all accumulator headers of the Boost.Histogram library. </p>
+<p>Extra header not automatically included:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a href="reference.html#header.boost.histogram.accumulators.ostream_hpp" target="_top">boost/histogram/accumulators/ostream.hpp</a></p></li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.algorithm_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/algorithm.hpp" target="_top">boost/histogram/algorithm.hpp</a>&gt;</h3></div></div></div>
+<p>Includes all algorithm headers of the Boost.Histogram library. </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.axis_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis.hpp" target="_top">boost/histogram/axis.hpp</a>&gt;</h3></div></div></div>
+<p>Includes all axis headers of the Boost.Histogram library. </p>
+<p>Extra header not automatically included:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p><a href="reference.html#header.boost.histogram.axis.ostream_hpp" target="_top">boost/histogram/axis/ostream.hpp</a></p></li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.fwd_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/fwd.hpp" target="_top">boost/histogram/fwd.hpp</a>&gt;</h3></div></div></div>
+<p>Forward declarations, tag types and type aliases. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">typedef</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1unlimited__storage.html" title="Class template unlimited_storage">unlimited_storage</a><span class="special">&lt;</span><span class="special">&gt;</span> <a name="doxygen.fwd_8hpp_1af203fa4dfd13c5b83968910ae9f6d3c7"></a><span class="identifier">default_storage</span><span class="special">;</span>  <span class="comment">// Default storage, optimized for unweighted histograms. </span>
+    <span class="keyword">typedef</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1storage__adaptor.html" title="Class template storage_adaptor">storage_adaptor</a><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">T</span><span class="special">,</span> <span class="identifier">A</span> <span class="special">&gt;</span> <span class="special">&gt;</span> <a name="doxygen.fwd_8hpp_1a71719797441c7c7e8be0a14303b4a871"></a><span class="identifier">dense_storage</span><span class="special">;</span>  <span class="comment">// Vector-like storage for fast zero-overhead access to cells. </span>
+    <span class="keyword">typedef</span> <span class="identifier">dense_storage</span><span class="special">&lt;</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1mean.html" title="Class template mean">accumulators::mean</a><span class="special">&lt;</span><span class="special">&gt;</span> <span class="special">&gt;</span> <a name="doxygen.fwd_8hpp_1a378985a72fee31f759c4f6d4da5ba13c"></a><span class="identifier">profile_storage</span><span class="special">;</span>  <span class="comment">// Dense storage which tracks means of samples in each cell. </span>
+
+    <span class="keyword">typedef</span> <span class="identifier">dense_storage</span><span class="special">&lt;</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1weighted__sum.html" title="Class template weighted_sum">accumulators::weighted_sum</a><span class="special">&lt;</span><span class="special">&gt;</span> <span class="special">&gt;</span> <a name="doxygen.fwd_8hpp_1a39512894e092a83d266b7b6976691b21"></a><span class="identifier">weight_storage</span><span class="special">;</span>  <span class="comment">// Dense storage which tracks sums of weights and a variance estimate. </span>
+    <span class="keyword">typedef</span> <span class="identifier">dense_storage</span><span class="special">&lt;</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1weighted__mean.html" title="Class template weighted_mean">accumulators::weighted_mean</a><span class="special">&lt;</span><span class="special">&gt;</span> <span class="special">&gt;</span> <a name="doxygen.fwd_8hpp_1af5fb6820a289f3d670098e57328929e8"></a><span class="identifier">weighted_profile_storage</span><span class="special">;</span>  <span class="comment">// Dense storage which tracks means of weighted samples in each cell. </span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">typedef</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1null__type.html" title="Struct null_type">null_type</a> <a name="doxygen.fwd_8hpp_1af876b1fb28b78795428195c2f751a025"></a><span class="identifier">empty_type</span><span class="special">;</span>  <span class="comment">// Another alias for an empty metadata type. </span>
+      <span class="keyword">typedef</span> <span class="keyword">int</span> <a name="doxygen.fwd_8hpp_1a9f1aebb118b832d8f15454525faa7c84"></a><span class="identifier">index_type</span><span class="special">;</span>  <span class="comment">// Integral type for axis indices. </span>
+
+      <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1null__type.html" title="Struct null_type">null_type</a><span class="special">;</span>
+
+      <span class="keyword">typedef</span> <span class="keyword">double</span> <a name="doxygen.fwd_8hpp_1a66ab868f73a86bef31bed15b9ab0f78a"></a><span class="identifier">real_index_type</span><span class="special">;</span>  <span class="comment">// Real type for axis indices. </span>
+    <span class="special">}</span>
+    <span class="keyword">namespace</span> <span class="identifier">utility</span> <span class="special">{</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.histogram_2histogram_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/histogram.hpp" target="_top">boost/histogram/histogram.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axes<span class="special">,</span> <span class="keyword">typename</span> Storage<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A1<span class="special">,</span> <span class="keyword">typename</span> S1<span class="special">,</span> <span class="keyword">typename</span> A2<span class="special">,</span> <span class="keyword">typename</span> S2<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1afe9348514de63e4d8c6bb19448412a82.html" title="Function template operator*"><span class="keyword">operator</span><span class="special">*</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A1</span><span class="special">,</span> <span class="identifier">S1</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A2</span><span class="special">,</span> <span class="identifier">S2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1ad77a17529e4583463afca758759b090f.html" title="Function template operator*"><span class="keyword">operator</span><span class="special">*</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1ac995b246cf6dcf31ebf28a1680e138d0.html" title="Function template operator*"><span class="keyword">operator</span><span class="special">*</span></a><span class="special">(</span><span class="keyword">double</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A1<span class="special">,</span> <span class="keyword">typename</span> S1<span class="special">,</span> <span class="keyword">typename</span> A2<span class="special">,</span> <span class="keyword">typename</span> S2<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1ae84d9bec7a2feec4d9e9c9762428bc6b.html" title="Function template operator+"><span class="keyword">operator</span><span class="special">+</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A1</span><span class="special">,</span> <span class="identifier">S1</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A2</span><span class="special">,</span> <span class="identifier">S2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A1<span class="special">,</span> <span class="keyword">typename</span> S1<span class="special">,</span> <span class="keyword">typename</span> A2<span class="special">,</span> <span class="keyword">typename</span> S2<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1a356e7aa4072b482b50ddc04beafceb43.html" title="Function template operator-"><span class="keyword">operator</span><span class="special">-</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A1</span><span class="special">,</span> <span class="identifier">S1</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A2</span><span class="special">,</span> <span class="identifier">S2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A1<span class="special">,</span> <span class="keyword">typename</span> S1<span class="special">,</span> <span class="keyword">typename</span> A2<span class="special">,</span> <span class="keyword">typename</span> S2<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1a6ebe3ee33d47ec61462e336641c037f2.html" title="Function template operator/"><span class="keyword">operator</span><span class="special">/</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A1</span><span class="special">,</span> <span class="identifier">S1</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A2</span><span class="special">,</span> <span class="identifier">S2</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/histogram_2histogram_8hpp_1a5f9847ce35ac376c2e734b807784b72a.html" title="Function template operator/"><span class="keyword">operator</span><span class="special">/</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.indexed_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/indexed.hpp" target="_top">boost/histogram/indexed.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">enum</span> <a class="link" href="../doxygen/indexed_8hpp_1a2337d903d48cbc27d3d961a1205428cc.html" title="Type coverage">coverage</a><span class="special">;</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Histogram<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1indexed__range.html" title="Class template indexed_range">indexed_range</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Histogram<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/indexed_8hpp_1afbad87a1aa10ed2372f5eb51f9e2b2a4.html" title="Function template indexed"><span class="identifier">indexed</span></a><span class="special">(</span><span class="identifier">Histogram</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">coverage</span> <span class="special">=</span> <span class="identifier">coverage</span><span class="special">::</span><span class="identifier">inner</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Histogram<span class="special">,</span> <span class="keyword">typename</span> Iterable<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/indexed_8hpp_1a0852117a733be49d6ea0121001d45ebe.html" title="Function template indexed"><span class="identifier">indexed</span></a><span class="special">(</span><span class="identifier">Histogram</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Iterable</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.literals_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/literals.hpp" target="_top">boost/histogram/literals.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">literals</span> <span class="special">{</span>
+
+      <span class="comment">// Suffix operator to generate literal compile-time numbers, 0_c, 12_c, etc. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">char</span><span class="special">...</span> digits<span class="special">&gt;</span> <span class="keyword">auto</span> <a name="doxygen.literals_8hpp_1a7c7ba819bc9ee7b595fab4a50377c8c5"></a><span class="keyword">operator</span><span class="string">""</span><span class="identifier">_c</span><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.make__histogram_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/make_histogram.hpp" target="_top">boost/histogram/make_histogram.hpp</a>&gt;</h3></div></div></div>
+<p>Collection of factory functions to conveniently create histograms. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Axes<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1a45ad5d817a45ac701a9d52a91dbf811b.html" title="Function template make_histogram"><span class="identifier">make_histogram</span></a><span class="special">(</span><span class="identifier">Axis</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Axes</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterable<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1ad4262da593a0e9768259764f55a76470.html" title="Function template make_histogram"><span class="identifier">make_histogram</span></a><span class="special">(</span><span class="identifier">Iterable</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1a6e0bcda02b185841dcf6ae6bec5c4eb2.html" title="Function template make_histogram"><span class="identifier">make_histogram</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Storage<span class="special">,</span> <span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Axes<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1ac7ccb1ecd7c001709c176276bd1c55c5.html" title="Function template make_histogram_with"><span class="identifier">make_histogram_with</span></a><span class="special">(</span><span class="identifier">Storage</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Axis</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Axes</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Storage<span class="special">,</span> <span class="keyword">typename</span> Iterable<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1a3a0c841824702201b5ddfbbd4d3a0c0e.html" title="Function template make_histogram_with"><span class="identifier">make_histogram_with</span></a><span class="special">(</span><span class="identifier">Storage</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Iterable</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Storage<span class="special">,</span> <span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1a9b1fe6509f3bb2ee447880092015b251.html" title="Function template make_histogram_with"><span class="identifier">make_histogram_with</span></a><span class="special">(</span><span class="identifier">Storage</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Axes<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1af924c6cc3d795525473f24d0d00bcd80.html" title="Function template make_weighted_histogram"><span class="identifier">make_weighted_histogram</span></a><span class="special">(</span><span class="identifier">Axis</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Axes</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterable<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1abc1216fa57d269c57eaf500574b0579d.html" title="Function template make_weighted_histogram"><span class="identifier">make_weighted_histogram</span></a><span class="special">(</span><span class="identifier">Iterable</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__histogram_8hpp_1a78185638288d7bc633c96a8fd864abcc.html" title="Function template make_weighted_histogram"><span class="identifier">make_weighted_histogram</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.make__profile_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/make_profile.hpp" target="_top">boost/histogram/make_profile.hpp</a>&gt;</h3></div></div></div>
+<p>Collection of factory functions to conveniently create profiles. </p>
+<p>Profiles are histograms which accept an additional sample and compute the mean of the sample in each cell. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Axes<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__profile_8hpp_1aa4f8c6e58cf03e86a4aa691b1dbc99b9.html" title="Function template make_profile"><span class="identifier">make_profile</span></a><span class="special">(</span><span class="identifier">Axis</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Axes</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterable<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__profile_8hpp_1a9086ed548bf862841b73315f1ca58fde.html" title="Function template make_profile"><span class="identifier">make_profile</span></a><span class="special">(</span><span class="identifier">Iterable</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__profile_8hpp_1a5ecbe2853d8ae2e73bd4a1cfd0be5ae4.html" title="Function template make_profile"><span class="identifier">make_profile</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Axes<span class="special">&gt;</span> 
+      <span class="keyword">auto</span> <a class="link" href="../doxygen/make__profile_8hpp_1a4e82caf34e5c07309b63a5866698408c.html" title="Function template make_weighted_profile"><span class="identifier">make_weighted_profile</span></a><span class="special">(</span><span class="identifier">Axis</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">Axes</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterable<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__profile_8hpp_1ae3327c2fb77e447e8db1338e759878d8.html" title="Function template make_weighted_profile"><span class="identifier">make_weighted_profile</span></a><span class="special">(</span><span class="identifier">Iterable</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Iterator<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/make__profile_8hpp_1a82c333a42f7187e67bbdcfae2493fa99.html" title="Function template make_weighted_profile"><span class="identifier">make_weighted_profile</span></a><span class="special">(</span><span class="identifier">Iterator</span><span class="special">,</span> <span class="identifier">Iterator</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.multi__index_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/multi_index.hpp" target="_top">boost/histogram/multi_index.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> Size<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1multi__index.html" title="Struct template multi_index">multi_index</a><span class="special">;</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1multi__index_3_01static__cast_3_01std_1_1size__t_01_4_07-1_08_4.html" title="Struct multi_index&lt;static_cast&lt; std::size_t &gt;(-1)&gt;">multi_index</a><span class="special">&lt;</span><span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">-</span><span class="number">1</span><span class="special">)</span><span class="special">&gt;</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.ostream_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/ostream.hpp" target="_top">boost/histogram/ostream.hpp</a>&gt;</h3></div></div></div>
+<p>A simple streaming operator for the histogram type. </p>
+<p>The text representation is rudimentary and not guaranteed to be stable between versions of Boost.Histogram. This header is not included by any other header and must be explicitly included to use the streaming operator.</p>
+<p>To use your own, simply include your own implementation instead of this header. </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.sample_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/sample.hpp" target="_top">boost/histogram/sample.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1sample__type.html" title="Struct template sample_type">sample_type</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Ts<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/sample_8hpp_1ad36d1d0ca87e34966c73b2b4eb469bf9.html" title="Function template sample"><span class="identifier">sample</span></a><span class="special">(</span><span class="identifier">Ts</span> <span class="special">&amp;&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.serialization_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/serialization.hpp" target="_top">boost/histogram/serialization.hpp</a>&gt;</h3></div></div></div>
+<p>Headers from <a href="https://www.boost.org/doc/libs/develop/libs/serialization/doc/index.html" target="_top">Boost.Serialization</a> needed to serialize STL types that are used internally by the Boost.Histogram classes.</p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.storage__adaptor_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/storage_adaptor.hpp" target="_top">boost/histogram/storage_adaptor.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1storage__adaptor.html" title="Class template storage_adaptor">storage_adaptor</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.unlimited__storage_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/unlimited_storage.hpp" target="_top">boost/histogram/unlimited_storage.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Allocator<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1unlimited__storage.html" title="Class template unlimited_storage">unlimited_storage</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.unsafe__access_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/unsafe_access.hpp" target="_top">boost/histogram/unsafe_access.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1unsafe__access.html" title="Struct unsafe_access">unsafe_access</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.weight_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/weight.hpp" target="_top">boost/histogram/weight.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1weight__type.html" title="Struct template weight_type">weight_type</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">auto</span> <a class="link" href="../doxygen/weight_8hpp_1af62f82b8d4842c196c563381ac21dcf4.html" title="Function template weight"><span class="identifier">weight</span></a><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.count_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/count.hpp" target="_top">boost/histogram/accumulators/count.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">accumulators</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">,</span> <span class="keyword">bool</span> ThreadSafe<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1count.html" title="Class template count">count</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.fraction_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/fraction.hpp" target="_top">boost/histogram/accumulators/fraction.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">accumulators</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1fraction.html" title="Class template fraction">fraction</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.is__thread__safe_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/is_thread_safe.hpp" target="_top">boost/histogram/accumulators/is_thread_safe.hpp</a>&gt;</h3></div></div></div></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.mean_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/mean.hpp" target="_top">boost/histogram/accumulators/mean.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">accumulators</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1mean.html" title="Class template mean">mean</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.accumulators_2ostream_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/ostream.hpp" target="_top">boost/histogram/accumulators/ostream.hpp</a>&gt;</h3></div></div></div>
+<p>Simple streaming operators for the builtin accumulator types. </p>
+<p>The text representation is not guaranteed to be stable between versions of Boost.Histogram. This header is only included by <a href="reference.html#header.boost.histogram.ostream_hpp" target="_top">boost/histogram/ostream.hpp</a>. To use your own, include your own implementation instead of this header and do not include<a href="reference.html#header.boost.histogram.ostream_hpp" target="_top">boost/histogram/ostream.hpp</a>.</p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.accumulators_2sum_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/sum.hpp" target="_top">boost/histogram/accumulators/sum.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">accumulators</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1sum.html" title="Class template sum">sum</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.weighted__mean_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/weighted_mean.hpp" target="_top">boost/histogram/accumulators/weighted_mean.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">accumulators</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1weighted__mean.html" title="Class template weighted_mean">weighted_mean</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.weighted__sum_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/accumulators/weighted_sum.hpp" target="_top">boost/histogram/accumulators/weighted_sum.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">accumulators</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1accumulators_1_1weighted__sum.html" title="Class template weighted_sum">weighted_sum</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.empty_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/algorithm/empty.hpp" target="_top">boost/histogram/algorithm/empty.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">algorithm</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">&gt;</span> 
+        <span class="keyword">auto</span> <a class="link" href="../doxygen/empty_8hpp_1a976bdeb53b7c7f21ed96833e1987e4b3.html" title="Function template empty"><span class="identifier">empty</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">coverage</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.project_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/algorithm/project.hpp" target="_top">boost/histogram/algorithm/project.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">algorithm</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">,</span> <span class="keyword">unsigned</span> N<span class="special">,</span> <span class="keyword">typename</span><span class="special">...</span> Ns<span class="special">&gt;</span> 
+        <span class="keyword">auto</span> <a class="link" href="../doxygen/project_8hpp_1aea8b77b648dc0aacc038374d6f1dd910.html" title="Function template project"><span class="identifier">project</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                     <span class="identifier">std</span><span class="special">::</span><span class="identifier">integral_constant</span><span class="special">&lt;</span> <span class="keyword">unsigned</span><span class="special">,</span> <span class="identifier">N</span> <span class="special">&gt;</span><span class="special">,</span> <span class="identifier">Ns</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">,</span> <span class="keyword">typename</span> Iterable<span class="special">&gt;</span> 
+        <span class="keyword">auto</span> <a class="link" href="../doxygen/project_8hpp_1a96b487faea4c6073997413aef8df4f01.html" title="Function template project"><span class="identifier">project</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Iterable</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reduce_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/algorithm/reduce.hpp" target="_top">boost/histogram/algorithm/reduce.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">algorithm</span> <span class="special">{</span>
+      <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="../doxygen/reduce_8hpp_1aa6016ff014f3dd5abc672882a2658aba.html" title="Type definition reduce_command"><span class="identifier">reduce_command</span></a><span class="special">;</span>
+
+      <span class="comment">// Whether to behave like <code class="computeroutput">shrink</code> or<code class="computeroutput">crop</code> regarding removed bins.</span>
+      <span class="keyword">enum</span> <a name="doxygen.reduce_8hpp_1a71c2df3fd5222ccc79d2fe6f5251bb6e"></a>slice_mode <span class="special">{</span> <a name="doxygen.reduce_8hpp_1a71c2df3fd5222ccc79d2fe6f5251bb6ea91808da94826016395b10b662ed4363b"></a>shrink, <a name="doxygen.reduce_8hpp_1a71c2df3fd5222ccc79d2fe6f5251bb6eaa634e7960e04b1633c103382004fe526"></a>crop <span class="special">}</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1a586bfdace7c7648615a77a9d67ab3f78.html" title="Function crop"><span class="identifier">crop</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1a461c4933dc4aa4f163eda4f1abbe2896.html" title="Function crop"><span class="identifier">crop</span></a><span class="special">(</span><span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1a2aa3ca6a8eb73c1590447c15f21ea0e0.html" title="Function crop_and_rebin"><span class="identifier">crop_and_rebin</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1ab9b342670e5cc4a547421fcb27010b1d.html" title="Function crop_and_rebin"><span class="identifier">crop_and_rebin</span></a><span class="special">(</span><span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1adbf88d6656efbfa1ed90ac4942050984.html" title="Function rebin"><span class="identifier">rebin</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1aaca90aaaf0d7c1096a94a8276d7410a9.html" title="Function rebin"><span class="identifier">rebin</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Histogram<span class="special">,</span> <span class="keyword">typename</span> Iterable<span class="special">&gt;</span> 
+        <span class="identifier">Histogram</span> <a class="link" href="../doxygen/reduce_8hpp_1a161e9205c4197adfebb2965437ecb248.html" title="Function template reduce"><span class="identifier">reduce</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Histogram</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">Iterable</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Histogram<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Ts<span class="special">&gt;</span> 
+        <span class="identifier">Histogram</span> <a class="link" href="../doxygen/reduce_8hpp_1a4f27b22085d08ceb9c69c8337c4e0203.html" title="Function template reduce"><span class="identifier">reduce</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Histogram</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">reduce_command</span> <span class="special">&amp;</span><span class="special">,</span> 
+                         <span class="keyword">const</span> <span class="identifier">Ts</span> <span class="special">&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1a5d449c1f0dac72332f2189afbc9531ad.html" title="Function shrink"><span class="identifier">shrink</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1a7e8cf0a12c0fd6b91f03031b8f6c4275.html" title="Function shrink"><span class="identifier">shrink</span></a><span class="special">(</span><span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1aeb067e6d4d445e2bee8237136ae4b717.html" title="Function shrink_and_rebin"><span class="identifier">shrink_and_rebin</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> <a class="link" href="../doxygen/reduce_8hpp_1a2213aa80f58d2f333aeaa9d7aba4d830.html" title="Function shrink_and_rebin"><span class="identifier">shrink_and_rebin</span></a><span class="special">(</span><span class="keyword">double</span><span class="special">,</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> 
+      <a class="link" href="../doxygen/reduce_8hpp_1af10b86ed3e81d12a5ff1a0785f2a8072.html" title="Function slice"><span class="identifier">slice</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> 
+            <span class="identifier">slice_mode</span> <span class="special">=</span> <span class="identifier">slice_mode</span><span class="special">::</span><span class="identifier">shrink</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> 
+      <a class="link" href="../doxygen/reduce_8hpp_1a42a5e5a5f56613186e6f87319ef2e8c0.html" title="Function slice"><span class="identifier">slice</span></a><span class="special">(</span><span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> 
+            <span class="identifier">slice_mode</span> <span class="special">=</span> <span class="identifier">slice_mode</span><span class="special">::</span><span class="identifier">shrink</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> 
+      <a class="link" href="../doxygen/reduce_8hpp_1a4df35a2a95c7210fe48e497dacefd2a2.html" title="Function slice_and_rebin"><span class="identifier">slice_and_rebin</span></a><span class="special">(</span><span class="keyword">unsigned</span><span class="special">,</span> <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">,</span> 
+                      <span class="identifier">slice_mode</span> <span class="special">=</span> <span class="identifier">slice_mode</span><span class="special">::</span><span class="identifier">shrink</span><span class="special">)</span><span class="special">;</span>
+      <span class="identifier">reduce_command</span> 
+      <a class="link" href="../doxygen/reduce_8hpp_1a9216f0ba710d80f51d1a17b9d7dc4282.html" title="Function slice_and_rebin"><span class="identifier">slice_and_rebin</span></a><span class="special">(</span><span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span><span class="special">,</span> <span class="keyword">unsigned</span><span class="special">,</span> 
+                      <span class="identifier">slice_mode</span> <span class="special">=</span> <span class="identifier">slice_mode</span><span class="special">::</span><span class="identifier">shrink</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.algorithm_2sum_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/algorithm/sum.hpp" target="_top">boost/histogram/algorithm/sum.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">algorithm</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> A<span class="special">,</span> <span class="keyword">typename</span> S<span class="special">&gt;</span> 
+        <span class="keyword">auto</span> <a class="link" href="../doxygen/algorithm_2sum_8hpp_1afbd600acba73a057226b9bcc1ff5280b.html" title="Function template sum"><span class="identifier">sum</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1histogram.html" title="Class template histogram">histogram</a><span class="special">&lt;</span> <span class="identifier">A</span><span class="special">,</span> <span class="identifier">S</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">coverage</span> <span class="special">=</span> <span class="identifier">coverage</span><span class="special">::</span><span class="identifier">all</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.boolean_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/boolean.hpp" target="_top">boost/histogram/axis/boolean.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MetaData<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1boolean.html" title="Class template boolean">boolean</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.category_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/category.hpp" target="_top">boost/histogram/axis/category.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Value<span class="special">,</span> <span class="keyword">typename</span> MetaData<span class="special">,</span> <span class="keyword">typename</span> Options<span class="special">,</span> 
+               <span class="keyword">typename</span> Allocator<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1category.html" title="Class template category">category</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.integer_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/integer.hpp" target="_top">boost/histogram/axis/integer.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Value<span class="special">,</span> <span class="keyword">typename</span> MetaData<span class="special">,</span> <span class="keyword">typename</span> Options<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1integer.html" title="Class template integer">integer</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.interval__view_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/interval_view.hpp" target="_top">boost/histogram/axis/interval_view.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1interval__view.html" title="Class template interval_view">interval_view</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.iterator_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/iterator.hpp" target="_top">boost/histogram/axis/iterator.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Derived<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1iterator__mixin.html" title="Class template iterator_mixin">iterator_mixin</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.metadata__base_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/metadata_base.hpp" target="_top">boost/histogram/axis/metadata_base.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Metadata<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1metadata__base.html" title="Class template metadata_base">metadata_base</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.option_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/option.hpp" target="_top">boost/histogram/axis/option.hpp</a>&gt;</h3></div></div></div>
+<p>Options for builtin axis types. </p>
+<p>Options <code class="computeroutput">circular</code> and<code class="computeroutput">growth</code> are mutually exclusive. Options<code class="computeroutput">circular</code> and<code class="computeroutput">underflow</code> are mutually exclusive.</p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">namespace</span> <span class="identifier">option</span> <span class="special">{</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">unsigned</span> Pos<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bit.html" title="Struct template bit">bit</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">unsigned</span> Bits<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">;</span>
+
+        <span class="keyword">constexpr</span> <span class="identifier">circular_t</span> <a class="link" href="../doxygen/option_8hpp_1ab165a9b43e66aa29ba86702a85c352e5.html" title="Global circular">circular</a><span class="special">;</span>        <span class="comment">// Instance of <code class="computeroutput">circular_t</code>.</span>
+
+        <span class="keyword">typedef</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bit.html" title="Struct template bit">bit</a><span class="special">&lt;</span> <span class="number">2</span> <span class="special">&gt;</span> <a name="doxygen.option_8hpp_1a7df8bd1729321150fe169371cdc299b4"></a><span class="identifier">circular_t</span><span class="special">;</span>  <span class="comment">// Axis is circular. Mutually exclusive with <code class="computeroutput">growth</code> and<code class="computeroutput">underflow</code>.</span>
+
+        <span class="keyword">constexpr</span> <span class="identifier">growth_t</span> <a class="link" href="../doxygen/option_8hpp_1a1b96ce8408202839209b648cd55774bf.html" title="Global growth">growth</a><span class="special">;</span>        <span class="comment">// Instance of <code class="computeroutput">growth_t</code>.</span>
+
+        <span class="keyword">typedef</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bit.html" title="Struct template bit">bit</a><span class="special">&lt;</span> <span class="number">3</span> <span class="special">&gt;</span> <a name="doxygen.option_8hpp_1ae2c45dd5855f5f31d1e8c32790cd62d1"></a><span class="identifier">growth_t</span><span class="special">;</span>  <span class="comment">// Axis can grow. Mutually exclusive with <code class="computeroutput">circular</code>.</span>
+
+        <span class="keyword">constexpr</span> <span class="identifier">none_t</span> <a class="link" href="../doxygen/option_8hpp_1ac18858a972340f9f5a670b134cbe7587.html" title="Global none">none</a><span class="special">;</span>        <span class="comment">// Instance of <code class="computeroutput">none_t</code>.</span>
+
+        <span class="keyword">typedef</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="number">0</span> <span class="special">&gt;</span> <a name="doxygen.option_8hpp_1ab0934eae4e18ae6a3334f451a94aa476"></a><span class="identifier">none_t</span><span class="special">;</span>  <span class="comment">// All options off. </span>
+
+        <span class="keyword">constexpr</span> <span class="identifier">overflow_t</span> <a class="link" href="../doxygen/option_8hpp_1a8c45da01f1e41797d360a24f0f24e3ee.html" title="Global overflow">overflow</a><span class="special">;</span>        <span class="comment">// Instance of <code class="computeroutput">overflow_t</code>.</span>
+
+        <span class="keyword">typedef</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bit.html" title="Struct template bit">bit</a><span class="special">&lt;</span> <span class="number">1</span> <span class="special">&gt;</span> <a name="doxygen.option_8hpp_1af618a7511209d2f721d119808a2e6b6d"></a><span class="identifier">overflow_t</span><span class="special">;</span>  <span class="comment">// Axis has overflow bin. </span>
+
+        <span class="keyword">constexpr</span> <span class="identifier">underflow_t</span> <a class="link" href="../doxygen/option_8hpp_1aec72c6a97716379c1dd0cbf455cd8250.html" title="Global underflow">underflow</a><span class="special">;</span>        <span class="comment">// Instance of <code class="computeroutput">underflow_t</code>.</span>
+
+        <span class="keyword">typedef</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bit.html" title="Struct template bit">bit</a><span class="special">&lt;</span> <span class="number">0</span> <span class="special">&gt;</span> <a name="doxygen.option_8hpp_1a48f0e2d8471fff92cadf9ea040f49840"></a><span class="identifier">underflow_t</span><span class="special">;</span>  <span class="comment">// Axis has an underflow bin. Mutually exclusive with <code class="computeroutput">circular</code>.</span>
+
+        <span class="comment">// Set intersection of the option arguments. </span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">unsigned</span> B1<span class="special">,</span> <span class="keyword">unsigned</span> B2<span class="special">&gt;</span> 
+          <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a name="doxygen.option_8hpp_1af61479f4e5f061c243854b09a9f1920d"></a><span class="keyword">operator</span><span class="special">&amp;</span><span class="special">(</span><a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="identifier">B1</span> <span class="special">&gt;</span><span class="special">,</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="identifier">B2</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+
+        <span class="comment">// Set difference of the option arguments. </span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">unsigned</span> B1<span class="special">,</span> <span class="keyword">unsigned</span> B2<span class="special">&gt;</span> 
+          <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a name="doxygen.option_8hpp_1a1f060d114fddefcf1265e2d2c0fff4dc"></a><span class="keyword">operator</span><span class="special">-</span><span class="special">(</span><a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="identifier">B1</span> <span class="special">&gt;</span><span class="special">,</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="identifier">B2</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+
+        <span class="comment">// Set union of the axis option arguments. </span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">unsigned</span> B1<span class="special">,</span> <span class="keyword">unsigned</span> B2<span class="special">&gt;</span> 
+          <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a name="doxygen.option_8hpp_1a8b8fdea63f93e046071f37bcf0cf7a91"></a><span class="keyword">operator</span><span class="special">|</span><span class="special">(</span><a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="identifier">B1</span> <span class="special">&gt;</span><span class="special">,</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1option_1_1bitset.html" title="Struct template bitset">bitset</a><span class="special">&lt;</span> <span class="identifier">B2</span> <span class="special">&gt;</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.axis_2ostream_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/ostream.hpp" target="_top">boost/histogram/axis/ostream.hpp</a>&gt;</h3></div></div></div>
+<p>Simple streaming operators for the builtin axis types. </p>
+<p>The text representation is not guaranteed to be stable between versions of Boost.Histogram. This header is only included by <a href="reference.html#header.boost.histogram.ostream_hpp" target="_top">boost/histogram/ostream.hpp</a>. To use your own, include your own implementation instead of this header and do not include<a href="reference.html#header.boost.histogram.ostream_hpp" target="_top">boost/histogram/ostream.hpp</a>.</p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.polymorphic__bin_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/polymorphic_bin.hpp" target="_top">boost/histogram/axis/polymorphic_bin.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RealType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1polymorphic__bin.html" title="Class template polymorphic_bin">polymorphic_bin</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.regular_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/regular.hpp" target="_top">boost/histogram/axis/regular.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Value <span class="special">=</span> <span class="keyword">double</span><span class="special">,</span> <span class="keyword">typename</span> MetaData <span class="special">=</span> <span class="identifier">use_default</span><span class="special">,</span> 
+               <span class="keyword">typename</span> Options <span class="special">=</span> <span class="identifier">use_default</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1circular.html" title="Class template circular">circular</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Value<span class="special">,</span> <span class="keyword">typename</span> Transform<span class="special">,</span> <span class="keyword">typename</span> MetaData<span class="special">,</span> 
+               <span class="keyword">typename</span> Options<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1regular.html" title="Class template regular">regular</a><span class="special">;</span>
+
+      <span class="comment">// Helper function to mark argument as step size. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">step_type</span><span class="special">&lt;</span> <span class="identifier">T</span> <span class="special">&gt;</span> <a name="doxygen.regular_8hpp_1a825722f832c67236829045ad61a1428a"></a><span class="identifier">step</span><span class="special">(</span><span class="identifier">T</span> t<span class="special">)</span><span class="special">;</span>
+      <span class="keyword">namespace</span> <span class="identifier">transform</span> <span class="special">{</span>
+        <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1transform_1_1id.html" title="Struct id">id</a><span class="special">;</span>
+        <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1transform_1_1log.html" title="Struct log">log</a><span class="special">;</span>
+        <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1transform_1_1pow.html" title="Struct pow">pow</a><span class="special">;</span>
+        <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1transform_1_1sqrt.html" title="Struct sqrt">sqrt</a><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.traits_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/traits.hpp" target="_top">boost/histogram/axis/traits.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">namespace</span> <span class="identifier">traits</span> <span class="special">{</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1traits_1_1get__options.html" title="Struct template get_options">get_options</a><span class="special">;</span>
+
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1traits_1_1is__continuous.html" title="Struct template is_continuous">is_continuous</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1traits_1_1is__inclusive.html" title="Struct template is_inclusive">is_inclusive</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1traits_1_1is__ordered.html" title="Struct template is_ordered">is_ordered</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1traits_1_1is__reducible.html" title="Struct template is_reducible">is_reducible</a><span class="special">;</span>
+
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="../doxygen/structboost_1_1histogram_1_1axis_1_1traits_1_1value__type.html" title="Struct template value_type">value_type</a><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> <a class="link" href="../doxygen/traits_8hpp_1a6a8a7a45e15e09618c1863e3ad2e9126.html" title="Function template continuous"><span class="identifier">continuous</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="identifier">index_type</span> <a class="link" href="../doxygen/traits_8hpp_1aa94da97e7154f332e2374d6cfdac7187.html" title="Function template extent"><span class="identifier">extent</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> <a class="link" href="../doxygen/traits_8hpp_1a001e46d611a7a56374b162a7d30d1dc9.html" title="Function template inclusive"><span class="identifier">inclusive</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">typename</span> U<span class="special">&gt;</span> 
+          <span class="identifier">axis</span><span class="special">::</span><span class="identifier">index_type</span> <a class="link" href="../doxygen/traits_8hpp_1aeb19104bfc248d206fc2e59278b20ce4.html" title="Function template index"><span class="identifier">index</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">U</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a class="link" href="../doxygen/traits_8hpp_1a83be61d37e872e247628d9228901cde3.html" title="Function template metadata"><span class="identifier">metadata</span></a><span class="special">(</span><span class="identifier">Axis</span> <span class="special">&amp;&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <a class="link" href="../doxygen/traits_8hpp_1a3efa2769458d2b867f3e9b960c392b26.html" title="Function template options"><span class="identifier">options</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> <a class="link" href="../doxygen/traits_8hpp_1a583de2246a3fb545bfebd6d478ec9869.html" title="Function template ordered"><span class="identifier">ordered</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> <a class="link" href="../doxygen/traits_8hpp_1a9b50b6a62cf2fd3c404d56f42e2a9b8f.html" title="Function template rank"><span class="identifier">rank</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">,</span> <span class="keyword">typename</span> U<span class="special">&gt;</span> 
+          <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">index_type</span><span class="special">,</span> <span class="identifier">index_type</span> <span class="special">&gt;</span> <a class="link" href="../doxygen/traits_8hpp_1a84c1a8f9496519798538523a7d62a82a.html" title="Function template update"><span class="identifier">update</span></a><span class="special">(</span><span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">U</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> 
+          <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a class="link" href="../doxygen/traits_8hpp_1a48415fa463cc2fd39080cfa2634c789d.html" title="Function template value"><span class="identifier">value</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">real_index_type</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Result<span class="special">,</span> <span class="keyword">typename</span> Axis<span class="special">&gt;</span> 
+          <span class="identifier">Result</span> <a class="link" href="../doxygen/traits_8hpp_1aa960a0cc16934332fb7e2c90f5ddaa19.html" title="Function template value_as"><span class="identifier">value_as</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">real_index_type</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Axis<span class="special">&gt;</span> <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a class="link" href="../doxygen/traits_8hpp_1ad9d0bf5500cbdac3ee38e6630a9ab941.html" title="Function template width"><span class="identifier">width</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">index_type</span><span class="special">)</span><span class="special">;</span>
+        <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Result<span class="special">,</span> <span class="keyword">typename</span> Axis<span class="special">&gt;</span> 
+          <span class="identifier">Result</span> <a class="link" href="../doxygen/traits_8hpp_1a418abd9d2496b6f88f7869e0994da731.html" title="Function template width_as"><span class="identifier">width_as</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Axis</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">index_type</span><span class="special">)</span><span class="special">;</span>
+      <span class="special">}</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.variable_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/variable.hpp" target="_top">boost/histogram/axis/variable.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Value<span class="special">,</span> <span class="keyword">typename</span> MetaData<span class="special">,</span> <span class="keyword">typename</span> Options<span class="special">,</span> 
+               <span class="keyword">typename</span> Allocator<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variable.html" title="Class template variable">variable</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.variant_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/axis/variant.hpp" target="_top">boost/histogram/axis/variant.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">axis</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Ts<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">;</span>
+
+      <span class="comment">// Return reference to T, throws std::runtime_error if type does not match. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.variant_8hpp_1ad6202c7204cbe15b8861895a79a55f41"></a><span class="identifier">get</span><span class="special">(</span><a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> v<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Return movable reference to T, throws unspecified exception if type does not match. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.variant_8hpp_1a5702819bec2d86f9c4cee8f9d76aa0f1"></a><span class="identifier">get</span><span class="special">(</span><a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> v<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Return const reference to T, throws unspecified exception if type does not match. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.variant_8hpp_1a6e713b5a27bb4a8810c3686897cded3f"></a><span class="identifier">get</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> v<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Returns pointer to T in variant or null pointer if type does not match. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> <span class="keyword">auto</span> <a name="doxygen.variant_8hpp_1a3cec762fdce9cb3669f413a1c3205c89"></a><span class="identifier">get_if</span><span class="special">(</span><a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">*</span> v<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Returns pointer to const T in variant or null pointer if type does not match. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">auto</span> <a name="doxygen.variant_8hpp_1abed36ef0c42029dbf47a2d76bd2ba970"></a><span class="identifier">get_if</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">*</span> v<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// The negation of operator==. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Us<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Ts<span class="special">&gt;</span> 
+        <span class="keyword">bool</span> <a name="doxygen.variant_8hpp_1a4e0f490b41a73431498b54d279e58c70"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> u<span class="special">,</span> 
+                        <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Ts</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> t<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// The negation of operator==. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Us<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+        <span class="keyword">bool</span> <a name="doxygen.variant_8hpp_1aaaf581840eda04a56d4850eaf6e02a40"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> u<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> t<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// The negation of operator==. </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">bool</span> <a name="doxygen.variant_8hpp_1a82769440bf04096986736eca0f260659"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> t<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> u<span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Us<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Vs<span class="special">&gt;</span> 
+        <span class="keyword">bool</span> <a class="link" href="../doxygen/variant_8hpp_1a6e213a5feb5508c75d2d5f218110230c.html" title="Function template operator=="><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Vs</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">class</span><span class="special">...</span> Us<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+        <span class="keyword">bool</span> <a class="link" href="../doxygen/variant_8hpp_1a0c1a727d77b3b92a00c6aa100dae0cc2.html" title="Function template operator=="><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Apply visitor to variant (reference). </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Visitor<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.variant_8hpp_1a1880fa8ea0dc34103630af65ce582d8f"></a><span class="identifier">visit</span><span class="special">(</span><span class="identifier">Visitor</span> <span class="special">&amp;&amp;</span> vis<span class="special">,</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> var<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Apply visitor to variant (movable reference). </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Visitor<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.variant_8hpp_1a063f82d64ab7ff9609da68cc6958dde7"></a><span class="identifier">visit</span><span class="special">(</span><span class="identifier">Visitor</span> <span class="special">&amp;&amp;</span> vis<span class="special">,</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;&amp;</span> var<span class="special">)</span><span class="special">;</span>
+
+      <span class="comment">// Apply visitor to variant (const reference). </span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Visitor<span class="special">,</span> <span class="keyword">class</span><span class="special">...</span> Us<span class="special">&gt;</span> 
+        <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <a name="doxygen.variant_8hpp_1a0ebbee19031bd04d2b2a0d8503b0dc25"></a><span class="identifier">visit</span><span class="special">(</span><span class="identifier">Visitor</span> <span class="special">&amp;&amp;</span> vis<span class="special">,</span> <span class="keyword">const</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1axis_1_1variant.html" title="Class template variant">variant</a><span class="special">&lt;</span> <span class="identifier">Us</span><span class="special">...</span> <span class="special">&gt;</span> <span class="special">&amp;</span> var<span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.binomial__proportion__interval_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/utility/binomial_proportion_interval.hpp" target="_top">boost/histogram/utility/binomial_proportion_interval.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">utility</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1binomial__proportion__interval.html" title="Class template binomial_proportion_interval">binomial_proportion_interval</a><span class="special">;</span>
+      <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1confidence__level.html" title="Class confidence_level">confidence_level</a><span class="special">;</span>
+      <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1deviation.html" title="Class deviation">deviation</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.clopper__pearson__interval_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/utility/clopper_pearson_interval.hpp" target="_top">boost/histogram/utility/clopper_pearson_interval.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">utility</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1clopper__pearson__interval.html" title="Class template clopper_pearson_interval">clopper_pearson_interval</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.jeffreys__interval_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/utility/jeffreys_interval.hpp" target="_top">boost/histogram/utility/jeffreys_interval.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">utility</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1jeffreys__interval.html" title="Class template jeffreys_interval">jeffreys_interval</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.wald__interval_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/utility/wald_interval.hpp" target="_top">boost/histogram/utility/wald_interval.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">utility</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1wald__interval.html" title="Class template wald_interval">wald_interval</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.wilson__interval_8hpp"></a>Header &lt;<a href="../../../../../boost/histogram/utility/wilson_interval.hpp" target="_top">boost/histogram/utility/wilson_interval.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">histogram</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">utility</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ValueType<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="../doxygen/classboost_1_1histogram_1_1utility_1_1wilson__interval.html" title="Class template wilson_interval">wilson_interval</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Hans
+      Dembinski<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="concepts.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../doxygen/structboost_1_1histogram_1_1axis_1_1null__type.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

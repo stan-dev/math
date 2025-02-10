@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Configuration and Optional Features</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="prev" href="../parser.html" title="Chapter 26. Boost.Parser">
+<link rel="next" href="this_library_s_relationship_to_boost_spirit.html" title="This Library's Relationship to Boost.Spirit">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../parser.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="this_library_s_relationship_to_boost_spirit.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="boost_parser.configuration_and_optional_features"></a><a class="link" href="configuration_and_optional_features.html" title="Configuration and Optional Features">Configuration
+    and Optional Features</a>
+</h2></div></div></div>
+<p>
+      Boost.Parser can be used entirely on its own. If Boost is available, extra
+      functionality provided by Boost is also available.
+    </p>
+<p>
+      By default, Boost.Parser is usable entirely on its own. The only explicit opt-in
+      use of Boost is the use of Boost.Hana. If you turn on the use of Hana, the
+      tuple type used throughout Boost.Parser will be <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">hana</span><span class="special">::</span><span class="identifier">tuple</span></code> instead of <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>.
+      To enable this, simply define <code class="computeroutput"><span class="identifier">BOOST_PARSER_USE_HANA_TUPLE</span></code>.
+      The Boost.Hana tuple is much nicer, because it has an <code class="computeroutput"><span class="keyword">operator</span><span class="special">[]</span></code>, and a whole lot of very useful algorithms;
+      you will see this operator used throughout the tutorial and examples. I encourage
+      you to use the Hana tuple, but I realize that it is an often-unfamiliar replacement
+      for <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>, which is a C++ vocabulary template,
+      and so that is the default.
+    </p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Boost.Parser defines a template alias <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a></code> that aliases to <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">hana</span><span class="special">::</span><span class="identifier">tuple</span></code> by default, and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>
+        when <code class="computeroutput"><span class="identifier">BOOST_PARSER_DISABLE_HANA_TUPLE</span></code>
+        is defined. You can future-proof your code slightly by using <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1a1792fbe3b24e0dcf5dc9d31005995c1e.html" title="Type definition tuple">boost::parser::tuple</a></code>, so that the code is
+        well-formed, whether or not <code class="computeroutput"><span class="identifier">BOOST_PARSER_DISABLE_HANA_TUPLE</span></code>
+        is defined. For the same reason, Boost.Parser also provides a generic <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1af2e6576c852ac796a5bdea3c8ed321b8.html" title="Function template get">boost::parser::get</a></code>
+        that works with both kinds of tuple (since <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span></code>
+        has no <code class="computeroutput"><span class="keyword">operator</span><span class="special">[]</span></code>
+        and <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">hana</span><span class="special">::</span><span class="identifier">tuple</span></code> does not work with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">get</span></code>).
+      </p></td></tr>
+</table></div>
+<p>
+      The presence of Boost headers is detected using <code class="computeroutput"><span class="identifier">__has_include</span><span class="special">()</span></code>. When it is present, all the typical Boost
+      conventions are used; otherwise, non-Boost alternatives are used. This applies
+      to the use of <code class="computeroutput"><span class="identifier">BOOST_ASSERT</span></code>
+      versus <code class="computeroutput"><span class="identifier">assert</span></code>, and printing
+      typenames with Boost.TypeIndex versus with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">typeinfo</span></code>.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        If you want to disable the use of the C macro <code class="computeroutput"><span class="identifier">assert</span></code>,
+        you define <code class="computeroutput"><span class="identifier">BOOST_DISABLE_ASSERTS</span></code>.
+        This is true whether <code class="computeroutput"><span class="identifier">BOOST_ASSERT</span></code>
+        is available or not.
+      </p></td></tr>
+</table></div>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        Boost.Parser uses inline namespaces around definitions of all functions and
+        types that use the optional Boost features; the name of the inline namespace
+        varies depending on whether the Boost implementation is used. So if Boost.TypeIndex
+        is available to one translation unit, but another TU must use <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">typeinfo</span></code>,
+        there are no ODR violations. The exception to this is the use of <code class="computeroutput"><span class="identifier">BOOST_ASSERT</span></code>/<code class="computeroutput"><span class="identifier">assert</span></code>;
+        assert macros are inherently ODR traps.
+      </p></td></tr>
+</table></div>
+<p>
+      Boost.Parser automatically treats aggregate <code class="computeroutput"><span class="keyword">struct</span></code>s
+      as if they were tuples in many cases. There is some metaprogramming logic that
+      makes this work, and this logic has a hard limit on the size of a <code class="computeroutput"><span class="keyword">struct</span></code> that it can operate on. There is a configuration
+      macro <code class="computeroutput"><a class="link" href="../doxygen/headers/config_8hpp_1a4a28f30fd27c316404cdb61d859ae6c5.html" title="Macro BOOST_PARSER_MAX_AGGREGATE_SIZE">BOOST_PARSER_MAX_AGGREGATE_SIZE</a></code>
+      that you can adjust if the default value is too small. Note that turning this
+      value up significantly can significantly increase compile times. Also, MSVC
+      seems to have a hard time with large values; I successfully set this value
+      to <code class="computeroutput"><span class="number">50</span></code> on MSVC, but <code class="computeroutput"><span class="number">100</span></code> broke the MSVC build entirely.
+    </p>
+<p>
+      Boost.Parser uses <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code> and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span></code>
+      internally. There is no way to change this. However, when Boost.Parser generates
+      values as a result of the parse (see <a class="link" href="tutorial.html#boost_parser.tutorial.attribute_generation" title="Attribute Generation">Attribute
+      Generation</a>), it can place them into other implementations of optional
+      and/or variant, if you tell it to do so. You tell it which templates are usable
+      as an optional or variant by specializing the associated variable template.
+      For instance, here is how you would tell Boost.Parser that <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span></code>
+      is an optional-type:
+    </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">constexpr</span> <span class="keyword">bool</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">enable_optional</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;&gt;</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+</pre>
+<p>
+      Here's how you would do the same thing for <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">variant2</span><span class="special">::</span><span class="identifier">variant</span></code>:
+    </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span><span class="special">...</span> <span class="identifier">Ts</span><span class="special">&gt;</span>
+<span class="keyword">constexpr</span> <span class="keyword">bool</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">enable_variant</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">variant2</span><span class="special">::</span><span class="identifier">variant</span><span class="special">&lt;</span><span class="identifier">Ts</span><span class="special">...&gt;&gt;</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">;</span>
+</pre>
+<p>
+      The requirements on a template used as an optional are pretty simple, since
+      Boost.Parser does almost nothing but assign to them. For a type <code class="computeroutput"><span class="identifier">O</span></code> to be a usable optional, you must be able
+      to assign to <code class="computeroutput"><span class="identifier">O</span></code>, and <code class="computeroutput"><span class="identifier">O</span></code> must have an <code class="computeroutput"><span class="keyword">operator</span><span class="special">*</span></code> that returns the stored value, or a (possibly
+      cv-qualified) reference to the stored value.
+    </p>
+<p>
+      For variants, the requirement is even simpler; the variant type only needs
+      to be assignable.
+    </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        The only thing affected by <code class="computeroutput"><span class="identifier">enable_variant</span></code>
+        is printing. If your variant template can be printed with just <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span>
+        <span class="special">&lt;&lt;</span> <span class="identifier">v</span></code>
+        (where <code class="computeroutput"><span class="identifier">v</span></code> is a variant, obviously),
+        then you don't need to define <code class="computeroutput"><span class="identifier">enable_variant</span></code>
+        for your variant template.
+      </p></td></tr>
+</table></div>
+<p>
+      Boost.Parser uses <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">ranges</span><span class="special">::</span><span class="identifier">subrange</span></code> extensively. However, there is no
+      C++17 equivalent. So, there is a <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">parser</span><span class="special">::</span><span class="identifier">subrange</span></code>
+      for C++17 builds. To switch between these transparently in the code, while
+      keeping CTAD operational, Boost.Parser defines <code class="computeroutput"><a class="link" href="../doxygen/headers/config_8hpp_1a72de4304cccf9a77088218388dac14a7.html" title="Macro BOOST_PARSER_SUBRANGE">BOOST_PARSER_SUBRANGE</a></code>. This is
+      the name of the template, so if you use it in your own code you would use it
+      like <code class="computeroutput"><a class="link" href="../doxygen/headers/config_8hpp_1a72de4304cccf9a77088218388dac14a7.html" title="Macro BOOST_PARSER_SUBRANGE">BOOST_PARSER_SUBRANGE</a><span class="special">&lt;</span><span class="identifier">I</span><span class="special">&gt;</span></code>
+      to instantiate it.
+    </p>
+<p>
+      Boost.Parser allows you to debug your parsers by passing <code class="computeroutput"><span class="identifier">trace</span><span class="special">::</span><span class="identifier">on</span></code> to
+      <code class="computeroutput"><a class="link" href="../doxygen/headers/namespaceboost_1_1parser_1ab68519dff2a5635d6a11296874fc154d.html" title="Function template parse">parse()</a></code>. Sometimes, your run environment
+      does not include a terminal. If you're running Boost.Parser code in the Visual
+      Studio debugger, you can see this trace output in the Visual Studio debugger
+      output panel rather than in a terminal by defining <code class="computeroutput"><span class="identifier">BOOST_PARSER_TRACE_TO_VS_OUTPUT</span></code>.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../parser.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../parser.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="this_library_s_relationship_to_boost_spirit.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

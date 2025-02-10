@@ -1,0 +1,132 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>websocket::stream::compress (1 of 2 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.Beast">
+<link rel="up" href="../compress.html" title="websocket::stream::compress">
+<link rel="prev" href="../compress.html" title="websocket::stream::compress">
+<link rel="next" href="overload2.html" title="websocket::stream::compress (2 of 2 overloads)">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../compress.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../compress.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="beast.ref.boost__beast__websocket__stream.compress.overload1"></a><a class="link" href="overload1.html" title="websocket::stream::compress (1 of 2 overloads)">websocket::stream::compress
+          (1 of 2 overloads)</a>
+</h6></div></div></div>
+<p>
+            Set the compress message write option.
+          </p>
+<h6>
+<a name="beast.ref.boost__beast__websocket__stream.compress.overload1.h0"></a>
+            <span class="phrase"><a name="beast.ref.boost__beast__websocket__stream.compress.overload1.synopsis"></a></span><a class="link" href="overload1.html#beast.ref.boost__beast__websocket__stream.compress.overload1.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">compress</span><span class="special">(</span>
+    <span class="keyword">bool</span> <span class="identifier">value</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="beast.ref.boost__beast__websocket__stream.compress.overload1.h1"></a>
+            <span class="phrase"><a name="beast.ref.boost__beast__websocket__stream.compress.overload1.description"></a></span><a class="link" href="overload1.html#beast.ref.boost__beast__websocket__stream.compress.overload1.description">Description</a>
+          </h6>
+<p>
+            This controls whether or not outgoing messages should be compressed.
+            The setting is only applied when
+          </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+                The template parameter <code class="computeroutput"><span class="identifier">deflateSupported</span></code>
+                is true
+              </li>
+<li class="listitem">
+                Compression is enable. This is controlled with <a class="link" href="../set_option.html" title="websocket::stream::set_option"><code class="computeroutput"><span class="identifier">stream</span><span class="special">::</span><span class="identifier">set_option</span></code></a>
+              </li>
+<li class="listitem">
+                Client and server have negotiated permessage-deflate settings
+              </li>
+<li class="listitem">
+                The message is larger than <a class="link" href="../../boost__beast__websocket__permessage_deflate/msg_size_threshold.html" title="websocket::permessage_deflate::msg_size_threshold"><code class="computeroutput"><span class="identifier">permessage_deflate</span><span class="special">::</span><span class="identifier">msg_size_threshold</span></code></a>
+              </li>
+</ul></div>
+<p>
+            This function permits adjusting per-message compression. Changing the
+            opcode after a message is started will only take effect after the current
+            message being sent is complete.
+          </p>
+<p>
+            The default setting is to compress messages whenever the conditions above
+            are true.
+          </p>
+<h6>
+<a name="beast.ref.boost__beast__websocket__stream.compress.overload1.h2"></a>
+            <span class="phrase"><a name="beast.ref.boost__beast__websocket__stream.compress.overload1.parameters"></a></span><a class="link" href="overload1.html#beast.ref.boost__beast__websocket__stream.compress.overload1.parameters">Parameters</a>
+          </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                    <p>
+                      Name
+                    </p>
+                  </th>
+<th>
+                    <p>
+                      Description
+                    </p>
+                  </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">value</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="keyword">true</span></code> if outgoing
+                      messages should be compressed
+                    </p>
+                  </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="beast.ref.boost__beast__websocket__stream.compress.overload1.h3"></a>
+            <span class="phrase"><a name="beast.ref.boost__beast__websocket__stream.compress.overload1.example"></a></span><a class="link" href="overload1.html#beast.ref.boost__beast__websocket__stream.compress.overload1.example">Example</a>
+          </h6>
+<p>
+            Disabling compression for a single message.
+          </p>
+<pre class="programlisting"><span class="identifier">ws</span><span class="special">.</span><span class="identifier">compress</span><span class="special">(</span> <span class="keyword">false</span> <span class="special">);</span>
+<span class="identifier">ws</span><span class="special">.</span><span class="identifier">write</span><span class="special">(</span><span class="identifier">net</span><span class="special">::</span><span class="identifier">buffer</span><span class="special">(</span><span class="identifier">s</span><span class="special">),</span> <span class="identifier">ec</span><span class="special">);</span>
+<span class="identifier">ws</span><span class="special">.</span><span class="identifier">compress</span><span class="special">(</span> <span class="keyword">true</span> <span class="special">);</span>
+</pre>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Vinnie
+      Falco<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../compress.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../compress.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="overload2.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

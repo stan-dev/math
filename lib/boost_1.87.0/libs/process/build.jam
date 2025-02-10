@@ -1,0 +1,47 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import feature : feature ;
+
+feature boost.process.fs : boost std : optional propagated ;
+feature boost.process.disable-close-range : on off : optional ;
+
+constant boost_dependencies :
+    /boost/algorithm//boost_algorithm
+    /boost/asio//boost_asio
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/core//boost_core
+    /boost/fusion//boost_fusion
+    /boost/io//boost_io
+    /boost/iterator//boost_iterator
+    /boost/move//boost_move
+    /boost/optional//boost_optional
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception
+    /boost/tokenizer//boost_tokenizer
+    /boost/type_index//boost_type_index
+    /boost/type_traits//boost_type_traits
+    /boost/utility//boost_utility
+    /boost/winapi//boost_winapi ;
+
+project /boost/process
+    : common-requirements
+        <include>include
+    : default-build
+        <boost.process.fs>boost
+    ;
+
+explicit
+    [ alias boost_process : build//boost_process ]
+    [ alias all : boost_process example example/v2 test ]
+    ;
+
+call-if : boost-library process
+    : install boost_process
+    ;
+

@@ -1,0 +1,104 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:integrating Integrating Boost.MySQL into your project]
+[nochunk]
+
+[note
+    [*Breaking change in Boost 1.85]: the compiled library Boost.Charconv is now required.
+    If you're upgrading and getting linker errors, link your executable to the `Boost::charconv`
+    CMake target.
+]
+
+[section:header_only Header-only mode]
+
+The easiest way to start using the library is header-only mode (the default).
+You will need the following:
+
+* A C++11 compiler (like gcc >=5.4, clang >=3.6, or Visual Studio 2017 or higher).
+* The Boost headers and Boost.Charconv. You can obtain them following the official installation instructions
+for [@boost:/more/getting_started/unix-variants.html UNIX-like systems] and for
+[@boost:/more/getting_started/windows.html Windows], or from a package manager.
+Note that Boost.MySQL does not work with the standalone version of __Asio__.
+* The OpenSSL headers and libraries. We recommend using your system package manager to obtain them.
+* CMake.
+
+Use the following `CMakeLists.txt`, replacing `main.cpp` with your project's source files:
+
+[!teletype]
+```
+project(boost_mysql_example LANGUAGES CXX)
+
+find_package(Boost REQUIRED COMPONENTS charconv)
+find_package(Threads REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+add_executable(main main.cpp)
+target_link_libraries(main PRIVATE Boost::charconv Threads::Threads OpenSSL::Crypto OpenSSL::SSL)
+```
+
+[note
+    `Boost::charconv` is only available in Boost 1.85 and higher. If you're using
+    an older version, use the `Boost::headers` target, instead.
+]
+
+If you're happy with header-only mode, have a look at [link mysql.tutorial_sync the first tutorial]
+or [link mysql.examples any of the examples] to learn how to use the library.
+
+[endsect]
+
+
+
+[section:separate_compilation Separate compilation mode]
+
+Header-only mode is simple but can make your project's build times high.
+If this is the case, we recommend switching to separate compilation mode.
+
+To use it, you must add the following to exactly one `.cpp` file:
+
+```
+// Contents of boost_mysql.cpp
+
+// This header file contains all Boost.MySQL implementations.
+// It should be included in exactly one .cpp file.
+// All code using Boost.MySQL in separate build mode, including this file,
+// should define BOOST_MYSQL_SEPARATE_COMPILATION.
+#include <boost/mysql/src.hpp>
+```
+
+All of your code, including this `.cpp` file, should define the 
+`BOOST_MYSQL_SEPARATE_COMPILATION` macro. This is what your `CMakeLists.txt`
+could look like:
+
+[!teletype]
+```
+project(boost_mysql_example LANGUAGES CXX)
+
+find_package(Boost REQUIRED COMPONENTS charconv)
+find_package(Threads REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+add_executable(
+    main
+    # Contains Boost.MySQL sources via #include <boost/mysql/src.hpp>
+    boost_mysql.cpp
+    # List any other .cpp your exe has here
+    main.cpp
+)
+target_link_libraries(main PRIVATE Boost::charconv Threads::Threads OpenSSL::Crypto OpenSSL::SSL)
+
+# We need to define BOOST_MYSQL_SEPARATE_COMPILATION in any code using Boost.MySQL in separate-build mode
+target_compile_definitions(main PRIVATE BOOST_MYSQL_SEPARATE_COMPILATION)
+```
+
+Boost.Asio and Boost.Beast offer a very similar separate compilation mode.
+If you're using them together with Boost.MySQL, you may consider enabling separate compilation
+for them, too.
+
+[endsect]
+
+[endsect]

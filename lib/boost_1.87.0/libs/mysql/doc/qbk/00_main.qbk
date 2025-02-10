@@ -1,0 +1,224 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[library Boost.MySQL
+    [quickbook 1.7]
+    [copyright 2019 - 2024 Ruben Perez]
+    [id mysql]
+    [purpose MySQL client library]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+    [authors [Perez, Ruben]]
+    [category template]
+    [category generic]
+]
+
+[template nochunk[] [block '''<?dbhtml stop-chunking?>''']]
+[template mdash[] '''&mdash; ''']
+[template link_to_file[path][^'''<ulink url="https://github.com/boostorg/mysql/blob/master/'''[path]'''">'''[path]'''</ulink>''']]
+[template include_file[path][^<'''<ulink url="https://github.com/boostorg/mysql/blob/master/include/'''[path]'''">'''[path]'''</ulink>'''>]]
+[template indexterm1[term1] '''<indexterm><primary>'''[term1]'''</primary></indexterm>''']
+[template indexterm2[term1 term2] '''<indexterm><primary>'''[term1]'''</primary><secondary>'''[term2]'''</secondary></indexterm>''']
+
+[template reflink2[id text][link mysql.ref.boost__mysql__[id] [^[text]]]]
+[template reflink[id][reflink2 [id] [id]]]
+[template refmem[class mem][reflink2 [class].[mem] [class]::[mem]]]
+[template refmemunq[class mem][reflink2 [class].[mem] [mem]]]
+[template asioreflink[id term][@boost:/doc/html/boost_asio/reference/[id].html [^asio::[term]]]]
+[template mysqllink[id text][@https://dev.mysql.com/doc/refman/8.0/en/[id] [text]]]
+
+[def __CompletionToken__ [@boost:/doc/html/boost_asio/reference/asynchronous_operations.html#boost_asio.reference.asynchronous_operations.completion_tokens_and_handlers ['CompletionToken]]]
+[def __ExecutionContext__ [@boost:/doc/html/boost_asio/reference/ExecutionContext.html ['ExecutionContext]]]
+[def __ExecutionRequest__ [reflink2 ExecutionRequest ['ExecutionRequest]]]
+[def __ExecutionStateType__ [reflink2 ExecutionStateType ['ExecutionStateType]]]
+[def __Executor__ [@boost:/doc/html/boost_asio/reference/Executor1.html ['Executor]]]
+[def __FieldViewFwdIterator__ [reflink2 FieldViewFwdIterator ['FieldViewFwdIterator]]]
+[def __Formattable__ [reflink2 Formattable ['Formattable]]]
+[def __OutputString__ [reflink2 OutputString ['OutputString]]]
+[def __ResultsType__ [reflink2 ResultsType ['ResultsType]]]
+[def __SocketStream__ [reflink2 SocketStream ['SocketStream]]]
+[def __StaticRow__ [reflink2 StaticRow ['StaticRow]]]
+[def __Stream__ [reflink2 Stream ['Stream]]]
+[def __WritableField__ [reflink2 WritableFieldTuple ['WritableField]]]
+[def __WritableFieldTuple__ [reflink2 WritableFieldTuple ['WritableFieldTuple]]]
+
+
+[def __Boost__ [@https://www.boost.org/ Boost]]
+[def __Asio__ [@boost:/libs/asio/index.html Boost.Asio]]
+[def __Beast__ [@boost:/libs/beast/index.html Boost.Beast]]
+[def __Context__ [@boost:/libs/context/index.html Boost.Context]]
+[def __Self__ [@boost:/libs/mysql/index.html Boost.MySQL]]
+[def __boost_optional__ [@boost:/libs/optional/index.html `boost::optional`]]
+[def __Describe__ [@boost:/libs/describe/index.html Boost.Describe]]
+[def __Pfr__ [@boost:/libs/pfr/index.html Boost.Pfr]]
+[def __ssl_context__ [asioreflink ssl__context ssl::context]]
+
+[/ MySQL stuff]
+[def __Mysql__ [@https://www.mysql.com/ MySQL]]
+[def __sql_mode__ [mysqllink sql-mode.html `sql_mode`]]
+[def __allow_invalid_dates__ [mysqllink sql-mode.html#sqlmode_allow_invalid_dates `ALLOW_INVALID_DATES`]]
+[def __strict_sql__ [mysqllink sql-mode.html#sql-mode-strict strict SQL mode]]
+[def __time_zone__ [mysqllink server-system-variables.html#sysvar_time_zone `time_zone`]]
+[def __TINYINT__ [mysqllink integer-types.html `TINYINT`]]
+[def __SMALLINT__ [mysqllink integer-types.html `SMALLINT`]]
+[def __MEDIUMINT__ [mysqllink integer-types.html `MEDIUMINT`]]
+[def __INT__ [mysqllink integer-types.html `INT`]]
+[def __BIGINT__ [mysqllink integer-types.html `BIGINT`]]
+[def __YEAR__ [mysqllink year.html `YEAR`]]
+[def __DATE__ [mysqllink datetime.html `DATE`]]
+[def __DATETIME__ [mysqllink datetime.html `DATETIME`]]
+[def __TIMESTAMP__ [mysqllink datetime.html `TIMESTAMP`]]
+[def __TIME__ [mysqllink time.html `TIME`]]
+[def __FLOAT__ [mysqllink floating-point-types.html `FLOAT`]]
+[def __DOUBLE__ [mysqllink floating-point-types.html `DOUBLE`]]
+[def __DECIMAL__ [mysqllink fixed-point-types.html `DECIMAL`]]
+[def __NUMERIC__ [mysqllink fixed-point-types.html `NUMERIC`]]
+[def __BIT__ [mysqllink bit-type.html `BIT`]]
+[def __CHAR__ [mysqllink char.html `CHAR`]]
+[def __VARCHAR__ [mysqllink char.html `VARCHAR`]]
+[def __BINARY__ [mysqllink binary-varbinary.html `BINARY`]]
+[def __VARBINARY__ [mysqllink binary-varbinary.html `VARBINARY`]]
+[def __TEXT__ [mysqllink blob.html `TEXT`]]
+[def __BLOB__ [mysqllink blob.html `BLOB`]]
+[def __ENUM__ [mysqllink enum.html `ENUM`]]
+[def __SET__ [mysqllink set.html `SET`]]
+[def __JSON__ [mysqllink json.html `JSON`]]
+[def __GEOMETRY__ [mysqllink spatial-type-overview.html `GEOMETRY`]]
+[def __USE__ [mysqllink use.html `USE`]]
+
+[/  Taken db_setup.sql, because import doesn't work for SQL files - keep in sync.
+    Having them in a separate file doesn't work ]
+[def __sp_get_employees__
+```
+CREATE PROCEDURE get_employees(IN pin_company_id CHAR(10))
+BEGIN
+    START TRANSACTION READ ONLY;
+    SELECT id, name, tax_id FROM company WHERE id = pin_company_id;
+    SELECT first_name, last_name, salary FROM employee WHERE company_id = pin_company_id;
+    COMMIT;
+END
+```]
+
+[def __sp_create_employee__
+```
+CREATE PROCEDURE create_employee(
+    IN  pin_company_id CHAR(10),
+    IN  pin_first_name VARCHAR(100),
+    IN  pin_last_name VARCHAR(100),
+    OUT pout_employee_id INT
+)
+BEGIN
+    START TRANSACTION;
+    INSERT INTO employee (company_id, first_name, last_name)
+        VALUES (pin_company_id, pin_first_name, pin_last_name);
+    SET pout_employee_id = LAST_INSERT_ID();
+    INSERT INTO audit_log (msg) VALUES ('Created new employee...');
+    COMMIT;
+END
+```]
+
+[/ AUTOGENERATED IMPORTS BEGIN ]
+[import ../../example/1_tutorial/1_sync.cpp]
+[import ../../example/1_tutorial/2_async.cpp]
+[import ../../example/1_tutorial/3_with_params.cpp]
+[import ../../example/1_tutorial/4_static_interface.cpp]
+[import ../../example/1_tutorial/5_updates_transactions.cpp]
+[import ../../example/1_tutorial/6_connection_pool.cpp]
+[import ../../example/1_tutorial/7_error_handling.cpp]
+[import ../../example/2_simple/inserts.cpp]
+[import ../../example/2_simple/deletes.cpp]
+[import ../../example/2_simple/prepared_statements.cpp]
+[import ../../example/2_simple/disable_tls.cpp]
+[import ../../example/2_simple/tls_certificate_verification.cpp]
+[import ../../example/2_simple/metadata.cpp]
+[import ../../example/2_simple/multi_function.cpp]
+[import ../../example/2_simple/callbacks.cpp]
+[import ../../example/2_simple/coroutines_cpp11.cpp]
+[import ../../example/2_simple/unix_socket.cpp]
+[import ../../example/2_simple/batch_inserts.cpp]
+[import ../../example/2_simple/batch_inserts_generic.cpp]
+[import ../../example/2_simple/dynamic_filters.cpp]
+[import ../../example/2_simple/patch_updates.cpp]
+[import ../../example/2_simple/source_script.cpp]
+[import ../../example/2_simple/pipeline.cpp]
+[import ../../example/3_advanced/connection_pool/main.cpp]
+[import ../../example/3_advanced/connection_pool/types.hpp]
+[import ../../example/3_advanced/connection_pool/repository.hpp]
+[import ../../example/3_advanced/connection_pool/repository.cpp]
+[import ../../example/3_advanced/connection_pool/handle_request.hpp]
+[import ../../example/3_advanced/connection_pool/handle_request.cpp]
+[import ../../example/3_advanced/connection_pool/server.hpp]
+[import ../../example/3_advanced/connection_pool/server.cpp]
+[import ../../example/3_advanced/connection_pool/log_error.hpp]
+[import ../../test/integration/test/snippets/prepared_statements.cpp]
+[import ../../test/integration/test/snippets/connection_establishment.cpp]
+[import ../../test/integration/test/snippets/charsets.cpp]
+[import ../../test/integration/test/snippets/sql_formatting_custom.cpp]
+[import ../../test/integration/test/snippets/multi_function.cpp]
+[import ../../test/integration/test/snippets/tutorials.cpp]
+[import ../../test/integration/test/snippets/templated_connection.cpp]
+[import ../../test/integration/test/snippets/metadata.cpp]
+[import ../../test/integration/test/snippets/connection_pool.cpp]
+[import ../../test/integration/test/snippets/time_types.cpp]
+[import ../../test/integration/test/snippets/pipeline.cpp]
+[import ../../test/integration/test/snippets/sql_formatting.cpp]
+[import ../../test/integration/test/snippets/overview.cpp]
+[import ../../test/integration/test/snippets/dynamic.cpp]
+[import ../../test/integration/test/snippets/multi_resultset.cpp]
+[import ../../test/integration/test/snippets/static.cpp]
+[/ AUTOGENERATED IMPORTS END ]
+[import ../../test/integration/include/test_integration/snippets/describe.hpp]
+
+[include 01_intro.qbk]
+[include 02_integrating.qbk]
+[include 03_1_tutorial_sync.qbk]
+[include 03_2_tutorial_async.qbk]
+[include 03_3_tutorial_with_params.qbk]
+[include 03_4_tutorial_static_interface.qbk]
+[include 03_5_tutorial_updates_transactions.qbk]
+[include 03_6_tutorial_connection_pool.qbk]
+[include 03_7_tutorial_error_handling.qbk]
+[include 04_overview.qbk]
+[include 05_connection_establishment.qbk]
+[include 06_sql_formatting.qbk]
+[include 07_prepared_statements.qbk]
+[include 08_dynamic_interface.qbk]
+[include 09_static_interface.qbk]
+[include 10_multi_resultset.qbk]
+[include 11_multi_function.qbk]
+[include 12_connection_pool.qbk]
+[include 13_async.qbk]
+[include 14_error_handling.qbk]
+[include 15_sql_formatting_advanced.qbk]
+[include 16_metadata.qbk]
+[include 17_charsets.qbk]
+[include 18_time_types.qbk]
+[include 19_templated_connection.qbk]
+[include 20_pipeline.qbk]
+[include 21_examples.qbk]
+
+
+
+[section:ref Reference]
+[xinclude helpers/quickref.xml]
+[block'''<part label="Two: Reference">''']
+[include reference.qbk]
+[include helpers/ExecutionRequest.qbk]
+[include helpers/ExecutionStateType.qbk]
+[include helpers/FieldViewFwdIterator.qbk]
+[include helpers/Formattable.qbk]
+[include helpers/OutputString.qbk]
+[include helpers/ResultsType.qbk]
+[include helpers/SocketStream.qbk]
+[include helpers/StaticRow.qbk]
+[include helpers/Stream.qbk]
+[include helpers/WritableFieldTuple.qbk]
+[block'''</part>''']
+[endsect]

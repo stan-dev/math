@@ -1,0 +1,771 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Changelog</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Atomic">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Atomic">
+<link rel="prev" href="porting.html" title="Porting">
+<link rel="next" href="acknowledgements.html" title="Acknowledgements">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="porting.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="acknowledgements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="atomic.changelog"></a><a class="link" href="changelog.html" title="Changelog">Changelog</a>
+</h2></div></div></div>
+<h4>
+<a name="atomic.changelog.h0"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_87"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_87">Boost
+      1.87</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Fixed initialization of atomic wait state list on memory reallocation.
+          (<a href="https://github.com/boostorg/atomic/issues/72" target="_top">GH#72</a>)
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h1"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_86"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_86">Boost
+      1.86</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Use <a href="https://man.openbsd.org/OpenBSD-6.2/futex.2" target="_top"><code class="computeroutput"><span class="identifier">futex</span><span class="special">(</span><span class="number">2</span><span class="special">)</span></code></a>
+          system call on OpenBSD since recent OpenBSD versions have removed support
+          for <code class="computeroutput"><span class="identifier">syscall</span><span class="special">(</span><span class="number">2</span><span class="special">)</span></code>.
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h2"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_85"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_85">Boost
+      1.85</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Added support for <code class="computeroutput"><span class="identifier">pause</span></code>
+          instruction on RISC-V. (<a href="https://github.com/boostorg/atomic/pull/65" target="_top">PR#65</a>)
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h3"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_84"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_84">Boost
+      1.84</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          C++03 is no longer supported, the minimum required language version is
+          C++11.
+        </li>
+<li class="listitem">
+          Added support for x87 extended double with reduced precision, which is
+          used on FreeBSD and OpenBSD. (<a href="https://github.com/boostorg/atomic/issues/14" target="_top">GH#14</a>)
+        </li>
+<li class="listitem">
+          Support for Windows versions older than Windows 10 is deprecated and will
+          be removed in Boost 1.87.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h4"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_83"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_83">Boost
+      1.83</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Fixed compilation of <code class="computeroutput"><span class="identifier">atomic_ref</span></code>
+          for <code class="computeroutput"><span class="keyword">const</span></code>-qualified types.
+          Note that even <code class="computeroutput"><span class="keyword">const</span></code>-qualified
+          atomic objects must still reside in read-write memory. (<a href="https://github.com/boostorg/atomic/issues/62" target="_top">GH#62</a>)
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h5"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_82"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_82">Boost
+      1.82</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Due to changes in Boost libraries used in Boost.Atomic, support for C++03
+          is deprecated. C++11 will become the minimum starting with Boost.Atomic
+          1.84.
+        </li>
+<li class="listitem">
+          When compiled for x86 targets supporting AVX, vector instructions are now
+          used for 128-bit atomic loads and stores.
+        </li>
+<li class="listitem">
+          For 32-bit x86 targets, 64-bit atomic loads and stores with <code class="computeroutput"><span class="identifier">memory_order_seq_cst</span></code> semantics will now
+          issue a memory ordering instruction.
+        </li>
+<li class="listitem">
+          Removed <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">storage</span><span class="special">()</span></code>
+          accessors and <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">storage_type</span></code> types that were deprecated
+          in Boost.Atomic 1.73. Users are recommended to use <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value</span><span class="special">()</span></code> and <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value_type</span></code>
+          instead.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h6"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_80"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_80">Boost
+      1.80</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Improved portability of endianness checks on ARM, AArch32 and AArch64 targets.
+          (<a href="https://github.com/boostorg/atomic/issues/59" target="_top">GH#59</a>)
+        </li>
+<li class="listitem">
+          Fixed compilation with MSVC 14.0 (Visual Studio 2015) in C++17 mode. (<a href="https://github.com/boostorg/atomic/issues/61" target="_top">GH#61</a>)
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h7"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_79"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_79">Boost
+      1.79</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Fixed compilation for Universal Windows Platform (UWP). (<a href="https://github.com/boostorg/atomic/issues/54" target="_top">GH#54</a>)
+        </li>
+<li class="listitem">
+          Added <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_NO_DARWIN_ULOCK</span></code>
+          configuration macro. The macto affects compilation on Darwin systems and
+          disables <code class="computeroutput"><span class="identifier">ulock</span></code>-based implementation
+          of waiting and notifying operations. This may be useful to comply with
+          Apple App Store requirements. (<a href="https://github.com/boostorg/atomic/issues/55" target="_top">GH#55</a>)
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h8"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_78"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_78">Boost
+      1.78</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Use process-local futex operations on Android for non-IPC waiting and notifying
+          operations.
+        </li>
+<li class="listitem">
+          Added support for Linux targets that only define <code class="computeroutput"><span class="identifier">SYS_futex_time64</span></code>
+          syscall, such as riscv32.
+        </li>
+<li class="listitem">
+          Added a workaround for incorrect result of <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">alignment_of</span></code>
+          on clang 8 for 64-bit types on 32-bit x86 targets.
+        </li>
+<li class="listitem">
+          Added a ulock backend for waiting and notifying operations on Darwin systems
+          since Mac OS 10.12, iOS 10.0, tvOS 10.0 or watchOS 3.0. The backend supports
+          native 32-bit process-local waiting and notifying operations, and since
+          Mac OS 10.15, iOS 13.0, tvOS 13.0 or watchOS 6.0 - also 64-bit process-local
+          operations and 32 and 64-bit inter-process operations.
+        </li>
+<li class="listitem">
+          On Windows, corrected discrepancy between <code class="literal"><span class="emphasis"><em>atomic-type</em></span>::always_has_native_wait_notify</code>
+          and the corresponding capability macros when targeting Windows 8 or later.
+          The library will now directly use <code class="computeroutput"><span class="identifier">WaitOnAddress</span></code>
+          and related APIs from public headers and therefore require user to link
+          with <code class="computeroutput"><span class="identifier">synchronization</span><span class="special">.</span><span class="identifier">lib</span></code> if the user requires Windows 8 or
+          later by defining <code class="computeroutput"><span class="identifier">BOOST_USE_WINAPI_VERSION</span></code>,
+          <code class="computeroutput"><span class="identifier">_WIN32_WINNT</span></code> or similar
+          macros. The library is linked automatically on compilers that support auto-linking
+          (e.g. MSVC).
+        </li>
+<li class="listitem">
+          Added support for types with padding bits, except unions, on compilers
+          that provide a way to clear the padding bits. This feature is supported
+          by gcc 11 and MSVC 14.2 (compiler version 19.27) and newer, as well as
+          other compilers supporting similar intrinsics. On compilers that don't
+          allow to clear the padding bits, types with padding are still generally
+          not supported with the exception of 80-bit <code class="computeroutput"><span class="keyword">long</span>
+          <span class="keyword">double</span></code> on x86 targets. A new <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_NO_CLEAR_PADDING</span></code> capability
+          macro is defined to indicate when clearing the padding is not supported.
+        </li>
+<li class="listitem">
+          Initializing constructors of <code class="computeroutput"><span class="identifier">atomic_ref</span></code>
+          and <code class="computeroutput"><span class="identifier">ipc_atomic_ref</span></code> no longer
+          use atomic instructions to clear the padding bits in the referenced object.
+          This reduces the cost of the atomic reference construction. This is considered
+          safe because clearing the padding does not issue writes to the bytes that
+          contribute to the object value. However, some thread safety checking software
+          may falsely detect this as a data race.
+        </li>
+<li class="listitem">
+          Initializing constructors of <code class="computeroutput"><span class="identifier">atomic</span></code>
+          and <code class="computeroutput"><span class="identifier">ipc_atomic</span></code> are now
+          <code class="computeroutput"><span class="keyword">constexpr</span></code> for enums, classes
+          and floating point types. For classes and floating point types, the constructors
+          are <code class="computeroutput"><span class="keyword">constexpr</span></code> if the compiler
+          supports <code class="computeroutput"><span class="keyword">constexpr</span></code> <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">bit_cast</span></code>, the type has no padding bytes
+          and no padding is required to implement native atomic operations (i.e.,
+          for <code class="literal">atomic&lt;<span class="emphasis"><em>T</em></span>&gt;</code>, the object
+          of type <code class="literal"><span class="emphasis"><em>T</em></span></code> fits exactly in the internal
+          storage of the atomic).
+        </li>
+<li class="listitem">
+          In accordance with C++20, default constructors of <code class="computeroutput"><span class="identifier">atomic</span></code>
+          and <code class="computeroutput"><span class="identifier">ipc_atomic</span></code> now perform
+          value initialization of the contained object. For types without a user-defined
+          default constructor, this means the default-constructed atomic will be
+          zero-initialized.
+        </li>
+<li class="listitem">
+          Added a workaround for compilation error on AIX caused by the assembler
+          tool not supporting numeric labels. (<a href="https://github.com/boostorg/atomic/pull/50" target="_top">PR#50</a>)
+        </li>
+<li class="listitem">
+          Added a workaround for compilation error with Visual Studio 2015 prior
+          to Update 3. (<a href="https://github.com/boostorg/atomic/issues/52" target="_top">GH#52</a>)
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h9"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_77"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_77">Boost
+      1.77</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Added <code class="computeroutput"><span class="identifier">make_atomic_ref</span></code> and
+          <code class="computeroutput"><span class="identifier">make_ipc_atomic_ref</span></code> factory
+          functions for constructing atomic reference objects.
+        </li>
+<li class="listitem">
+          Added C++17 template argument deduction guides for <code class="computeroutput"><span class="identifier">atomic_ref</span></code>
+          and <code class="computeroutput"><span class="identifier">ipc_atomic_ref</span></code> to allow
+          omitting template arguments when they can be deduced from constructor arguments.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h10"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_76"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_76">Boost
+      1.76</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Fixed compilation with MSVC for ARM. (<a href="https://github.com/boostorg/atomic/pull/49" target="_top">PR#49</a>)
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h11"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_75"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_75">Boost
+      1.75</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Implemented SSE2 and SSE4.1 versions of address lookup algorithm, which
+          is used in the internal lock pool implementation. This may improve performance
+          of waiting and notifying operations in heavily contended cases.
+        </li>
+<li class="listitem">
+          Fixed a possible compilation error on AArch64 targets caused by incorrect
+          instructions generated for bitwise (logical) operations with immediate
+          constants. (<a href="https://github.com/boostorg/atomic/issues/41" target="_top">GH#41</a>)
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h12"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_74"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_74">Boost
+      1.74</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Added missing <code class="computeroutput"><span class="keyword">const</span></code> qualifiers
+          to some operations in <code class="computeroutput"><span class="identifier">atomic_ref</span></code>.
+        </li>
+<li class="listitem">
+          Added support for <code class="computeroutput"><span class="identifier">yield</span></code>
+          instruction on ARMv8-A. The instruction is used internally in spin loops
+          to reduce CPU power consumption.
+        </li>
+<li class="listitem">
+          Added support for C++20 <a class="link" href="interface.html#atomic.interface.interface_wait_notify_ops" title="Waiting and notifying operations">waiting
+          and notifying operations</a>. The implementation includes generic backend
+          that involves the internal lock pool, as well as specialized backends for
+          Windows, Linux, FreeBSD, DragonFly BSD and NetBSD. Atomic types provide
+          a new method <code class="computeroutput"><span class="identifier">has_native_wait_notify</span></code>,
+          a static boolean constant <code class="computeroutput"><span class="identifier">always_has_native_wait_notify</span></code>
+          and a set of capability macros that allow to detect if the implementation
+          supports native waiting and notifying operations for a given type.
+        </li>
+<li class="listitem">
+          Changed internal representation of <code class="computeroutput"><span class="identifier">atomic_flag</span></code>
+          to use 32-bit storage. This allows for more efficient waiting and notifying
+          operations on <code class="computeroutput"><span class="identifier">atomic_flag</span></code>
+          on some platforms.
+        </li>
+<li class="listitem">
+          Added support for build-time configuration of the internal lock pool size.
+          The user can define the <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_LOCK_POOL_SIZE_LOG2</span></code>
+          macro to specify binary logarithm of the size of the lock pool. The default
+          value is 8, meaning that the size of the lock pool is 256, up from 64 used
+          in the previous release.
+        </li>
+<li class="listitem">
+          Added support for a new set of atomic types dedicated for <a class="link" href="interface.html#atomic.interface.interface_ipc" title="Atomic types for inter-process communication">inter-process
+          communication</a>: <code class="computeroutput"><span class="identifier">ipc_atomic_flag</span></code>,
+          <code class="computeroutput"><span class="identifier">ipc_atomic</span></code> and <code class="computeroutput"><span class="identifier">ipc_atomic_ref</span></code>. Users are recommended
+          to port their code using non-IPC types for inter-process communication
+          to the new types. The new types provide the same set of operations as their
+          non-IPC counterparts, with the following differences:
+          <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                Most operations have an added precondition that <code class="computeroutput"><span class="identifier">is_lock_free</span></code>
+                returns <code class="computeroutput"><span class="keyword">true</span></code> for the
+                given atomic object. The library will issue a compile time error
+                if this precondition is known to be not satisfied at compile time.
+              </li>
+<li class="listitem">
+                All provided operations are address-free, meaning that the atomic
+                object (in case of <code class="computeroutput"><span class="identifier">ipc_atomic_ref</span></code>
+                - the referenced object) may be located in process-shared memory
+                or mapped into the same process at multiple different addresses.
+              </li>
+<li class="listitem">
+                The new <code class="computeroutput"><span class="identifier">has_native_wait_notify</span></code>
+                operation and <code class="computeroutput"><span class="identifier">always_has_native_wait_notify</span></code>
+                constant indicate support for native inter-process waiting and notifying
+                operations. When that support is not present, the operations are
+                implemented with a busy loop, which is less efficient, but still
+                is address-free. A separate set of capability macros is also provided
+                to indicate this support.
+              </li>
+</ul></div>
+        </li>
+<li class="listitem">
+          Added new <code class="computeroutput"><span class="identifier">atomic_unsigned_lock_free</span></code>
+          and <code class="computeroutput"><span class="identifier">atomic_signed_lock_free</span></code>
+          types introduced in C++20. The types indicate the atomic object type for
+          an unsigned or signed integer, respectively, that is lock-free and preferably
+          has native support for waiting and notifying operations.
+        </li>
+<li class="listitem">
+          Added new gcc assembler backends for ARMv8-A (for both AArch32 and AArch64).
+          The new backends are used to implement operations not supported by compiler
+          intrinsics (including 128-bit operations on AArch64) and can also be used
+          when compiler intrinsics are not available. Both little and big endian
+          targets are supported. AArch64 backend supports extensions defined in ARMv8.1
+          and ARMv8.3.
+        </li>
+<li class="listitem">
+          Added support for big endian targets in the legacy ARM backend based on
+          gcc assembler blocks (this backend is used on ARMv7 and older targets).
+          Previously, the backend assumed little endian memory layout, which is significant
+          for 64-bit operations.
+        </li>
+<li class="listitem">
+          Improved performance of seq_cst stores and thread fences on x86 by using
+          <code class="computeroutput"><span class="identifier">lock</span></code>-prefixed instructions
+          instead of <code class="computeroutput"><span class="identifier">mfence</span></code>. This
+          means that the operations no longer affect non-temporal stores, which was
+          also not guaranteed before. Use specialized instructions and intrinsics
+          to order non-temporal memory accesses.
+        </li>
+<li class="listitem">
+          Fixed capability macros for 80-bit <code class="computeroutput"><span class="keyword">long</span>
+          <span class="keyword">double</span></code> on x86 targets not indicating
+          lock-free operations even if 128-bit atomic operations were available.
+        </li>
+<li class="listitem">
+          Fixed compilation of gcc asm blocks on Alpha targets.
+        </li>
+<li class="listitem">
+          In the gcc <code class="computeroutput"><span class="identifier">__sync</span><span class="special">*</span></code>
+          intrinsics backend, fixed that store and load operations of large objects
+          (larger than a pointer size) could be non-atomic. The implementation currently
+          assumes that small objects can be stored with a single instruction atomically
+          on all modern architectures.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h13"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_73"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_73">Boost
+      1.73</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Implemented C++20 <code class="computeroutput"><span class="identifier">atomic_ref</span></code>.
+          See <a class="link" href="interface.html#atomic.interface.interface_atomic_ref" title="Atomic references">docs</a> and
+          especially the <a class="link" href="interface.html#atomic.interface.interface_atomic_ref.caveats" title="Caveats">caveats</a>
+          section.
+        </li>
+<li class="listitem">
+          Implemented <code class="computeroutput"><span class="identifier">atomic_flag</span><span class="special">::</span><span class="identifier">test</span></code>
+          operation, which was introduced in C++20.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+          should now take into account alignment requirements of <code class="computeroutput"><span class="identifier">T</span></code>,
+          which makes a difference if those requirements are higher than that of
+          the internal storage of <code class="computeroutput"><span class="identifier">atomic</span></code>.
+        </li>
+<li class="listitem">
+          Added static asserts enforcing the requirements on the value type <code class="computeroutput"><span class="identifier">T</span></code> used with <code class="computeroutput"><span class="identifier">atomic</span></code>
+          and <code class="computeroutput"><span class="identifier">atomic_ref</span></code>. This should
+          prohibit invalid types from being used as atomics.
+        </li>
+<li class="listitem">
+          Improved internal lock pool implementation. The pool is larger, and lock
+          selection accounts for atomic object alignment, which should reduce the
+          potential of thread contention.
+        </li>
+<li class="listitem">
+          Fixed incorrect x86 code generated for <code class="computeroutput"><span class="identifier">bit_test_and_</span><span class="special">*</span></code> operations on 8 and 16-bit arguments.
+          Other architectures are not affected.
+        </li>
+<li class="listitem">
+          Fixed a possible unaligned memory access in <code class="computeroutput"><span class="identifier">compare_exchange_</span><span class="special">*</span></code> operations, if alignment requirements
+          of <code class="computeroutput"><span class="identifier">value_type</span></code> are less
+          than that of the internal storage of <code class="computeroutput"><span class="identifier">atomic</span></code>.
+        </li>
+<li class="listitem">
+          <code class="computeroutput"><span class="identifier">boost</span><span class="special">/</span><span class="identifier">atomic</span><span class="special">/</span><span class="identifier">atomic</span><span class="special">.</span><span class="identifier">hpp</span></code> no longer includes <code class="computeroutput"><span class="identifier">boost</span><span class="special">/</span><span class="identifier">atomic</span><span class="special">/</span><span class="identifier">atomic_flag</span><span class="special">.</span><span class="identifier">hpp</span></code> and <code class="computeroutput"><span class="identifier">boost</span><span class="special">/</span><span class="identifier">atomic</span><span class="special">/</span><span class="identifier">fences</span><span class="special">.</span><span class="identifier">hpp</span></code>
+          and only defines the <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">atomic</span></code>
+          class template and related typedefs. Include the other headers explicitly
+          or use <code class="computeroutput"><span class="identifier">boost</span><span class="special">/</span><span class="identifier">atomic</span><span class="special">.</span><span class="identifier">hpp</span></code> to include all parts of Boost.Atomic.
+        </li>
+<li class="listitem">
+          The <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">storage</span><span class="special">()</span></code>
+          accessor and associated <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">storage_type</span></code>
+          type are deprecated. Instead, users are advised to use <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value</span><span class="special">()</span></code> and <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value_type</span></code>,
+          respectively. Users can define <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_SILENCE_STORAGE_DEPRECATION</span></code>
+          to disable deprecation warnings for the time of transition. The deprecated
+          pieces will be removed in a future release.
+        </li>
+<li class="listitem">
+          Removed support for <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_DETAIL_HIGHLIGHT_OP_AND_TEST</span></code>.
+          This macro was used as a helper for transition to the updated returned
+          values of <code class="computeroutput"><span class="special">*</span><span class="identifier">_and_test</span></code>
+          operations in Boost.Atomic 1.67, which was released 2 years before 1.73.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h14"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_72"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_72">Boost
+      1.72</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Added a workaround for <code class="computeroutput"><span class="identifier">__float128</span></code>
+          not being considered as a floating point type by some versions of libstdc++.
+        </li>
+<li class="listitem">
+          Improved compatibility with clang-win compiler.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h15"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_67"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_67">Boost
+      1.67</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <span class="bold"><strong>Breaking change:</strong></span> Changed the result of
+          the <code class="computeroutput"><span class="special">(</span><span class="identifier">op</span><span class="special">)</span><span class="identifier">_and_test</span></code>
+          operations added in Boost 1.66 to the opposite - the functions now return
+          <code class="computeroutput"><span class="keyword">true</span></code> if the operation result
+          is non-zero. This is consistent with other <code class="computeroutput"><span class="identifier">test</span></code>
+          methods in Boost.Atomic and the C++ standard library. Users can define
+          <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_DETAIL_HIGHLIGHT_OP_AND_TEST</span></code>
+          when compiling their code to emit warnings on every use of the changed
+          functions. This way users can locate the code that needs to be updated.
+          (<a href="https://github.com/boostorg/atomic/issues/11" target="_top">GH#11</a>)
+        </li>
+<li class="listitem">
+          Update for C++2a. On C++11 compilers that support scoped enums, the <code class="computeroutput"><span class="identifier">memory_order</span></code> enumeration is now scoped
+          and contains constants with shorter names like <code class="computeroutput"><span class="identifier">acquire</span></code>,
+          <code class="computeroutput"><span class="identifier">release</span></code> or <code class="computeroutput"><span class="identifier">seq_cst</span></code> (i.e. users can use <code class="computeroutput"><span class="identifier">memory_order</span><span class="special">::</span><span class="identifier">acquire</span></code> instead of <code class="computeroutput"><span class="identifier">memory_order_acquire</span></code>).
+          The old constants are also provided for backward compatibility. (<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0439r0.html" target="_top">P0439R0</a>)
+        </li>
+<li class="listitem">
+          Update for C++2a. Added experimental support for atomic operations on floating
+          point types. In addition to general operations, <code class="computeroutput"><span class="identifier">add</span></code>,
+          <code class="computeroutput"><span class="identifier">sub</span></code>, <code class="computeroutput"><span class="identifier">negate</span></code>
+          operations and their <code class="computeroutput"><span class="identifier">fetch_</span><span class="special">(</span><span class="identifier">op</span><span class="special">)</span></code>
+          and <code class="computeroutput"><span class="identifier">opaque_</span><span class="special">(</span><span class="identifier">op</span><span class="special">)</span></code> versions
+          are supported. Lock-free property can be tested with the new macros <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_FLOAT</span><span class="special">/</span><span class="identifier">DOUBLE</span><span class="special">/</span><span class="identifier">LONG_DOUBLE_LOCK_FREE</span></code>. The support for
+          floating point types is optional and can be disabled by defining <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_NO_FLOATING_POINT</span></code>. (<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0020r6.html" target="_top">P0020R6</a>)
+        </li>
+<li class="listitem">
+          Added new experimental operations:
+          <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">negate_and_test</span></code> and
+                <code class="computeroutput"><span class="identifier">complement_and_test</span></code>
+                which perform negation or bitwise complement and return <code class="computeroutput"><span class="keyword">true</span></code> if the result is not zero.
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">add</span></code>, <code class="computeroutput"><span class="identifier">sub</span></code>, <code class="computeroutput"><span class="identifier">negate</span></code>,
+                <code class="computeroutput"><span class="identifier">bitwise_and</span></code>, <code class="computeroutput"><span class="identifier">bitwise_or</span></code>, <code class="computeroutput"><span class="identifier">bitwise_xor</span></code>,
+                <code class="computeroutput"><span class="identifier">bitwise_complement</span></code>
+                operations which perform the operation and return its result.
+              </li>
+</ul></div>
+        </li>
+<li class="listitem">
+          For generic <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code>
+          specialization, the default constructor is now trivial if <code class="computeroutput"><span class="identifier">T</span></code>'s default constructor is.
+        </li>
+<li class="listitem">
+          The internal implementation of <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> has been updated to avoid undefined
+          behavior that stems from signed integer overflows. As required by the C++
+          standard, the library uses two's complement representation of signed integers
+          internally and accroding rules of overflow. Currently, the library requires
+          the native signed integer types to also use two's complement representation
+          (but no defined overflow semantics).
+        </li>
+<li class="listitem">
+          Improved Clang support. In particular, fixed DCAS not being lock-free and
+          fixed possible incorrect code generated on 32-bit x86.
+        </li>
+<li class="listitem">
+          Improved MinGW support. For gcc versions up to 4.6, fixed compilation of
+          DCAS on x86.
+        </li>
+<li class="listitem">
+          In x86 PIE code, asm blocks now preserve <code class="computeroutput"><span class="identifier">ebx</span></code>
+          value.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h16"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_66"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_66">Boost
+      1.66</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Implemented a set of experimental extended atomic operations for integral
+          types:
+          <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">fetch_negate</span></code>, <code class="computeroutput"><span class="identifier">fetch_complement</span></code> - atomically replaces
+                the value with a negated or binary complemented value and returns
+                the original value
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">opaque_</span><span class="special">&lt;</span><span class="identifier">op</span><span class="special">&gt;</span></code>
+                - equivalent to <code class="computeroutput"><span class="identifier">fetch_</span><span class="special">&lt;</span><span class="identifier">op</span><span class="special">&gt;</span></code> except that it doesn't return
+                the original value
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">op</span><span class="special">&gt;</span><span class="identifier">_and_test</span></code>
+                - atomically applies <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">op</span><span class="special">&gt;</span></code>
+                and returns <code class="computeroutput"><span class="keyword">true</span></code> if
+                the result is zero. <span class="bold"><strong>Note:</strong></span> The result
+                of these operations will change to the opposite in Boost 1.67. The
+                code that uses these functions will need to be updated.
+              </li>
+<li class="listitem">
+                <code class="computeroutput"><span class="identifier">bit_test_and_set</span></code>,
+                <code class="computeroutput"><span class="identifier">bit_test_and_reset</span></code>,
+                <code class="computeroutput"><span class="identifier">bit_test_and_complement</span></code>
+                - atomically sets, resets or complements the specified bit and returns
+                the original value of the bit
+              </li>
+</ul></div>
+        </li>
+<li class="listitem">
+          Following C++17 (<a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0558r1.pdf" target="_top">P0558R1</a>),
+          arithmetic operations for pointers to non-object types are no longer provided.
+        </li>
+<li class="listitem">
+          Also following C++17 exposed <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value_type</span></code>
+          and <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">difference_type</span></code> member typedefs, where
+          applicable, to the user's code.
+        </li>
+<li class="listitem">
+          Improved compatibility with gcc 7. In particular, using 128-bit operations
+          on x86-64 should no longer require linking with libatomic (the compiler-supplied
+          library).
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h17"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_64"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_64">Boost
+      1.64</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Fixed possible incorrect code generation in 64-bit atomic operations on
+          32-bit x86 with gcc versions older than 4.7 and compatible compilers.
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h18"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_63"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_63">Boost
+      1.63</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Added the static constant <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">is_always_lock_free</span></code>
+          for conformance with C++17. The constant indicates that the given specialization
+          always provides lock-free implementation of atomic operations.
+        </li>
+<li class="listitem">
+          Improved support of Oracle Studio on x86 targets.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Post-release notes:</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Using 64-bit atomic operations on 32-bit x86 with gcc versions older than
+          4.7 and compatible compilers can result in generation of incorrect code.
+          This problem is fixed in <a href="https://github.com/boostorg/atomic/commit/a67cc1b055cf09f371e2eca544884634a1ccc886" target="_top">this</a>
+          commit.
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h19"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_62"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_62">Boost
+      1.62</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Improved support for Oracle Studio and SPARC. The library now provides
+          native atomic operations on SPARCv8+.
+        </li></ul></div>
+<h4>
+<a name="atomic.changelog.h20"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_60"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_60">Boost
+      1.60</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Enforced proper alignment of <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;&gt;</span></code> storage. This should fix possible
+          issues on platforms that support atomic operations on data units larger
+          than the native word size. This may also change binary layout of user's
+          data structures that have <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;&gt;</span></code> members.
+        </li>
+<li class="listitem">
+          Fixed compilation for PowerPC with IBM XL C++ compiler. Corrected memory
+          barriers in PowerPC assembler.
+        </li>
+<li class="listitem">
+          Fixed compilation with MSVC-8 for ARM.
+        </li>
+<li class="listitem">
+          Fixed compilation with gcc 4.4 for x86-64, when 128-bit atomic operations
+          were used. (<a href="https://svn.boost.org/trac/boost/ticket/10994" target="_top">#10994</a>)
+        </li>
+<li class="listitem">
+          Optimized some gcc assembler blocks for x86/x86-64 to reduce the number
+          of used registers. This may require binutils 2.10 or later.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h21"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_56"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_56">Boost
+      1.56</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          The library has been redesigned. Besides internal refactoring, various
+          bugs were fixed, including incorrect values of feature test macros and
+          integer overflow handling.
+        </li>
+<li class="listitem">
+          Changed values of the <code class="computeroutput"><span class="identifier">memory_order</span></code>
+          enumeration. The concrete values are not part of the interface, but this
+          change may potentially break ABI, if the enum is used in user's interfaces.
+        </li>
+<li class="listitem">
+          Implemented support for 128-bit atomic operations on Windows x64 with MSVC.
+          The library assumes presence of the <code class="computeroutput"><span class="identifier">cmpxchg16b</span></code>
+          instruction in the target CPUs. Some early AMD CPUs don't support this
+          instruction. To target those define the <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_NO_CMPXCHG16B</span></code>
+          macro.
+        </li>
+<li class="listitem">
+          Implemented experimental support for Windows ARM target with MSVC.
+        </li>
+<li class="listitem">
+          Implemented experimental support for DEC Alpha target with GCC.
+        </li>
+<li class="listitem">
+          Improved support for ARMv6 and later with GCC. Implemented all atomic operations
+          as assembler blocks instead of CAS-based loops. 64-bit operations are supported
+          with ARMv7.
+        </li>
+<li class="listitem">
+          Implemented optional support for the <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_FLAG_INIT</span></code>
+          macro and static initialization of <code class="computeroutput"><span class="identifier">atomic_flag</span></code>.
+          (<a href="https://svn.boost.org/trac/boost/ticket/8158" target="_top">#8158</a>)
+        </li>
+<li class="listitem">
+          Fixed compilation for SPARCv9 target. (<a href="https://svn.boost.org/trac/boost/ticket/9446" target="_top">#9446</a>)
+        </li>
+<li class="listitem">
+          Fixed compilation for PowerPC target. (<a href="https://svn.boost.org/trac/boost/ticket/9447" target="_top">#9447</a>)
+        </li>
+<li class="listitem">
+          Fixed several compatibility problems with Clang on x86 and x86-64. (<a href="https://svn.boost.org/trac/boost/ticket/9610" target="_top">#9610</a>,
+          <a href="https://svn.boost.org/trac/boost/ticket/9842" target="_top">#9842</a>)
+        </li>
+<li class="listitem">
+          Removed specialized code for Windows on IA64 platform.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h22"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_55"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_55">Boost
+      1.55</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Added support for 64-bit atomic operations on x86 target for GCC, MSVC
+          and compatible compilers. The support is enabled when it is known at compile
+          time that the target CPU supports required instructions.
+        </li>
+<li class="listitem">
+          Added support for 128-bit atomic operations on x86-64 target for GCC and
+          compatible compilers. The support is enabled when it is known at compile
+          time that the target CPU supports required instructions. The support can
+          be tested for with the new <code class="computeroutput"><span class="identifier">BOOST_ATOMIC_INT128_LOCK_FREE</span></code>
+          macro.
+        </li>
+<li class="listitem">
+          Added a more efficient implementation of <code class="computeroutput"><span class="identifier">atomic</span><span class="special">&lt;&gt;</span></code> based on GCC <code class="computeroutput"><span class="identifier">__atomic</span><span class="special">*</span></code> intrinsics available since GCC 4.7.
+        </li>
+<li class="listitem">
+          Added support for more ARM v7 CPUs, improved detection of Thumb 2.
+        </li>
+<li class="listitem">
+          Added support for x32 (i.e. 64-bit x86 with 32-bit pointers) target on
+          GCC and compatible compilers.
+        </li>
+<li class="listitem">
+          Removed dependency on Boost.Thread.
+        </li>
+<li class="listitem">
+          Internal lock pool now includes proper padding and alignment to avoid false
+          sharing.
+        </li>
+<li class="listitem">
+          Fixed compilation with Intel compiler on Windows. Removed internal macro
+          duplication when compiled on Windows.
+        </li>
+<li class="listitem">
+          Some code refactoring to use C++11 features when available.
+        </li>
+</ul></div>
+<h4>
+<a name="atomic.changelog.h23"></a>
+      <span class="phrase"><a name="atomic.changelog.boost_1_53"></a></span><a class="link" href="changelog.html#atomic.changelog.boost_1_53">Boost
+      1.53</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Initial Boost release with <span class="bold"><strong>Boost.Atomic</strong></span>.
+        </li></ul></div>
+</div>
+<div class="copyright-footer">Copyright © 2011 Helge Bahmann<br>Copyright © 2012 Tim Blechmann<br>Copyright © 2013, 2017, 2018, 2020-2022 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="porting.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="acknowledgements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

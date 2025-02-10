@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>format_context_base::append_raw</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__format_context_base.html" title="format_context_base">
+<link rel="prev" href="../boost__mysql__format_context_base.html" title="format_context_base">
+<link rel="next" href="append_value.html" title="format_context_base::append_value">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="append_value.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__format_context_base.append_raw"></a><a class="link" href="append_raw.html" title="format_context_base::append_raw">format_context_base::append_raw</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id76462"></a>
+Adds raw SQL to the output string (low level).
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_raw.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_raw.synopsis"></a></span><a class="link" href="append_raw.html#mysql.ref.boost__mysql__format_context_base.append_raw.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><a class="link" href="../boost__mysql__format_context_base.html" title="format_context_base"><code class="literal">format_context_base</code></a><span class="special">&amp;</span>
+<span class="identifier">append_raw</span><span class="special">(</span>
+    <a class="link" href="../boost__mysql__constant_string_view.html" title="constant_string_view"><code class="literal">constant_string_view</code></a> <span class="identifier">sql</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_raw.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_raw.description"></a></span><a class="link" href="append_raw.html#mysql.ref.boost__mysql__format_context_base.append_raw.description">Description</a>
+        </h6>
+<p>
+          Adds raw, unescaped SQL to the output string. Doesn't alter the error state.
+        </p>
+<p>
+          By default, the passed SQL should be available at compile-time. Use <a class="link" href="../boost__mysql__runtime.html" title="runtime"><code class="computeroutput"><span class="identifier">runtime</span></code></a>
+          if you need to use runtime values.
+        </p>
+<p>
+          This is a low level function. In general, prefer <a class="link" href="../boost__mysql__format_sql_to.html" title="format_sql_to"><code class="computeroutput"><span class="identifier">format_sql_to</span></code></a>, instead.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_raw.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_raw.exception_safety"></a></span><a class="link" href="append_raw.html#mysql.ref.boost__mysql__format_context_base.append_raw.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          Basic guarantee. Memory allocations may throw.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__format_context_base.append_raw.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__format_context_base.append_raw.object_lifetimes"></a></span><a class="link" href="append_raw.html#mysql.ref.boost__mysql__format_context_base.append_raw.object_lifetimes">Object
+          lifetimes</a>
+        </h6>
+<p>
+          The passed string is copied as required and doesn't need to be kept alive.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__format_context_base.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="append_value.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

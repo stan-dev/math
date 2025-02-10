@@ -1,0 +1,208 @@
+////
+Copyright 2023 - 2024 Matt Borland
+Distributed under the Boost Software License, Version 1.0.
+https://www.boost.org/LICENSE_1_0.txt
+////
+
+= from_chars
+:idprefix: from_chars_
+
+== from_chars overview
+
+`from_chars` is a set of functions that parse a string from `[first, last)` in an attempt to convert the string into `value` according to the `chars_format` specified (if applicable).
+The parsing of number is locale-independent (e.g. equivalent to the "C" locale).
+The result of `from_chars` is `from_chars_result` which on success returns `ptr == last` and `ec == std::errc()`, and on failure returns `ptr` equal to the last valid character parsed or `last` on underflow/overflow, and `ec == std::errc::invalid_argument` or `std::errc::result_out_of_range` respectively. `from_chars` does not require the character sequence to be null terminated.
+
+== Definitions
+[#from_chars_definitions_]
+
+[source, c++]
+----
+namespace boost { namespace charconv {
+
+struct from_chars_result
+{
+    const char* ptr;
+    std::errc ec;
+
+    friend constexpr bool operator==(const from_chars_result& lhs, const from_chars_result& rhs) noexcept = default;
+    constexpr explicit operator bool() const noexcept { return ec == std::errc{}; }
+}
+
+template <typename Integral>
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars(const char* first, const char* last, Integral& value, int base = 10) noexcept;
+
+template <typename Integral>
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars(boost::core::string_view sv, Integral& value, int base = 10) noexcept;
+
+BOOST_CXX14_CONSTEXPR from_chars_result from_chars<bool>(const char* first, const char* last, bool& value, int base) = delete;
+
+template <typename Real>
+from_chars_result from_chars(const char* first, const char* last, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+template <typename Real>
+from_chars_result from_chars(boost::core::string_view sv, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+// See note below Usage notes for from_chars for floating point types
+
+template <typename Real>
+from_chars_result from_chars_erange(const char* first, const char* last, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+template <typename Real>
+from_chars_result from_chars_erange(boost::core::string_view sv, Real& value, chars_format fmt = chars_format::general) noexcept;
+
+}} // Namespace boost::charconv
+----
+
+== from_chars parameters
+* `first`, `last` - pointers to a valid range to parse
+* `sv` - string view of a valid range to parse.
+Compatible with boost::core::string_view, std::string, and std::string_view
+* `value` - where the output is stored upon successful parsing
+* `base` (integer only) - the integer base to use. Must be between 2 and 36 inclusive
+* `fmt` (floating point only) - The format of the buffer. See <<chars_format overview>> for description.
+
+== from_chars_result
+* `ptr` - On return from `from_chars` it is a pointer to the first character not matching the pattern, or pointer to `last` if all characters are successfully parsed.
+* `ec` - https://en.cppreference.com/w/cpp/error/errc[the error code]. Values returned by `from_chars` are:
+
+|===
+|Return Value | Description
+| `std::errc()` | Successful Parsing
+| `std::errc::invalid_argument` | 1) Parsing a negative into an unsigned type
+
+2) Leading `+` sign
+
+3) Leading space
+
+4) Incompatible formatting (e.g. exponent on `chars_format::fixed`, or p as exponent on value that is not `chars_format::hex`) See <<chars_format overview>>
+
+| `std::errc::result_out_of_range` | 1) Overflow
+
+2) Underflow
+|===
+
+* `operator==` - compares the values of ptr and ec for equality
+
+== Usage Notes
+
+=== Usage notes for from_chars for integral types
+* All built-in integral types are allowed except bool which is deleted
+* These functions have been tested to support `\__int128` and `unsigned __int128`
+* from_chars for integral types is constexpr when compiled using `-std=c++14` or newer
+** One known exception is GCC 5 which does not support constexpr comparison of `const char*`.
+* A valid string must only contain the characters for numbers. Leading spaces are not ignored, and will return `std::errc::invalid_argument`.
+
+=== Usage notes for from_chars for floating point types
+* On `std::errc::result_out_of_range` we return ±0 for small values (e.g. 1.0e-99999) or ±HUGE_VAL for large values (e.g. 1.0e+99999) to match the handling of `std::strtod`.
+This is a divergence from the standard which states we should return the `value` argument unmodified.
+
+** `from_chars` has an open issue with LWG here: https://cplusplus.github.io/LWG/lwg-active.html#3081.
+The standard for <charconv> does not distinguish between underflow and overflow like strtod does.
+Let's say you are writing a JSON library, and you replace `std::strtod` with `boost::charconv::from_chars` for performance reasons.
+Charconv returns std::errc::result_out_of_range on some conversion.
+You would then have to parse the string again yourself to figure out which of the four possible reasons you got `std::errc::result_out_of_range`.
+Charconv can give you that information by using `boost::charconv::from_chars_erange` instead of `boost::charconv::from_chars` throughout the code base.
+By implementing the resolution to the LWG issue that matches the established strtod behavior I think we are providing the correct behavior without waiting on the committee's decision.
+
+* These functions have been tested to support all built-in floating-point types and those from C++23's `<stdfloat>`
+** Long doubles can be 64, 80, or 128-bit, but must be IEEE 754 compliant. An example of a non-compliant, and therefore unsupported, format is `__ibm128`.
+** Use of `__float128` or `std::float128_t` requires compiling with `-std=gnu++xx` and linking GCC's `libquadmath`.
+This is done automatically when building with CMake.
+
+== Examples
+
+=== Basic usage
+==== Integral
+[source, c++]
+----
+const char* buffer = "42";
+int v = 0;
+from_chars_result r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 42);
+
+std::string str_buffer (buffer);
+boost::core::string_view sv(str_buffer);
+int v2;
+auto r2 = boost::charconv::from_chars(sv, v2);
+assert(r);
+assert(v2 == v);
+----
+
+==== Floating Point
+[source, c++]
+----
+const char* buffer = "1.2345"
+double v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 1.2345);
+
+std::string str_buffer(buffer);
+double v2;
+auto r2 = boost::charconv::from_chars(buffer, v2);
+assert(r2);
+assert(v == v2);
+----
+
+=== Hexadecimal
+==== Integral
+[source, c++]
+----
+const char* buffer = "2a";
+unsigned v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v, 16);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 42);
+----
+==== Floating Point
+[source, c++]
+----
+const char* buffer = "1.3a2bp-10";
+double v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v, boost::charconv::chars_format::hex);
+assert(r.ec == std::errc());
+assert(r); // Same as above but less verbose. Added in C++26.
+assert(v == 8.0427e-18);
+----
+
+=== std::errc::invalid_argument
+
+The below is invalid because a negative value is being parsed into an unsigned integer.
+
+[source, c++]
+----
+const char* buffer = "-123";
+unsigned v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc::invalid_argument);
+assert(!r); // Same as above but less verbose. Added in C++26.
+----
+
+The below is invalid because a fixed format floating-point value can not have an exponent.
+
+[source, c++]
+----
+const char* buffer = "-1.573e-3";
+double v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v, boost::charconv::chars_format::fixed);
+assert(r.ec == std::errc::invalid_argument);
+assert(!r); // Same as above but less verbose. Added in C++26.
+----
+Note: In the event of `std::errc::invalid_argument`, v is not modified by `from_chars`
+
+=== std::errc::result_out_of_range
+[source, c++]
+----
+const char* buffer = "1234";
+unsigned char v = 0;
+auto r = boost::charconv::from_chars(buffer, buffer + std::strlen(buffer), v);
+assert(r.ec == std::errc::result_out_of_range);
+assert(!r); // Same as above but less verbose. Added in C++26.
+assert(v == 0)
+----
+Note: In the event of `std::errc::result_out_of_range`, v is not modified by `from_chars`

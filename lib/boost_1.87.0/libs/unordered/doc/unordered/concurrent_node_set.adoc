@@ -1,0 +1,1757 @@
+﻿[#concurrent_node_set]
+== Class Template concurrent_node_set
+
+:idprefix: concurrent_node_set_
+
+`boost::concurrent_node_set` — A node-based hash table that stores unique values and
+allows for concurrent element insertion, erasure, lookup and access
+without external synchronization mechanisms.
+
+Even though it acts as a container, `boost::concurrent_node_set`
+does not model the standard C++ https://en.cppreference.com/w/cpp/named_req/Container[Container^] concept.
+In particular, iterators and associated operations (`begin`, `end`, etc.) are not provided.
+Element access is done through user-provided _visitation functions_ that are passed
+to `concurrent_node_set` operations where they are executed internally in a controlled fashion.
+Such visitation-based API allows for low-contention concurrent usage scenarios.
+
+The internal data structure of `boost::concurrent_node_set` is similar to that of
+`boost::unordered_node_set`. Unlike `boost::concurrent_flat_set`, pointer stability and
+node handling functionalities are provided, at the expense of potentially lower performance.
+
+=== Synopsis
+
+[listing,subs="+macros,+quotes"]
+-----
+// #include <boost/unordered/concurrent_node_set.hpp>
+
+namespace boost {
+  template<class Key,
+           class Hash = boost::hash<Key>,
+           class Pred = std::equal_to<Key>,
+           class Allocator = std::allocator<Key>>
+  class concurrent_node_set {
+  public:
+    // types
+    using key_type             = Key;
+    using value_type           = Key;
+    using init_type            = Key;
+    using hasher               = Hash;
+    using key_equal            = Pred;
+    using allocator_type       = Allocator;
+    using pointer              = typename std::allocator_traits<Allocator>::pointer;
+    using const_pointer        = typename std::allocator_traits<Allocator>::const_pointer;
+    using reference            = value_type&;
+    using const_reference      = const value_type&;
+    using size_type            = std::size_t;
+    using difference_type      = std::ptrdiff_t;
+
+    using node_type            = _implementation-defined_;
+    using insert_return_type   = _implementation-defined_;
+
+    using stats                = xref:stats_stats_type[__stats-type__]; // if statistics are xref:concurrent_node_set_boost_unordered_enable_stats[enabled]
+
+    // constants
+    static constexpr size_type xref:#concurrent_node_set_constants[bulk_visit_size] = _implementation-defined_;
+
+    // construct/copy/destroy
+    xref:#concurrent_node_set_default_constructor[concurrent_node_set]();
+    explicit xref:#concurrent_node_set_bucket_count_constructor[concurrent_node_set](size_type n,
+                                 const hasher& hf = hasher(),
+                                 const key_equal& eql = key_equal(),
+                                 const allocator_type& a = allocator_type());
+    template<class InputIterator>
+      xref:#concurrent_node_set_iterator_range_constructor[concurrent_node_set](InputIterator f, InputIterator l,
+                          size_type n = _implementation-defined_,
+                          const hasher& hf = hasher(),
+                          const key_equal& eql = key_equal(),
+                          const allocator_type& a = allocator_type());
+    xref:#concurrent_node_set_copy_constructor[concurrent_node_set](const concurrent_node_set& other);
+    xref:#concurrent_node_set_move_constructor[concurrent_node_set](concurrent_node_set&& other);
+    template<class InputIterator>
+      xref:#concurrent_node_set_iterator_range_constructor_with_allocator[concurrent_node_set](InputIterator f, InputIterator l,const allocator_type& a);
+    explicit xref:#concurrent_node_set_allocator_constructor[concurrent_node_set](const Allocator& a);
+    xref:#concurrent_node_set_copy_constructor_with_allocator[concurrent_node_set](const concurrent_node_set& other, const Allocator& a);
+    xref:#concurrent_node_set_move_constructor_with_allocator[concurrent_node_set](concurrent_node_set&& other, const Allocator& a);
+    xref:#concurrent_node_set_move_constructor_from_unordered_node_set[concurrent_node_set](unordered_node_set<Key, Hash, Pred, Allocator>&& other);
+    xref:#concurrent_node_set_initializer_list_constructor[concurrent_node_set](std::initializer_list<value_type> il,
+                        size_type n = _implementation-defined_
+                        const hasher& hf = hasher(),
+                        const key_equal& eql = key_equal(),
+                        const allocator_type& a = allocator_type());
+    xref:#concurrent_node_set_bucket_count_constructor_with_allocator[concurrent_node_set](size_type n, const allocator_type& a);
+    xref:#concurrent_node_set_bucket_count_constructor_with_hasher_and_allocator[concurrent_node_set](size_type n, const hasher& hf, const allocator_type& a);
+    template<class InputIterator>
+      xref:#concurrent_node_set_iterator_range_constructor_with_bucket_count_and_allocator[concurrent_node_set](InputIterator f, InputIterator l, size_type n,
+                          const allocator_type& a);
+    template<class InputIterator>
+      xref:#concurrent_node_set_iterator_range_constructor_with_bucket_count_and_hasher[concurrent_node_set](InputIterator f, InputIterator l, size_type n, const hasher& hf,
+                          const allocator_type& a);
+    xref:#concurrent_node_set_initializer_list_constructor_with_allocator[concurrent_node_set](std::initializer_list<value_type> il, const allocator_type& a);
+    xref:#concurrent_node_set_initializer_list_constructor_with_bucket_count_and_allocator[concurrent_node_set](std::initializer_list<value_type> il, size_type n,
+                        const allocator_type& a);
+    xref:#concurrent_node_set_initializer_list_constructor_with_bucket_count_and_hasher_and_allocator[concurrent_node_set](std::initializer_list<value_type> il, size_type n, const hasher& hf,
+                        const allocator_type& a);
+    xref:#concurrent_node_set_destructor[~concurrent_node_set]();
+    concurrent_node_set& xref:#concurrent_node_set_copy_assignment[operator++=++](const concurrent_node_set& other);
+    concurrent_node_set& xref:#concurrent_node_set_move_assignment[operator++=++](concurrent_node_set&& other)
+      noexcept(boost::allocator_traits<Allocator>::is_always_equal::value ||
+              boost::allocator_traits<Allocator>::propagate_on_container_move_assignment::value);
+    concurrent_node_set& xref:#concurrent_node_set_initializer_list_assignment[operator++=++](std::initializer_list<value_type>);
+    allocator_type xref:#concurrent_node_set_get_allocator[get_allocator]() const noexcept;
+
+
+    // visitation
+    template<class F> size_t xref:#concurrent_node_set_cvisit[visit](const key_type& k, F f);
+    template<class F> size_t xref:#concurrent_node_set_cvisit[visit](const key_type& k, F f) const;
+    template<class F> size_t xref:#concurrent_node_set_cvisit[cvisit](const key_type& k, F f) const;
+    template<class K, class F> size_t xref:#concurrent_node_set_cvisit[visit](const K& k, F f);
+    template<class K, class F> size_t xref:#concurrent_node_set_cvisit[visit](const K& k, F f) const;
+    template<class K, class F> size_t xref:#concurrent_node_set_cvisit[cvisit](const K& k, F f) const;
+
+    template<class FwdIterator, class F>
+      size_t xref:concurrent_node_set_bulk_visit[visit](FwdIterator first, FwdIterator last, F f);
+    template<class FwdIterator, class F>
+      size_t xref:concurrent_node_set_bulk_visit[visit](FwdIterator first, FwdIterator last, F f) const;
+    template<class FwdIterator, class F>
+      size_t xref:concurrent_node_set_bulk_visit[cvisit](FwdIterator first, FwdIterator last, F f) const;
+
+    template<class F> size_t xref:#concurrent_node_set_cvisit_all[visit_all](F f);
+    template<class F> size_t xref:#concurrent_node_set_cvisit_all[visit_all](F f) const;
+    template<class F> size_t xref:#concurrent_node_set_cvisit_all[cvisit_all](F f) const;
+    template<class ExecutionPolicy, class F>
+      void xref:#concurrent_node_set_parallel_cvisit_all[visit_all](ExecutionPolicy&& policy, F f);
+    template<class ExecutionPolicy, class F>
+      void xref:#concurrent_node_set_parallel_cvisit_all[visit_all](ExecutionPolicy&& policy, F f) const;
+    template<class ExecutionPolicy, class F>
+      void xref:#concurrent_node_set_parallel_cvisit_all[cvisit_all](ExecutionPolicy&& policy, F f) const;
+
+    template<class F> bool xref:#concurrent_node_set_cvisit_while[visit_while](F f);
+    template<class F> bool xref:#concurrent_node_set_cvisit_while[visit_while](F f) const;
+    template<class F> bool xref:#concurrent_node_set_cvisit_while[cvisit_while](F f) const;
+    template<class ExecutionPolicy, class F>
+      bool xref:#concurrent_node_set_parallel_cvisit_while[visit_while](ExecutionPolicy&& policy, F f);
+    template<class ExecutionPolicy, class F>
+      bool xref:#concurrent_node_set_parallel_cvisit_while[visit_while](ExecutionPolicy&& policy, F f) const;
+    template<class ExecutionPolicy, class F>
+      bool xref:#concurrent_node_set_parallel_cvisit_while[cvisit_while](ExecutionPolicy&& policy, F f) const;
+
+    // capacity
+    ++[[nodiscard]]++ bool xref:#concurrent_node_set_empty[empty]() const noexcept;
+    size_type xref:#concurrent_node_set_size[size]() const noexcept;
+    size_type xref:#concurrent_node_set_max_size[max_size]() const noexcept;
+
+    // modifiers
+    template<class... Args> bool xref:#concurrent_node_set_emplace[emplace](Args&&... args);
+    bool xref:#concurrent_node_set_copy_insert[insert](const value_type& obj);
+    bool xref:#concurrent_node_set_move_insert[insert](value_type&& obj);
+    template<class K> bool xref:#concurrent_node_set_transparent_insert[insert](K&& k);
+    template<class InputIterator> size_type xref:#concurrent_node_set_insert_iterator_range[insert](InputIterator first, InputIterator last);
+    size_type xref:#concurrent_node_set_insert_initializer_list[insert](std::initializer_list<value_type> il);
+    insert_return_type xref:#concurrent_node_set_insert_node[insert](node_type&& nh);
+
+    template<class... Args, class F> bool xref:#concurrent_node_set_emplace_or_cvisit[emplace_or_visit](Args&&... args, F&& f);
+    template<class... Args, class F> bool xref:#concurrent_node_set_emplace_or_cvisit[emplace_or_cvisit](Args&&... args, F&& f);
+    template<class F> bool xref:#concurrent_node_set_copy_insert_or_cvisit[insert_or_visit](const value_type& obj, F f);
+    template<class F> bool xref:#concurrent_node_set_copy_insert_or_cvisit[insert_or_cvisit](const value_type& obj, F f);
+    template<class F> bool xref:#concurrent_node_set_move_insert_or_cvisit[insert_or_visit](value_type&& obj, F f);
+    template<class F> bool xref:#concurrent_node_set_move_insert_or_cvisit[insert_or_cvisit](value_type&& obj, F f);
+    template<class K, class F> bool xref:#concurrent_node_set_transparent_insert_or_cvisit[insert_or_visit](K&& k, F f);
+    template<class K, class F> bool xref:#concurrent_node_set_transparent_insert_or_cvisit[insert_or_cvisit](K&& k, F f);
+    template<class InputIterator,class F>
+      size_type xref:#concurrent_node_set_insert_iterator_range_or_visit[insert_or_visit](InputIterator first, InputIterator last, F f);
+    template<class InputIterator,class F>
+      size_type xref:#concurrent_node_set_insert_iterator_range_or_visit[insert_or_cvisit](InputIterator first, InputIterator last, F f);
+    template<class F> size_type xref:#concurrent_node_set_insert_initializer_list_or_visit[insert_or_visit](std::initializer_list<value_type> il, F f);
+    template<class F> size_type xref:#concurrent_node_set_insert_initializer_list_or_visit[insert_or_cvisit](std::initializer_list<value_type> il, F f);
+    template<class F> insert_return_type xref:#concurrent_node_set_insert_node_or_visit[insert_or_visit](node_type&& nh, F f);
+    template<class F> insert_return_type xref:#concurrent_node_set_insert_node_or_visit[insert_or_cvisit](node_type&& nh, F f);
+
+    template<class... Args, class F1, class F2>
+      bool xref:#concurrent_node_set_emplace_and_cvisit[emplace_and_visit](Args&&... args, F1&& f1, F2&& f2);
+    template<class... Args, class F1, class F2>
+      bool xref:#concurrent_node_set_emplace_and_cvisit[emplace_and_cvisit](Args&&... args, F1&& f1, F2&& f2);
+    template<class F1, class F2> bool xref:#concurrent_node_set_copy_insert_and_cvisit[insert_and_visit](const value_type& obj, F1 f1, F2 f2);
+    template<class F1, class F2> bool xref:#concurrent_node_set_copy_insert_and_cvisit[insert_and_cvisit](const value_type& obj, F1 f1, F2 f2);
+    template<class F1, class F2> bool xref:#concurrent_node_set_move_insert_and_cvisit[insert_and_visit](value_type&& obj, F1 f1, F2 f2);
+    template<class F1, class F2> bool xref:#concurrent_node_set_move_insert_and_cvisit[insert_and_cvisit](value_type&& obj, F1 f1, F2 f2);
+    template<class K, class F1, class F2> bool xref:#concurrent_node_set_transparent_insert_and_cvisit[insert_and_visit](K&& k, F1 f1, F2 f2);
+    template<class K, class F1, class F2> bool xref:#concurrent_node_set_transparent_insert_and_cvisit[insert_and_cvisit](K&& k, F1 f1, F2 f2);
+    template<class InputIterator,class F1, class F2>
+      size_type xref:#concurrent_node_set_insert_iterator_range_and_visit[insert_and_visit](InputIterator first, InputIterator last, F1 f1, F2 f2);
+    template<class InputIterator,class F1, class F2>
+      size_type xref:#concurrent_node_set_insert_iterator_range_and_visit[insert_and_cvisit](InputIterator first, InputIterator last, F1 f1, F2 f2);
+    template<class F1, class F2>
+      size_type xref:#concurrent_node_set_insert_initializer_list_and_visit[insert_and_visit](std::initializer_list<value_type> il, F1 f1, F2 f2);
+    template<class F1, class F2>
+      size_type xref:#concurrent_node_set_insert_initializer_list_and_visit[insert_and_cvisit](std::initializer_list<value_type> il, F1 f1, F2 f2);
+    template<class F1, class F2>
+      insert_return_type xref:#concurrent_node_set_insert_node_and_visit[insert_and_visit](node_type&& nh, F1 f1, F2 f2);
+    template<class F1, class F2>
+      insert_return_type xref:#concurrent_node_set_insert_node_and_visit[insert_and_cvisit](node_type&& nh, F1 f1, F2 f2);
+
+    size_type xref:#concurrent_node_set_erase[erase](const key_type& k);
+    template<class K> size_type xref:#concurrent_node_set_erase[erase](const K& k);
+
+    template<class F> size_type xref:#concurrent_node_set_erase_if_by_key[erase_if](const key_type& k, F f);
+    template<class K, class F> size_type xref:#concurrent_node_set_erase_if_by_key[erase_if](const K& k, F f);
+    template<class F> size_type xref:#concurrent_node_set_erase_if[erase_if](F f);
+    template<class ExecutionPolicy, class  F> void xref:#concurrent_node_set_parallel_erase_if[erase_if](ExecutionPolicy&& policy, F f);
+
+    void      xref:#concurrent_node_set_swap[swap](concurrent_node_set& other)
+      noexcept(boost::allocator_traits<Allocator>::is_always_equal::value ||
+               boost::allocator_traits<Allocator>::propagate_on_container_swap::value);
+
+    node_type xref:#concurrent_node_set_extract[extract](const key_type& k);
+    template<class K> node_type xref:#concurrent_node_set_extract[extract](const K& k);
+
+    template<class F> node_type xref:#concurrent_node_set_extract_if[extract_if](const key_type& k, F f);
+    template<class K, class F> node_type xref:#concurrent_node_set_extract[extract_if](const K& k, F f);
+
+    void      xref:#concurrent_node_set_clear[clear]() noexcept;
+
+    template<class H2, class P2>
+      size_type xref:#concurrent_node_set_merge[merge](concurrent_node_set<Key, H2, P2, Allocator>& source);
+    template<class H2, class P2>
+      size_type xref:#concurrent_node_set_merge[merge](concurrent_node_set<Key, H2, P2, Allocator>&& source);
+
+    // observers
+    hasher xref:#concurrent_node_set_hash_function[hash_function]() const;
+    key_equal xref:#concurrent_node_set_key_eq[key_eq]() const;
+
+    // set operations
+    size_type        xref:#concurrent_node_set_count[count](const key_type& k) const;
+    template<class K>
+      size_type      xref:#concurrent_node_set_count[count](const K& k) const;
+    bool             xref:#concurrent_node_set_contains[contains](const key_type& k) const;
+    template<class K>
+      bool           xref:#concurrent_node_set_contains[contains](const K& k) const;
+
+    // bucket interface
+    size_type xref:#concurrent_node_set_bucket_count[bucket_count]() const noexcept;
+
+    // hash policy
+    float xref:#concurrent_node_set_load_factor[load_factor]() const noexcept;
+    float xref:#concurrent_node_set_max_load_factor[max_load_factor]() const noexcept;
+    void xref:#concurrent_node_set_set_max_load_factor[max_load_factor](float z);
+    size_type xref:#concurrent_node_set_max_load[max_load]() const noexcept;
+    void xref:#concurrent_node_set_rehash[rehash](size_type n);
+    void xref:#concurrent_node_set_reserve[reserve](size_type n);
+
+    // statistics (if xref:concurrent_node_set_boost_unordered_enable_stats[enabled])
+    stats xref:#concurrent_node_set_get_stats[get_stats]() const;
+    void xref:#concurrent_node_set_reset_stats[reset_stats]() noexcept;
+  };
+
+  // Deduction Guides
+  template<class InputIterator,
+           class Hash = boost::hash<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>,
+           class Pred = std::equal_to<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>,
+           class Allocator = std::allocator<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>>
+    concurrent_node_set(InputIterator, InputIterator, typename xref:#concurrent_node_set_deduction_guides[__see below__]::size_type = xref:#concurrent_node_set_deduction_guides[__see below__],
+                        Hash = Hash(), Pred = Pred(), Allocator = Allocator())
+      -> concurrent_node_set<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>, Hash, Pred, Allocator>;
+
+  template<class T, class Hash = boost::hash<T>, class Pred = std::equal_to<T>,
+           class Allocator = std::allocator<T>>
+    concurrent_node_set(std::initializer_list<T>, typename xref:#concurrent_node_set_deduction_guides[__see below__]::size_type = xref:#concurrent_node_set_deduction_guides[__see below__],
+                        Hash = Hash(), Pred = Pred(), Allocator = Allocator())
+      -> concurrent_node_set<T, Hash, Pred, Allocator>;
+
+  template<class InputIterator, class Allocator>
+    concurrent_node_set(InputIterator, InputIterator, typename xref:#concurrent_node_set_deduction_guides[__see below__]::size_type, Allocator)
+      -> concurrent_node_set<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>,
+                             boost::hash<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>,
+                             std::equal_to<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>, Allocator>;
+
+  template<class InputIterator, class Allocator>
+    concurrent_node_set(InputIterator, InputIterator, Allocator)
+      -> concurrent_node_set<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>,
+                             boost::hash<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>,
+                             std::equal_to<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>, Allocator>;
+
+  template<class InputIterator, class Hash, class Allocator>
+    concurrent_node_set(InputIterator, InputIterator, typename xref:#concurrent_node_set_deduction_guides[__see below__]::size_type, Hash,
+                        Allocator)
+      -> concurrent_node_set<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>, Hash,
+                             std::equal_to<xref:#concurrent_node_set_iter_value_type[__iter-value-type__]<InputIterator>>, Allocator>;
+
+  template<class T, class Allocator>
+    concurrent_node_set(std::initializer_list<T>, typename xref:#concurrent_node_set_deduction_guides[__see below__]::size_type, Allocator)
+      -> concurrent_node_set<T, boost::hash<T>, std::equal_to<T>, Allocator>;
+
+  template<class T, class Allocator>
+    concurrent_node_set(std::initializer_list<T>, Allocator)
+      -> concurrent_node_set<T, boost::hash<T>, std::equal_to<T>, Allocator>;
+
+  template<class T, class Hash, class Allocator>
+    concurrent_node_set(std::initializer_list<T>, typename xref:#concurrent_node_set_deduction_guides[__see below__]::size_type, Hash, Allocator)
+      -> concurrent_node_set<T, Hash, std::equal_to<T>, Allocator>;
+
+  // Equality Comparisons
+  template<class Key, class Hash, class Pred, class Alloc>
+    bool xref:#concurrent_node_set_operator[operator==](const concurrent_node_set<Key, Hash, Pred, Alloc>& x,
+                    const concurrent_node_set<Key, Hash, Pred, Alloc>& y);
+
+  template<class Key, class Hash, class Pred, class Alloc>
+    bool xref:#concurrent_node_set_operator_2[operator!=](const concurrent_node_set<Key, Hash, Pred, Alloc>& x,
+                    const concurrent_node_set<Key, Hash, Pred, Alloc>& y);
+
+  // swap
+  template<class Key, class Hash, class Pred, class Alloc>
+    void xref:#concurrent_node_set_swap_2[swap](concurrent_node_set<Key, Hash, Pred, Alloc>& x,
+              concurrent_node_set<Key, Hash, Pred, Alloc>& y)
+      noexcept(noexcept(x.swap(y)));
+
+  // Erasure
+  template<class K, class H, class P, class A, class Predicate>
+    typename concurrent_node_set<K, H, P, A>::size_type
+       xref:#concurrent_node_set_erase_if_2[erase_if](concurrent_node_set<K, H, P, A>& c, Predicate pred);
+
+  // Pmr aliases (C++17 and up)
+  namespace unordered::pmr {
+    template<class Key,
+             class Hash = boost::hash<Key>,
+             class Pred = std::equal_to<Key>>
+    using concurrent_node_set =
+      boost::concurrent_node_set<Key, Hash, Pred,
+        std::pmr::polymorphic_allocator<Key>>;
+  }
+}
+-----
+
+---
+
+=== Description
+
+*Template Parameters*
+
+[cols="1,1"]
+|===
+
+|_Key_
+|`Key` must be https://en.cppreference.com/w/cpp/named_req/MoveInsertable[MoveInsertable^] into the container
+and https://en.cppreference.com/w/cpp/named_req/Erasable[Erasable^] from the container.
+
+|_Hash_
+|A unary function object type that acts a hash function for a `Key`. It takes a single argument of type `Key` and returns a value of type `std::size_t`.
+
+|_Pred_
+|A binary function object that induces an equivalence relation on values of type `Key`. It takes two arguments of type `Key` and returns a value of type `bool`.
+
+|_Allocator_
+|An allocator whose value type is the same as the table's value type.
+`std::allocator_traits<Allocator>::pointer` and `std::allocator_traits<Allocator>::const_pointer`
+must be convertible to/from `value_type*` and `const value_type*`, respectively.
+
+|===
+
+The element nodes of the table are held into an internal _bucket array_. An node is inserted into a bucket determined by
+the hash code of its element, but if the bucket is already occupied (a _collision_), an available one in the vicinity of the
+original position is used.
+
+The size of the bucket array can be automatically increased by a call to `insert`/`emplace`, or as a result of calling
+`rehash`/`reserve`. The _load factor_ of the table (number of elements divided by number of buckets) is never
+greater than `max_load_factor()`, except possibly for small sizes where the implementation may decide to
+allow for higher loads.
+
+If `xref:hash_traits_hash_is_avalanching[hash_is_avalanching]<Hash>::value` is `true`, the hash function
+is used as-is; otherwise, a bit-mixing post-processing stage is added to increase the quality of hashing
+at the expense of extra computational cost.
+
+---
+
+=== Concurrency Requirements and Guarantees
+
+Concurrent invocations of `operator()` on the same const instance of `Hash` or `Pred` are required
+to not introduce data races. For `Alloc` being either `Allocator` or any allocator type rebound
+from `Allocator`, concurrent invocations of the following operations on the same instance `al` of `Alloc`
+are required to not introduce data races:
+
+* Copy construction from `al` of an allocator rebound from `Alloc`
+* `std::allocator_traits<Alloc>::allocate`
+* `std::allocator_traits<Alloc>::deallocate`
+* `std::allocator_traits<Alloc>::construct`
+* `std::allocator_traits<Alloc>::destroy`
+
+In general, these requirements on `Hash`, `Pred` and `Allocator` are met if these types
+are not stateful or if the operations only involve constant access to internal data members.
+
+With the exception of destruction, concurrent invocations of any operation on the same instance of a
+`concurrent_node_set` do not introduce data races — that is, they are thread-safe.
+
+If an operation *op* is explicitly designated as _blocking on_ `x`, where `x` is an instance of a `boost::concurrent_node_set`,
+prior blocking operations on `x` synchronize with *op*. So, blocking operations on the same
+`concurrent_node_set` execute sequentially in a multithreaded scenario.
+
+An operation is said to be _blocking on rehashing of_ ``__x__`` if it blocks on `x`
+only when an internal rehashing is issued.
+
+When executed internally by a `boost::concurrent_node_set`, the following operations by a
+user-provided visitation function on the element passed do not introduce data races:
+
+* Read access to the element.
+* Non-mutable modification of the element.
+* Mutable modification of the element:
+  ** Within a container function accepting two visitation functions, always for the first function.
+  ** Within a non-const container function whose name does not contain `cvisit`, for the last (or only) visitation function.
+
+Any `boost::concurrent_node_set operation` that inserts or modifies an element `e`
+synchronizes with the internal invocation of a visitation function on `e`.
+
+Visitation functions executed by a `boost::concurrent_node_set` `x` are not allowed to invoke any operation
+on `x`; invoking operations on a different `boost::concurrent_node_set` instance `y` is allowed only
+if concurrent outstanding operations on `y` do not access `x` directly or indirectly.
+
+---
+
+=== Configuration Macros
+
+==== `BOOST_UNORDERED_DISABLE_REENTRANCY_CHECK`
+
+In debug builds (more precisely, when
+link:../../../assert/doc/html/assert.html#boost_assert_is_void[`BOOST_ASSERT_IS_VOID`^]
+is not defined), __container reentrancies__ (illegaly invoking an operation on `m` from within
+a function visiting elements of `m`) are detected and signalled through `BOOST_ASSERT_MSG`.
+When run-time speed is a concern, the feature can be disabled by globally defining
+this macro.
+
+---
+
+==== `BOOST_UNORDERED_ENABLE_STATS`
+
+Globally define this macro to enable xref:#stats[statistics calculation] for the table. Note
+that this option decreases the overall performance of many operations.
+
+---
+
+=== Typedefs
+
+[source,c++,subs=+quotes]
+----
+typedef _implementation-defined_ node_type;
+----
+
+A class for holding extracted table elements, modelling 
+https://en.cppreference.com/w/cpp/container/node_handle[NodeHandle].
+
+---
+
+[source,c++,subs=+quotes]
+----
+typedef _implementation-defined_ insert_return_type;
+----
+
+A specialization of an internal class template:
+
+[source,c++,subs=+quotes]
+----
+template<class NodeType>
+struct _insert_return_type_ // name is exposition only
+{
+  bool     inserted;
+  NodeType node;
+};
+----
+
+with `NodeType` = `node_type`.
+
+---
+
+=== Constants
+
+```cpp
+static constexpr size_type bulk_visit_size;
+```
+
+Chunk size internally used in xref:concurrent_node_set_bulk_visit[bulk visit] operations.
+
+=== Constructors
+
+==== Default Constructor
+```c++
+concurrent_node_set();
+```
+
+Constructs an empty table using `hasher()` as the hash function,
+`key_equal()` as the key equality predicate and `allocator_type()` as the allocator.
+
+[horizontal]
+Postconditions:;; `size() == 0`
+Requires:;; If the defaults are used, `hasher`, `key_equal` and `allocator_type` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Bucket Count Constructor
+```c++
+explicit concurrent_node_set(size_type n,
+                             const hasher& hf = hasher(),
+                             const key_equal& eql = key_equal(),
+                             const allocator_type& a = allocator_type());
+```
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash
+function, `eql` as the key equality predicate, and `a` as the allocator.
+
+[horizontal]
+Postconditions:;; `size() == 0`
+Requires:;; If the defaults are used, `hasher`, `key_equal` and `allocator_type` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Iterator Range Constructor
+[source,c++,subs="+quotes"]
+----
+template<class InputIterator>
+  concurrent_node_set(InputIterator f, InputIterator l,
+                      size_type n = _implementation-defined_,
+                      const hasher& hf = hasher(),
+                      const key_equal& eql = key_equal(),
+                      const allocator_type& a = allocator_type());
+----
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash function, `eql` as the key equality predicate and `a` as the allocator, and inserts the elements from `[f, l)` into it.
+
+[horizontal]
+Requires:;; If the defaults are used, `hasher`, `key_equal` and `allocator_type` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Copy Constructor
+```c++
+concurrent_node_set(concurrent_node_set const& other);
+```
+
+The copy constructor. Copies the contained elements, hash function, predicate and allocator.
+
+If `Allocator::select_on_container_copy_construction` exists and has the right signature, the allocator will be constructed from its result.
+
+[horizontal]
+Requires:;; `value_type` is copy constructible
+Concurrency:;; Blocking on `other`.
+
+---
+
+==== Move Constructor
+```c++
+concurrent_node_set(concurrent_node_set&& other);
+```
+
+The move constructor. The internal bucket array of `other` is transferred directly to the new table.
+The hash function, predicate and allocator are moved-constructed from `other`.
+If statistics are xref:concurrent_node_set_boost_unordered_enable_stats[enabled],
+transfers the internal statistical information from `other` and calls `other.reset_stats()`.
+
+[horizontal]
+Concurrency:;; Blocking on `other`.
+
+---
+
+==== Iterator Range Constructor with Allocator
+```c++
+template<class InputIterator>
+  concurrent_node_set(InputIterator f, InputIterator l, const allocator_type& a);
+```
+
+Constructs an empty table using `a` as the allocator, with the default hash function and key equality predicate and inserts the elements from `[f, l)` into it.
+
+[horizontal]
+Requires:;; `hasher`, `key_equal` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Allocator Constructor
+```c++
+explicit concurrent_node_set(Allocator const& a);
+```
+
+Constructs an empty table, using allocator `a`.
+
+---
+
+==== Copy Constructor with Allocator
+```c++
+concurrent_node_set(concurrent_node_set const& other, Allocator const& a);
+```
+
+Constructs a table, copying ``other``'s contained elements, hash function, and predicate, but using allocator `a`.
+
+[horizontal]
+Concurrency:;; Blocking on `other`.
+
+---
+
+==== Move Constructor with Allocator
+```c++
+concurrent_node_set(concurrent_node_set&& other, Allocator const& a);
+```
+
+If `a == other.get_allocator()`, the elements of `other` are transferred directly to the new table;
+otherwise, elements are moved-constructed from those of `other`. The hash function and predicate are moved-constructed
+from `other`, and the allocator is copy-constructed from `a`.
+If statistics are xref:concurrent_node_set_boost_unordered_enable_stats[enabled],
+transfers the internal statistical information from `other` iff `a == other.get_allocator()`,
+and always calls `other.reset_stats()`.
+
+[horizontal]
+Concurrency:;; Blocking on `other`.
+
+---
+
+==== Move Constructor from unordered_node_set
+
+```c++
+concurrent_node_set(unordered_node_set<Key, Hash, Pred, Allocator>&& other);
+```
+
+Move construction from a xref:#unordered_node_set[`unordered_node_set`].
+The internal bucket array of `other` is transferred directly to the new container.
+The hash function, predicate and allocator are moved-constructed from `other`.
+If statistics are xref:concurrent_node_set_boost_unordered_enable_stats[enabled],
+transfers the internal statistical information from `other` and calls `other.reset_stats()`.
+
+[horizontal]
+Complexity:;; O(`bucket_count()`) 
+
+---
+
+==== Initializer List Constructor
+[source,c++,subs="+quotes"]
+----
+concurrent_node_set(std::initializer_list<value_type> il,
+                    size_type n = _implementation-defined_
+                    const hasher& hf = hasher(),
+                    const key_equal& eql = key_equal(),
+                    const allocator_type& a = allocator_type());
+----
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash function, `eql` as the key equality predicate and `a`, and inserts the elements from `il` into it.
+
+[horizontal]
+Requires:;; If the defaults are used, `hasher`, `key_equal` and `allocator_type` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Bucket Count Constructor with Allocator
+```c++
+concurrent_node_set(size_type n, allocator_type const& a);
+```
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash function, the default hash function and key equality predicate and `a` as the allocator.
+
+[horizontal]
+Postconditions:;; `size() == 0`
+Requires:;; `hasher` and `key_equal` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Bucket Count Constructor with Hasher and Allocator
+```c++
+concurrent_node_set(size_type n, hasher const& hf, allocator_type const& a);
+```
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash function, the default key equality predicate and `a` as the allocator.
+
+[horizontal]
+Postconditions:;; `size() == 0`
+Requires:;; `key_equal` needs to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Iterator Range Constructor with Bucket Count and Allocator
+[source,c++,subs="+quotes"]
+----
+template<class InputIterator>
+  concurrent_node_set(InputIterator f, InputIterator l, size_type n, const allocator_type& a);
+----
+
+Constructs an empty table with at least `n` buckets, using `a` as the allocator and default hash function and key equality predicate, and inserts the elements from `[f, l)` into it.
+
+[horizontal]
+Requires:;; `hasher`, `key_equal` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== Iterator Range Constructor with Bucket Count and Hasher
+[source,c++,subs="+quotes"]
+----
+    template<class InputIterator>
+      concurrent_node_set(InputIterator f, InputIterator l, size_type n, const hasher& hf,
+                          const allocator_type& a);
+----
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash function, `a` as the allocator, with the default key equality predicate, and inserts the elements from `[f, l)` into it.
+
+[horizontal]
+Requires:;; `key_equal` needs to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== initializer_list Constructor with Allocator
+
+```c++
+concurrent_node_set(std::initializer_list<value_type> il, const allocator_type& a);
+```
+
+Constructs an empty table using `a` and default hash function and key equality predicate, and inserts the elements from `il` into it.
+
+[horizontal]
+Requires:;; `hasher` and `key_equal` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== initializer_list Constructor with Bucket Count and Allocator
+
+```c++
+concurrent_node_set(std::initializer_list<value_type> il, size_type n, const allocator_type& a);
+```
+
+Constructs an empty table with at least `n` buckets, using `a` and default hash function and key equality predicate, and inserts the elements from `il` into it.
+
+[horizontal]
+Requires:;; `hasher` and `key_equal` need to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+==== initializer_list Constructor with Bucket Count and Hasher and Allocator
+
+```c++
+concurrent_node_set(std::initializer_list<value_type> il, size_type n, const hasher& hf,
+                    const allocator_type& a);
+```
+
+Constructs an empty table with at least `n` buckets, using `hf` as the hash function, `a` as the allocator and default key equality predicate,and inserts the elements from `il` into it.
+
+[horizontal]
+Requires:;; `key_equal` needs to be https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^].
+
+---
+
+=== Destructor
+
+```c++
+~concurrent_node_set();
+```
+
+[horizontal]
+Note:;; The destructor is applied to every element, and all memory is deallocated
+
+---
+
+=== Assignment
+
+==== Copy Assignment
+
+```c++
+concurrent_node_set& operator=(concurrent_node_set const& other);
+```
+
+The assignment operator. Destroys previously existing elements, copy-assigns the hash function and predicate from `other`, 
+copy-assigns the allocator from `other` if `Alloc::propagate_on_container_copy_assignment` exists and `Alloc::propagate_on_container_copy_assignment::value` is `true`,
+and finally inserts copies of the elements of `other`.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/CopyInsertable[CopyInsertable^]
+Concurrency:;; Blocking on `*this` and `other`.
+
+---
+
+==== Move Assignment
+```c++
+concurrent_node_set& operator=(concurrent_node_set&& other)
+  noexcept(boost::allocator_traits<Allocator>::is_always_equal::value ||
+           boost::allocator_traits<Allocator>::propagate_on_container_move_assignment::value);
+```
+The move assignment operator. Destroys previously existing elements, swaps the hash function and predicate from `other`,
+and move-assigns the allocator from `other` if `Alloc::propagate_on_container_move_assignment` exists and `Alloc::propagate_on_container_move_assignment::value` is `true`.
+If at this point the allocator is equal to `other.get_allocator()`, the internal bucket array of `other` is transferred directly to `*this`;
+otherwise, inserts move-constructed copies of the elements of `other`.
+If statistics are xref:concurrent_node_set_boost_unordered_enable_stats[enabled],
+transfers the internal statistical information from `other` iff the final allocator is equal to `other.get_allocator()`,
+and always calls `other.reset_stats()`.
+
+[horizontal]
+Concurrency:;; Blocking on `*this` and `other`.
+
+---
+
+==== Initializer List Assignment
+```c++
+concurrent_node_set& operator=(std::initializer_list<value_type> il);
+```
+
+Assign from values in initializer list. All previously existing elements are destroyed.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/CopyInsertable[CopyInsertable^]
+Concurrency:;; Blocking on `*this`.
+
+---
+
+=== Visitation
+
+==== [c]visit
+
+```c++
+template<class F> size_t visit(const key_type& k, F f);
+template<class F> size_t visit(const key_type& k, F f) const;
+template<class F> size_t cvisit(const key_type& k, F f) const;
+template<class K, class F> size_t visit(const K& k, F f);
+template<class K, class F> size_t visit(const K& k, F f) const;
+template<class K, class F> size_t cvisit(const K& k, F f) const;
+```
+
+If an element `x` exists with key equivalent to `k`, invokes `f` with a const reference to `x`.
+
+[horizontal]
+Returns:;; The number of elements visited (0 or 1).
+Notes:;; The `template<class K, class F>` overloads only participate in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== Bulk visit
+
+```c++
+template<class FwdIterator, class F>
+  size_t visit(FwdIterator first, FwdIterator last, F f);
+template<class FwdIterator, class F>
+  size_t visit(FwdIterator first, FwdIterator last, F f) const;
+template<class FwdIterator, class F>
+  size_t cvisit(FwdIterator first, FwdIterator last, F f) const;
+```
+
+For each element `k` in the range [`first`, `last`),
+if there is an element `x` in the container with key equivalent to `k`,
+invokes `f` with a const reference to `x`.
+
+Although functionally equivalent to individually invoking
+xref:concurrent_node_set_cvisit[`[c\]visit`] for each key, bulk visitation
+performs generally faster due to internal streamlining optimizations.
+It is advisable that `std::distance(first,last)` be at least
+xref:#concurrent_node_set_constants[`bulk_visit_size`] to enjoy
+a performance gain: beyond this size, performance is not expected
+to increase further.
+
+[horizontal]
+Requires:;; `FwdIterator` is a https://en.cppreference.com/w/cpp/named_req/ForwardIterator[LegacyForwardIterator^]
+({cpp}11 to {cpp}17), 
+or satisfies https://en.cppreference.com/w/cpp/iterator/forward_iterator[std::forward_iterator^] ({cpp}20 and later).
+For `K` = `std::iterator_traits<FwdIterator>::value_type`, either `K` is `key_type` or
+else `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs.
+In the latter case, the library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent.
+This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+Returns:;; The number of elements visited.
+
+---
+
+==== [c]visit_all
+
+```c++
+template<class F> size_t visit_all(F f);
+template<class F> size_t visit_all(F f) const;
+template<class F> size_t cvisit_all(F f) const;
+```
+
+Successively invokes `f` with const references to each of the elements in the table.
+
+[horizontal]
+Returns:;; The number of elements visited.
+
+---
+
+==== Parallel [c]visit_all
+
+```c++
+template<class ExecutionPolicy, class F> void visit_all(ExecutionPolicy&& policy, F f);
+template<class ExecutionPolicy, class F> void visit_all(ExecutionPolicy&& policy, F f) const;
+template<class ExecutionPolicy, class F> void cvisit_all(ExecutionPolicy&& policy, F f) const;
+```
+
+Invokes `f` with const references to each of the elements in the table.
+Execution is parallelized according to the semantics of the execution policy specified.
+
+[horizontal]
+Throws:;; Depending on the exception handling mechanism of the execution policy used, may call `std::terminate` if an exception is thrown within `f`.
+Notes:;; Only available in compilers supporting C++17 parallel algorithms. +
++
+These overloads only participate in overload resolution if `std::is_execution_policy_v<std::remove_cvref_t<ExecutionPolicy>>` is `true`. +
++
+Unsequenced execution policies are not allowed.
+
+---
+
+==== [c]visit_while
+
+```c++
+template<class F> bool visit_while(F f);
+template<class F> bool visit_while(F f) const;
+template<class F> bool cvisit_while(F f) const;
+```
+
+Successively invokes `f` with const references to each of the elements in the table until `f` returns `false`
+or all the elements are visited.
+
+[horizontal]
+Returns:;; `false` iff `f` ever returns `false`.
+
+---
+
+==== Parallel [c]visit_while
+
+```c++
+template<class ExecutionPolicy, class F> bool visit_while(ExecutionPolicy&& policy, F f);
+template<class ExecutionPolicy, class F> bool visit_while(ExecutionPolicy&& policy, F f) const;
+template<class ExecutionPolicy, class F> bool cvisit_while(ExecutionPolicy&& policy, F f) const;
+```
+
+Invokes `f` with const references to each of the elements in the table until `f` returns `false`
+or all the elements are visited.
+Execution is parallelized according to the semantics of the execution policy specified.
+
+[horizontal]
+Returns:;; `false` iff `f` ever returns `false`.
+Throws:;; Depending on the exception handling mechanism of the execution policy used, may call `std::terminate` if an exception is thrown within `f`.
+Notes:;; Only available in compilers supporting C++17 parallel algorithms. +
++
+These overloads only participate in overload resolution if `std::is_execution_policy_v<std::remove_cvref_t<ExecutionPolicy>>` is `true`. +
++
+Unsequenced execution policies are not allowed. +
++
+Parallelization implies that execution does not necessary finish as soon as `f` returns `false`, and as a result
+`f` may be invoked with further elements for which the return value is also `false`.
+
+---
+
+=== Size and Capacity
+
+==== empty
+
+```c++
+[[nodiscard]] bool empty() const noexcept;
+```
+
+[horizontal]
+Returns:;; `size() == 0`
+
+---
+
+==== size
+
+```c++
+size_type size() const noexcept;
+```
+
+[horizontal]
+Returns:;; The number of elements in the table.
+
+[horizontal]
+Notes:;; In the presence of concurrent insertion operations, the value returned may not accurately reflect
+the true size of the table right after execution.
+
+---
+
+==== max_size
+
+```c++
+size_type max_size() const noexcept;
+```
+
+[horizontal]
+Returns:;; `size()` of the largest possible table.
+
+---
+
+=== Modifiers
+
+==== emplace
+```c++
+template<class... Args> bool emplace(Args&&... args);
+```
+
+Inserts an object, constructed with the arguments `args`, in the table if and only if there is no element in the table with an equivalent key.
+
+[horizontal]
+Requires:;; `value_type` is constructible from `args`.
+Returns:;; `true` if an insert took place.
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Copy Insert
+```c++
+bool insert(const value_type& obj);
+```
+
+Inserts `obj` in the table if and only if there is no element in the table with an equivalent key.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/CopyInsertable[CopyInsertable^].
+Returns:;; `true` if an insert took place. +
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Move Insert
+```c++
+bool insert(value_type&& obj);
+```
+
+Inserts `obj` in the table if and only if there is no element in the table with an equivalent key.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/MoveInsertable[MoveInsertable^].
+Returns:;; `true` if an insert took place. 
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Transparent Insert
+```c++
+template<class K> bool insert(K&& k);
+```
+
+Inserts an element constructed from `std::forward<K>(k)` in the container if and only if there is no element in the container with an equivalent key.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/EmplaceConstructible[EmplaceConstructible^] from `k`.
+Returns:;; `true` if an insert took place. 
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; This overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== Insert Iterator Range
+```c++
+template<class InputIterator> size_type insert(InputIterator first, InputIterator last);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+  while(first != last) this->xref:#concurrent_node_set_emplace[emplace](*first++);
+-----
+
+[horizontal]
+Returns:;; The number of elements inserted. 
+
+---
+
+==== Insert Initializer List
+```c++
+size_type insert(std::initializer_list<value_type> il);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+  this->xref:#concurrent_node_set_insert_iterator_range[insert](il.begin(), il.end());
+-----
+
+[horizontal]
+Returns:;; The number of elements inserted. 
+
+---
+
+==== Insert Node
+```c++
+insert_return_type insert(node_type&& nh);
+```
+
+If `nh` is not empty, inserts the associated element in the table  if and only if there is no element in the table with a key equivalent to `nh.value()`.
+`nh` is empty when the function returns.
+
+[horizontal]
+Returns:;; An `insert_return_type` object constructed from `inserted` and `node`: +
+* If `nh` is empty, `inserted` is `false` and `node` is empty.
+* Otherwise if the insertion took place, `inserted` is true and `node` is empty.
+* If the insertion failed, `inserted` is false and `node` has the previous value of `nh`.
+Throws:;; If an exception is thrown by an operation other than a call to `hasher` the function has no effect.
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; Behavior is undefined if `nh` is not empty and the allocators of `nh` and the container are not equal.
+
+---
+
+==== emplace_or_[c]visit
+```c++
+template<class... Args, class F> bool emplace_or_visit(Args&&... args, F&& f);
+template<class... Args, class F> bool emplace_or_cvisit(Args&&... args, F&& f);
+```
+
+Inserts an object, constructed with the arguments `args`, in the table if there is no element in the table with an equivalent key.
+Otherwise, invokes `f` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is constructible from `args`.
+Returns:;; `true` if an insert took place.
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; The interface is exposition only, as C++ does not allow to declare a parameter `f` after a variadic parameter pack.
+
+---
+
+==== Copy insert_or_[c]visit
+```c++
+template<class F> bool insert_or_visit(const value_type& obj, F f);
+template<class F> bool insert_or_cvisit(const value_type& obj, F f);
+```
+
+Inserts `obj` in the table if and only if there is no element in the table with an equivalent key.
+Otherwise, invokes `f` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/CopyInsertable[CopyInsertable^].
+Returns:;; `true` if an insert took place. +
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Move insert_or_[c]visit
+```c++
+template<class F> bool insert_or_visit(value_type&& obj, F f);
+template<class F> bool insert_or_cvisit(value_type&& obj, F f);
+```
+
+Inserts `obj` in the table if and only if there is no element in the table with an equivalent key.
+Otherwise, invokes `f` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/MoveInsertable[MoveInsertable^].
+Returns:;; `true` if an insert took place. +
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Transparent insert_or_[c]visit
+```c++
+template<class K, class F> bool insert_or_visit(K&& k, F f);
+template<class K, class F> bool insert_or_cvisit(K&& k, F f);
+```
+
+Inserts an element constructed from `std::forward<K>(k)` in the container if and only if there is no element in the container with an equivalent key.
+Otherwise, invokes `f` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/EmplaceConstructible[EmplaceConstructible^] from `k`.
+Returns:;; `true` if an insert took place. 
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; These overloads only participate in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== Insert Iterator Range or Visit
+```c++
+template<class InputIterator,class F>
+    size_type insert_or_visit(InputIterator first, InputIterator last, F f);
+template<class InputIterator,class F>
+    size_type insert_or_cvisit(InputIterator first, InputIterator last, F f);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+  while(first != last) this->xref:#concurrent_node_set_emplace_or_cvisit[emplace_or_[c\]visit](*first++, f);
+-----
+
+[horizontal]
+Returns:;; The number of elements inserted. 
+
+---
+
+==== Insert Initializer List or Visit
+```c++
+template<class F> size_type insert_or_visit(std::initializer_list<value_type> il, F f);
+template<class F> size_type insert_or_cvisit(std::initializer_list<value_type> il, F f);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+  this->xref:#concurrent_node_set_insert_iterator_range_or_visit[insert_or_[c\]visit](il.begin(), il.end(), std::ref(f));
+-----
+
+[horizontal]
+Returns:;; The number of elements inserted. 
+
+---
+
+==== Insert Node or Visit
+```c++
+template<class F> insert_return_type insert_or_visit(node_type&& nh, F f);
+template<class F> insert_return_type insert_or_cvisit(node_type&& nh, F f);
+```
+
+If `nh` is empty, does nothing.
+Otherwise, inserts the associated element in the table if and only if there is no element in the table with a key equivalent to `nh.value()`.
+Otherwise, invokes `f` with a const reference to the equivalent element.
+
+[horizontal]
+Returns:;; An `insert_return_type` object constructed from `inserted` and `node`: +
+* If `nh` is empty, `inserted` is `false` and `node` is empty.
+* Otherwise if the insertion took place, `inserted` is true and `node` is empty.
+* If the insertion failed, `inserted` is false and `node` has the previous value of `nh`.
+Throws:;; If an exception is thrown by an operation other than a call to `hasher` or call to `f`, the function has no effect.
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; Behavior is undefined if `nh` is not empty and the allocators of `nh` and the container are not equal.
+
+---
+
+==== emplace_and_[c]visit
+```c++
+template<class... Args, class F1, class F2>
+  bool emplace_or_visit(Args&&... args, F1&& f1, F2&& f2);
+template<class... Args, class F1, class F2>
+  bool emplace_or_cvisit(Args&&... args, F1&& f1, F2&& f2);
+```
+
+Inserts an object, constructed with the arguments `args`, in the table if there is no element in the table with an equivalent key,
+and then invokes `f1` with a const reference to the newly created element.
+Otherwise, invokes `f2` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is constructible from `args`.
+Returns:;; `true` if an insert took place.
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; The interface is exposition only, as C++ does not allow to declare parameters `f1` and `f2` after a variadic parameter pack.
+
+---
+
+==== Copy insert_and_[c]visit
+```c++
+template<class F1, class F2> bool insert_and_visit(const value_type& obj, F1 f1, F2 f2);
+template<class F1, class F2> bool insert_and_cvisit(const value_type& obj, F1 f2, F2 f2);
+```
+
+Inserts `obj` in the table if and only if there is no element in the table with an equivalent key,
+and then invokes `f1` with a const reference to the newly created element.
+Otherwise, invokes `f` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/CopyInsertable[CopyInsertable^].
+Returns:;; `true` if an insert took place. +
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Move insert_and_[c]visit
+```c++
+template<class F1, class F2> bool insert_and_visit(value_type&& obj, F1 f1, F2 f2);
+template<class F1, class F2> bool insert_and_cvisit(value_type&& obj, F1 f1, F2 f2);
+```
+
+Inserts `obj` in the table if and only if there is no element in the table with an equivalent key,
+and then invokes `f1` with a const reference to the newly created element.
+Otherwise, invokes `f2` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/MoveInsertable[MoveInsertable^].
+Returns:;; `true` if an insert took place. +
+Concurrency:;; Blocking on rehashing of `*this`.
+
+---
+
+==== Transparent insert_and_[c]visit
+```c++
+template<class K, class F1, class F2> bool insert_and_visit(K&& k, F1 f1, F2 f2);
+template<class K, class F1, class F2> bool insert_and_cvisit(K&& k, F1 f1, F2 f2);
+```
+
+Inserts an element constructed from `std::forward<K>(k)` in the container if and only if there is no element in the container with an equivalent key,
+and then invokes `f1` with a const reference to the newly created element.
+Otherwise, invokes `f2` with a const reference to the equivalent element.
+
+[horizontal]
+Requires:;; `value_type` is https://en.cppreference.com/w/cpp/named_req/EmplaceConstructible[EmplaceConstructible^] from `k`.
+Returns:;; `true` if an insert took place. 
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; These overloads only participate in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== Insert Iterator Range and Visit
+```c++
+template<class InputIterator,class F1, class F2>
+    size_type insert_and_visit(InputIterator first, InputIterator last, F1 f1, F2 f2);
+template<class InputIterator,class F1, class f2>
+    size_type insert_and_cvisit(InputIterator first, InputIterator last, F1 f1, F2 f2);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+  while(first != last) this->xref:#concurrent_node_set_emplace_and_cvisit[emplace_and_[c\]visit](*first++, f1, f2);
+-----
+
+[horizontal]
+Returns:;; The number of elements inserted. 
+
+---
+
+==== Insert Initializer List and Visit
+```c++
+template<class F1, class F2>
+  size_type insert_and_visit(std::initializer_list<value_type> il, F1 f1, F2 f2);
+template<class F1, class F2>
+  size_type insert_and_cvisit(std::initializer_list<value_type> il, F1 f1, F2 f2);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+  this->xref:#concurrent_node_set_insert_iterator_range_and_visit[insert_and_[c\]visit](il.begin(), il.end(), std::ref(f1), std::ref(f2));
+-----
+
+[horizontal]
+Returns:;; The number of elements inserted. 
+
+---
+
+==== Insert Node and Visit
+```c++
+template<class F1, class F2>
+  insert_return_type insert_and_visit(node_type&& nh, F1 f1, F2 f2);
+template<class F1, class F2>
+  insert_return_type insert_and_cvisit(node_type&& nh, F1 f1, F2 f2);
+```
+
+If `nh` is empty, does nothing.
+Otherwise, inserts the associated element in the table if and only if there is no element in the table with a key equivalent to `nh.value()`,
+and then invokes `f1` with a const reference to the newly inserted element.
+Otherwise, invokes `f2` with a const reference to the equivalent element.
+
+[horizontal]
+Returns:;; An `insert_return_type` object constructed from `inserted` and `node`: +
+* If `nh` is empty, `inserted` is `false` and `node` is empty.
+* Otherwise if the insertion took place, `inserted` is true and `node` is empty.
+* If the insertion failed, `inserted` is false and `node` has the previous value of `nh`.
+Throws:;; If an exception is thrown by an operation other than a call to `hasher` or call to `f1` or `f2`, the function has no effect.
+Concurrency:;; Blocking on rehashing of `*this`.
+Notes:;; Behavior is undefined if `nh` is not empty and the allocators of `nh` and the container are not equal.
+
+---
+
+==== erase
+```c++
+size_type erase(const key_type& k);
+template<class K> size_type erase(const K& k);
+```
+
+Erases the element with key equivalent to `k` if it exists.
+
+[horizontal]
+Returns:;; The number of elements erased (0 or 1).
+Throws:;; Only throws an exception if it is thrown by `hasher` or `key_equal`.
+Notes:;; The `template<class K>` overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== erase_if by Key
+```c++
+template<class F> size_type erase_if(const key_type& k, F f);
+template<class K, class F> size_type erase_if(const K& k, F f);
+```
+
+Erases the element `x` with key equivalent to `k` if it exists and `f(x)` is `true`.
+
+[horizontal]
+Returns:;; The number of elements erased (0 or 1).
+Throws:;; Only throws an exception if it is thrown by `hasher`, `key_equal` or `f`.
+Notes:;; The `template<class K, class F>` overload only participates in overload resolution if `std::is_execution_policy_v<std::remove_cvref_t<ExecutionPolicy>>` is `false`. +
++
+The `template<class K, class F>` overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== erase_if
+```c++
+template<class F> size_type erase_if(F f);
+```
+
+Successively invokes `f` with references to each of the elements in the table, and erases those for which `f` returns `true`.
+
+[horizontal]
+Returns:;; The number of elements erased.
+Throws:;; Only throws an exception if it is thrown by `f`.
+
+---
+
+==== Parallel erase_if
+```c++
+template<class ExecutionPolicy, class  F> void erase_if(ExecutionPolicy&& policy, F f);
+```
+
+Invokes `f` with references to each of the elements in the table, and erases those for which `f` returns `true`.
+Execution is parallelized according to the semantics of the execution policy specified.
+
+[horizontal]
+Throws:;; Depending on the exception handling mechanism of the execution policy used, may call `std::terminate` if an exception is thrown within `f`.
+Notes:;; Only available in compilers supporting C++17 parallel algorithms. +
++
+This overload only participates in overload resolution if `std::is_execution_policy_v<std::remove_cvref_t<ExecutionPolicy>>` is `true`. +
++
+Unsequenced execution policies are not allowed.
+
+---
+
+==== swap
+```c++
+void swap(concurrent_node_set& other)
+  noexcept(boost::allocator_traits<Allocator>::is_always_equal::value ||
+           boost::allocator_traits<Allocator>::propagate_on_container_swap::value);
+```
+
+Swaps the contents of the table with the parameter.
+
+If `Allocator::propagate_on_container_swap` is declared and `Allocator::propagate_on_container_swap::value` is `true` then the tables' allocators are swapped. Otherwise, swapping with unequal allocators results in undefined behavior.
+
+[horizontal]
+Throws:;; Nothing unless `key_equal` or `hasher` throw on swapping.
+Concurrency:;; Blocking on `*this` and `other`.
+
+---
+
+==== extract
+```c++
+node_type extract(const key_type& k);
+template<class K> node_type extract(K&& k);
+```
+
+Extracts the element with key equivalent to `k`, if it exists.
+
+[horizontal]
+Returns:;; A `node_type` object holding the extracted element, or empty if no element was extracted.
+Throws:;; Only throws an exception if it is thrown by `hasher` or `key_equal`.
+Notes:;; The `template<class K>` overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== extract_if
+```c++
+template<class F> node_type extract_if(const key_type& k, F f);
+template<class K, class F> node_type extract_if(K&& k, F f);
+```
+
+Extracts the element `x` with key equivalent to `k`, if it exists and `f(x)` is `true`.
+
+[horizontal]
+Returns:;; A `node_type` object holding the extracted element, or empty if no element was extracted.
+Throws:;; Only throws an exception if it is thrown by `hasher` or `key_equal` or `f`.
+Notes:;; The `template<class K>` overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.
+
+---
+
+==== clear
+```c++
+void clear() noexcept;
+```
+
+Erases all elements in the table.
+
+[horizontal]
+Postconditions:;; `size() == 0`, `max_load() >= max_load_factor() * bucket_count()`
+Concurrency:;; Blocking on `*this`.
+
+---
+
+==== merge
+```c++
+template<class H2, class P2>
+  size_type merge(concurrent_node_set<Key, H2, P2, Allocator>& source);
+template<class H2, class P2>
+  size_type merge(concurrent_node_set<Key, H2, P2, Allocator>&& source);
+```
+
+Move-inserts all the elements from `source` whose key is not already present in `*this`, and erases them from `source`.
+
+[horizontal]
+Returns:;; The number of elements inserted.
+Concurrency:;; Blocking on `*this` and `source`.
+
+---
+
+=== Observers
+
+==== get_allocator
+```
+allocator_type get_allocator() const noexcept;
+```
+
+[horizontal]
+Returns:;; The table's allocator.
+
+---
+
+==== hash_function
+```
+hasher hash_function() const;
+```
+
+[horizontal]
+Returns:;; The table's hash function.
+
+---
+
+==== key_eq
+```
+key_equal key_eq() const;
+```
+
+[horizontal]
+Returns:;; The table's key equality predicate.
+
+---
+
+=== Set Operations
+
+==== count
+```c++
+size_type        count(const key_type& k) const;
+template<class K>
+  size_type      count(const K& k) const;
+```
+
+[horizontal]
+Returns:;; The number of elements with key equivalent to `k` (0 or 1).
+Notes:;; The `template<class K>` overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type. +
++
+In the presence of concurrent insertion operations, the value returned may not accurately reflect
+the true state of the table right after execution.
+
+---
+
+==== contains
+```c++
+bool             contains(const key_type& k) const;
+template<class K>
+  bool           contains(const K& k) const;
+```
+
+[horizontal]
+Returns:;; A boolean indicating whether or not there is an element with key equal to `k` in the table.
+Notes:;; The `template<class K>` overload only participates in overload resolution if `Hash::is_transparent` and `Pred::is_transparent` are valid member typedefs. The library assumes that `Hash` is callable with both `K` and `Key` and that `Pred` is transparent. This enables heterogeneous lookup which avoids the cost of instantiating an instance of the `Key` type.  +
++
+In the presence of concurrent insertion operations, the value returned may not accurately reflect
+the true state of the table right after execution.
+
+---
+=== Bucket Interface
+
+==== bucket_count
+```c++
+size_type bucket_count() const noexcept;
+```
+
+[horizontal]
+Returns:;; The size of the bucket array.
+
+---
+
+=== Hash Policy
+
+==== load_factor
+```c++
+float load_factor() const noexcept;
+```
+
+[horizontal]
+Returns:;; `static_cast<float>(size())/static_cast<float>(bucket_count())`, or `0` if `bucket_count() == 0`.
+
+---
+
+==== max_load_factor
+
+```c++
+float max_load_factor() const noexcept;
+```
+
+[horizontal]
+Returns:;; Returns the table's maximum load factor.
+
+---
+
+==== Set max_load_factor
+```c++
+void max_load_factor(float z);
+```
+
+[horizontal]
+Effects:;; Does nothing, as the user is not allowed to change this parameter. Kept for compatibility with `boost::unordered_set`.
+
+---
+
+
+==== max_load
+
+```c++
+size_type max_load() const noexcept;
+```
+
+[horizontal]
+Returns:;; The maximum number of elements the table can hold without rehashing, assuming that no further elements will be erased.
+Note:;; After construction, rehash or clearance, the table's maximum load is at least `max_load_factor() * bucket_count()`.
+This number may decrease on erasure under high-load conditions. +
++
+In the presence of concurrent insertion operations, the value returned may not accurately reflect
+the true state of the table right after execution.
+
+---
+
+==== rehash
+```c++
+void rehash(size_type n);
+```
+
+Changes if necessary the size of the bucket array so that there are at least `n` buckets, and so that the load factor is less than or equal to the maximum load factor. When applicable, this will either grow or shrink the `bucket_count()` associated with the table.
+
+When `size() == 0`, `rehash(0)` will deallocate the underlying buckets array.
+
+[horizontal]
+Throws:;; The function has no effect if an exception is thrown, unless it is thrown by the table's hash function or comparison function.
+Concurrency:;; Blocking on `*this`.
+---
+
+==== reserve
+```c++
+void reserve(size_type n);
+```
+
+Equivalent to `a.rehash(ceil(n / a.max_load_factor()))`.
+
+Similar to `rehash`, this function can be used to grow or shrink the number of buckets in the table.
+
+[horizontal]
+Throws:;; The function has no effect if an exception is thrown, unless it is thrown by the table's hash function or comparison function.
+Concurrency:;; Blocking on `*this`.
+
+---
+
+=== Statistics
+
+==== get_stats
+```c++
+stats get_stats() const;
+```
+
+[horizontal]
+Returns:;; A statistical description of the insertion and lookup operations performed by the table so far.
+Notes:;; Only available if xref:stats[statistics calculation] is xref:concurrent_node_set_boost_unordered_enable_stats[enabled].
+
+---
+
+==== reset_stats
+```c++
+void reset_stats() noexcept;
+```
+
+[horizontal]
+Effects:;; Sets to zero the internal statistics kept by the table.
+Notes:;; Only available if xref:stats[statistics calculation] is xref:concurrent_node_set_boost_unordered_enable_stats[enabled].
+
+---
+
+=== Deduction Guides
+A deduction guide will not participate in overload resolution if any of the following are true:
+
+  - It has an `InputIterator` template parameter and a type that does not qualify as an input iterator is deduced for that parameter.
+  - It has an `Allocator` template parameter and a type that does not qualify as an allocator is deduced for that parameter.
+  - It has a `Hash` template parameter and an integral type or a type that qualifies as an allocator is deduced for that parameter.
+  - It has a `Pred` template parameter and a type that qualifies as an allocator is deduced for that parameter.
+
+A `size_­type` parameter type in a deduction guide refers to the `size_­type` member type of the
+container type deduced by the deduction guide. Its default value coincides with the default value
+of the constructor selected.
+
+==== __iter-value-type__
+[listings,subs="+macros,+quotes"]
+-----
+template<class InputIterator>
+  using __iter-value-type__ =
+    typename std::iterator_traits<InputIterator>::value_type; // exposition only
+-----
+
+=== Equality Comparisons
+
+==== operator==
+```c++
+template<class Key, class Hash, class Pred, class Alloc>
+  bool operator==(const concurrent_node_set<Key, Hash, Pred, Alloc>& x,
+                  const concurrent_node_set<Key, Hash, Pred, Alloc>& y);
+```
+
+Returns `true` if `x.size() == y.size()` and for every element in `x`, there is an element in `y` with the same key, with an equal value (using `operator==` to compare the value types).
+
+[horizontal]
+Concurrency:;; Blocking on `x` and `y`.
+Notes:;; Behavior is undefined if the two tables don't have equivalent equality predicates.
+
+---
+
+==== operator!=
+```c++
+template<class Key, class Hash, class Pred, class Alloc>
+  bool operator!=(const concurrent_node_set<Key, Hash, Pred, Alloc>& x,
+                  const concurrent_node_set<Key, Hash, Pred, Alloc>& y);
+```
+
+Returns `false` if `x.size() == y.size()` and for every element in `x`, there is an element in `y` with the same key, with an equal value (using `operator==` to compare the value types).
+
+[horizontal]
+Concurrency:;; Blocking on `x` and `y`.
+Notes:;; Behavior is undefined if the two tables don't have equivalent equality predicates.
+
+---
+
+=== Swap
+```c++
+template<class Key, class Hash, class Pred, class Alloc>
+  void swap(concurrent_node_set<Key, Hash, Pred, Alloc>& x,
+            concurrent_node_set<Key, Hash, Pred, Alloc>& y)
+    noexcept(noexcept(x.swap(y)));
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+x.xref:#concurrent_node_set_swap[swap](y);
+-----
+
+---
+
+=== erase_if
+```c++
+template<class K, class H, class P, class A, class Predicate>
+  typename concurrent_node_set<K, H, P, A>::size_type
+    erase_if(concurrent_node_set<K, H, P, A>& c, Predicate pred);
+```
+
+Equivalent to
+[listing,subs="+macros,+quotes"]
+-----
+c.xref:#concurrent_node_set_erase_if[erase_if](pred);
+-----
+
+=== Serialization
+
+``concurrent_node_set``s can be archived/retrieved by means of
+link:../../../serialization/index.html[Boost.Serialization^] using the API provided
+by this library. Both regular and XML archives are supported. 
+
+==== Saving an concurrent_node_set to an archive
+
+Saves all the elements of a `concurrent_node_set` `x` to an archive (XML archive) `ar`.
+
+[horizontal]
+Requires:;; `value_type` is serializable (XML serializable), and it supports Boost.Serialization
+`save_construct_data`/`load_construct_data` protocol (automatically suported by
+https://en.cppreference.com/w/cpp/named_req/DefaultConstructible[DefaultConstructible^]
+types).  
+Concurrency:;; Blocking on `x`.
+
+---
+
+==== Loading an concurrent_node_set from an archive
+
+Deletes all preexisting elements of a `concurrent_node_set` `x` and inserts
+from an archive (XML archive) `ar` restored copies of the elements of the
+original `concurrent_node_set` `other` saved to the storage read by `ar`.
+
+[horizontal]
+Requires:;; `x.key_equal()` is functionally equivalent to `other.key_equal()`.
+Concurrency:;; Blocking on `x`.

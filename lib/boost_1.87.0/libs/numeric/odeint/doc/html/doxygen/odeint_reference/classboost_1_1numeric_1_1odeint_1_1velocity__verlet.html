@@ -1,0 +1,432 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template velocity_verlet</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Numeric.Odeint">
+<link rel="up" href="velocity__verlet_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/velocity_verlet.hpp&gt;">
+<link rel="prev" href="velocity__verlet_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/velocity_verlet.hpp&gt;">
+<link rel="next" href="../../odeint/indexes.html" title="Indexes">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../logo.jpg"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="velocity__verlet_8hpp.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="velocity__verlet_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../odeint/indexes.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template velocity_verlet</span></h2>
+<p>boost::numeric::odeint::velocity_verlet — The Velocity-Verlet algorithm. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="velocity__verlet_8hpp.html" title="Header &lt;boost/numeric/odeint/stepper/velocity_verlet.hpp&gt;">boost/numeric/odeint/stepper/velocity_verlet.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Coor<span class="special">,</span> <span class="keyword">typename</span> Velocity <span class="special">=</span> <span class="identifier">Coor</span><span class="special">,</span> <span class="keyword">typename</span> Value <span class="special">=</span> <span class="keyword">double</span><span class="special">,</span> 
+         <span class="keyword">typename</span> Acceleration <span class="special">=</span> <span class="identifier">Coor</span><span class="special">,</span> <span class="keyword">typename</span> Time <span class="special">=</span> <span class="identifier">Value</span><span class="special">,</span> 
+         <span class="keyword">typename</span> TimeSq <span class="special">=</span> <span class="identifier">Time</span><span class="special">,</span> 
+         <span class="keyword">typename</span> Algebra <span class="special">=</span> <span class="keyword">typename</span> <span class="identifier">algebra_dispatcher</span><span class="special">&lt;</span> <span class="identifier">Coor</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">algebra_type</span><span class="special">,</span> 
+         <span class="keyword">typename</span> Operations <span class="special">=</span> <span class="keyword">typename</span> <span class="identifier">operations_dispatcher</span><span class="special">&lt;</span> <span class="identifier">Coor</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">operations_type</span><span class="special">,</span> 
+         <span class="keyword">typename</span> Resizer <span class="special">=</span> <span class="identifier">initially_resizer</span><span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html" title="Class template velocity_verlet">velocity_verlet</a> <span class="special">:</span> <span class="keyword">public</span> algebra_stepper_base&lt; typename algebra_dispatcher&lt; Coor &gt;::algebra_type, typename operations_dispatcher&lt; Coor &gt;::operations_type &gt;
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">algebra_stepper_base</span><span class="special">&lt;</span> <span class="identifier">Algebra</span><span class="special">,</span> <span class="identifier">Operations</span> <span class="special">&gt;</span>   <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a08e8ee6f2a06525d2f73dcf1a765587f"></a><span class="identifier">algebra_stepper_base_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">algebra_stepper_base_type</span><span class="special">::</span><span class="identifier">algebra_type</span>       <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a6de81360bee9cfe899058e279aae654d"></a><span class="identifier">algebra_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">algebra_stepper_base_type</span><span class="special">::</span><span class="identifier">operations_type</span>    <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a1dd1bbb2baf0f6b50d209b50041f9702"></a><span class="identifier">operations_type</span><span class="special">;</span>          
+  <span class="keyword">typedef</span> <span class="identifier">Coor</span>                                          <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a46aff487fb131dedc09564bc6f52c0a5"></a><span class="identifier">coor_type</span><span class="special">;</span>                
+  <span class="keyword">typedef</span> <span class="identifier">Velocity</span>                                      <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a270c9ca6abdcb9c9f99c8fc576fcc0c8"></a><span class="identifier">velocity_type</span><span class="special">;</span>            
+  <span class="keyword">typedef</span> <span class="identifier">Acceleration</span>                                  <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a0a998e2734ba677b2a90c2bb58eb1ec8"></a><span class="identifier">acceleration_type</span><span class="special">;</span>        
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">coor_type</span><span class="special">,</span> <span class="identifier">velocity_type</span> <span class="special">&gt;</span>         <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a7a050aa06c38ac34e0ac583ca30b1a5d"></a><span class="identifier">state_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">velocity_type</span><span class="special">,</span> <span class="identifier">acceleration_type</span> <span class="special">&gt;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a749841f583a17b178b4f2d86baf84437"></a><span class="identifier">deriv_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">state_wrapper</span><span class="special">&lt;</span> <span class="identifier">acceleration_type</span> <span class="special">&gt;</span>            <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a297a74cfc921fff2c037fdbd2cab1eb7"></a><span class="identifier">wrapped_acceleration_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">Value</span>                                         <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a4f1a456114add78f09b490eb480f12ef"></a><span class="identifier">value_type</span><span class="special">;</span>               
+  <span class="keyword">typedef</span> <span class="identifier">Time</span>                                          <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a6e73a7216eb09b05fd20bdff43ae6fab"></a><span class="identifier">time_type</span><span class="special">;</span>                
+  <span class="keyword">typedef</span> <span class="identifier">TimeSq</span>                                        <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a6832ca3d3e31fc40fb2a177fab37eae3"></a><span class="identifier">time_square_type</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="identifier">Resizer</span>                                       <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a5bebc8c5d80e64b42deb18b0eb475dfa"></a><span class="identifier">resizer_type</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">stepper_tag</span>                                   <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a44c095862566b27addc77b3c77d958f5"></a><span class="identifier">stepper_category</span><span class="special">;</span>         
+  <span class="keyword">typedef</span> <span class="keyword">unsigned</span> <span class="keyword">short</span>                                <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a3fae458e92fc36cafcb82ba1545bc929"></a><span class="identifier">order_type</span><span class="special">;</span>               
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#id247-bb">public member functions</a></span>
+  <span class="identifier">order_type</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1afeee91cd3f07126eee920ed26bc28ec9"><span class="identifier">order</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a8711a6a0457c97b6ce68dad2edfadf75"><span class="identifier">velocity_verlet</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">algebra_type</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">algebra_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a31d87eb1f5f37938b9737f38d86992e4"><span class="identifier">do_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1ade515ec7d5ae19974af19ee59150b8a5"><span class="identifier">do_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> CoorIn<span class="special">,</span> <span class="keyword">typename</span> VelocityIn<span class="special">,</span> 
+           <span class="keyword">typename</span> AccelerationIn<span class="special">,</span> <span class="keyword">typename</span> CoorOut<span class="special">,</span> <span class="keyword">typename</span> VelocityOut<span class="special">,</span> 
+           <span class="keyword">typename</span> AccelerationOut<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a15b6cebcb7bad47bb8b87905fb98c7ce"><span class="identifier">do_step</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">CoorIn</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VelocityIn</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                 <span class="identifier">AccelerationIn</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">CoorOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">VelocityOut</span> <span class="special">&amp;</span><span class="special">,</span> 
+                 <span class="identifier">AccelerationOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a3fefe8b671b04d8b7508b44cef662bb0"><span class="identifier">adjust_size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a8ce6c3ac30bfb4acb28a556a93310211"><span class="identifier">reset</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AccelerationIn<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a38ff6182cabd4acb3cfd2f978441b930"><span class="identifier">initialize</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">AccelerationIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> CoorIn<span class="special">,</span> <span class="keyword">typename</span> VelocityIn<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a2a10e4b259d4dfb22890618c979fa639"><span class="identifier">initialize</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">CoorIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">VelocityIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1adcc40e0724337b12ce2bac935770c2f4"><span class="identifier">is_initialized</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#id248-bb">private member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> CoorIn<span class="special">,</span> <span class="keyword">typename</span> VelocityIn<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1ab5761f07fc2d2aaef3a7cff9b90b11b4"><span class="identifier">initialize_acc</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">CoorIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">VelocityIn</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+    <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a3bcacb1a7cbbfea2943c76f37c37123a"><span class="identifier">do_step_v1</span></a><span class="special">(</span><span class="identifier">System</span><span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">,</span> <span class="identifier">time_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a35920562b475fbfdbdde02bdeb5dbd44"><span class="identifier">resize_impl</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a435aa66e10ba6144312aa08f19876503"><span class="identifier">get_current_acc</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a952e0e0e4954e0185d98810795dedcc7"><span class="identifier">get_current_acc</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1aa7731d7305898dab34f3665b66bb0496"><span class="identifier">get_old_acc</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a63b165becd58d14291234ec7e8f86ea7"><span class="identifier">get_old_acc</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html#doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1ad8d70da12bf05e1ee7773719fdd36341"><span class="identifier">toggle_current_acc</span></a><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// public data members</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">order_type</span> <span class="identifier">order_value</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id53874"></a><h2>Description</h2>
+<p><a href="http://en.wikipedia.org/wiki/Verlet_integration" target="_top">The Velocity-Verlet algorithm</a> is a method for simulation of molecular dynamics systems. It solves the ODE a=f(r,v',t) where r are the coordinates, v are the velocities and a are the accelerations, hence v = dr/dt, a=dv/dt.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id53879"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Coor</pre>
+<p>The type representing the coordinates. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Velocity <span class="special">=</span> <span class="identifier">Coor</span></pre>
+<p>The type representing the velocities. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Value <span class="special">=</span> <span class="keyword">double</span></pre>
+<p>The type value type. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Acceleration <span class="special">=</span> <span class="identifier">Coor</span></pre>
+<p>The type representing the acceleration. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Time <span class="special">=</span> <span class="identifier">Value</span></pre>
+<p>The time representing the independent variable - the time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> TimeSq <span class="special">=</span> <span class="identifier">Time</span></pre>
+<p>The time representing the square of the time. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Algebra <span class="special">=</span> <span class="keyword">typename</span> <span class="identifier">algebra_dispatcher</span><span class="special">&lt;</span> <span class="identifier">Coor</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">algebra_type</span></pre>
+<p>The algebra. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Operations <span class="special">=</span> <span class="keyword">typename</span> <span class="identifier">operations_dispatcher</span><span class="special">&lt;</span> <span class="identifier">Coor</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">operations_type</span></pre>
+<p>The operations type. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Resizer <span class="special">=</span> <span class="identifier">initially_resizer</span></pre>
+<p>The resizer policy type. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id53964"></a><h3>
+<a name="id247-bb"></a><code class="computeroutput">velocity_verlet</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">order_type</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1afeee91cd3f07126eee920ed26bc28ec9"></a><span class="identifier">order</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Returns the order of the stepper. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a8711a6a0457c97b6ce68dad2edfadf75"></a><span class="identifier">velocity_verlet</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">algebra_type</span> <span class="special">&amp;</span> algebra <span class="special">=</span> <span class="identifier">algebra_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>Constructs the <a class="link" href="classboost_1_1numeric_1_1odeint_1_1velocity__verlet.html" title="Class template velocity_verlet">velocity_verlet</a> class. This constructor can be used as a default constructor if the algebra has a default constructor. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">algebra</code></span></p></td>
+<td><p>A copy of algebra is made and stored. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a31d87eb1f5f37938b9737f38d86992e4"></a><span class="identifier">do_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> t<span class="special">,</span> <span class="identifier">time_type</span> dt<span class="special">)</span><span class="special">;</span></pre>This method performs one step. It transforms the result in-place. <p>It can be used like </p>
+<pre class="programlisting"><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">coordinates</span> <span class="special">,</span> <span class="identifier">velocities</span> <span class="special">&gt;</span> <span class="identifier">state</span><span class="special">;</span>
+<span class="identifier">stepper</span><span class="special">.</span><span class="identifier">do_step</span><span class="special">(</span> <span class="identifier">sys</span> <span class="special">,</span> <span class="identifier">x</span> <span class="special">,</span> <span class="identifier">t</span> <span class="special">,</span> <span class="identifier">dt</span> <span class="special">)</span><span class="special">;</span>
+</pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ordinary differential equation. It must fulfill the Second Order System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The state of the ODE which should be solved. The state is pair of Coor and Velocity. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time, at which the step should be performed. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1ade515ec7d5ae19974af19ee59150b8a5"></a><span class="identifier">do_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> t<span class="special">,</span> <span class="identifier">time_type</span> dt<span class="special">)</span><span class="special">;</span></pre>This method performs one step. It transforms the result in-place. <p>It can be used like </p>
+<pre class="programlisting"><span class="identifier">pair</span><span class="special">&lt;</span> <span class="identifier">coordinates</span> <span class="special">,</span> <span class="identifier">velocities</span> <span class="special">&gt;</span> <span class="identifier">state</span><span class="special">;</span>
+<span class="identifier">stepper</span><span class="special">.</span><span class="identifier">do_step</span><span class="special">(</span> <span class="identifier">sys</span> <span class="special">,</span> <span class="identifier">x</span> <span class="special">,</span> <span class="identifier">t</span> <span class="special">,</span> <span class="identifier">dt</span> <span class="special">)</span><span class="special">;</span>
+</pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ordinary differential equation. It must fulfill the Second Order System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>The state of the ODE which should be solved. The state is pair of Coor and Velocity. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time, at which the step should be performed. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> CoorIn<span class="special">,</span> <span class="keyword">typename</span> VelocityIn<span class="special">,</span> 
+         <span class="keyword">typename</span> AccelerationIn<span class="special">,</span> <span class="keyword">typename</span> CoorOut<span class="special">,</span> <span class="keyword">typename</span> VelocityOut<span class="special">,</span> 
+         <span class="keyword">typename</span> AccelerationOut<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a15b6cebcb7bad47bb8b87905fb98c7ce"></a><span class="identifier">do_step</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">CoorIn</span> <span class="keyword">const</span> <span class="special">&amp;</span> qin<span class="special">,</span> <span class="identifier">VelocityIn</span> <span class="keyword">const</span> <span class="special">&amp;</span> pin<span class="special">,</span> 
+               <span class="identifier">AccelerationIn</span> <span class="keyword">const</span> <span class="special">&amp;</span> ain<span class="special">,</span> <span class="identifier">CoorOut</span> <span class="special">&amp;</span> qout<span class="special">,</span> 
+               <span class="identifier">VelocityOut</span> <span class="special">&amp;</span> pout<span class="special">,</span> <span class="identifier">AccelerationOut</span> <span class="special">&amp;</span> aout<span class="special">,</span> <span class="identifier">time_type</span> t<span class="special">,</span> 
+               <span class="identifier">time_type</span> dt<span class="special">)</span><span class="special">;</span></pre>This method performs one step. It transforms the result in-place. Additionally to the other methods the coordinates, velocities and accelerations are passed directly to do_step and they are transformed out-of-place. <p>It can be used like </p>
+<pre class="programlisting"><span class="identifier">coordinates</span> <span class="identifier">qin</span> <span class="special">,</span> <span class="identifier">qout</span><span class="special">;</span>
+<span class="identifier">velocities</span> <span class="identifier">pin</span> <span class="special">,</span> <span class="identifier">pout</span><span class="special">;</span>
+<span class="identifier">accelerations</span> <span class="identifier">ain</span><span class="special">,</span> <span class="identifier">aout</span><span class="special">;</span>
+<span class="identifier">stepper</span><span class="special">.</span><span class="identifier">do_step</span><span class="special">(</span> <span class="identifier">sys</span> <span class="special">,</span> <span class="identifier">qin</span> <span class="special">,</span> <span class="identifier">pin</span> <span class="special">,</span> <span class="identifier">ain</span> <span class="special">,</span> <span class="identifier">qout</span> <span class="special">,</span> <span class="identifier">pout</span> <span class="special">,</span> <span class="identifier">aout</span> <span class="special">,</span> <span class="identifier">t</span> <span class="special">,</span> <span class="identifier">dt</span> <span class="special">)</span><span class="special">;</span>
+</pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function to solve, hence the r.h.s. of the ordinary differential equation. It must fulfill the Second Order System concept. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The value of the time, at which the step should be performed. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">dt</code></span></p></td>
+<td><p>The step size. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a3fefe8b671b04d8b7508b44cef662bb0"></a><span class="identifier">adjust_size</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre>Adjust the size of all temporaries in the stepper manually. <p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">x</code></span></p></td>
+<td><p>A state from which the size of the temporaries to be resized is deduced. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a8ce6c3ac30bfb4acb28a556a93310211"></a><span class="identifier">reset</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre>Resets the internal state of this stepper. After calling this method it is safe to use all <code class="computeroutput">do_step</code> method without explicitly initializing the stepper. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> AccelerationIn<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a38ff6182cabd4acb3cfd2f978441b930"></a><span class="identifier">initialize</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">AccelerationIn</span> <span class="special">&amp;</span> ain<span class="special">)</span><span class="special">;</span></pre>Initializes the internal state of the stepper. <p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> CoorIn<span class="special">,</span> <span class="keyword">typename</span> VelocityIn<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a2a10e4b259d4dfb22890618c979fa639"></a><span class="identifier">initialize</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">CoorIn</span> <span class="special">&amp;</span> qin<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">VelocityIn</span> <span class="special">&amp;</span> pin<span class="special">,</span> 
+                  <span class="identifier">time_type</span> t<span class="special">)</span><span class="special">;</span></pre>Initializes the internal state of the stepper. <p>This method is equivalent to </p>
+<pre class="programlisting"><span class="identifier">Acceleration</span> <span class="identifier">a</span><span class="special">;</span>
+<span class="identifier">system</span><span class="special">(</span> <span class="identifier">qin</span> <span class="special">,</span> <span class="identifier">pin</span> <span class="special">,</span> <span class="identifier">a</span> <span class="special">,</span> <span class="identifier">t</span> <span class="special">)</span><span class="special">;</span>
+<span class="identifier">stepper</span><span class="special">.</span><span class="identifier">initialize</span><span class="special">(</span> <span class="identifier">a</span> <span class="special">)</span><span class="special">;</span>
+</pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">system</code></span></p></td>
+<td><p>The system function for the next calls of <code class="computeroutput">do_step</code>. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">qin</code></span></p></td>
+<td><p>The current coordinates of the ODE. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">pin</code></span></p></td>
+<td><p>The current velocities of the ODE. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">t</code></span></p></td>
+<td><p>The current time of the ODE. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1adcc40e0724337b12ce2bac935770c2f4"></a><span class="identifier">is_initialized</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Returns if the stepper is initialized. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id54420"></a><h3>
+<a name="id248-bb"></a><code class="computeroutput">velocity_verlet</code> private member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> CoorIn<span class="special">,</span> <span class="keyword">typename</span> VelocityIn<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1ab5761f07fc2d2aaef3a7cff9b90b11b4"></a><span class="identifier">initialize_acc</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">CoorIn</span> <span class="special">&amp;</span> qin<span class="special">,</span> 
+                      <span class="keyword">const</span> <span class="identifier">VelocityIn</span> <span class="special">&amp;</span> pin<span class="special">,</span> <span class="identifier">time_type</span> t<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> System<span class="special">,</span> <span class="keyword">typename</span> StateInOut<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a3bcacb1a7cbbfea2943c76f37c37123a"></a><span class="identifier">do_step_v1</span><span class="special">(</span><span class="identifier">System</span> system<span class="special">,</span> <span class="identifier">StateInOut</span> <span class="special">&amp;</span> x<span class="special">,</span> <span class="identifier">time_type</span> t<span class="special">,</span> <span class="identifier">time_type</span> dt<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StateIn<span class="special">&gt;</span> <span class="keyword">bool</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a35920562b475fbfdbdde02bdeb5dbd44"></a><span class="identifier">resize_impl</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">StateIn</span> <span class="special">&amp;</span> x<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a435aa66e10ba6144312aa08f19876503"></a><span class="identifier">get_current_acc</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a952e0e0e4954e0185d98810795dedcc7"></a><span class="identifier">get_current_acc</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1aa7731d7305898dab34f3665b66bb0496"></a><span class="identifier">get_old_acc</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">const</span> <span class="identifier">acceleration_type</span> <span class="special">&amp;</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1a63b165becd58d14291234ec7e8f86ea7"></a><span class="identifier">get_old_acc</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.odeint_reference.classboost_1_1numeric_1_1odeint_1_1velocity__verlet_1ad8d70da12bf05e1ee7773719fdd36341"></a><span class="identifier">toggle_current_acc</span><span class="special">(</span><span class="keyword">void</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2009-2015 Karsten Ahnert and Mario Mulansky<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="velocity__verlet_8hpp.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="velocity__verlet_8hpp.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../../odeint/indexes.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

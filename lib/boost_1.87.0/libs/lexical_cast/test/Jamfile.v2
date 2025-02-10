@@ -1,0 +1,93 @@
+# Copyright (C) 2001-2003 Douglas Gregor
+# Copyright (C) Antony Polukhin, 2011-2024
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+require-b2 5.0.1 ;
+import-search /boost/config/checks ;
+import config : requires ;
+import testing ;
+import feature ;
+
+project
+    : requirements
+        <library>/boost/lexical_cast//boost_lexical_cast
+        [ requires cxx11_rvalue_references cxx11_static_assert cxx11_template_aliases ]
+        <link>static
+        <toolset>gcc-4.7:<cxxflags>-ftrapv
+        <toolset>gcc-4.6:<cxxflags>-ftrapv
+        <toolset>clang:<cxxflags>-ftrapv
+        # default to all warnings on:
+        <warnings>all
+        # set warnings as errors for those compilers we know we get warning free:
+        <toolset>gcc:<cxxflags>-Wextra
+
+        # Not a lexical_cast related warning: boost/preprocessor/variadic/elem.hpp:29:46: warning: variadic macros are a C99 feature
+        <toolset>clang:<cxxflags>-Wno-variadic-macros
+        <toolset>gcc:<cxxflags>-Wno-variadic-macros
+
+        # Not a lexical_cast related warning: boost/mpl/aux_/preprocessed/gcc/greater_equal.hpp:78:1: warning: empty macro arguments are a C99 feature [-Wc99-extensions]
+        #                                     boost/mpl/iter_fold.hpp:45:1: warning: empty macro arguments are a C99 feature [-Wc99-extensions]
+        <toolset>clang:<cxxflags>-Wno-c99-extensions
+
+        <library>/boost/array//boost_array
+        <library>/boost/range//boost_range
+        <library>/boost/utility//boost_utility
+    ;
+
+# Thanks to Steven Watanabe for helping with <nowchar> feature
+feature.feature nowchar : on :
+ composite optional propagated link-incompatible ;
+feature.compose <nowchar>on : <cxxflags>"/Zc:wchar_t-" ;
+
+test-suite conversion
+  : [ run lexical_cast_test.cpp ]
+    [ run loopback_test.cpp ]
+    [ run abstract_test.cpp ]
+    [ run noncopyable_test.cpp ]
+    [ run vc8_bug_test.cpp ]
+    [ run implicit_convert.cpp ]
+    [ run wchars_test.cpp ]
+    [ run float_types_test.cpp ]
+
+    # Make sure that LexicalCast works the same way as some of the C++ Standard Libraries
+    [ run float_types_test.cpp : : : <define>BOOST_LEXICAL_CAST_DETAIL_TEST_ON_OLD
+        <toolset>msvc:<build>no         # could have outdated behavior in some border cases
+        <target-os>darwin:<build>no     # may have outdated behavior in some border cases
+        : float_types_non_opt
+    ]
+
+    [ run inf_nan_test.cpp ]
+    [ run containers_test.cpp : : : <toolset>gcc:<cxxflags>-Wno-long-long <toolset>clang:<cxxflags>-Wno-long-long ]
+    [ run empty_input_test.cpp ]
+    [ run pointers_test.cpp ]
+    [ compile typedefed_wchar_test.cpp : <toolset>msvc:<nowchar>on <library>/boost/date_time//boost_date_time ]
+    [ run typedefed_wchar_test_runtime.cpp : : : <toolset>msvc:<nowchar>on <toolset>msvc,<stdlib>stlport:<build>no ]
+    [ run no_locale_test.cpp : : : <define>BOOST_NO_STD_LOCALE <define>BOOST_LEXICAL_CAST_ASSUME_C_LOCALE ]
+    [ run no_exceptions_test.cpp : : : <exception-handling>off
+        <define>_HAS_EXCEPTIONS=0 # MSVC stdlib
+        <define>_STLP_NO_EXCEPTIONS # STLPort
+    ]
+    [ run iterator_range_test.cpp ]
+    [ run string_view_test.cpp ]
+    [ run arrays_test.cpp : : :
+        <toolset>msvc:<cxxflags>/wd4512 # assignment operator could not be generated
+    ]
+    [ run integral_types_test.cpp ]
+    [ run stream_detection_test.cpp ]
+    [ run stream_traits_test.cpp ]
+    [ compile-fail to_pointer_test.cpp ]
+    [ compile-fail from_volatile.cpp ]
+    [ run filesystem_test.cpp /boost/filesystem//boost_filesystem/<link>static ]
+    [ run try_lexical_convert.cpp ]
+  ;
+
+# Assuring that examples compile and run. Adding sources from `example` directory to the `conversion` test suite.
+for local p in [ glob ../example/*.cpp ]
+{
+    conversion += [ run $(p) : : : <library>/boost/variant//boost_variant <library>/boost/date_time//boost_date_time ] ;
+}
+
+

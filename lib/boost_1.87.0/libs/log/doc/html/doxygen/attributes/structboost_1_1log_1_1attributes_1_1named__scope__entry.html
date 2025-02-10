@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct named_scope_entry</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../attributes.html#doxygen.attributes.named__scope_8hpp" title="Header &lt;boost/log/attributes/named_scope.hpp&gt;">
+<link rel="prev" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html" title="Struct sentry">
+<link rel="next" href="structboost_1_1log_1_1attributes_1_1named__scope__entry_1a8b3e571acec11c700e7eafbd62097810.html" title="Type scope_name_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.named__scope_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1log_1_1attributes_1_1named__scope__entry_1a8b3e571acec11c700e7eafbd62097810.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct named_scope_entry</span></h2>
+<p>boost::log::attributes::named_scope_entry — The structure contains all information about a named scope. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../attributes.html#doxygen.attributes.named__scope_8hpp" title="Header &lt;boost/log/attributes/named_scope.hpp&gt;">boost/log/attributes/named_scope.hpp</a>&gt;
+
+</span>
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html" title="Struct named_scope_entry">named_scope_entry</a> <span class="special">{</span>
+  <span class="keyword">enum</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry_1a8b3e571acec11c700e7eafbd62097810.html" title="Type scope_name_type">scope_name_type</a><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#id57-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1a36830a1044d80207ca14d1202dd4182e"><span class="identifier">named_scope_entry</span></a><span class="special">(</span><span class="identifier">string_literal</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">string_literal</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> 
+                    <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">,</span> <span class="identifier">scope_name_type</span> <span class="special">=</span> <span class="identifier">general</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entrypublic-data-members">public data members</a></span>
+  <span class="identifier">string_literal</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1a7e7e20a1111e30d908646e2ec08d01e8"><span class="identifier">scope_name</span></a><span class="special">;</span>
+  <span class="identifier">string_literal</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1a301e6b4339c802d115da9c95b26f3054"><span class="identifier">file_name</span></a><span class="special">;</span>
+  <span class="keyword">unsigned</span> <span class="keyword">int</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1ae81f92b05f69edc98e6251688e3518da"><span class="identifier">line</span></a><span class="special">;</span>
+  <span class="identifier">scope_name_type</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope__entry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1aa00d400ba0862eda84357d6534d4fe95"><span class="identifier">type</span></a><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id37141"></a><h2>Description</h2>
+<p>The named scope entries are stored as elements of <code class="computeroutput">basic_named_scope_list</code> container, which in turn can be acquired either from the <code class="computeroutput">basic_named_scope</code> attribute value or from a thread-local instance. </p>
+<div class="refsect2">
+<a name="id37146"></a><h3>
+<a name="id57-bb"></a><code class="computeroutput">named_scope_entry</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1a36830a1044d80207ca14d1202dd4182e"></a><span class="identifier">named_scope_entry</span><span class="special">(</span><span class="identifier">string_literal</span> <span class="keyword">const</span> <span class="special">&amp;</span> sn<span class="special">,</span> <span class="identifier">string_literal</span> <span class="keyword">const</span> <span class="special">&amp;</span> fn<span class="special">,</span> 
+                  <span class="keyword">unsigned</span> <span class="keyword">int</span> ln<span class="special">,</span> <span class="identifier">scope_name_type</span> t <span class="special">=</span> <span class="identifier">general</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>Initializing constructor</p>
+<p>
+<span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Postconditions:</span></p></td>
+<td><p><code class="computeroutput">scope_name == sn &amp;&amp; file_name == fn &amp;&amp; line == ln</code></p></td>
+</tr></tbody>
+</table></div>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id37183"></a><h3>
+<a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entrypublic-data-members"></a><code class="computeroutput">named_scope_entry</code> 
+        public
+       public data members</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">string_literal</span> <a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1a7e7e20a1111e30d908646e2ec08d01e8"></a><span class="identifier">scope_name</span><span class="special">;</span></pre>
+<p>The scope name (e.g. a function signature) </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">string_literal</span> <a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1a301e6b4339c802d115da9c95b26f3054"></a><span class="identifier">file_name</span><span class="special">;</span></pre>
+<p>The source file name </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">unsigned</span> <span class="keyword">int</span> <a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1ae81f92b05f69edc98e6251688e3518da"></a><span class="identifier">line</span><span class="special">;</span></pre>
+<p>The line number in the source file </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">scope_name_type</span> <a name="doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope__entry_1aa00d400ba0862eda84357d6534d4fe95"></a><span class="identifier">type</span><span class="special">;</span></pre>
+<p>The scope name type </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.named__scope_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1log_1_1attributes_1_1named__scope__entry_1a8b3e571acec11c700e7eafbd62097810.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

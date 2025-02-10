@@ -1,0 +1,8 @@
+{
+    "key": "parser",
+    "name": "Parser",
+    "authors": [ "T. Zachary Laine" ],
+    "maintainers": [ "Zach Laine <whatwasthataddress -at- gmail.com>" ],
+    "description": "A parser combinator library.",
+    "category": [ "Parsing" ]
+}

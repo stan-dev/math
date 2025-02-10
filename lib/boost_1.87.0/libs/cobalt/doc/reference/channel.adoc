@@ -1,0 +1,87 @@
+[#channel]
+== cobalt/channel.hpp
+
+Channels can be used to exchange data between different coroutines
+on a single thread.
+
+=== Outline
+
+.channel outline
+[example]
+[source,cpp,subs=+quotes]
+----
+include::../../include/boost/cobalt/channel.hpp[tag=outline]
+----
+
+=== Description
+
+Channels are a tool for two coroutines to communicate and synchronize.
+
+[source,cpp]
+----
+const std::size_t buffer_size = 2;
+channel<int> ch{exec, buffer_size};
+
+// in coroutine <1>
+co_await ch.write(42);
+
+// in coroutine <2>
+auto val = co_await ch.read();
+----
+<1> Send a value to the channel - will block until it can be sent
+<2> Read a value from the channel - will block until a value is awaitable.
+
+Both operations maybe be blocking depending on the channel buffer size.
+
+If the buffer size is zero, a `read` & `write` will need to occur at the same time,
+i.e. act as a rendezvous.
+
+If the buffer is not full, the write operation will not suspend the coroutine;
+likewise if the buffer is not empty, the read operation will not suspend.
+
+If two operations complete at once (as is always the case with an empty buffer),
+the second operation gets posted to the executor for later completion.
+
+NOTE: A channel type can be `void`, in which case `write` takes no parameter.
+
+The channel operations can be cancelled without losing data.
+This makes them usable with <<race, race>>.
+
+[source,cpp]
+----
+generator<variant2::variant<int, double>> merge(
+    channel<int> & c1,
+    channel<double> & c2)
+{
+    while (c1 && c2)
+       co_yield co_await race(c1, c2);
+}
+----
+
+
+=== Example
+
+[source,cpp]
+----
+include::../../example/channel.cpp[tag=channel_example]
+----
+
+Additionally, a `channel_reader` is provided to make reading channels more convenient & usable with
+<<async_for, BOOST_COBALT_FOR>>.
+
+[source,cpp]
+----
+cobalt::main co_main(int argc, char * argv[])
+{
+  cobalt::channel<int> c;
+
+  auto p = producer(c);
+  BOOST_COBALT_FOR(int value, cobalt::channel_reader(c))
+    std::cout << value << std::endl;
+
+  co_await p;
+  co_return 0;
+}
+----
+
+

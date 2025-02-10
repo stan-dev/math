@@ -1,0 +1,54 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.depends__on_8hpp" name="boost/accumulators/framework/depends_on.hpp">
+<namespace name="boost">
+<namespace name="accumulators">
+<struct id="doxygen.structboost_1_1accumulators_1_1as__feature" name="as_feature"><template>
+      <template-type-parameter name="Feature"/>
+    </template><typedef id="doxygen.structboost_1_1accumulators_1_1as__feature_1a7394e83f03a0e8eb86fcdc63fa9cda94" name="type"><type>Feature</type></typedef>
+</struct><struct id="doxygen.structboost_1_1accumulators_1_1as__weighted__feature" name="as_weighted_feature"><template>
+      <template-type-parameter name="Feature"/>
+    </template><typedef id="doxygen.structboost_1_1accumulators_1_1as__weighted__feature_1ab3f196e87e3dcfaa9a3b0158fea60dbe" name="type"><type>Feature</type></typedef>
+</struct><struct id="doxygen.structboost_1_1accumulators_1_1depends__on" name="depends_on"><template>
+      <template-type-parameter name="Feature1"/>
+      <template-type-parameter name="Feature2"/>
+      <template-nontype-parameter name=""><type>...</type></template-nontype-parameter>
+    </template><purpose><link linkend="doxygen.structboost_1_1accumulators_1_1depends__on">depends_on</link> </purpose><typedef id="doxygen.structboost_1_1accumulators_1_1depends__on_1a89f59731e0a83227ea0d9a0f7e8ec169" name="is_weight_accumulator"><type>mpl::false_</type></typedef>
+<typedef id="doxygen.structboost_1_1accumulators_1_1depends__on_1ab7352e98f2b6b4e0dfb77783277f2f24" name="dependencies"><type>mpl::transform&lt; mpl::vector&lt; Feature1, Feature2,... &gt;, <classname>as_feature</classname>&lt; mpl::_1 &gt; &gt;::type</type></typedef>
+</struct><struct id="doxygen.structboost_1_1accumulators_1_1feature__of" name="feature_of"><template>
+      <template-type-parameter name="Feature"/>
+    </template><typedef id="doxygen.structboost_1_1accumulators_1_1feature__of_1a9db0cf9fc26431bea0cf190ba5dab74b" name="type"><type>Feature</type></typedef>
+</struct></namespace>
+</namespace>
+</header>
+<header id="doxygen.extractor_8hpp" name="boost/accumulators/framework/extractor.hpp">
+<namespace name="boost">
+<namespace name="accumulators">
+<struct id="doxygen.structboost_1_1accumulators_1_1extractor" name="extractor"><template>
+      <template-type-parameter name="Feature"/>
+    </template><purpose>Extracts the result associated with Feature from the specified accumulator_set. </purpose><struct id="doxygen.structboost_1_1accumulators_1_1extractor_1_1result" name="result"><template>
+      <template-type-parameter name="F"/>
+    </template><purpose>The result meta-function for determining the return type of the extractor. </purpose></struct><struct-specialization id="doxygen.structboost_1_1accumulators_1_1extractor_1_1result_3_01this__type_07A1_08_4" name="result"><template>
+      <template-type-parameter name="A1"/>
+    </template><specialization><template-arg>this_type(A1)</template-arg></specialization></struct-specialization><typedef id="doxygen.structboost_1_1accumulators_1_1extractor_1a554f534b7b0d9cb5d8235b35180991a4" name="this_type"><type><classname>extractor</classname>&lt; Feature &gt;</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.structboost_1_1accumulators_1_1extractor_1a543291f5a932f0d9b55fb627e62e0362" name="operator()" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="Arg1"/>
+        </template><parameter name="arg1"><paramtype>Arg1 const &amp;</paramtype></parameter><description><para>Extract the result associated with Feature from the accumulator set 
+</para></description></method>
+<method id="doxygen.structboost_1_1accumulators_1_1extractor_1a4756c17711c4ca273522b860dcf03cfe" name="operator()" cv="const"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="AccumulatorSet"/>
+          <template-type-parameter name="A1"/>
+        </template><parameter name="acc"><paramtype>AccumulatorSet const &amp;</paramtype></parameter><parameter name="a1"><paramtype>A1 const &amp;</paramtype><description><para>Optional named parameter to be passed to the accumulator's result() function. </para></description></parameter><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts.</para><para>
+</para></description></method>
+<method id="doxygen.structboost_1_1accumulators_1_1extractor_1a148b1b51c241313d253856e084d3c701" name="operator()"><type><emphasis>unspecified</emphasis></type><template>
+          <template-type-parameter name="AccumulatorSet"/>
+          <template-type-parameter name="A1"/>
+          <template-type-parameter name="A2"/>
+          <template-nontype-parameter name=""><type>...</type></template-nontype-parameter>
+        </template><parameter name="acc"><paramtype>AccumulatorSet const &amp;</paramtype></parameter><parameter name="a1"><paramtype>A1 const &amp;</paramtype></parameter><parameter name="a2"><paramtype>A2 const &amp;</paramtype></parameter><parameter name=""><paramtype>...</paramtype></parameter><description><para>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. </para></description></method>
+</method-group>
+</struct></namespace>
+</namespace>
+<macro id="doxygen.extractor_8hpp_1a5e13d7e8840e54e5d68222029c7174c2" name="BOOST_ACCUMULATORS_DEFINE_EXTRACTOR" kind="functionlike"><macro-parameter name="Tag"/><macro-parameter name="Feature"/><macro-parameter name="ParamSeq"/></macro>
+</header>
+</library-reference>

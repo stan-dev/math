@@ -1,0 +1,96 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>is_described_enum</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../../json_hidden.html" title="This Page Intentionally Left Blank">
+<link rel="prev" href="boost__json__is_described_class.html" title="is_described_class">
+<link rel="next" href="boost__json__is_map_like.html" title="is_map_like">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__json__is_described_class.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../json_hidden.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__json__is_map_like.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="json.ref.boost__json__is_described_enum"></a><a class="link" href="boost__json__is_described_enum.html" title="is_described_enum">is_described_enum</a>
+</h4></div></div></div>
+<p>
+        Determine if <code class="computeroutput"><span class="identifier">T</span></code> should be
+        treated as a described enum.
+      </p>
+<h5>
+<a name="json.ref.boost__json__is_described_enum.h0"></a>
+        <span class="phrase"><a name="json.ref.boost__json__is_described_enum.synopsis"></a></span><a class="link" href="boost__json__is_described_enum.html#json.ref.boost__json__is_described_enum.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/json/blob/master/include/boost/json/conversion.hpp" target="_top">boost/json/conversion.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">T</span><span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">is_described_enum</span><span class="special">;</span>
+</pre>
+<h5>
+<a name="json.ref.boost__json__is_described_enum.h1"></a>
+        <span class="phrase"><a name="json.ref.boost__json__is_described_enum.description"></a></span><a class="link" href="boost__json__is_described_enum.html#json.ref.boost__json__is_described_enum.description">Description</a>
+      </h5>
+<p>
+        Described enums are serialised as strings when their value equals to a described
+        enumerator, and as integers otherwise. The reverse operation does not convert
+        numbers to enums values, though, and instead produces an error.
+      </p>
+<p>
+        If <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">describe</span><span class="special">::</span><span class="identifier">has_describe_enumerators</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;::</span><span class="identifier">value</span></code> is <code class="computeroutput"><span class="keyword">true</span></code>,
+        then the trait provides the member constant <code class="computeroutput"><span class="identifier">value</span></code>
+        that is equal to <code class="computeroutput"><span class="keyword">true</span></code>. Otherwise,
+        <code class="computeroutput"><span class="identifier">value</span></code> is equal to <code class="computeroutput"><span class="keyword">false</span></code>.
+      </p>
+<p>
+        Users can specialize the trait for their own enums if they don't want them
+        to be treated as described enums. For example:
+      </p>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+<span class="keyword">namespace</span> <span class="identifier">json</span> <span class="special">{</span>
+
+<span class="keyword">template</span> <span class="special">&lt;&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">is_described_enum</span><span class="special">&lt;</span><span class="identifier">your</span><span class="special">::</span><span class="identifier">described_enum</span><span class="special">&gt;</span> <span class="special">:</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">false_type</span>
+<span class="special">{</span> <span class="special">};</span>
+
+<span class="special">}</span> <span class="comment">// namespace boost</span>
+<span class="special">}</span> <span class="comment">// namespace json</span>
+</pre>
+<h5>
+<a name="json.ref.boost__json__is_described_enum.h2"></a>
+        <span class="phrase"><a name="json.ref.boost__json__is_described_enum.see_also"></a></span><a class="link" href="boost__json__is_described_enum.html#json.ref.boost__json__is_described_enum.see_also">See
+        Also</a>
+      </h5>
+<p>
+        <a href="https://www.boost.org/doc/libs/develop/libs/describe/doc/html/describe.html" target="_top">Boost.Describe</a>.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/json/blob/master/include/boost/json.hpp" target="_top">boost/json.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__json__is_described_class.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../json_hidden.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__json__is_map_like.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

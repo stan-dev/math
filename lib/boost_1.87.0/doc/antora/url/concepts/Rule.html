@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Rule :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/concepts/Rule.html">
+    <link rel="prev" href="CharSet.html">
+    <link rel="next" href="StringToken.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../../_/css/boostlook.css">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="../index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="../urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="../examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="../reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="CharSet.html">CharSet</a>
+        </li>
+              <li class=" is-current-page" data-depth="3">
+            <a class="nav-link" href="Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="../HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li>
+      <a href="../index.html" aria-label="Home: Boost.URL">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 -960 960 960" fill="#000000" aria-hidden="true"><path d="M160-120v-480l320-240 320 240v480H560v-280H400v280H160Z"/></svg>
+      </a>
+    </li>
+    <li><a href="../reference.html">Reference</a></li>
+    <li>Concepts</li>
+    <li><a href="Rule.html">Rule</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="CharSet.html"><span class="material-symbols-outlined" title="Previous: CharSet">arrow_back</span></a>
+    <a accesskey="p" href="../reference.html"><span class="material-symbols-outlined" title="Up: Reference">arrow_upward</span></a>
+    <a accesskey="p" href="StringToken.html"><span class="material-symbols-outlined" title="Next: StringToken">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Rule</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <em>Rule</em> defines an algorithm used to match an input buffer of ASCII characters against a set of syntactical specifications.
+Each rule represents either a terminal symbol or a composition in the represented grammar.
+The library comes with a set of rules for productions typically found in RFC documents.
+Rules are not invoked directly; instead, rule variables are used with overloads of <code><a href="../reference/boost/urls/grammar/parse.html" class="xref page">parse</a></code> which provide a convenient, uniform front end.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_related_identifiers"><a class="anchor" href="#_related_identifiers"></a>Related Identifiers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code><a href="../reference/boost/urls/grammar/is_rule.html" class="xref page">is_rule</a></code>, <code><a href="../reference/boost/urls/grammar/parse.html" class="xref page">parse</a></code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements"><a class="anchor" href="#_requirements"></a>Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this table:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>T</code> is a type meeting the requirements of <em>Rule</em></p>
+</li>
+<li>
+<p><code>t</code> is a const value of type <code>T</code></p>
+</li>
+<li>
+<p><code>it</code> is an <em>lvalue</em> with type cpp:char const*[]</p>
+</li>
+<li>
+<p><code><a href="https://en.cppreference.com/w/cpp/iterator/end" target="_blank" rel="noopener">end</a></code> is a value of type cpp:char const*[]</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Expression</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Semantics, Pre/Post-conditions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>T(t)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy construction of <code>T</code> throws nothing.</p>
+<p class="tableblock"><code><a href="https://en.cppreference.com/w/cpp/types/is_copy_constructible" target="_blank" rel="noopener">std::is_nothrow_copy_constructible</a>&#x3C;T&#x3E;::https://en.cppreference.com/w/cpp/types/is_copy_constructible[std::is_nothrow_copy_constructible::value,window="_blank"]</code> == truecpp:</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]T::value_typecpp:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Values of this type are returned by the rule when the
+parse operation is successful</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]t.parse(it,end)cpp:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[]result&lt;T::value_type&gt;cpp:</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Attempt to parse the buffer of characters defined by
+the range []// [it,end)cpp:. Upon success, the return result
+holds an instance of the rule&#8217;s value type, and
+the reference parameter []itcpp: is modified to point
+to the first unconsumed character. Otherwise, upon
+failure the result holds an error. In this case
+the implementation defines if and how the reference
+parameter []itcpp: is modified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exemplar"><a class="anchor" href="#_exemplar"></a>Exemplar</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For best results, it is suggested that all constructors for rules be marked []constexprcpp:.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct Rule
+{
+    struct value_type;
+
+    constexpr Rule( Rule const&amp; ) noexcept = default;
+
+    auto parse( char const*&amp; it, char const* end ) const -&gt; result&lt; value_type &gt;;
+};
+
+// Declare a variable of type Rule for notational convenience
+constexpr Rule rule{};</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_model"><a class="anchor" href="#_model"></a>Model</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>[]grammar::dec_octet_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::delim_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::not_empty_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::optional_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::range_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::token_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::tuple_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::unsigned_rulecpp:</p>
+</li>
+<li>
+<p>[]grammar::variant_rule`</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/concepts/Rule.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="prev"><a href="CharSet.html">CharSet</a></span>
+        <span class="next"><a href="StringToken.html">StringToken</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

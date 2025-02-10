@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template extended_p_square_impl</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../accumulators/reference.html#doxygen.statistics_library_reference.extended__p__square_8hpp" title="Header &lt;boost/accumulators/statistics/extended_p_square.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1accumulators_1_1extract_1a22a8e13d99a5b863990ba4a65bd4971b.html" title="Global extended_p_square">
+<link rel="next" href="structboost_1_1accumulators_1_1tag_1_1extended__p__square.html" title="Struct extended_p_square">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1accumulators_1_1extract_1a22a8e13d99a5b863990ba4a65bd4971b.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.extended__p__square_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1tag_1_1extended__p__square.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template extended_p_square_impl</span></h2>
+<p>boost::accumulators::impl::extended_p_square_impl — Multiple quantile estimation with the extended <span class="inlinemediaobject"><img src="../../images/accumulators//form_33.png"></span> algorithm. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../accumulators/reference.html#doxygen.statistics_library_reference.extended__p__square_8hpp" title="Header &lt;boost/accumulators/statistics/extended_p_square.hpp&gt;">boost/accumulators/statistics/extended_p_square.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Sample<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl.html" title="Struct template extended_p_square_impl">extended_p_square_impl</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">accumulator_base</span> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">numeric</span><span class="special">::</span><span class="identifier">functional</span><span class="special">::</span><span class="identifier">fdiv</span><span class="special">&lt;</span> <span class="identifier">Sample</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1ae5d15cd468ba931ff40d21220d4b8fd7"></a><span class="identifier">float_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span> <span class="identifier">float_type</span> <span class="special">&gt;</span>                                     <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1a56266f8f489361b7697419abbd704d69"></a><span class="identifier">array_type</span><span class="special">;</span> 
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                                                   <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1aa733d9f769d8cfd745ed7fd3bf373c41"></a><span class="identifier">result_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl.html#id-1_3_2_6_3_8_1_1_4_1_8-bb">public member functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1ab4e5ce2e08a7736a0d3e1278cdd9117e"><span class="identifier">extended_p_square_impl</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1a241bffc6843e954b3d0efb9e3a4dc79a"><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span></a><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">result_type</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1acca7045ced985222ac5f20bfd6484d90"><span class="identifier">result</span></a><span class="special">(</span><span class="identifier">dont_care</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl.html#doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1aa016a4af27c4a1d24ea8b046f099dfc1"><span class="identifier">serialize</span></a><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.2.6.3.8.4.4"></a><h2>Description</h2>
+<p>Extended <span class="inlinemediaobject"><img src="../../images/accumulators//form_33.png"></span> algorithm for estimation of several quantiles without storing samples. Assume that <span class="inlinemediaobject"><img src="../../images/accumulators//form_42.png"></span> quantiles <span class="inlinemediaobject"><img src="../../images/accumulators//form_43.png"></span> are to be estimated. Instead of storing the whole sample cumulative distribution, the algorithm maintains only <span class="inlinemediaobject"><img src="../../images/accumulators//form_44.png"></span> principal markers and <span class="inlinemediaobject"><img src="../../images/accumulators//form_45.png"></span> middle markers, whose positions are updated with each sample and whose heights are adjusted (if necessary) using a piecewise-parablic formula. The heights of these central markers are the current estimates of the quantiles and returned as an iterator range.</p>
+<p>For further details, see</p>
+<p>K. E. E. Raatikainen, Simultaneous estimation of several quantiles, Simulation, Volume 49, Number 4 (October), 1986, p. 159-164.</p>
+<p>The extended <span class="inlinemediaobject"><img src="../../images/accumulators//form_37.png"></span> algorithm generalizes the <span class="inlinemediaobject"><img src="../../images/accumulators//form_37.png"></span> algorithm of</p>
+<p>R. Jain and I. Chlamtac, The P^2 algorithm for dynamic calculation of quantiles and histograms without storing observations, Communications of the ACM, Volume 28 (October), Number 10, 1985, p. 1076-1085.</p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.2.6.3.8.4.4.8"></a><h3>
+<a name="id-1_3_2_6_3_8_1_1_4_1_8-bb"></a><code class="computeroutput">extended_p_square_impl</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1ab4e5ce2e08a7736a0d3e1278cdd9117e"></a><span class="identifier">extended_p_square_impl</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Args<span class="special">&gt;</span> <span class="keyword">void</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1a241bffc6843e954b3d0efb9e3a4dc79a"></a><span class="keyword">operator</span><span class="special">(</span><span class="special">)</span><span class="special">(</span><span class="identifier">Args</span> <span class="keyword">const</span> <span class="special">&amp;</span> args<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="identifier">result_type</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1acca7045ced985222ac5f20bfd6484d90"></a><span class="identifier">result</span><span class="special">(</span><span class="identifier">dont_care</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Archive<span class="special">&gt;</span> 
+  <span class="keyword">void</span> <a name="doxygen.statistics_library_reference.structboost_1_1accumulators_1_1impl_1_1extended__p__square__impl_1aa016a4af27c4a1d24ea8b046f099dfc1"></a><span class="identifier">serialize</span><span class="special">(</span><span class="identifier">Archive</span> <span class="special">&amp;</span> ar<span class="special">,</span> <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> file_version<span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005, 2006 Eric Niebler<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1accumulators_1_1extract_1a22a8e13d99a5b863990ba4a65bd4971b.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../accumulators/reference.html#doxygen.statistics_library_reference.extended__p__square_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1accumulators_1_1tag_1_1extended__p__square.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Macro BOOST_CONTRACT_CONSTRUCTOR</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Contract 1.0.0">
+<link rel="up" href="../../reference.html#doxygen.reference.contract__macro_8hpp" title="Header &lt;boost/contract_macro.hpp&gt;">
+<link rel="prev" href="contract__macro_8hpp_1aa2cd5c99a0379ee16f1903031cbd8b87.html" title="Macro BOOST_CONTRACT_STATIC_INVARIANT">
+<link rel="next" href="contract__macro_8hpp_1a078888cb53d31e2a3d6665f2cc03770b.html" title="Macro BOOST_CONTRACT_CONSTRUCTOR_PRECONDITION">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="contract__macro_8hpp_1aa2cd5c99a0379ee16f1903031cbd8b87.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.contract__macro_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="contract__macro_8hpp_1a078888cb53d31e2a3d6665f2cc03770b.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference.contract__macro_8hpp_1a028ef0324f44b21c81e8adc558491d8d"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Macro BOOST_CONTRACT_CONSTRUCTOR</span></h2>
+<p>BOOST_CONTRACT_CONSTRUCTOR — Program contracts that can be completely disabled at compile-time for constructors. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference.html#doxygen.reference.contract__macro_8hpp" title="Header &lt;boost/contract_macro.hpp&gt;">boost/contract_macro.hpp</a>&gt;
+
+</span>BOOST_CONTRACT_CONSTRUCTOR(...)</pre></div>
+<div class="refsect1">
+<a name="id46839"></a><h2>Description</h2>
+<p>This is used together with  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1af6dfb552cf20bd72e90810c04ebabf73.html" title="Macro BOOST_CONTRACT_POSTCONDITION">BOOST_CONTRACT_POSTCONDITION</a></code>,  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1a2fd179e4b9a7e057f661991785ee71ac.html" title="Macro BOOST_CONTRACT_EXCEPT">BOOST_CONTRACT_EXCEPT</a></code>, and  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1a1a85a0b0137be4fc4a404b57d88170af.html" title="Macro BOOST_CONTRACT_OLD">BOOST_CONTRACT_OLD</a></code> to specify postconditions, exception guarantees, and old value copies at body that can be completely disabled at compile-time for constructors (see  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1a078888cb53d31e2a3d6665f2cc03770b.html" title="Macro BOOST_CONTRACT_CONSTRUCTOR_PRECONDITION">BOOST_CONTRACT_CONSTRUCTOR_PRECONDITION</a></code> to specify preconditions for constructors):</p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">u</span> <span class="special">{</span>
+    <span class="keyword">friend</span> <span class="keyword">class</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">contract</span><span class="special">::</span><span class="identifier">access</span><span class="special">;</span>
+
+    <span class="identifier">BOOST_CONTRACT_INVARIANT</span><span class="special">(</span><span class="special">{</span> <span class="comment">// Optional (as for static and volatile).</span>
+        <span class="identifier">BOOST_CONTRACT_ASSERT</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+        <span class="special">...</span>
+    <span class="special">}</span><span class="special">)</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="identifier">u</span><span class="special">(</span><span class="special">...</span><span class="special">)</span> <span class="special">{</span>
+        <span class="identifier">BOOST_CONTRACT_OLD_PTR</span><span class="special">(</span><span class="identifier">old_type</span><span class="special">)</span><span class="special">(</span><span class="identifier">old_var</span><span class="special">)</span><span class="special">;</span>
+        <span class="identifier">BOOST_CONTRACT_CONSTRUCTOR</span><span class="special">(</span><span class="keyword">this</span><span class="special">)</span>
+            <span class="comment">// No `PRECONDITION` (use `CONSTRUCTOR_PRECONDITION` if needed).</span>
+            <span class="identifier">BOOST_CONTRACT_OLD</span><span class="special">(</span><span class="special">[</span><span class="special">&amp;</span><span class="special">]</span> <span class="special">{</span> <span class="comment">// Optional.</span>
+                <span class="identifier">old_var</span> <span class="special">=</span> <span class="identifier">BOOST_CONTRACT_OLDOF</span><span class="special">(</span><span class="identifier">old_epxr</span><span class="special">)</span><span class="special">;</span>
+                <span class="special">...</span>
+            <span class="special">}</span><span class="special">)</span>
+            <span class="identifier">BOOST_CONTRACT_POSTCONDITION</span><span class="special">(</span><span class="special">[</span><span class="special">&amp;</span><span class="special">]</span> <span class="special">{</span> <span class="comment">// Optional.</span>
+                <span class="identifier">BOOST_CONTRACT_ASSERT</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+                <span class="special">...</span>
+            <span class="special">}</span><span class="special">)</span>
+            <span class="identifier">BOOST_CONTRACT_EXCEPT</span><span class="special">(</span><span class="special">[</span><span class="special">&amp;</span><span class="special">]</span> <span class="special">{</span> <span class="comment">// Optional.</span>
+                <span class="identifier">BOOST_CONTRACT_ASSERT</span><span class="special">(</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+                <span class="special">...</span>
+            <span class="special">}</span><span class="special">)</span>
+        <span class="special">;</span> <span class="comment">// Trailing `;` is required.</span>
+
+        <span class="special">...</span> <span class="comment">// Constructor body.</span>
+    <span class="special">}</span>
+
+    <span class="special">...</span>
+<span class="special">}</span><span class="special">;</span>
+</pre>
+<p>For optimization, this can be omitted for constructors that do not have postconditions and exception guarantees, within classes that have no invariants.</p>
+<p><code class="computeroutput"><a class="link" href="contract__macro_8hpp_1a028ef0324f44b21c81e8adc558491d8d.html" title="Macro BOOST_CONTRACT_CONSTRUCTOR">BOOST_CONTRACT_CONSTRUCTOR(obj)</a></code> expands to code equivalent to the following (note that no code is generated when  <code class="computeroutput"><a class="link" href="config_8hpp_1a3f23f0f76c0977db0778b5a0756a8769.html" title="Macro BOOST_CONTRACT_NO_CONSTRUCTORS">BOOST_CONTRACT_NO_CONSTRUCTORS</a></code> is defined):</p>
+<pre class="programlisting"><span class="preprocessor">#ifndef</span> <span class="identifier">BOOST_CONTRACT_NO_CONSTRUCTORS</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">contract</span><span class="special">::</span><span class="identifier">check</span> <span class="identifier">internal_var</span> <span class="special">=</span>
+            <span class="identifier">boost</span><span class="special">::</span><span class="identifier">contract</span><span class="special">::</span><span class="identifier">constructor</span><span class="special">(</span><span class="identifier">obj</span><span class="special">)</span>
+<span class="preprocessor">#endif</span>
+</pre>
+<p>Where:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p><code class="computeroutput"><span class="bold"><strong>obj</strong></span></code> is the object <code class="computeroutput">this</code> from the scope of the enclosing constructor declaring the contract. Constructors check all class invariants, including static and volatile invariants (see  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1aebdcf2bb0cbd7a2501a3a210ef83b4ab.html" title="Macro BOOST_CONTRACT_INVARIANT">BOOST_CONTRACT_INVARIANT</a></code>,  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1aa2cd5c99a0379ee16f1903031cbd8b87.html" title="Macro BOOST_CONTRACT_STATIC_INVARIANT">BOOST_CONTRACT_STATIC_INVARIANT</a></code>, and  <code class="computeroutput"><a class="link" href="contract__macro_8hpp_1afb95261134b0c30c018ec33f96612f98.html" title="Macro BOOST_CONTRACT_INVARIANT_VOLATILE">BOOST_CONTRACT_INVARIANT_VOLATILE</a></code>). (This is a variadic macro parameter so it can contain commas not protected by round parenthesis.) </p></li>
+<li class="listitem"><p><code class="computeroutput"><span class="bold"><strong>internal_var</strong></span></code> is a variable name internally generated by this library (this name is unique but only on different line numbers so this macro cannot be expanded multiple times on the same line).</p></li>
+</ul></div>
+<p>
+</p>
+<p><b>See Also: </b> <a class="link" href="../../boost_contract/extras.html#boost_contract.extras.disable_contract_compilation__macro_interface_" title="Disable Contract Compilation (Macro Interface)">
+        Disable Contract Compilation</a>,  <a class="link" href="../../boost_contract/tutorial.html#boost_contract.tutorial.constructors" title="Constructors"> Constructors</a> </p>
+<p>
+</p>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2019 Lorenzo Caminiti<p>
+        Distributed under the Boost Software License, Version 1.0 (see accompanying
+        file LICENSE_1_0.txt or a copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="contract__macro_8hpp_1aa2cd5c99a0379ee16f1903031cbd8b87.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference.html#doxygen.reference.contract__macro_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="contract__macro_8hpp_1a078888cb53d31e2a3d6665f2cc03770b.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,704 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference><header id="doxygen.lockfree__forward_8hpp" name="boost/lockfree/lockfree_forward.hpp">
+</header>
+<header id="doxygen.policies_8hpp" name="boost/lockfree/policies.hpp">
+<namespace name="boost">
+<namespace name="lockfree">
+<struct id="doxygen.structboost_1_1lockfree_1_1allocator" name="allocator"><template>
+      <template-type-parameter name="Alloc"/>
+    </template><description><para>Defines the <emphasis role="bold">allocator</emphasis> type of a data structure. </para></description></struct><struct id="doxygen.structboost_1_1lockfree_1_1capacity" name="capacity"><template>
+      <template-nontype-parameter name="Size"><type>size_t</type></template-nontype-parameter>
+    </template><description><para>Sets the <emphasis role="bold">capacity</emphasis> of a data structure at compile-time.</para><para>This implies that a data structure is bounded and fixed-sized. </para></description></struct><struct id="doxygen.structboost_1_1lockfree_1_1fixed__sized" name="fixed_sized"><template>
+      <template-nontype-parameter name="IsFixedSized"><type>bool</type></template-nontype-parameter>
+    </template><description><para>Configures a data structure as <emphasis role="bold">fixed-sized</emphasis>.</para><para>The internal nodes are stored inside an array and they are addressed by array indexing. This limits the possible size of the queue to the number of elements that can be addressed by the index type (usually 2**16-2), but on platforms that lack double-width compare-and-exchange instructions, this is the best way to achieve lock-freedom. This implies that a data structure is bounded. </para></description></struct></namespace>
+</namespace>
+</header>
+<header id="doxygen.queue_8hpp" name="boost/lockfree/queue.hpp">
+<namespace name="boost">
+<namespace name="lockfree">
+<class id="doxygen.classboost_1_1lockfree_1_1queue" name="queue"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="Options"><type>typename...</type></template-nontype-parameter>
+    </template><description><para>The queue class provides a multi-writer/multi-reader queue, pushing and popping is lock-free, construction/destruction has to be synchronized. It uses a freelist for memory management, freed nodes are pushed to the freelist and not returned to the OS before the queue is destroyed.</para><para><emphasis role="bold">Policies:</emphasis> <itemizedlist>
+<listitem><para><link linkend="doxygen.structboost_1_1lockfree_1_1fixed__sized">boost::lockfree::fixed_sized</link>, defaults to <computeroutput>boost::lockfree::fixed_sized&lt;false&gt;</computeroutput> <sbr/>
+ Can be used to completely disable dynamic memory allocations during push in order to ensure lockfree behavior. <sbr/>
+ If the data structure is configured as fixed-sized, the internal nodes are stored inside an array and they are addressed by array indexing. This limits the possible size of the queue to the number of elements that can be addressed by the index type (usually 2**16-2), but on platforms that lack double-width compare-and-exchange instructions, this is the best way to achieve lock-freedom.</para>
+</listitem><listitem><para><link linkend="doxygen.structboost_1_1lockfree_1_1capacity">boost::lockfree::capacity</link>, optional <sbr/>
+ If this template argument is passed to the options, the size of the queue is set at compile-time.<sbr/>
+ This option implies <computeroutput>fixed_sized&lt;true&gt;</computeroutput> </para>
+</listitem><listitem><para><link linkend="doxygen.structboost_1_1lockfree_1_1allocator">boost::lockfree::allocator</link>, defaults to <computeroutput>boost::lockfree::allocator&lt;std::allocator&lt;void&gt;&gt;</computeroutput> <sbr/>
+ Specifies the allocator that is used for the internal freelist</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Requirements:</emphasis> <itemizedlist>
+<listitem><para>T must have a copy constructor</para>
+</listitem><listitem><para>T must have a trivial assignment operator</para>
+</listitem><listitem><para>T must have a trivial destructor </para>
+</listitem></itemizedlist>
+</para></description><typedef id="doxygen.classboost_1_1lockfree_1_1queue_1ac1adebc2934285377a0e5d5c0fdd929f" name="value_type"><type>T</type></typedef>
+<typedef id="doxygen.classboost_1_1lockfree_1_1queue_1a67d1f7b5de911eff69e8bc316fdfe6e1" name="allocator"><type>implementation_defined::allocator</type></typedef>
+<typedef id="doxygen.classboost_1_1lockfree_1_1queue_1af35bfb85ac297fdf1387f9a06999aa30" name="size_type"><type>implementation_defined::size_type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1ac4fbc6def019dcd45b8b320c5763eda5" name="is_lock_free" cv="const"><type>bool</type><parameter name=""><paramtype>void</paramtype></parameter><description><para>
+<warning><para>It only checks, if the queue head and tail nodes and the freelist can be modified in a lock-free manner. On most platforms, the whole implementation is lock-free, if this is true. Using c++0x-style atomics, there is no possibility to provide a completely accurate implementation, because one would need to test every internal node, which is impossible if further nodes will be allocated from the operating system. </para>
+</warning>
+</para></description><returns><para>true, if implementation is lock-free.</para>
+</returns></method>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1a6cf49b1e8d04aa06dae2650057b324a0"><parameter name=""><paramtype>void</paramtype></parameter><description><para>Construct a fixed-sized queue</para><para>
+</para></description><requires><para>Must specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1a0589a15d06553adb7f19cc2ff29f46ad" specifiers="explicit"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>typename boost::allocator_rebind&lt; node_allocator, U &gt;::type const &amp;</paramtype></parameter><description><para>Construct a fixed-sized queue with a custom allocator</para><para>
+</para></description><requires><para>Must specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1a633e9e5c0e9f2a2f7f5c96c8f0712887" specifiers="explicit"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>allocator const &amp;</paramtype></parameter><description><para>Construct a fixed-sized queue with a custom allocator</para><para>
+</para></description><requires><para>Must specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1a3ee5b96592ad93e255563b31636d9cac" specifiers="explicit"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><description><para>Construct a variable-sized queue</para><para>Allocate n nodes initially for the freelist</para><para>
+</para></description><requires><para>Must <emphasis role="bold">not</emphasis> specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1a06a08933b34a1f55c2cdb800c40d8474"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="alloc"><paramtype>typename boost::allocator_rebind&lt; node_allocator, U &gt;::type const &amp;</paramtype></parameter><description><para>Construct a variable-sized queue with a custom allocator</para><para>Allocate n nodes initially for the freelist</para><para>
+</para></description><requires><para>Must <emphasis role="bold">not</emphasis> specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1ad139c2c08ea92748a1b37fe09701d059"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="alloc"><paramtype>allocator const &amp;</paramtype></parameter><description><para>Construct a variable-sized queue with a custom allocator</para><para>Allocate n nodes initially for the freelist</para><para>
+</para></description><requires><para>Must <emphasis role="bold">not</emphasis> specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1ae2dfaaacc1e22c69ead593f590783762" cv="= delete"><parameter name=""><paramtype>const <classname>queue</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1lockfree_1_1queue_1aa094e98c9af5e8a93e20523a0bee97bc" cv="= delete"><type><classname>queue</classname> &amp;</type><parameter name=""><paramtype>const <classname>queue</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.classboost_1_1lockfree_1_1queue_1af08a5e30da3585a9cad5192d78270862" cv="= delete"><parameter name=""><paramtype><classname>queue</classname> &amp;&amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1lockfree_1_1queue_1a6f997f3ace8679541d053c7e3b081bed" cv="= delete"><type><classname>queue</classname> &amp;</type><parameter name=""><paramtype><classname>queue</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a250c1e1b9a42754c7a91da4eff915f42" name="reserve"><type>void</type><parameter name="n"><paramtype>size_type</paramtype></parameter><description><para>Allocate n nodes for freelist</para><para>
+<note><para>thread-safe, may block if memory allocator blocks  </para>
+</note>
+</para></description><requires><para>only valid if no capacity&lt;&gt; argument given </para>
+</requires></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1ab12e9c1ece7fc978134fda443d2bbbbf" name="reserve_unsafe"><type>void</type><parameter name="n"><paramtype>size_type</paramtype></parameter><description><para>Allocate n nodes for freelist</para><para>
+<note><para>not thread-safe, may block if memory allocator blocks  </para>
+</note>
+</para></description><requires><para>only valid if no capacity&lt;&gt; argument given </para>
+</requires></method>
+<destructor id="doxygen.classboost_1_1lockfree_1_1queue_1a9589758028022cf94edf15737b48f766"><parameter name=""><paramtype>void</paramtype></parameter><description><para>Destroys queue, free all nodes from freelist. </para></description></destructor>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a381942c23d6a741a7628bedd955a2fdc" name="empty" cv="const"><type>bool</type><parameter name=""><paramtype>void</paramtype></parameter><description><para>Check if the queue is empty</para><para>
+<note><para>The result is only accurate, if no other thread modifies the queue. Therefore it is rarely practical to use this value in program logic. </para>
+</note>
+</para></description><returns><para>true, if the queue is empty, false otherwise </para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1af4ae48ae72e3a62460bd0bff5d89f65d" name="push"><type>bool</type><parameter name="t"><paramtype>const T &amp;</paramtype></parameter><description><para>Pushes object t to the queue.</para><para>
+
+<note><para>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+</para></description><postconditions><para>object will be pushed to the queue, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1ae5bbb96ac92dd9f6f32dfcb3b530dd00" name="push"><type>bool</type><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the queue.</para><para>
+
+<note><para>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free.  </para>
+</note>
+</para></description><postconditions><para>object will be pushed to the queue, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1af3d88723db4be17a84ab62f9bd4e4c21" name="bounded_push"><type>bool</type><parameter name="t"><paramtype>const T &amp;</paramtype></parameter><description><para>Pushes object t to the queue.</para><para>
+
+<note><para>Thread-safe and non-blocking. If internal memory pool is exhausted, operation will fail </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the queue, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1abb33e7be05513ef6ee70f8b094c1491d" name="bounded_push"><type>bool</type><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the queue.</para><para>
+
+<note><para>Thread-safe and non-blocking. If internal memory pool is exhausted, operation will fail </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the queue, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws  </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a2aa150439aa763cfa234315c70a5ac02" name="unsynchronized_push"><type>bool</type><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the queue.</para><para>
+
+<note><para>Not Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the queue, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1ad538e85a47ae31a72ae88061b410918c" name="pop"><type>bool</type><parameter name="ret"><paramtype>T &amp;</paramtype></parameter><description><para>Pops object from queue.</para><para>
+
+<note><para>Thread-safe and non-blocking. Might modify return argument even if operation fails. </para>
+</note>
+</para></description><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if queue was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a04504547a71461d66de40d7761d046ca" name="pop"><type>bool</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="ret"><paramtype>U &amp;</paramtype></parameter><description><para>Pops object from queue.</para><para>
+
+
+<note><para>Thread-safe and non-blocking. Might modify return argument even if operation fails. </para>
+</note>
+</para></description><requires><para>type U must be constructible by T and copyable, or T must be convertible to U </para>
+</requires><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if queue was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1ae8946e40be0a169a4ed5e3def7407e91" name="pop"><type>std::optional&lt; T &gt;</type><parameter name=""><paramtype>uses_optional_t</paramtype></parameter><description><para>Pops object from queue, returning a std::optional&lt;&gt;</para><para>
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para><computeroutput>std::optional</computeroutput> with value if successful, <computeroutput>std::nullopt</computeroutput> if queue is empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a9ccd629af2a1f4b57d8dd0140ee80503" name="pop"><type>std::optional&lt; U &gt;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name=""><paramtype>uses_optional_t</paramtype></parameter><description><para>Pops object from queue, returning a std::optional&lt;&gt;</para><para>
+
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><requires><para>type T must be convertible to U </para>
+</requires><returns><para><computeroutput>std::optional</computeroutput> with value if successful, <computeroutput>std::nullopt</computeroutput> if queue is empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a60cb2502f276b2b7ee8e3ca41c2fabe0" name="unsynchronized_pop"><type>bool</type><parameter name="ret"><paramtype>T &amp;</paramtype></parameter><description><para>Pops object from queue.</para><para>
+
+<note><para>Not thread-safe, but non-blocking. Might modify return argument even if operation fails. </para>
+</note>
+</para></description><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if queue was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a76cc63838e4a450940cd62d86ac1521e" name="unsynchronized_pop"><type>bool</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name="ret"><paramtype>U &amp;</paramtype></parameter><description><para>Pops object from queue.</para><para>
+
+
+<note><para>Not thread-safe, but non-blocking. Might modify return argument even if operation fails. </para>
+</note>
+</para></description><requires><para>type U must be constructible by T and copyable, or T must be convertible to U </para>
+</requires><postconditions><para>if pop operation is successful, object will be copied to ret.</para>
+</postconditions><returns><para>true, if the pop operation is successful, false if queue was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1af5c4d3230f97a8fc05831ef1b7aeb81e" name="consume_one"><type>bool</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes one element via a functor</para><para>pops one element from the queue and applies the functor on this object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>true, if one element was consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1queue_1a429888950d2860c42906d159fc020a62" name="consume_all"><type>size_t</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes all elements via a functor</para><para>sequentially pops all elements from the queue and applies the functor on each object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>number of elements that are consumed</para>
+</returns></method>
+</method-group>
+</class></namespace>
+</namespace>
+</header>
+<header id="doxygen.spsc__queue_8hpp" name="boost/lockfree/spsc_queue.hpp">
+<namespace name="boost">
+<namespace name="lockfree">
+<class id="doxygen.classboost_1_1lockfree_1_1spsc__queue" name="spsc_queue"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="Options"><type>typename...</type></template-nontype-parameter>
+    </template><description><para>The <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> class provides a single-writer/single-reader fifo queue, pushing and popping is wait-free.</para><para><emphasis role="bold">Policies:</emphasis> <itemizedlist>
+<listitem><para><computeroutput>boost::lockfree::capacity&lt;&gt;</computeroutput>, optional <sbr/>
+ If this template argument is passed to the options, the size of the ringbuffer is set at compile-time.</para>
+</listitem><listitem><para><computeroutput>boost::lockfree::allocator&lt;&gt;</computeroutput>, defaults to <computeroutput>boost::lockfree::allocator&lt;std::allocator&lt;T&gt;&gt;</computeroutput> <sbr/>
+ Specifies the allocator that is used to allocate the ringbuffer. This option is only valid, if the ringbuffer is configured to be sized at run-time</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Requirements:</emphasis> <itemizedlist>
+<listitem><para>T must have a default constructor</para>
+</listitem><listitem><para>T must be copyable or movable </para>
+</listitem></itemizedlist>
+</para></description><typedef id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a6070e12a1f3ea8e4f3859de66fc84eec" name="value_type"><type>T</type></typedef>
+<typedef id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a5751e860c22c414f590d917dd20fa708" name="allocator"><type>implementation_defined::allocator</type></typedef>
+<typedef id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a3656daf232ddb60584e9daab0b0df118" name="size_type"><type>implementation_defined::size_type</type></typedef>
+<method-group name="public member functions">
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a37ec8638a88eb65bb6d6bc00c65b5274"><parameter name=""><paramtype>void</paramtype></parameter><description><para>Constructs a <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link></para><para>
+</para></description><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> must be configured to be sized at compile-time </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a4b9264a4b4e393f765cd3c0ebf97b4fc" specifiers="explicit"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !runtime_sized &gt;</default></template-type-parameter>
+        </template><parameter name=""><paramtype>typename boost::allocator_rebind&lt; allocator, U &gt;::type const &amp;</paramtype></parameter><description><para>Constructs a <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> with a custom allocator</para><para>
+<note><para>This is just for API compatibility: an allocator isn't actually needed </para>
+</note>
+</para></description><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> must be configured to be sized at compile-time</para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1ac319001be218c3d9eb732f85aa5a6a27" specifiers="explicit"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !runtime_sized &gt;</default></template-type-parameter>
+        </template><parameter name=""><paramtype>allocator const &amp;</paramtype></parameter><description><para>Constructs a <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> with a custom allocator</para><para>
+<note><para>This is just for API compatibility: an allocator isn't actually needed </para>
+</note>
+</para></description><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> must be configured to be sized at compile-time</para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a858f61a8ed1172158b23da770320b11c" specifiers="explicit"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; runtime_sized &gt;</default></template-type-parameter>
+        </template><parameter name="element_count"><paramtype>size_type</paramtype></parameter><description><para>Constructs a <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> for element_count elements</para><para>
+</para></description><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> must be configured to be sized at run-time </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a7d56bf19494a1500602a18c14043a449"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; runtime_sized &gt;</default></template-type-parameter>
+        </template><parameter name="element_count"><paramtype>size_type</paramtype></parameter><parameter name="alloc"><paramtype>typename boost::allocator_rebind&lt; allocator, U &gt;::type const &amp;</paramtype></parameter><description><para>Constructs a <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> for element_count elements with a custom allocator</para><para>
+</para></description><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> must be configured to be sized at run-time </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1af1c7dc0749ff0cf649c443d41f0f28ec"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; runtime_sized &gt;</default></template-type-parameter>
+        </template><parameter name="element_count"><paramtype>size_type</paramtype></parameter><parameter name="alloc"><paramtype>allocator_arg const &amp;</paramtype></parameter><description><para>Constructs a <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> for element_count elements with a custom allocator</para><para>
+</para></description><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> must be configured to be sized at run-time </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a6c3a253dfd34e28d70fb816a5bdb9a2c" cv="= delete"><parameter name=""><paramtype>const <classname>spsc_queue</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a33655f61ab0e115e5a7ee33c53fd70e5" cv="= delete"><type><classname>spsc_queue</classname> &amp;</type><parameter name=""><paramtype>const <classname>spsc_queue</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1ac383b0a903c7de8182b184dc9e9904c9" cv="= delete"><parameter name=""><paramtype><classname>spsc_queue</classname> &amp;&amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a39f4124525b294be0a40aa8aa82f7bd8" cv="= delete"><type><classname>spsc_queue</classname> &amp;</type><parameter name=""><paramtype><classname>spsc_queue</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1aa9ec66a800f75ab4239f5fa69becfbaa" name="push"><type>bool</type><parameter name="t"><paramtype>const T &amp;</paramtype></parameter><description><para>Pushes object t to the ringbuffer.</para><para>
+
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to push data to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><postconditions><para>object will be pushed to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link>, unless it is full. </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a49f5614dddc839ae53562444155d65e1" name="push"><type>bool</type><parameter name="t"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the ringbuffer.</para><para>
+
+
+<note><para>Thread-safe and wait-free  </para>
+</note>
+</para></description><requires><para>only one thread is allowed to push data to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><postconditions><para>object will be pushed to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link>, unless it is full. </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a53da262b413be07633c71ba986296e87" name="pop"><type>bool</type><description><para>Pops one object from ringbuffer.</para><para>
+
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to pop data from the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><postconditions><para>if ringbuffer is not empty, object will be discarded. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if ringbuffer was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1acd52553fc38cecf7fd753c7b16378b17" name="pop"><type>bool</type><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; std::is_convertible&lt; T, U &gt;::value &gt;</default></template-type-parameter>
+        </template><parameter name="ret"><paramtype>U &amp;</paramtype></parameter><description><para>Pops one object from ringbuffer.</para><para>
+
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to pop data from the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><postconditions><para>if ringbuffer is not empty, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if ringbuffer was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1aadbb77122aeb505381d1d8abb735308f" name="pop"><type>std::optional&lt; T &gt;</type><parameter name=""><paramtype>uses_optional_t</paramtype></parameter><description><para>Pops object from <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link>, returning a std::optional&lt;&gt;</para><para>
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para><computeroutput>std::optional</computeroutput> with value if successful, <computeroutput>std::nullopt</computeroutput> if <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> is empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a3a80bbd36ae35ee5da40ea47db5e2ae2" name="pop"><type>std::optional&lt; U &gt;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name=""><paramtype>uses_optional_t</paramtype></parameter><description><para>Pops object from <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link>, returning a std::optional&lt;&gt;</para><para>
+
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><requires><para>type T must be convertible to U </para>
+</requires><returns><para><computeroutput>std::optional</computeroutput> with value if successful, <computeroutput>std::nullopt</computeroutput> if <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> is empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a69291244914101ed5a3f0464756f83d7" name="push"><type>size_type</type><parameter name="t"><paramtype>T const *</paramtype></parameter><parameter name="size"><paramtype>size_type</paramtype></parameter><description><para>Pushes as many objects from the array t as there is space.</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to push data to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>number of pushed items</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1aa9dd23b2061693ad801acb50dcf88616" name="push"><type>size_type</type><template>
+          <template-nontype-parameter name="size"><type>size_type</type></template-nontype-parameter>
+        </template><parameter name="t"><paramtype>T const (&amp;)</paramtype></parameter><description><para>Pushes as many objects from the array t as there is space available.</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to push data to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>number of pushed items</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a3ce4506ee40dcacd171d7453772a87a9" name="push"><type>size_type</type><template>
+          <template-nontype-parameter name="Extent"><type>std::size_t</type></template-nontype-parameter>
+        </template><parameter name="t"><paramtype>boost::span&lt; const T, Extent &gt;</paramtype></parameter><description><para>Pushes as many objects from the span t as there is space available.</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to push data to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>number of pushed items</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a66368494233983ddc594d8a702cc14cd" name="push"><type>ConstIterator</type><template>
+          <template-type-parameter name="ConstIterator"/>
+        </template><parameter name="begin"><paramtype>ConstIterator</paramtype></parameter><parameter name="end"><paramtype>ConstIterator</paramtype></parameter><description><para>Pushes as many objects from the range [begin, end) as there is space .</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to push data to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>iterator to the first element, which has not been pushed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a8aaf171206a7b0c862a3ad066c916581" name="pop"><type>size_type</type><parameter name="ret"><paramtype>T *</paramtype></parameter><parameter name="size"><paramtype>size_type</paramtype></parameter><description><para>Pops a maximum of size objects from ringbuffer.</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to pop data from the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>number of popped items</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1ad631dce12b26271ec5658f3f3f8104d6" name="pop"><type>size_type</type><template>
+          <template-nontype-parameter name="size"><type>size_type</type></template-nontype-parameter>
+        </template><parameter name="ret"><paramtype>T(&amp;)</paramtype></parameter><description><para>Pops a maximum of size objects from <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link>.</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to pop data from the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>number of popped items</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1aca56d28f493f89cb7dcef27f23b24725" name="pop"><type>std::enable_if&lt;!std::is_convertible&lt; T, OutputIterator &gt;::value, size_type &gt;::type</type><template>
+          <template-type-parameter name="OutputIterator"/>
+        </template><parameter name="it"><paramtype>OutputIterator</paramtype></parameter><description><para>Pops objects to the output iterator it</para><para>
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only one thread is allowed to pop data from the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link> </para>
+</requires><returns><para>number of popped items</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a0ec271c24e8ecdc42d422ece84eed354" name="consume_one"><type>bool</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes one element via a functor</para><para>pops one element from the queue and applies the functor on this object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>true, if one element was consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a8b30c85fb9b9425e15a067e1d092c9f5" name="consume_all"><type>size_type</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes all elements via a functor</para><para>sequentially pops all elements from the queue and applies the functor on each object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>number of elements that are consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a0652dcc180b385a352beaf6e57b37b29" name="read_available" cv="const"><type>size_type</type><description><para>get number of elements that are available for read</para><para>
+<note><para>Thread-safe and wait-free, should only be called from the consumer thread </para>
+</note>
+</para></description><returns><para>number of available elements that can be popped from the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link></para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1afe8872cf0c1a016c8effe4da9bc2f29c" name="write_available" cv="const"><type>size_type</type><description><para>get write space to write elements</para><para>
+<note><para>Thread-safe and wait-free, should only be called from the producer thread </para>
+</note>
+</para></description><returns><para>number of elements that can be pushed to the <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue">spsc_queue</link></para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a285425cc0ba5a8512c6971beb07eae1f" name="front" cv="const"><type>const T &amp;</type><description><para>get reference to element in the front of the queue</para><para>Availability of front element can be checked using <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a0652dcc180b385a352beaf6e57b37b29">read_available()</link>.</para><para>
+
+
+<note><para>Thread-safe and wait-free </para>
+</note>
+</para></description><requires><para>only a consuming thread is allowed to check front element </para>
+</requires><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a0652dcc180b385a352beaf6e57b37b29">read_available()</link> &gt; 0. If ringbuffer is empty, it's undefined behaviour to invoke this method. </para>
+</requires><returns><para>reference to the first element in the queue</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a273996034ecf7211d429b1f1c0d32ba7" name="front"><type>T &amp;</type><description><para>get reference to element in the front of the queue</para><para>Availability of front element can be checked using <link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a0652dcc180b385a352beaf6e57b37b29">read_available()</link>.</para><para>
+
+
+<note><para>Thread-safe and wait-free  </para>
+</note>
+</para></description><requires><para>only a consuming thread is allowed to check front element </para>
+</requires><requires><para><link linkend="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a0652dcc180b385a352beaf6e57b37b29">read_available()</link> &gt; 0. If ringbuffer is empty, it's undefined behaviour to invoke this method. </para>
+</requires><returns><para>reference to the first element in the queue</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1spsc__queue_1a9246fd9c7738cf5c072e5955732686a3" name="reset"><type>void</type><parameter name=""><paramtype>void</paramtype></parameter><description><para>reset the ringbuffer</para><para><note><para>Not thread-safe </para>
+</note>
+</para></description></method>
+</method-group>
+</class></namespace>
+</namespace>
+</header>
+<header id="doxygen.stack_8hpp" name="boost/lockfree/stack.hpp">
+<namespace name="boost">
+<namespace name="lockfree">
+<class id="doxygen.classboost_1_1lockfree_1_1stack" name="stack"><template>
+      <template-type-parameter name="T"/>
+      <template-nontype-parameter name="Options"><type>typename...</type></template-nontype-parameter>
+    </template><description><para>The stack class provides a multi-writer/multi-reader stack, pushing and popping is lock-free, construction/destruction has to be synchronized. It uses a freelist for memory management, freed nodes are pushed to the freelist and not returned to the OS before the stack is destroyed.</para><para><emphasis role="bold">Policies:</emphasis> </para><para><itemizedlist>
+<listitem><para><computeroutput>boost::lockfree::fixed_sized&lt;&gt;</computeroutput>, defaults to <computeroutput>boost::lockfree::fixed_sized&lt;false&gt;</computeroutput> <sbr/>
+ Can be used to completely disable dynamic memory allocations during push in order to ensure lockfree behavior.<sbr/>
+ If the data structure is configured as fixed-sized, the internal nodes are stored inside an array and they are addressed by array indexing. This limits the possible size of the stack to the number of elements that can be addressed by the index type (usually 2**16-2), but on platforms that lack double-width compare-and-exchange instructions, this is the best way to achieve lock-freedom.</para>
+</listitem><listitem><para><computeroutput>boost::lockfree::capacity&lt;&gt;</computeroutput>, optional <sbr/>
+ If this template argument is passed to the options, the size of the stack is set at compile-time. <sbr/>
+ It this option implies <computeroutput>fixed_sized&lt;true&gt;</computeroutput> </para>
+</listitem><listitem><para><computeroutput>boost::lockfree::allocator&lt;&gt;</computeroutput>, defaults to <computeroutput>boost::lockfree::allocator&lt;std::allocator&lt;void&gt;&gt;</computeroutput> <sbr/>
+ Specifies the allocator that is used for the internal freelist</para>
+</listitem></itemizedlist>
+</para><para><emphasis role="bold">Requirements:</emphasis> <itemizedlist>
+<listitem><para>T must have a copy constructor or a move constructor </para>
+</listitem></itemizedlist>
+</para></description><typedef id="doxygen.classboost_1_1lockfree_1_1stack_1a15a90cacfe2eab8e6735e2d28c09026d" name="value_type"><type>T</type></typedef>
+<typedef id="doxygen.classboost_1_1lockfree_1_1stack_1aa07fd8df78777638ef0c6f6107761a85" name="allocator"><type>implementation_defined::allocator</type></typedef>
+<typedef id="doxygen.classboost_1_1lockfree_1_1stack_1af6a1187ab6b1472268466602072e9eaf" name="size_type"><type>implementation_defined::size_type</type></typedef>
+<method-group name="public member functions">
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a9534a04c81419a8183e94b181928b5e2" name="is_lock_free" cv="const"><type>bool</type><parameter name=""><paramtype>void</paramtype></parameter><description><para>
+<warning><para>It only checks, if the top stack node and the freelist can be modified in a lock-free manner. On most platforms, the whole implementation is lock-free, if this is true. Using c++0x-style atomics, there is no possibility to provide a completely accurate implementation, because one would need to test every internal node, which is impossible if further nodes will be allocated from the operating system. </para>
+</warning>
+</para></description><returns><para>true, if implementation is lock-free.</para>
+</returns></method>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1ae1d5313f6bb2a413c540ba6b6a9b77f2" specifiers="explicit"><parameter name=""><paramtype>void</paramtype></parameter><description><para>Construct a fixed-sized stack</para><para>
+</para></description><requires><para>Must specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1a8dbd37017ee1e45e8ef494e90ba5b2f3" specifiers="explicit"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>typename boost::allocator_rebind&lt; node_allocator, U &gt;::type const &amp;</paramtype></parameter><description><para>Construct a fixed-sized stack with a custom allocator</para><para>
+</para></description><requires><para>Must specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1a3e90196072a647c8162201a66f7eea47" specifiers="explicit"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="alloc"><paramtype>allocator const &amp;</paramtype></parameter><description><para>Construct a fixed-sized stack with a custom allocator</para><para>
+</para></description><requires><para>Must specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1a699287479f90d0d6608f0e3644fd2a2d" specifiers="explicit"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><description><para>Construct a variable-sized stack</para><para>Allocate n nodes initially for the freelist</para><para>
+</para></description><requires><para>Must <emphasis role="bold">not</emphasis> specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1aac0d8d62117cc111d0c36a5e8a6519b9" cv="= delete"><parameter name=""><paramtype>const <classname>stack</classname> &amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1lockfree_1_1stack_1ae91a420a1cfca599876a471511e0a5bb" cv="= delete"><type><classname>stack</classname> &amp;</type><parameter name=""><paramtype>const <classname>stack</classname> &amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1ad7af9876e49a9bf38e27e1b10a6e21ec" cv="= delete"><parameter name=""><paramtype><classname>stack</classname> &amp;&amp;</paramtype></parameter></constructor>
+<copy-assignment id="doxygen.classboost_1_1lockfree_1_1stack_1a4928698fd73ee32208747173e49a50f1" cv="= delete"><type><classname>stack</classname> &amp;</type><parameter name=""><paramtype><classname>stack</classname> &amp;&amp;</paramtype></parameter></copy-assignment>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1a78e1cd5522a1f9ce00d9d0e0971b7e53"><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="alloc"><paramtype>typename boost::allocator_rebind&lt; node_allocator, U &gt;::type const &amp;</paramtype></parameter><description><para>Construct a variable-sized stack with a custom allocator</para><para>Allocate n nodes initially for the freelist</para><para>
+</para></description><requires><para>Must <emphasis role="bold">not</emphasis> specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<constructor id="doxygen.classboost_1_1lockfree_1_1stack_1a54d3a3cf9296d8e3b6fc80f8b684ce25"><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><parameter name="alloc"><paramtype>node_allocator const &amp;</paramtype></parameter><description><para>Construct a variable-sized stack with a custom allocator</para><para>Allocate n nodes initially for the freelist</para><para>
+</para></description><requires><para>Must <emphasis role="bold">not</emphasis> specify a capacity&lt;&gt; argument </para>
+</requires></constructor>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ae44f2a2b0fdedba40f2b8743915e70a0" name="reserve"><type>void</type><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><description><para>Allocate n nodes for freelist</para><para>
+<note><para>thread-safe, may block if memory allocator blocks </para>
+</note>
+</para></description><requires><para>only valid if no capacity&lt;&gt; argument given </para>
+</requires></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a68dd77481b6695b32ca834b161729bde" name="reserve_unsafe"><type>void</type><template>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; !has_capacity &gt;</default></template-type-parameter>
+        </template><parameter name="n"><paramtype>size_type</paramtype></parameter><description><para>Allocate n nodes for freelist</para><para>
+<note><para>not thread-safe, may block if memory allocator blocks </para>
+</note>
+</para></description><requires><para>only valid if no capacity&lt;&gt; argument given </para>
+</requires></method>
+<destructor id="doxygen.classboost_1_1lockfree_1_1stack_1a1285da740c270fbc0bc9085b4a2120db"><parameter name=""><paramtype>void</paramtype></parameter><description><para>Destroys stack, free all nodes from freelist.</para><para><note><para>not thread-safe </para>
+</note>
+</para></description></destructor>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a4ec7bdce0912d59c31ae92f942bd4b97" name="push"><type>bool</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><description><para>Pushes object t to the stack.</para><para>
+
+<note><para>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the stack, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a6452ec871bb6f57badd246e37a2999f0" name="push"><type>bool</type><parameter name="v"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the stack.</para><para>
+
+<note><para>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the stack, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws  </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a2638ccd040bbb8160c0590b735fad91f" name="bounded_push"><type>bool</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><description><para>Pushes object t to the stack.</para><para>
+
+<note><para>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail </para>
+</note>
+</para></description><postconditions><para>object will be pushed to the stack, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ae2577ab2c10cb0ad6e1a7b7bb240ff3a" name="bounded_push"><type>bool</type><parameter name="v"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the stack.</para><para>
+
+<note><para>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail  </para>
+</note>
+</para></description><postconditions><para>object will be pushed to the stack, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ab4e1efb388d4425cdd53d0df62c0b111" name="push"><type>ConstIterator</type><template>
+          <template-type-parameter name="ConstIterator"/>
+        </template><parameter name="begin"><paramtype>ConstIterator</paramtype></parameter><parameter name="end"><paramtype>ConstIterator</paramtype></parameter><description><para>Pushes as many objects from the range [begin, end) as freelist node can be allocated.</para><para>
+<note><para>Operation is applied atomically </para>
+</note>
+<note><para>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free.</para>
+</note>
+
+</para></description><returns><para>iterator to the first element, which has not been pushed</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ae134426a20a4c0446911e88326a790d2" name="push"><type>size_type</type><template>
+          <template-nontype-parameter name="Extent"><type>std::size_t</type></template-nontype-parameter>
+        </template><parameter name="t"><paramtype>boost::span&lt; const T, Extent &gt;</paramtype></parameter><description><para>Pushes as many objects from the span as freelist node can be allocated.</para><para>
+<note><para>Operation is applied atomically </para>
+</note>
+<note><para>Thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free.</para>
+</note>
+
+</para></description><returns><para>Number of elements pushed</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ae05a956fd34ddb036834741731796451" name="bounded_push"><type>ConstIterator</type><template>
+          <template-type-parameter name="ConstIterator"/>
+        </template><parameter name="begin"><paramtype>ConstIterator</paramtype></parameter><parameter name="end"><paramtype>ConstIterator</paramtype></parameter><description><para>Pushes as many objects from the range [begin, end) as freelist node can be allocated.</para><para>
+<note><para>Operation is applied atomically </para>
+</note>
+<note><para>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail </para>
+</note>
+
+</para></description><returns><para>iterator to the first element, which has not been pushed</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a3500bb9a139028faff4cfe537ebc0683" name="bounded_push"><type>size_type</type><template>
+          <template-nontype-parameter name="Extent"><type>std::size_t</type></template-nontype-parameter>
+        </template><parameter name="t"><paramtype>boost::span&lt; const T, Extent &gt;</paramtype></parameter><description><para>Pushes as many objects from the span as freelist node can be allocated.</para><para>
+<note><para>Operation is applied atomically </para>
+</note>
+<note><para>Thread-safe and non-blocking. If internal memory pool is exhausted, the push operation will fail </para>
+</note>
+
+</para></description><returns><para>Number of elements pushed</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ac13781e5915a7148471b4d0d8a42ec65" name="unsynchronized_push"><type>bool</type><parameter name="v"><paramtype>const T &amp;</paramtype></parameter><description><para>Pushes object t to the stack.</para><para>
+
+<note><para>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the stack, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a60c845ecf312d20ba2c22a3c564a0df5" name="unsynchronized_push"><type>bool</type><parameter name="v"><paramtype>T &amp;&amp;</paramtype></parameter><description><para>Pushes object t to the stack.</para><para>
+
+<note><para>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><postconditions><para>object will be pushed to the stack, if internal node can be allocated </para>
+</postconditions><returns><para>true, if the push operation is successful.</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws  </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a148ce971a2eb34e015b39587ee5fb784" name="unsynchronized_push"><type>ConstIterator</type><template>
+          <template-type-parameter name="ConstIterator"/>
+        </template><parameter name="begin"><paramtype>ConstIterator</paramtype></parameter><parameter name="end"><paramtype>ConstIterator</paramtype></parameter><description><para>Pushes as many objects from the range [begin, end) as freelist node can be allocated.</para><para>
+<note><para>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><returns><para>iterator to the first element, which has not been pushed</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1aa051e4a127de714e9e8dd66ff4864e5e" name="unsynchronized_push"><type>size_type</type><template>
+          <template-nontype-parameter name="Extent"><type>std::size_t</type></template-nontype-parameter>
+        </template><parameter name="t"><paramtype>boost::span&lt; const T, Extent &gt;</paramtype></parameter><description><para>Pushes as many objects from the span as freelist node can be allocated.</para><para>
+<note><para>Not thread-safe. If internal memory pool is exhausted and the memory pool is not fixed-sized, a new node will be allocated from the OS. This may not be lock-free. </para>
+</note>
+
+</para></description><returns><para>iterator to the first element, which has not been pushed</para>
+</returns><throws><simpara><classname>if</classname> memory allocator throws </simpara>
+</throws></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ae7a21d178b5a2fd805147eeb6bf0784c" name="pop"><type>bool</type><parameter name="ret"><paramtype>T &amp;</paramtype></parameter><description><para>Pops object from stack.</para><para>
+
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if stack was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1aacd414c5c9d600517520160bafbd0e31" name="pop"><type>bool</type><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; std::is_convertible&lt; T, U &gt;::value &gt;</default></template-type-parameter>
+        </template><parameter name="ret"><paramtype>U &amp;</paramtype></parameter><description><para>Pops object from stack.</para><para>
+
+
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><requires><para>type T must be convertible to U </para>
+</requires><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if stack was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a800a005c0844810d89f84aec82bbf2ea" name="pop"><type>std::optional&lt; T &gt;</type><parameter name=""><paramtype>uses_optional_t</paramtype></parameter><description><para>Pops object from stack, returning a std::optional&lt;&gt;</para><para>
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para><computeroutput>std::optional</computeroutput> with value if successful, <computeroutput>std::nullopt</computeroutput> if stack is empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a85f15d66bdb428440362a9d4775bb3f7" name="pop"><type>std::optional&lt; U &gt;</type><template>
+          <template-type-parameter name="U"/>
+        </template><parameter name=""><paramtype>uses_optional_t</paramtype></parameter><description><para>Pops object from stack, returning a std::optional&lt;&gt;</para><para>
+
+<note><para>Thread-safe and non-blocking </para>
+</note>
+</para></description><requires><para>type T must be convertible to U </para>
+</requires><returns><para><computeroutput>std::optional</computeroutput> with value if successful, <computeroutput>std::nullopt</computeroutput> if stack is empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a95a7acc2013ff8f4f38bca337e803d9c" name="unsynchronized_pop"><type>bool</type><parameter name="ret"><paramtype>T &amp;</paramtype></parameter><description><para>Pops object from stack.</para><para>
+
+<note><para>Not thread-safe, but non-blocking </para>
+</note>
+</para></description><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if stack was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1ae16eb773dc30562a9cf9c7b0dc7c20b7" name="unsynchronized_pop"><type>bool</type><template>
+          <template-type-parameter name="U"/>
+          <template-type-parameter name="Enabler"><default>std::enable_if&lt; std::is_convertible&lt; T, U &gt;::value &gt;</default></template-type-parameter>
+        </template><parameter name="ret"><paramtype>U &amp;</paramtype></parameter><description><para>Pops object from stack.</para><para>
+
+
+<note><para>Not thread-safe, but non-blocking </para>
+</note>
+</para></description><requires><para>type T must be convertible to U </para>
+</requires><postconditions><para>if pop operation is successful, object will be copied to ret. </para>
+</postconditions><returns><para>true, if the pop operation is successful, false if stack was empty.</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a71f189fa95cc93ce24e45da12604d4ad" name="consume_one"><type>bool</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes one element via a functor</para><para>pops one element from the stack and applies the functor on this object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>true, if one element was consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a880dfff931389a5a4b35cac8a135a0ea" name="consume_all"><type>size_t</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes all elements via a functor</para><para>sequentially pops all elements from the stack and applies the functor on each object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>number of elements that are consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a58d97acee233612eccbb9db11089e796" name="consume_all_atomic"><type>size_t</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes all elements via a functor</para><para>atomically pops all elements from the stack and applies the functor on each object</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>number of elements that are consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1a41edbd5554b03cc1c329f9f094879f34" name="consume_all_atomic_reversed"><type>size_t</type><template>
+          <template-type-parameter name="Functor"/>
+        </template><parameter name="f"><paramtype>Functor &amp;&amp;</paramtype></parameter><description><para>consumes all elements via a functor</para><para>atomically pops all elements from the stack and applies the functor on each object in reversed order</para><para>
+<note><para>Thread-safe and non-blocking, if functor is thread-safe and non-blocking </para>
+</note>
+</para></description><returns><para>number of elements that are consumed</para>
+</returns></method>
+<method id="doxygen.classboost_1_1lockfree_1_1stack_1aaeab1a227794b63d0e9cc04b844b5a4d" name="empty" cv="const"><type>bool</type><parameter name=""><paramtype>void</paramtype></parameter><description><para>
+<note><para>It only guarantees that at some point during the execution of the function the stack has been empty. It is rarely practical to use this value in program logic, because the stack can be modified by other threads. </para>
+</note>
+</para></description><returns><para>true, if stack is empty.</para>
+</returns></method>
+</method-group>
+</class></namespace>
+</namespace>
+</header>
+</library-reference>

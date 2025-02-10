@@ -1,0 +1,566 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Release Notes</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.JSON">
+<link rel="prev" href="ref/boost__json__string_kind.html" title="string_kind">
+<link rel="next" href="index.html" title="Index">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ref/boost__json__string_kind.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="index.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="json.release_notes"></a><a class="link" href="release_notes.html" title="Release Notes">Release Notes</a>
+</h2></div></div></div>
+<h4>
+<a name="json.release_notes.h0"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_86_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_86_0">Boost
+      1.86.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>Deprecation</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Support for GCC versions older than version 5.0 is deprecated and <span class="bold"><strong>will stop in Boost 1.88.0</strong></span>.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/941" target="_top">#941</a> <code class="computeroutput"><span class="identifier">source_location</span></code> parameter
+          was added to throwing accessor functions.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/940" target="_top">#940</a> Parse option to tolerate invalid UTF-16 surrogate pairs, and produce
+          <a href="https://simonsapin.github.io/wtf-8/" target="_top">WTF-8</a>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/941" target="_top">#941</a> Added accessor functions that return <code class="computeroutput"><span class="identifier">system</span><span class="special">::</span><span class="identifier">result</span></code>.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Handle missing error case in direct parsing.
+        </li></ul></div>
+<h4>
+<a name="json.release_notes.h1"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_85_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_85_0">Boost
+      1.85.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>New Dependencies</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/915" target="_top">#915</a> Boost.Endian is now used to deal with endianness.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/881" target="_top">#881</a> Aliases to Boost.System and Boost.Container components are deprecated
+          and <span class="bold"><strong>will be completely removed in 1.87.0</strong></span>.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/979" target="_top">#979</a> Conversion of described classes supports private members
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/979" target="_top">#979</a> Rvalue reference overload for <code class="computeroutput"><span class="identifier">visit</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/977" target="_top">#977</a> Add conversion support for path-like types.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/988" target="_top">#988</a> Parsing into described classes correctly considers inherited members.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/975" target="_top">#975</a> Conversion of self-referential sequences is disabled.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/952" target="_top">#952</a> Fixed reference handling in visit.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h2"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_84_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_84_0">Boost
+      1.84.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/925" target="_top">#925</a> Add a conversion category for variants.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/833" target="_top">#833</a> Add a conversion category for optionals.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/840" target="_top">#840</a> Relax iterator requirements for constructors from iterator pairs.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/627" target="_top">#627</a> Parsing directly into user types. See <a class="link" href="conversion/direct_parsing.html" title="Direct parsing">Direct
+          Parsing</a>.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/933" target="_top">#933</a> Fix reading beyond input buffer.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/920" target="_top">#920</a> Fix inconsistent choice of init list constructor.
+        </li>
+<li class="listitem">
+          Documentation improvements.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h3"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_83_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_83_0">Boost
+      1.83.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/859" target="_top">#859</a> The library now only throws <a href="https://boost.org/doc/libs/release/libs/system/doc/html/system.html#ref_system_error" target="_top"><code class="computeroutput"><span class="identifier">system_error</span></code></a>, except for when
+          allocation failed, in which case <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">bad_alloc</span></code>
+          is thrown.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/884" target="_top">#884</a> Serialization behavior can now be changed by <a class="link" href="ref/boost__json__serialize_options.html" title="serialize_options"><code class="computeroutput"><span class="identifier">serialize_options</span></code></a>.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/819" target="_top">#819</a> <a class="link" href="conversion/contextual_conversions.html" title="Contextual conversions">Contextual
+          conversions</a>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/599" target="_top">#599</a> <a class="link" href="ref/boost__json__number_precision.html" title="number_precision">Parser option</a>
+          for more precise number parsing.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/885" target="_top">#885</a> Support <a class="link" href="ref/boost__json__parse_options.html" title="parse_options"><code class="computeroutput"><span class="identifier">parse_options</span></code></a> in stream <code class="computeroutput"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/397" target="_top">#397</a> <a class="link" href="ref/boost__json__parse_options.html" title="parse_options">Parser option</a>
+          to allow <code class="computeroutput"><span class="identifier">Infinity</span></code> and
+          <code class="computeroutput"><span class="identifier">NaN</span></code> JSON literals.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/901" target="_top">#901</a> <a class="link" href="ref/boost__json__number_precision.html" title="number_precision">Parser mode</a>
+          that only validates numbers rather than parsing them.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/892" target="_top">#892</a> Numbers with exponent larger than <code class="computeroutput"><span class="identifier">INT_MAX</span></code>
+          are accepted by the parser and treated as infinity.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/901" target="_top">#901</a> Fix <code class="computeroutput"><span class="identifier">object</span></code> member
+          functions that should provide strong guarantee.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/887" target="_top">#887</a> Fix ambiguity of <code class="computeroutput"><span class="identifier">end</span></code>
+          call when <code class="computeroutput"><span class="identifier">boost</span><span class="special">/</span><span class="identifier">range</span><span class="special">.</span><span class="identifier">hpp</span></code> is included.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/902" target="_top">#902</a> Fix ASan failures.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/904" target="_top">#904</a> Fix error message for <code class="computeroutput"><span class="identifier">error</span><span class="special">::</span><span class="identifier">size_mismatch</span></code>.
+        </li>
+<li class="listitem">
+          Fix conversion into tuple with const elements.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h4"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_82_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_82_0">Boost
+      1.82.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/800" target="_top">#800</a> <a class="link" href="ref/boost__json__value/set_at_pointer.html" title="value::set_at_pointer"><code class="computeroutput"><span class="identifier">set_at_pointer</span></code></a>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/570" target="_top">#570</a> <a class="link" href="ref/boost__json__value/hash_value_fr.html" title="value::hash_value"><code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">hash</span></code> support</a>.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Improvements</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/848" target="_top">#848</a> <a class="link" href="ref/boost__json__serializer/serializer/overload3.html" title="serializer::serializer (3 of 3 overloads)">Caller-provided
+          serializer storage</a>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/807" target="_top">#807</a> <code class="computeroutput"><span class="identifier">value_to</span></code> supports
+          missing elements for <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code>.
+        </li>
+<li class="listitem">
+          Documentation improvements.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/876" target="_top">#876</a> Fix parser suspend inside an escape character.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/814" target="_top">#814</a> Make sentinel() return a unique pointer.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h5"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_81_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_81_0">Boost
+      1.81.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/686" target="_top">#686</a> Conversion traits were redesigned.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/756" target="_top">#756</a> Removed <code class="computeroutput"><span class="identifier">condition</span><span class="special">::</span><span class="identifier">assign_error</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/758" target="_top">#758</a> Removed <code class="computeroutput"><span class="identifier">generic_category</span></code>
+          alias.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/749" target="_top">#749</a> <code class="computeroutput"><span class="identifier">object</span><span class="special">::</span><span class="identifier">stable_erase</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/778" target="_top">#778</a> Added error condition for generic library errors.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/619" target="_top">#619</a> Added <code class="computeroutput"><span class="identifier">parse</span></code> overload
+          for <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">istream</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/619" target="_top">#619</a> <code class="computeroutput"><span class="keyword">operator</span><span class="special">&gt;&gt;</span></code>
+          for <code class="computeroutput"><span class="identifier">value</span></code>.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Improvements</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/686" target="_top">#686</a> Null-like type conversion support (including <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">nullptr_t</span></code>).
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/736" target="_top">#736</a> Non-throwing conversion from <code class="computeroutput"><span class="identifier">value</span></code>
+          to user types.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/677" target="_top">#677</a> <code class="computeroutput"><span class="identifier">value_to</span><span class="special">/</span><span class="identifier">from</span></code> supports <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code>
+          and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">nullopt_t</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/517" target="_top">#517</a> <code class="computeroutput"><span class="identifier">value_to</span><span class="special">/</span><span class="identifier">from</span></code> supports <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">variant</span></code>
+          and <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">monotype</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/626" target="_top">#626</a> <code class="computeroutput"><span class="identifier">value_to</span><span class="special">/</span><span class="identifier">from</span></code> supports supports described classes
+          and enums.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/757" target="_top">#757</a> Rvalue ref-qualified accessors for <code class="computeroutput"><span class="identifier">value</span></code>.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/745" target="_top">#745</a> Support for self-swap and self-move in <code class="computeroutput"><span class="identifier">string</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/747" target="_top">#747</a> Support for self-swap and self-move in <code class="computeroutput"><span class="identifier">array</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/735" target="_top">#735</a> Replaced C floating point constants with C++ equivalents.
+        </li>
+<li class="listitem">
+          Documentation improvements.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h6"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_80_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_80_0">Boost
+      1.80.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/703" target="_top">#703</a> Add non-const <code class="computeroutput"><span class="identifier">value</span><span class="special">::</span><span class="identifier">at</span></code>
+          overloads.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/717" target="_top">#717</a> Add the ability to manually choose endianness of the platform.
+        </li>
+<li class="listitem">
+          Add <code class="computeroutput"><span class="identifier">string</span><span class="special">::</span><span class="identifier">subview</span><span class="special">()</span></code>
+          overload.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/692" target="_top">#692</a> Fix segfault in <code class="computeroutput"><span class="identifier">array</span><span class="special">::</span><span class="identifier">erase</span><span class="special">(</span><span class="identifier">it</span><span class="special">)</span></code>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/697" target="_top">#697</a> Fix low performance of <code class="computeroutput"><span class="identifier">serialize</span></code>
+          on libc++.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/708" target="_top">#708</a> Fix ambiguous conversion to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code>
+          on GCC 8.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/717" target="_top">#717</a> Fix parsing on big-endian platforms.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/726" target="_top">#726</a> Fix handling of comment after trailing comma.
+        </li>
+<li class="listitem">
+          Minor documentation fixes.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h7"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_79_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_79_0">Boost
+      1.79.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/650" target="_top">#650</a> Standalone mode of the library is removed. Users who wish to continue
+          using standalone JSON can switch to <a href="https://github.com/CPPAlliance/standalone-json.git" target="_top">the
+          C++ Alliance fork</a>.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/480" target="_top">#480</a> Add support for JSON Pointer.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>Improvements</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Add <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">error_code</span></code> overloads.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/680" target="_top">#680</a> Add <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">source_location</span></code> to <code class="computeroutput"><span class="identifier">error_codes</span></code>.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/668" target="_top">#668</a> Naturally grow string during serialization.
+        </li></ul></div>
+<h4>
+<a name="json.release_notes.h8"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_78_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_78_0">Boost
+      1.78.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/628" target="_top">#628</a> Standalone mode of the library is removed.
+        </li></ul></div>
+<h4>
+<a name="json.release_notes.h9"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_78_0_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_78_0_0">Boost
+      1.78.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>API Changes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/628" target="_top">#628</a> Standalone mode of the library is deprecated.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/549" target="_top">#549</a>  <a href="https://github.com/boostorg/json/issues/550" target="_top">#550</a> Allow external libraries to forward declare <a class="link" href="ref/boost__json__value_to.html" title="value_to"><code class="computeroutput"><span class="identifier">value_to</span></code></a> and <a class="link" href="ref/boost__json__value_from.html" title="value_from"><code class="computeroutput"><span class="identifier">value_from</span></code></a>.
+        </li></ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/608" target="_top">#608</a>  <a href="https://github.com/boostorg/json/issues/612" target="_top">#612</a> Fixed signed integer overflow in number parsing.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/620" target="_top">#620</a> Documentation fixes.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Improvements</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/557" target="_top">#557</a> Add support for <code class="computeroutput"><span class="special">/</span><span class="identifier">Zc</span><span class="special">:</span><span class="identifier">implicitNoexcept</span><span class="special">-</span></code> on MSVC.
+        </li></ul></div>
+<h4>
+<a name="json.release_notes.h10"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_77_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_77_0">Boost
+      1.77.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>New Features</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/538" target="_top">#538</a> <a class="link" href="ref/boost__json__string/operator_std__string_view.html" title="string::operator std::string_view">Implicit
+          conversion operator from <code class="computeroutput"><span class="identifier">string</span></code>
+          to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code></a>.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/521" target="_top">#521</a> <a href="https://en.cppreference.com/w/cpp/utility/hash" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">hash</span></code></a> specializations for json
+          types.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__json__object.html" title="object"><code class="computeroutput"><span class="identifier">object</span></code></a>
+          deallocates the correct size.
+        </li>
+<li class="listitem">
+          Fixed crash when constructing <a class="link" href="ref/boost__json__array.html" title="array"><code class="computeroutput"><span class="identifier">array</span></code></a> from a pair of iterators
+          that form an empty range.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__json__key_value_pair.html" title="key_value_pair"><code class="computeroutput"><span class="identifier">key_value_pair</span></code></a>
+          allocates with the correct alignment.
+        </li>
+</ul></div>
+<p>
+      <span class="bold"><strong>Improvements</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a class="link" href="ref/boost__json__value_to.html" title="value_to"><code class="computeroutput"><span class="identifier">value_to</span></code></a>
+          supports <code class="computeroutput"><span class="identifier">TupleLike</span></code> types.
+        </li>
+<li class="listitem">
+          <a class="link" href="ref/boost__json__value_to.html" title="value_to"><code class="computeroutput"><span class="identifier">value_to</span></code></a>
+          and <a class="link" href="ref/boost__json__value_from.html" title="value_from"><code class="computeroutput"><span class="identifier">value_from</span></code></a>
+          support <a href="https://en.cppreference.com/w/cpp/container/array" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span></code></a> and similar types.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h11"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_76_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_76_0">Boost
+      1.76.0</a>
+    </h4>
+<p>
+      <span class="bold"><strong>Fixes</strong></span>
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/481" target="_top">#481</a> Refactored <a class="link" href="ref/boost__json__value_from.html" title="value_from"><code class="computeroutput"><span class="identifier">value_from</span></code></a> implementation; user
+          customizations are now always preferred over library-provided overloads.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/484" target="_top">#484</a> Fixed imprecise parsing for some floating point numbers.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/485" target="_top">#485</a> Fixed link errors in standalone mode, when used alongside Boost.
+        </li>
+<li class="listitem">
+          <a href="https://github.com/boostorg/json/issues/497" target="_top">#497</a> Fix Boost.Build builds on GCC 4.8.
+        </li>
+</ul></div>
+<h4>
+<a name="json.release_notes.h12"></a>
+      <span class="phrase"><a name="json.release_notes.boost_1_75_0"></a></span><a class="link" href="release_notes.html#json.release_notes.boost_1_75_0">Boost
+      1.75.0</a>
+    </h4>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Initial release.
+        </li></ul></div>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="ref/boost__json__string_kind.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="index.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Logging sources</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="log/reference.html" title="Reference">
+<link rel="prev" href="doxygen/expressions/record_8hpp_1a9f618cf55a4264e978f951c55da84155.html" title="Global record">
+<link rel="next" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__composite__logger.html" title="Class template basic_composite_logger">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="doxygen/expressions/record_8hpp_1a9f618cf55a4264e978f951c55da84155.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="log/reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__composite__logger.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="logging_sources"></a>Logging sources</h3></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.basic__logger_8hpp">Header &lt;boost/log/sources/basic_logger.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.channel__feature_8hpp">Header &lt;boost/log/sources/channel_feature.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.channel__logger_8hpp">Header &lt;boost/log/sources/channel_logger.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.exception__handler__feature_8hpp">Header &lt;boost/log/sources/exception_handler_feature.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.features_8hpp">Header &lt;boost/log/sources/features.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.global__logger__storage_8hpp">Header &lt;boost/log/sources/global_logger_storage.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.logger_8hpp">Header &lt;boost/log/sources/logger.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.record__ostream_8hpp">Header &lt;boost/log/sources/record_ostream.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.severity__channel__logger_8hpp">Header &lt;boost/log/sources/severity_channel_logger.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.severity__feature_8hpp">Header &lt;boost/log/sources/severity_feature.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.severity__logger_8hpp">Header &lt;boost/log/sources/severity_logger.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="logging_sources.html#doxygen.logging_sources.threading__models_8hpp">Header &lt;boost/log/sources/threading_models.hpp&gt;</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.basic__logger_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/basic_logger.hpp" target="_top">boost/log/sources/basic_logger.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.03.2007</p>
+<p>
+
+The header contains implementation of a base class for loggers. Convenience macros for defining custom loggers are also provided. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a2bf9e2352b8dae6da956fa36eb988907.html" title="Macro BOOST_LOG_FORWARD_LOGGER_CONSTRUCTORS">BOOST_LOG_FORWARD_LOGGER_CONSTRUCTORS</a>(class_type)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a4a1cd5a4ad6a970ee250b63a8bb6f07f.html" title="Macro BOOST_LOG_FORWARD_LOGGER_CONSTRUCTORS_TEMPLATE">BOOST_LOG_FORWARD_LOGGER_CONSTRUCTORS_TEMPLATE</a>(class_type)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1aede60fe3d966deea9321c6e2ed7e01c0.html" title="Macro BOOST_LOG_FORWARD_LOGGER_ASSIGNMENT">BOOST_LOG_FORWARD_LOGGER_ASSIGNMENT</a>(class_type)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a25676d4fc5f863deca3b0f7d76d82908.html" title="Macro BOOST_LOG_FORWARD_LOGGER_ASSIGNMENT_TEMPLATE">BOOST_LOG_FORWARD_LOGGER_ASSIGNMENT_TEMPLATE</a>(class_type)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a5e7b99cb8505007e328718b7b446fb20.html" title="Macro BOOST_LOG_FORWARD_LOGGER_MEMBERS">BOOST_LOG_FORWARD_LOGGER_MEMBERS</a>(class_type)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1aa39ae6fe81ed76065aa621195ba2ec39.html" title="Macro BOOST_LOG_FORWARD_LOGGER_MEMBERS_TEMPLATE">BOOST_LOG_FORWARD_LOGGER_MEMBERS_TEMPLATE</a>(class_type)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a4de026a34fdbc35b209ab31fda65d917.html" title="Macro BOOST_LOG_DECLARE_LOGGER_TYPE">BOOST_LOG_DECLARE_LOGGER_TYPE</a>(type_name, char_type, base_seq, threading)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1ae3649a62f7be59c9863e7a8aca7fccf9.html" title="Macro BOOST_LOG_DECLARE_LOGGER">BOOST_LOG_DECLARE_LOGGER</a>(type_name, base_seq)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a8fb4ab8af1b52a0a829207295dd57a92.html" title="Macro BOOST_LOG_DECLARE_LOGGER_MT">BOOST_LOG_DECLARE_LOGGER_MT</a>(type_name, base_seq)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a585ac3b030662fe5e820be095c983e2d.html" title="Macro BOOST_LOG_DECLARE_WLOGGER">BOOST_LOG_DECLARE_WLOGGER</a>(type_name, base_seq)
+<a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a0d7e5b0cdd9666df7e5304a51382410c.html" title="Macro BOOST_LOG_DECLARE_WLOGGER_MT">BOOST_LOG_DECLARE_WLOGGER_MT</a>(type_name, base_seq)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> FinalT<span class="special">,</span> <span class="keyword">typename</span> ThreadingModelT<span class="special">,</span> 
+               <span class="keyword">typename</span> FeaturesT<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__composite__logger.html" title="Class template basic_composite_logger">basic_composite_logger</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> FinalT<span class="special">,</span> <span class="keyword">typename</span> FeaturesT<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__composite__logger_3_01CharT_00_01FinalT_00_01single__thread__model_00_01FeaturesT_01_4.html" title="Class template basic_composite_logger&lt;CharT, FinalT, single_thread_model, FeaturesT&gt;">basic_composite_logger</a><span class="special">&lt;</span><span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">FinalT</span><span class="special">,</span> <span class="identifier">single_thread_model</span><span class="special">,</span> <span class="identifier">FeaturesT</span><span class="special">&gt;</span><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> FinalT<span class="special">,</span> <span class="keyword">typename</span> ThreadingModelT<span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__logger.html" title="Class template basic_logger">basic_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">,</span> <span class="keyword">typename</span> FinalT<span class="special">,</span> <span class="keyword">typename</span> ThreadingModelT<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="doxygen/logging_sources/basic__logger_8hpp_1a02ff944c71752c681767cc722d146866.html" title="Function template swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__logger.html" title="Class template basic_logger">basic_logger</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">FinalT</span><span class="special">,</span> <span class="identifier">ThreadingModelT</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__logger.html" title="Class template basic_logger">basic_logger</a><span class="special">&lt;</span> <span class="identifier">CharT</span><span class="special">,</span> <span class="identifier">FinalT</span><span class="special">,</span> <span class="identifier">ThreadingModelT</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.channel__feature_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/channel_feature.hpp" target="_top">boost/log/sources/channel_feature.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>28.02.2008</p>
+<p>
+
+The header contains implementation of a channel support feature. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/logging_sources/channel__feature_8hpp_1af88a622876b200fceeda2bfd43d69131.html" title="Macro BOOST_LOG_STREAM_CHANNEL">BOOST_LOG_STREAM_CHANNEL</a>(logger, chan)
+<a class="link" href="doxygen/logging_sources/channel__feature_8hpp_1acd22c675c840b37cb6a839f86b56bfb4.html" title="Macro BOOST_LOG_CHANNEL">BOOST_LOG_CHANNEL</a>(logger, chan)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BaseT<span class="special">,</span> <span class="keyword">typename</span> ChannelT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__channel__logger.html" title="Class template basic_channel_logger">basic_channel_logger</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1channel.html" title="Struct template channel">channel</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.channel__logger_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/channel_logger.hpp" target="_top">boost/log/sources/channel_logger.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>28.02.2008</p>
+<p>
+
+The header contains implementation of a logger with channel support. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1channel__logger.html" title="Class template channel_logger">channel_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1channel__logger__mt.html" title="Class template channel_logger_mt">channel_logger_mt</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wchannel__logger.html" title="Class template wchannel_logger">wchannel_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wchannel__logger__mt.html" title="Class template wchannel_logger_mt">wchannel_logger_mt</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.exception__handler__feature_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/exception_handler_feature.hpp" target="_top">boost/log/sources/exception_handler_feature.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>17.07.2009</p>
+<p>
+
+The header contains implementation of an exception handler support feature. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BaseT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__exception__handler__logger.html" title="Class template basic_exception_handler_logger">basic_exception_handler_logger</a><span class="special">;</span>
+
+      <span class="keyword">struct</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1exception__handler.html" title="Struct exception_handler">exception_handler</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.features_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/features.hpp" target="_top">boost/log/sources/features.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>17.07.2009</p>
+<p>
+
+The header contains definition of a features list class template. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span><span class="special">...</span> FeaturesT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1features.html" title="Struct template features">features</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.global__logger__storage_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/global_logger_storage.hpp" target="_top">boost/log/sources/global_logger_storage.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>21.04.2008</p>
+<p>
+
+The header contains implementation of facilities to declare global loggers. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1aaf4792e83d8810b2182dc40fbb9b0971.html" title="Macro BOOST_LOG_GLOBAL_LOGGER">BOOST_LOG_GLOBAL_LOGGER</a>(tag_name, logger)
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1ac3d73b4fb68e12ee0a523c99a3ddaeca.html" title="Macro BOOST_LOG_GLOBAL_LOGGER_INIT">BOOST_LOG_GLOBAL_LOGGER_INIT</a>(tag_name, logger)
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1add4dade7fe622b4bd6608e69e3abed84.html" title="Macro BOOST_LOG_GLOBAL_LOGGER_DEFAULT">BOOST_LOG_GLOBAL_LOGGER_DEFAULT</a>(tag_name, logger)
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1a73d962e61a78c43894b9abd2bdd93c1a.html" title="Macro BOOST_LOG_GLOBAL_LOGGER_CTOR_ARGS">BOOST_LOG_GLOBAL_LOGGER_CTOR_ARGS</a>(tag_name, logger, args)
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1a232634829527b256b222acde0b897134.html" title="Macro BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT">BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT</a>(tag_name, logger)
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1a8ec0a191e0873253f997240e5c3fa9ee.html" title="Macro BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT">BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT</a>(tag_name, logger)
+<a class="link" href="doxygen/logging_sources/global__logger__storage_8hpp_1aba2c2695faac93c42134ce35e7b0c1c2.html" title="Macro BOOST_LOG_INLINE_GLOBAL_LOGGER_CTOR_ARGS">BOOST_LOG_INLINE_GLOBAL_LOGGER_CTOR_ARGS</a>(tag_name, logger, args)</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.logger_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/logger.hpp" target="_top">boost/log/sources/logger.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.03.2007</p>
+<p>
+
+The header contains implementation of a simplistic logger with no features. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1logger.html" title="Class logger">logger</a><span class="special">;</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1logger__mt.html" title="Class logger_mt">logger_mt</a><span class="special">;</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wlogger.html" title="Class wlogger">wlogger</a><span class="special">;</span>
+      <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wlogger__mt.html" title="Class wlogger_mt">wlogger_mt</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.record__ostream_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/record_ostream.hpp" target="_top">boost/log/sources/record_ostream.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>09.03.2009</p>
+<p>
+
+This header contains a wrapper class around a logging record that allows to compose the record message with a streaming expression. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1a6e8e7693aca519bfc255b9c80c440dbd.html" title="Macro BOOST_LOG_STREAM">BOOST_LOG_STREAM</a>(logger)
+<a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1ab4699f6df5da1c0b90999ef08b18b19c.html" title="Macro BOOST_LOG_STREAM_WITH_PARAMS">BOOST_LOG_STREAM_WITH_PARAMS</a>(logger, params_seq)
+<a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1af81e49d02468d89cbce61713a12ec92a.html" title="Macro BOOST_LOG">BOOST_LOG</a>(logger)
+<a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1ab350e09162e46b0a16ec6d4dab613c8e.html" title="Macro BOOST_LOG_WITH_PARAMS">BOOST_LOG_WITH_PARAMS</a>(logger, params_seq)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> CharT<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1basic__record__ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a><span class="special">;</span>
+
+    <span class="keyword">typedef</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1basic__record__ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a><span class="special">&lt;</span> <span class="keyword">char</span> <span class="special">&gt;</span> <a name="doxygen.logging_sources.record__ostream_8hpp_1a674a20d04104ee880472988af8f6d242"></a><span class="identifier">record_ostream</span><span class="special">;</span>  <span class="comment">// Convenience typedef for narrow-character logging. </span>
+    <span class="keyword">typedef</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1basic__record__ostream.html" title="Class template basic_record_ostream">basic_record_ostream</a><span class="special">&lt;</span> <span class="keyword">wchar_t</span> <span class="special">&gt;</span> <a name="doxygen.logging_sources.record__ostream_8hpp_1a5a34ff61361e8774ebe6ddf10decd657"></a><span class="identifier">wrecord_ostream</span><span class="special">;</span>  <span class="comment">// Convenience typedef for wide-character logging. </span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StreamT<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1ac4df57bc51a08bd29959994e819cb80e.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">StreamT</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">T</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StreamT<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1afb9c94308b2bdb151f192ce6f8f0fe29.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">StreamT</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StreamT<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1af6257687aec019d71ffde19f1e5d0e84.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">StreamT</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StreamT<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1a9361f18ca24a475b384d42e970ece60a.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">StreamT</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">T</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StreamT<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1ab8c780590927582e83b8cb60e25c0576.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">StreamT</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">T</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> StreamT<span class="special">,</span> <span class="keyword">typename</span> T<span class="special">&gt;</span> 
+      <span class="emphasis"><em><span class="identifier">unspecified</span></em></span> <a class="link" href="doxygen/logging_sources/record__ostream_8hpp_1a395439ad87147b1fb65d1ba1687d48c4.html" title="Function template operator&lt;&lt;"><span class="keyword">operator</span><span class="special">&lt;&lt;</span></a><span class="special">(</span><span class="identifier">StreamT</span> <span class="special">&amp;&amp;</span><span class="special">,</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.severity__channel__logger_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/severity_channel_logger.hpp" target="_top">boost/log/sources/severity_channel_logger.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>28.02.2008</p>
+<p>
+
+The header contains implementation of a logger with severity level and channel support. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/logging_sources/severity__channel__logger_8hpp_1acd2d134d5db0b9572d1739190f5651b7.html" title="Macro BOOST_LOG_STREAM_CHANNEL_SEV">BOOST_LOG_STREAM_CHANNEL_SEV</a>(logger, chan, lvl)
+<a class="link" href="doxygen/logging_sources/severity__channel__logger_8hpp_1ae6db663e758e2799641204963a05512b.html" title="Macro BOOST_LOG_CHANNEL_SEV">BOOST_LOG_CHANNEL_SEV</a>(logger, chan, lvl)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1severity__channel__logger.html" title="Class template severity_channel_logger">severity_channel_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1severity__channel__logger__mt.html" title="Class template severity_channel_logger_mt">severity_channel_logger_mt</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wseverity__channel__logger.html" title="Class template wseverity_channel_logger">wseverity_channel_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">,</span> <span class="keyword">typename</span> ChannelT <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">wstring</span><span class="special">&gt;</span> 
+        <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wseverity__channel__logger__mt.html" title="Class template wseverity_channel_logger_mt">wseverity_channel_logger_mt</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.severity__feature_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/severity_feature.hpp" target="_top">boost/log/sources/severity_feature.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.03.2007</p>
+<p>
+
+The header contains implementation of a severity level support feature. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/logging_sources/severity__feature_8hpp_1a86ddf0c58672251f366a903016aadf5b.html" title="Macro BOOST_LOG_STREAM_SEV">BOOST_LOG_STREAM_SEV</a>(logger, lvl)
+<a class="link" href="doxygen/logging_sources/severity__feature_8hpp_1af172a32347cbf8f7dc34d9e0c1e55ab1.html" title="Macro BOOST_LOG_SEV">BOOST_LOG_SEV</a>(logger, lvl)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> BaseT<span class="special">,</span> <span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__severity__logger.html" title="Class template basic_severity_logger">basic_severity_logger</a><span class="special">;</span>
+
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1severity.html" title="Struct template severity">severity</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.severity__logger_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/severity_logger.hpp" target="_top">boost/log/sources/severity_logger.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>08.03.2007</p>
+<p>
+
+The header contains implementation of a logger with severity level support. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1severity__logger.html" title="Class template severity_logger">severity_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1severity__logger__mt.html" title="Class template severity_logger_mt">severity_logger_mt</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wseverity__logger.html" title="Class template wseverity_logger">wseverity_logger</a><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> LevelT <span class="special">=</span> <span class="keyword">int</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1wseverity__logger__mt.html" title="Class template wseverity_logger_mt">wseverity_logger_mt</a><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="doxygen.logging_sources.threading__models_8hpp"></a>Header &lt;<a href="../../../../boost/log/sources/threading_models.hpp" target="_top">boost/log/sources/threading_models.hpp</a>&gt;</h4></div></div></div>
+<p>Andrey Semashev </p>
+<p>
+
+</p>
+<p>04.10.2008</p>
+<p>
+
+The header contains definition of threading models that can be used in loggers. The header also provides a number of tags that can be used to express lock requirements on a function callee. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">log</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">sources</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutexT<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1multi__thread__model.html" title="Struct template multi_thread_model">multi_thread_model</a><span class="special">;</span>
+      <span class="keyword">struct</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1single__thread__model.html" title="Struct single_thread_model">single_thread_model</a><span class="special">;</span>
+      <span class="keyword">void</span> <a class="link" href="doxygen/logging_sources/threading__models_8hpp_1a2d5bf0f4926854c235a3646c1da69dcc.html" title="Function swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1single__thread__model.html" title="Struct single_thread_model">single_thread_model</a> <span class="special">&amp;</span><span class="special">,</span> <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1single__thread__model.html" title="Struct single_thread_model">single_thread_model</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MutexT<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="doxygen/logging_sources/threading__models_8hpp_1a7c62c95768b702db92402925f26b6cba.html" title="Function template swap"><span class="identifier">swap</span></a><span class="special">(</span><a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1multi__thread__model.html" title="Struct template multi_thread_model">multi_thread_model</a><span class="special">&lt;</span> <span class="identifier">MutexT</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">,</span> 
+                  <a class="link" href="doxygen/logging_sources/structboost_1_1log_1_1sources_1_1multi__thread__model.html" title="Struct template multi_thread_model">multi_thread_model</a><span class="special">&lt;</span> <span class="identifier">MutexT</span> <span class="special">&gt;</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="doxygen/expressions/record_8hpp_1a9f618cf55a4264e978f951c55da84155.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="log/reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/logging_sources/classboost_1_1log_1_1sources_1_1basic__composite__logger.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

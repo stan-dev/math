@@ -1,0 +1,102 @@
+﻿
+[section Convenience Conversions and Deductions]
+
+Unlike `std::optional`, `boost::optional` does not offer a number of
+"convenience" converting constructors, mixed relational operations and
+deductions for class template parameters.
+
+  std::optional oi = 1;                 // OK
+
+  std:string_view sv = "hi";
+  std::optional<std::string> os = sv;   // OK
+  os == sv;                             // OK
+
+  std::optional<std::string> osv;
+  std::optional<std::string> os2 = osv; // OK
+  os2 == osv;                           // OK
+
+They are practical, and sometimes stem from the argument for consistency:
+if `(optT && *optT == u)` works then `(optT == u)` should also work.
+
+However, these intelligent convenience functions sometimes produce results
+that are counter to the programmer intentions and produce silent bugs.
+
+Consider a more complicated example:
+
+  Threshold th = /*...*/;
+  std::optional o = th;
+  assert (o);
+
+In this code, can we expect that thus initialized `optional` contains a value?
+The answer is: it depends on the type of `Threshold`. It can be defined as:
+
+  using Threshold = std::optional<int>;
+
+And then the assertion will fire. This is because in this case the intelligence
+decides that since we already have an optional, the additional wrapping into
+a yet another optional is unnecessary.
+
+If we explicitly specify the template type, the situation doesn't get less
+complicated.
+
+  Threshold th;
+  std::optional<Threshold> o = th;
+  assert(o);
+
+Can this assertion fire? Now we have two competing constructors:
+
+  template <typename U>
+  optional(U const&);
+
+  template <typename U>
+  optional(optional<U> const&);
+
+Which one will get chosen? Actually, we are lucky, and it is going to be the
+first one due to concept tricks. But let's try a different example:
+
+  Threshold th;
+  std::optional<Threshold> o = th;
+  assert(o);
+  assert(o == th);
+
+Here, the first assertion passes, but the second one fires. This is because
+there are two competing overloads of the comparison operator:
+
+  template <typename T, typename U>
+  bool operator==(optional<T> const&, U const&);
+
+  template <typename T, typename U>
+  bool operator==(optional<T> const&, optional<U> const&);
+
+And this time there is no concept trickery, so the second overload is chosen,
+and gives different results: we are comparing an optional object `th`, which does
+not contain a value, with an optional object `o` which does contain a value.
+
+This problem -- that the operations compile, but have runtime behavior counter
+to programmer's intuition -- gains new significance with the introduction of
+concepts to C++.
+
+  static_assert(std::equality_comparable_with<std::optional<Threshold>, Threshold>);
+
+Concepts have both syntactic constraints and semantic constraints. Syntactic
+constraints are statically checked by the compiler. For semantic constraints,
+functions that use the concept trust the programmer that these constraints are
+met, and if not, this is __UB__.
+
+These are problems with `std::optional`. `boost::optional` doesn't have these
+problems, because it does not offer the said convenience operations.
+
+The design principle for `boost::optional` is not to offer functionality that
+nicely deduces the programmer intentions in 95% of the cases, and in the remaining
+5% renders effects counter to programmer expectations.
+
+Instead, this library recommends using a more verbose syntax that works in 100%
+of the cases:
+
+  Threshold th;
+  auto o = boost::make_potional(th);   // *always* add a new layer of optionality
+
+  return boost::equal_pointees(o, th); // *always* unpack optionals for comparison
+  return o && *o == th;    // *always* treat the right-hand side argument as value
+
+[endsect]

@@ -1,0 +1,409 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>experimental::coro</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../reference.html" title="Reference">
+<link rel="prev" href="experimental__concurrent_channel.html" title="experimental::concurrent_channel">
+<link rel="next" href="experimental__coro/allocator_type.html" title="experimental::coro::allocator_type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="experimental__concurrent_channel.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="experimental__coro/allocator_type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_asio.reference.experimental__coro"></a><a class="link" href="experimental__coro.html" title="experimental::coro">experimental::coro</a>
+</h3></div></div></div>
+<p>
+        <a class="indexterm" name="boost_asio.indexterm.experimental__coro"></a>
+      </p>
+<p>
+        The main type of a resumable coroutine.
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">typename</span> <span class="identifier">Yield</span> <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">Return</span> <span class="special">=</span> <span class="keyword">void</span><span class="special">,</span>
+    <span class="keyword">typename</span> <a class="link" href="Executor1.html" title="Executor requirements">Executor</a> <span class="special">=</span> <span class="identifier">any_io_executor</span><span class="special">,</span>
+    <span class="keyword">typename</span> <span class="identifier">Allocator</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">allocator</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">coro</span>
+</pre>
+<h5>
+<a name="boost_asio.reference.experimental__coro.h0"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__coro.types"></a></span><a class="link" href="experimental__coro.html#boost_asio.reference.experimental__coro.types">Types</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/allocator_type.html" title="experimental::coro::allocator_type"><span class="bold"><strong>allocator_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The allocator type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/completion_handler.html" title="experimental::coro::completion_handler"><span class="bold"><strong>completion_handler</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Completion handler type used by async_resume.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/error_type.html" title="experimental::coro::error_type"><span class="bold"><strong>error_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The error type of the coroutine. Void for noexcept.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/executor_type.html" title="experimental::coro::executor_type"><span class="bold"><strong>executor_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The executor type.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/input_type.html" title="experimental::coro::input_type"><span class="bold"><strong>input_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The value that can be passed into a symmetrical cororoutine. void
+                  if asymmetrical.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/promise_type.html" title="experimental::coro::promise_type"><span class="bold"><strong>promise_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The internal promise-type of the coroutine.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/result_type.html" title="experimental::coro::result_type"><span class="bold"><strong>result_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type received by a co_await or async_resume. Its a combination
+                  of yield and return.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/return_type.html" title="experimental::coro::return_type"><span class="bold"><strong>return_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type that can be passed out through a co_return.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/signature_type.html" title="experimental::coro::signature_type"><span class="bold"><strong>signature_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The signature used by the async_resume.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/traits.html" title="experimental::coro::traits"><span class="bold"><strong>traits</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The traits of the coroutine. See boost::asio::experimental::coro_traits
+                  for details.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/yield_type.html" title="experimental::coro::yield_type"><span class="bold"><strong>yield_type</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  The type that can be passed out through a co_yield.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="boost_asio.reference.experimental__coro.h1"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__coro.member_functions"></a></span><a class="link" href="experimental__coro.html#boost_asio.reference.experimental__coro.member_functions">Member
+        Functions</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/async_resume.html" title="experimental::coro::async_resume"><span class="bold"><strong>async_resume</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Resume the coroutine.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/coro.html" title="experimental::coro::coro"><span class="bold"><strong>coro</strong></span></a> <span class="silver">[constructor]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  The default constructor, gives an invalid coroutine. <br> <span class="silver"> —</span><br>
+                  Move constructor. <br> <span class="silver"> —</span><br>
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/get_allocator.html" title="experimental::coro::get_allocator"><span class="bold"><strong>get_allocator</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Get the used allocator.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/get_executor.html" title="experimental::coro::get_executor"><span class="bold"><strong>get_executor</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Get the used executor.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/is_open.html" title="experimental::coro::is_open"><span class="bold"><strong>is_open</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Check whether the coroutine is open, i.e. can be resumed.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/operator_bool.html" title="experimental::coro::operator bool"><span class="bold"><strong>operator bool</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Check whether the coroutine is open, i.e. can be resumed.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/operator_co_await.html" title="experimental::coro::operator co_await"><span class="bold"><strong>operator co_await</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Operator used for coroutines without input value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/operator_lp__rp_.html" title="experimental::coro::operator()"><span class="bold"><strong>operator()</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Operator used for coroutines with input value.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/operator_eq_.html" title="experimental::coro::operator="><span class="bold"><strong>operator=</strong></span></a>
+                </p>
+              </td>
+<td>
+                <p>
+                  Move assignment.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/_coro.html" title="experimental::coro::~coro"><span class="bold"><strong>~coro</strong></span></a> <span class="silver">[destructor]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Destructor. Destroys the coroutine, if it holds a valid one.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+<h5>
+<a name="boost_asio.reference.experimental__coro.h2"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__coro.data_members"></a></span><a class="link" href="experimental__coro.html#boost_asio.reference.experimental__coro.data_members">Data Members</a>
+      </h5>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Name
+                </p>
+              </th>
+<th>
+                <p>
+                  Description
+                </p>
+              </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                <p>
+                  <a class="link" href="experimental__coro/is_noexcept.html" title="experimental::coro::is_noexcept"><span class="bold"><strong>is_noexcept</strong></span></a> <span class="silver">[static]</span>
+                </p>
+              </td>
+<td>
+                <p>
+                  Whether or not the coroutine is noexcept.
+                </p>
+              </td>
+</tr></tbody>
+</table></div>
+<p>
+        Template parameter <code class="computeroutput"><span class="identifier">Yield</span></code>
+        specifies type or signature used by co_yield, <code class="computeroutput"><span class="identifier">Return</span></code>
+        specifies the type used for co_return, and <code class="computeroutput"><span class="identifier">Executor</span></code>
+        specifies the underlying executor type.
+      </p>
+<h5>
+<a name="boost_asio.reference.experimental__coro.h3"></a>
+        <span class="phrase"><a name="boost_asio.reference.experimental__coro.requirements"></a></span><a class="link" href="experimental__coro.html#boost_asio.reference.experimental__coro.requirements">Requirements</a>
+      </h5>
+<p>
+        <span class="emphasis"><em>Header: </em></span><code class="literal">boost/asio/experimental/coro.hpp</code>
+      </p>
+<p>
+        <span class="emphasis"><em>Convenience header: </em></span>None
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="experimental__concurrent_channel.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../reference.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../boost_asio.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="experimental__coro/allocator_type.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class discard_iterator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.discard__iterator_8hpp" title="Header &lt;boost/compute/iterator/discard_iterator.hpp&gt;">
+<link rel="prev" href="counting__iterator_8hpp_1a2986ac07f2f0f37de832dc3ad143f631.html" title="Function template make_counting_iterator">
+<link rel="next" href="structboost_1_1compute_1_1is__device__iterator_3_01discard__iterator_01_4.html" title="Struct is_device_iterator&lt;discard_iterator&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="counting__iterator_8hpp_1a2986ac07f2f0f37de832dc3ad143f631.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.discard__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1compute_1_1is__device__iterator_3_01discard__iterator_01_4.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class discard_iterator</span></h2>
+<p>boost::compute::discard_iterator — An iterator which discards all values written to it. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.discard__iterator_8hpp" title="Header &lt;boost/compute/iterator/discard_iterator.hpp&gt;">boost/compute/iterator/discard_iterator.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                 <a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a196ee36257a04ab4e3f86dd22981c172"></a><span class="identifier">super_type</span><span class="special">;</span>     
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">reference</span>       <a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a27fd9e81d8089366756357d6e9f4d5a7"></a><span class="identifier">reference</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">super_type</span><span class="special">::</span><span class="identifier">difference_type</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1ada04d7d8411da8ae7f062c6f5841b2e6"></a><span class="identifier">difference_type</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1discard__iterator.html#id60-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1discard__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a08dd9db87707d3ff6ad4fecb423cb886"><span class="identifier">discard_iterator</span></a><span class="special">(</span><span class="identifier">size_t</span> <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1discard__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1ab9bf2ea4b59b7fe7143b1e6202315c41"><span class="identifier">discard_iterator</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1discard__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a4445a449484b5c2499b1569d656927ab"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1discard__iterator.html#doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a4e80766de323f63abecc21671a93000f"><span class="special">~</span><span class="identifier">discard_iterator</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id32545"></a><h2>Description</h2>
+<p><b>See Also: </b>make_discard_iterator(), <a class="link" href="classboost_1_1compute_1_1constant__iterator.html" title="Class template constant_iterator">constant_iterator</a> </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id32552"></a><h3>
+<a name="id60-bb"></a><code class="computeroutput">discard_iterator</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a08dd9db87707d3ff6ad4fecb423cb886"></a><span class="identifier">discard_iterator</span><span class="special">(</span><span class="identifier">size_t</span> index <span class="special">=</span> <span class="number">0</span><span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1ab9bf2ea4b59b7fe7143b1e6202315c41"></a><span class="identifier">discard_iterator</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a4445a449484b5c2499b1569d656927ab"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1discard__iterator.html" title="Class discard_iterator">discard_iterator</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1discard__iterator_1a4e80766de323f63abecc21671a93000f"></a><span class="special">~</span><span class="identifier">discard_iterator</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="counting__iterator_8hpp_1a2986ac07f2f0f37de832dc3ad143f631.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.discard__iterator_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1compute_1_1is__device__iterator_3_01discard__iterator_01_4.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

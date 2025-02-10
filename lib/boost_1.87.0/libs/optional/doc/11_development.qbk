@@ -1,0 +1,130 @@
+﻿[/
+    Boost.Optional
+
+    Copyright (c) 2003-2007 Fernando Luis Cacciola Carballal
+    Copyright (c) 2024 andrzej Krzemieński
+
+    Distributed under the Boost Software License, Version 1.0.
+    (See accompanying file LICENSE_1_0.txt or copy at
+    http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section Design Goals]
+
+In C++ you can create an automatic object of a scalar type, and manipulate it,
+without assigning it the initial value.
+
+  {
+    int i; // indeterminate value
+    populate(&i);
+    cout << i;
+  }
+
+Such an object is said to have ['indeterminate value]. If you subsequently
+assign a proper value to the object, all is fine; but if the program tries to
+read an indeterminate value, this is ['undefined behavior'], and since C++26
+this is ['erroneous behavior].
+In any case, the program is now likely to do something else than what the
+programmer intended. In case you have some object `i`, and you do not know if it
+has an indeterminate value, or a normal, intended, value, there is no way to
+check it, because the checking would require reading the value.
+
+This is one of the primary problems that `optional` was intended to address: so
+that you may have a type that knows whether it has been assigned a proper value,
+and it can tell you that if requested.
+
+In the case of type `int` the internal representation of such a class could be:
+
+  class OptionalInt
+  {
+    bool _has_value = false;
+    int _value;
+  };
+
+In the general case, the internal representation is something equivalent to:
+
+  template <typename T>
+  class Optional
+  {
+    bool _has_value = false;
+    alignas(T) char _value [sizeof(T)];
+  };
+
+Next, because we need to pass around these "optional" `int`s as normal `int`s,
+like returning them from functions, when copying, we need to copy `_has_value`,
+which indicates whether we have the value or not, and, if we do have value, and
+only then, to also copy `_value`.
+
+This means that our type requires ['deep copy] semantics.
+
+[note
+This is a C++ equivalent of a
+[@https://hackage.haskell.org/package/base-4.20.0.1/docs/Data-Maybe.html Maybe]
+monad in [@http://www.haskell.org/ Haskell].
+]
+
+[endsect]
+
+[section:iface Interface Design]
+One part of the interface is for modifying and setting the initial state of
+the object. It has to be able to say that
+
+* we want to store a specific value of type `T`,
+* we want to store no value.
+
+The default constructor stores no value. Other than that, we require that
+the assignment and construction from a `T` reflects the former, while assignment
+and construction of a special ['tag] value `none` reflect the latter need.
+
+  optional<int> o1;        // contains no value
+  optional<int> o2 = 2;    // contains value 2
+  optional<int> o3 = none; // contains no value
+
+  o1 = 1;    // assign value 1
+  o2 = none; // assign a no-value
+  o3 = {};   // assign a no-value
+
+[heading Inspecting the State]
+
+Inspecting the state of an optional object requires two steps:
+
+* check if we have the value or not,
+* if so, read the stored value.
+
+This 'procedure' is characteristic of inspecting pointers in C++, therefore the
+pointer-like syntax was chosen to represent this.
+
+  void inspect (optional<string> os)
+  {
+    if (os) {               // contextual conversion to `bool`
+      read_string(*os);     // `operator*` to access the stored value
+      read_int(os->size()); // `operator->` as shortcut for accessing members
+    }
+  }
+
+Also, similarly to pointers, if you access the value when it is not there,
+you trigger __UB__.
+This library detects and reports it via
+[@../../../assert/assert.html `BOOST_ASSERT()`]. This common property of
+pointers and `optional<>` has been formalized into a concept __OPTIONAL_POINTEE__.
+
+However, there is also the counter-intuitive part. All pointers embed ['shallow-copy]
+semantics: when you copy a pointer, the pointed-to object stays at the same location
+and you can access it via either of the pointers. This is unlike optional objects
+where the represented value is copied along.
+
+[caution
+Optional objects are not pointers.
+]
+
+There is a similar difference in relational operations: they compare deeply for
+`optional<>`, while they are shallow for pointers.
+
+[note
+When you need a deep relational operations that work uniformly for `optional<>`
+and pointers in generic contexts, use functions
+[@../../../utility/OptionalPointee.html#equal `equal_pointees()`] and
+[@../../../utility/OptionalPointee.html#less `less_pointees()`].
+]
+
+[endsect]

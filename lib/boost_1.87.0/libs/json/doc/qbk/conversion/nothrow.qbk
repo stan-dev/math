@@ -1,0 +1,56 @@
+[/
+    Copyright (c) 2022 Dmitry Arkhipov (grisumbras@yandex.ru)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/json
+]
+
+[/-----------------------------------------------------------------------------]
+
+[section Non-throwing conversions]
+
+For the case where throwing exceptions is undesirable, Boost.JSON also provides
+a non-throwing version of __value_to__, the function template
+__try_value_to__.  It returns __result__, a specialised variant that either
+holds a value or an __error_code__.
+
+[note There's no non-throwing equivalent for __value_from__. This is simply
+because we haven't yet encountered a situation where __value_from__ needed to
+communicate an error to the caller.]
+
+The library provides non-throwing conversions for all the categories of types
+it supports with __value_to__. If a user wants to use it with custom types,
+an overload of `tag_invoke` of this form needs to be provided:
+
+```
+result_for<T, value>::type
+tag_invoke( const try_value_to_tag< T >&, const value& );
+```
+
+For the class `ip_address` from the section
+[link json.conversion.custom_conversions Custom conversions] this overload may
+look like this:
+
+[snippet_nothrow_1]
+
+The overload lets us use `ip_address` with __try_value_to__.
+
+[snippet_nothrow_2]
+
+If __try_value_to__ is used with a type, for which there's no `tag_invoke`
+overload of the form described in this section, but there is one of the form
+intended for __value_to__, then the library still tries to perform the
+conversion. It uses the throwing overload, and attempts to convert any thrown
+exception into an __error_code__. Note, though, that such approach will likely
+be slower then a dedicated overload.
+
+The opposite is also true: if there's a `tag_invoke` overload intended for
+__try_value_to__, but not for __value_to__, then calling `__value_to__` will
+invoke the non-throwing overload, then construct a __system_error__ from the
+__error_code__ and throw it. Due to these fallbacks, it is recommended that
+users provide the overload from this section, rather then the other one, if
+they ever intend to use __try_value_to__.
+
+[endsect]

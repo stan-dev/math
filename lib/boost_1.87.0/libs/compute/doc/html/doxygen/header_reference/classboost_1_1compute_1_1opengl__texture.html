@@ -1,0 +1,97 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class opengl_texture</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Compute">
+<link rel="up" href="../../boost_compute/reference.html#doxygen.header_reference.opengl__texture_8hpp" title="Header &lt;boost/compute/interop/opengl/opengl_texture.hpp&gt;">
+<link rel="prev" href="classboost_1_1compute_1_1opengl__renderbuffer.html" title="Class opengl_renderbuffer">
+<link rel="next" href="classboost_1_1compute_1_1buffer__iterator.html" title="Class template buffer_iterator">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1opengl__renderbuffer.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.opengl__texture_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1buffer__iterator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class opengl_texture</span></h2>
+<p>boost::compute::opengl_texture</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_compute/reference.html#doxygen.header_reference.opengl__texture_8hpp" title="Header &lt;boost/compute/interop/opengl/opengl_texture.hpp&gt;">boost/compute/interop/opengl/opengl_texture.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">compute</span><span class="special">::</span><span class="identifier">image_object</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#id53-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a5d57009b39f0505549c219f7fc0222f7"><span class="identifier">opengl_texture</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1ac855bfd227407ddb1e2701aabf1066ea"><span class="identifier">opengl_texture</span></a><span class="special">(</span><span class="identifier">cl_mem</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1ae2923a80f1594a39a7138fad13757407"><span class="identifier">opengl_texture</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">GLenum</span><span class="special">,</span> <span class="identifier">GLint</span><span class="special">,</span> <span class="identifier">GLuint</span><span class="special">,</span> 
+                 <span class="identifier">cl_mem_flags</span> <span class="special">=</span> <span class="identifier">read_write</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a8702a9c139658bcc0a94f0fc81638e89"><span class="identifier">opengl_texture</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">&amp;</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a557999f58791a6ef3aada1f76113d6b9"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1aef70b4d5cdda130527fac1ede5ed9ac6"><span class="special">~</span><span class="identifier">opengl_texture</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a><span class="special">&lt;</span> <span class="number">2</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a903dde74b325bcb5791ae2c51d1e3c09"><span class="identifier">size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a><span class="special">&lt;</span> <span class="number">2</span> <span class="special">&gt;</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a033345467a4c89933e6e609985b4dbd9"><span class="identifier">origin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html#doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a17dec5ac9e5a99bda6e2b665abde6ed8"><span class="identifier">get_texture_info</span></a><span class="special">(</span><span class="identifier">cl_gl_texture_info</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id30701"></a><h2>Description</h2>
+<p>A OpenCL <a class="link" href="classboost_1_1compute_1_1image2d.html" title="Class image2d">image2d</a> for accessing an OpenGL texture object. </p>
+<div class="refsect2">
+<a name="id30705"></a><h3>
+<a name="id53-bb"></a><code class="computeroutput">opengl_texture</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a5d57009b39f0505549c219f7fc0222f7"></a><span class="identifier">opengl_texture</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Creates a null OpenGL texture object. </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1ac855bfd227407ddb1e2701aabf1066ea"></a><span class="identifier">opengl_texture</span><span class="special">(</span><span class="identifier">cl_mem</span> mem<span class="special">,</span> <span class="keyword">bool</span> retain <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span></pre>Creates a new OpenGL texture object for <code class="computeroutput">mem</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1ae2923a80f1594a39a7138fad13757407"></a><span class="identifier">opengl_texture</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">context</span> <span class="special">&amp;</span> context<span class="special">,</span> <span class="identifier">GLenum</span> texture_target<span class="special">,</span> <span class="identifier">GLint</span> miplevel<span class="special">,</span> 
+               <span class="identifier">GLuint</span> texture<span class="special">,</span> <span class="identifier">cl_mem_flags</span> flags <span class="special">=</span> <span class="identifier">read_write</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Creates a new OpenGL texture object in <code class="computeroutput">context</code> for <code class="computeroutput">texture</code> with <code class="computeroutput">flags</code>.</p>
+<p>See the documentation for </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a8702a9c139658bcc0a94f0fc81638e89"></a><span class="identifier">opengl_texture</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Creates a new OpenGL texture object as a copy of <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">&amp;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a557999f58791a6ef3aada1f76113d6b9"></a><span class="keyword">operator</span><span class="special">=</span><span class="special">(</span><span class="keyword">const</span> <a class="link" href="classboost_1_1compute_1_1opengl__texture.html" title="Class opengl_texture">opengl_texture</a> <span class="special">&amp;</span> other<span class="special">)</span><span class="special">;</span></pre>Copies the OpenGL texture object from <code class="computeroutput">other</code>. </li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1aef70b4d5cdda130527fac1ede5ed9ac6"></a><span class="special">~</span><span class="identifier">opengl_texture</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>Destroys the texture object. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a><span class="special">&lt;</span> <span class="number">2</span> <span class="special">&gt;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a903dde74b325bcb5791ae2c51d1e3c09"></a><span class="identifier">size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the size (width, height) of the texture. </li>
+<li class="listitem">
+<pre class="literallayout"><a class="link" href="classboost_1_1compute_1_1extents.html" title="Class template extents">extents</a><span class="special">&lt;</span> <span class="number">2</span> <span class="special">&gt;</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a033345467a4c89933e6e609985b4dbd9"></a><span class="identifier">origin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the origin of the texture (<code class="computeroutput">0</code>, <code class="computeroutput">0</code>). </li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="identifier">T</span> <a name="doxygen.header_reference.classboost_1_1compute_1_1opengl__texture_1a17dec5ac9e5a99bda6e2b665abde6ed8"></a><span class="identifier">get_texture_info</span><span class="special">(</span><span class="identifier">cl_gl_texture_info</span> info<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns information about the texture.</p>
+<p>See the documentation for </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2013, 2014 Kyle Lutz<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1compute_1_1opengl__renderbuffer.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_compute/reference.html#doxygen.header_reference.opengl__texture_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1compute_1_1buffer__iterator.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

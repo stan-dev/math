@@ -1,0 +1,135 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>value::at (6 of 6 overloads)</title>
+<link rel="stylesheet" href="../../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../at.html" title="value::at">
+<link rel="prev" href="overload5.html" title="value::at (5 of 6 overloads)">
+<link rel="next" href="../at_pointer.html" title="value::at_pointer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload5.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../at.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../at_pointer.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h6 class="title">
+<a name="json.ref.boost__json__value.at.overload6"></a><a class="link" href="overload6.html" title="value::at (6 of 6 overloads)">value::at
+          (6 of 6 overloads)</a>
+</h6></div></div></div>
+<p>
+            Access an element, with bounds checking.
+          </p>
+<h6>
+<a name="json.ref.boost__json__value.at.overload6.h0"></a>
+            <span class="phrase"><a name="json.ref.boost__json__value.at.overload6.synopsis"></a></span><a class="link" href="overload6.html#json.ref.boost__json__value.at.overload6.synopsis">Synopsis</a>
+          </h6>
+<pre class="programlisting"><a class="link" href="../../boost__json__value.html" title="value"><code class="literal">value</code></a> <span class="keyword">const</span><span class="special">&amp;</span>
+<span class="identifier">at</span><span class="special">(</span>
+    <a href="https://en.cppreference.com/w/cpp/types/size_t" target="_top"><code class="literal">std::size_t</code></a> <span class="identifier">pos</span><span class="special">,</span>
+    <a href="https://www.boost.org/doc/libs/release/libs/assert/doc/html/assert.html#source_location" target="_top"><code class="literal">boost::source_location</code></a> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">loc</span> <span class="special">=</span> <span class="identifier">BOOST_CURRENT_LOCATION</span><span class="special">)</span> <span class="keyword">const</span><span class="special">&amp;;</span>
+</pre>
+<h6>
+<a name="json.ref.boost__json__value.at.overload6.h1"></a>
+            <span class="phrase"><a name="json.ref.boost__json__value.at.overload6.description"></a></span><a class="link" href="overload6.html#json.ref.boost__json__value.at.overload6.description">Description</a>
+          </h6>
+<p>
+            This function is used to access elements of the underlying array, or
+            throw an exception if the value is not an array.
+          </p>
+<h6>
+<a name="json.ref.boost__json__value.at.overload6.h2"></a>
+            <span class="phrase"><a name="json.ref.boost__json__value.at.overload6.complexity"></a></span><a class="link" href="overload6.html#json.ref.boost__json__value.at.overload6.complexity">Complexity</a>
+          </h6>
+<p>
+            Constant.
+          </p>
+<h6>
+<a name="json.ref.boost__json__value.at.overload6.h3"></a>
+            <span class="phrase"><a name="json.ref.boost__json__value.at.overload6.exception_safety"></a></span><a class="link" href="overload6.html#json.ref.boost__json__value.at.overload6.exception_safety">Exception
+            Safety</a>
+          </h6>
+<p>
+            Strong guarantee.
+          </p>
+<h6>
+<a name="json.ref.boost__json__value.at.overload6.h4"></a>
+            <span class="phrase"><a name="json.ref.boost__json__value.at.overload6.parameters"></a></span><a class="link" href="overload6.html#json.ref.boost__json__value.at.overload6.parameters">Parameters</a>
+          </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                    <p>
+                      Name
+                    </p>
+                  </th>
+<th>
+                    <p>
+                      Description
+                    </p>
+                  </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">pos</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      A zero-based array index.
+                    </p>
+                  </td>
+</tr>
+<tr>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">loc</span></code>
+                    </p>
+                  </td>
+<td>
+                    <p>
+                      <code class="computeroutput"><span class="identifier">source_location</span></code>
+                      to use in thrown exception; the source location of the call
+                      site by default.
+                    </p>
+                  </td>
+</tr>
+</tbody>
+</table></div>
+<h6>
+<a name="json.ref.boost__json__value.at.overload6.h5"></a>
+            <span class="phrase"><a name="json.ref.boost__json__value.at.overload6.return_value"></a></span><a class="link" href="overload6.html#json.ref.boost__json__value.at.overload6.return_value">Return
+            Value</a>
+          </h6>
+<p>
+            <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">as_array</span><span class="special">(</span><span class="identifier">loc</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span> <span class="identifier">pos</span><span class="special">,</span> <span class="identifier">loc</span> <span class="special">)</span></code>.
+          </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="overload5.html"><img src="../../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../at.html"><img src="../../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../../index.html"><img src="../../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../at_pointer.html"><img src="../../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

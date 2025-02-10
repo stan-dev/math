@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2019 Vinnie Falco (vinnie.falco@gmail.com)
+# Copyright (c) 2022 Alan de Freitas (alandefreitas@gmail.com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/vinniefalco/url
+#
+
+import-search /boost/config/checks ;
+import config : requires ;
+
+constant c11-requires :
+    [ requires
+    cxx11_constexpr
+    cxx11_decltype
+    cxx11_hdr_tuple
+    cxx11_template_aliases
+    cxx11_variadic_templates
+    ]
+    ;
+
+constant boost_dependencies_private :
+    /boost/throw_exception//boost_throw_exception
+    ;
+
+project
+    : common-requirements <library>$(boost_dependencies)
+    : requirements
+      <library>$(boost_dependencies_private)
+      $(c11-requires)
+      <define>BOOST_URL_SOURCE
+      <toolset>msvc-14.0:<build>no
+      # Warnings in dependencies
+      <toolset>gcc:<cxxflags>"-Wno-maybe-uninitialized"
+      <toolset>gcc,<target-os>windows:<cxxflags>"-Wno-error=array-bounds"
+    : common-requirements
+      <link>shared:<define>BOOST_URL_DYN_LINK=1
+      <link>static:<define>BOOST_URL_STATIC_LINK=1
+    : usage-requirements
+        <define>BOOST_URL_NO_LIB=1
+    : source-location ../src
+    ;
+
+alias url_sources
+   : [ glob-tree-ex ../src : *.cpp ]
+   ;
+
+explicit url_sources ;
+
+lib boost_url
+   : url_sources
+   ;

@@ -1,0 +1,134 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Interface Design</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Boost.Optional">
+<link rel="up" href="../../optional/design.html" title="Design Overview and Rationale">
+<link rel="prev" href="../../optional/design.html" title="Design Overview and Rationale">
+<link rel="next" href="relational_operators.html" title="Relational operators">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../optional/design.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/design.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="relational_operators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="boost_optional.design.iface"></a><a class="link" href="iface.html" title="Interface Design">Interface Design</a>
+</h3></div></div></div>
+<p>
+        One part of the interface is for modifying and setting the initial state
+        of the object. It has to be able to say that
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            we want to store a specific value of type <code class="computeroutput"><span class="identifier">T</span></code>,
+          </li>
+<li class="listitem">
+            we want to store no value.
+          </li>
+</ul></div>
+<p>
+        The default constructor stores no value. Other than that, we require that
+        the assignment and construction from a <code class="computeroutput"><span class="identifier">T</span></code>
+        reflects the former, while assignment and construction of a special <span class="emphasis"><em>tag</em></span>
+        value <code class="computeroutput"><span class="identifier">none</span></code> reflect the latter
+        need.
+      </p>
+<pre class="programlisting"><span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">o1</span><span class="special">;</span>        <span class="comment">// contains no value</span>
+<span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">o2</span> <span class="special">=</span> <span class="number">2</span><span class="special">;</span>    <span class="comment">// contains value 2</span>
+<span class="identifier">optional</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">o3</span> <span class="special">=</span> <span class="identifier">none</span><span class="special">;</span> <span class="comment">// contains no value</span>
+
+<span class="identifier">o1</span> <span class="special">=</span> <span class="number">1</span><span class="special">;</span>    <span class="comment">// assign value 1</span>
+<span class="identifier">o2</span> <span class="special">=</span> <span class="identifier">none</span><span class="special">;</span> <span class="comment">// assign a no-value</span>
+<span class="identifier">o3</span> <span class="special">=</span> <span class="special">{};</span>   <span class="comment">// assign a no-value</span>
+</pre>
+<h5>
+<a name="boost_optional.design.iface.h0"></a>
+        <span class="phrase"><a name="boost_optional.design.iface.inspecting_the_state"></a></span><a class="link" href="iface.html#boost_optional.design.iface.inspecting_the_state">Inspecting
+        the State</a>
+      </h5>
+<p>
+        Inspecting the state of an optional object requires two steps:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            check if we have the value or not,
+          </li>
+<li class="listitem">
+            if so, read the stored value.
+          </li>
+</ul></div>
+<p>
+        This 'procedure' is characteristic of inspecting pointers in C++, therefore
+        the pointer-like syntax was chosen to represent this.
+      </p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">inspect</span> <span class="special">(</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">string</span><span class="special">&gt;</span> <span class="identifier">os</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="keyword">if</span> <span class="special">(</span><span class="identifier">os</span><span class="special">)</span> <span class="special">{</span>               <span class="comment">// contextual conversion to `bool`</span>
+    <span class="identifier">read_string</span><span class="special">(*</span><span class="identifier">os</span><span class="special">);</span>     <span class="comment">// `operator*` to access the stored value</span>
+    <span class="identifier">read_int</span><span class="special">(</span><span class="identifier">os</span><span class="special">-&gt;</span><span class="identifier">size</span><span class="special">());</span> <span class="comment">// `operator-&gt;` as shortcut for accessing members</span>
+  <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<p>
+        Also, similarly to pointers, if you access the value when it is not there,
+        you trigger <a href="https://en.cppreference.com/w/cpp/language/ub" target="_top"><span class="emphasis"><em>undefined
+        behavior</em></span></a>. This library detects and reports it via <a href="../../../../../assert/assert.html" target="_top"><code class="computeroutput"><span class="identifier">BOOST_ASSERT</span><span class="special">()</span></code></a>. This common property of pointers
+        and <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;&gt;</span></code>
+        has been formalized into a concept <a href="../../../../../utility/OptionalPointee.html" target="_top"><code class="computeroutput"><span class="identifier">OptionalPointee</span></code></a>.
+      </p>
+<p>
+        However, there is also the counter-intuitive part. All pointers embed <span class="emphasis"><em>shallow-copy</em></span>
+        semantics: when you copy a pointer, the pointed-to object stays at the same
+        location and you can access it via either of the pointers. This is unlike
+        optional objects where the represented value is copied along.
+      </p>
+<div class="caution"><table border="0" summary="Caution">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Caution]" src="../../../../../../doc/src/images/caution.png"></td>
+<th align="left">Caution</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          Optional objects are not pointers.
+        </p></td></tr>
+</table></div>
+<p>
+        There is a similar difference in relational operations: they compare deeply
+        for <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;&gt;</span></code>,
+        while they are shallow for pointers.
+      </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          When you need a deep relational operations that work uniformly for <code class="computeroutput"><span class="identifier">optional</span><span class="special">&lt;&gt;</span></code>
+          and pointers in generic contexts, use functions <a href="../../../../../utility/OptionalPointee.html#equal" target="_top"><code class="computeroutput"><span class="identifier">equal_pointees</span><span class="special">()</span></code></a>
+          and <a href="../../../../../utility/OptionalPointee.html#less" target="_top"><code class="computeroutput"><span class="identifier">less_pointees</span><span class="special">()</span></code></a>.
+        </p></td></tr>
+</table></div>
+</div>
+<div class="copyright-footer">Copyright © 2003-2007 Fernando Luis Cacciola Carballal<br>Copyright © 2014-2024 Andrzej Krzemieński<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../../optional/design.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../optional/design.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="relational_operators.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

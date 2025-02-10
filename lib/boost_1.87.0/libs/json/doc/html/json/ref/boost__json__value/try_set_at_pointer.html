@@ -1,0 +1,203 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>value::try_set_at_pointer</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.JSON">
+<link rel="up" href="../boost__json__value.html" title="value">
+<link rel="prev" href="try_at_pointer/overload2.html" title="value::try_at_pointer (2 of 2 overloads)">
+<link rel="next" href="swap_fr.html" title="value::swap">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="try_at_pointer/overload2.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__json__value.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="swap_fr.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="json.ref.boost__json__value.try_set_at_pointer"></a><a class="link" href="try_set_at_pointer.html" title="value::try_set_at_pointer">value::try_set_at_pointer</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id69295"></a>
+Set an element via JSON Pointer.
+        </p>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h0"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.synopsis"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><a href="https://www.boost.org/doc/libs/release/libs/system/doc/html/system.html#ref_boostsystemresult_hpp" target="_top"><code class="literal">boost::system::result</code></a><span class="special">&lt;</span> <a class="link" href="../boost__json__value.html" title="value"><code class="literal">value</code></a> <span class="special">&amp;</span> <span class="special">&gt;</span>
+<span class="identifier">try_set_at_pointer</span><span class="special">(</span>
+    <a class="link" href="../boost__json__string_view.html" title="string_view"><code class="literal">string_view</code></a> <span class="identifier">sv</span><span class="special">,</span>
+    <a class="link" href="../boost__json__value_ref.html" title="value_ref"><code class="literal">value_ref</code></a> <span class="identifier">ref</span><span class="special">,</span>
+    <a class="link" href="../boost__json__set_pointer_options.html" title="set_pointer_options"><code class="literal">set_pointer_options</code></a> <span class="keyword">const</span><span class="special">&amp;</span> <span class="identifier">opts</span> <span class="special">=</span> <span class="special">{});</span>
+</pre>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h1"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.description"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.description">Description</a>
+        </h6>
+<p>
+          This function is used to insert or assign to a potentially nested element
+          of the value using a JSON Pointer string. The function may create intermediate
+          elements corresponding to pointer segments.
+        </p>
+<p>
+          The particular conditions when and what kind of intermediate element is
+          created is governed by the <code class="computeroutput"><span class="identifier">ptr</span></code>
+          parameter.
+        </p>
+<p>
+          Each pointer token is considered in sequence. For each token
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              if the containing value is an <a class="link" href="../boost__json__object.html" title="object"><code class="computeroutput"><span class="identifier">object</span></code></a>, then a new <code class="computeroutput"><span class="identifier">null</span></code> element is created with key
+              equal to unescaped token string; otherwise
+            </li>
+<li class="listitem">
+              if the containing value is an <a class="link" href="../boost__json__array.html" title="array"><code class="computeroutput"><span class="identifier">array</span></code></a>, and the token represents
+              a past-the-end marker, then a <code class="computeroutput"><span class="identifier">null</span></code>
+              element is appended to the array; otherwise
+            </li>
+<li class="listitem">
+              if the containing value is an <a class="link" href="../boost__json__array.html" title="array"><code class="computeroutput"><span class="identifier">array</span></code></a>, and the token represents
+              a number, then if the difference between the number and array's size
+              is smaller than <code class="computeroutput"><span class="identifier">opts</span><span class="special">.</span><span class="identifier">max_created_elements</span></code>,
+              then the size of the array is increased, so that the number can reference
+              an element in the array; otherwise
+            </li>
+<li class="listitem">
+              if the containing value is of different <a class="link" href="kind.html" title="value::kind"><code class="computeroutput"><span class="identifier">kind</span></code></a> and <code class="computeroutput"><span class="identifier">opts</span><span class="special">.</span><span class="identifier">replace_any_scalar</span></code>
+              is <code class="computeroutput"><span class="keyword">true</span></code>, or the value
+              is <code class="computeroutput"><span class="identifier">null</span></code>, then
+              <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                    if <code class="computeroutput"><span class="identifier">opts</span><span class="special">.</span><span class="identifier">create_arrays</span></code> is <code class="computeroutput"><span class="keyword">true</span></code> and the token either represents
+                    past-the-end marker or a number, then the value is replaced with
+                    an empty array and the token is considered again; otherwise
+                  </li>
+<li class="listitem">
+                    if <code class="computeroutput"><span class="identifier">opts</span><span class="special">.</span><span class="identifier">create_objects</span></code> is <code class="computeroutput"><span class="keyword">true</span></code>, then the value is replaced
+                    with an empty object and the token is considered again; otherwise
+                  </li>
+</ul></div>
+            </li>
+<li class="listitem">
+              an error is produced.
+            </li>
+</ul></div>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h2"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.complexity"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.complexity">Complexity</a>
+        </h6>
+<p>
+          Linear in the sum of size of <code class="computeroutput"><span class="identifier">ptr</span></code>,
+          size of underlying array, object, or string and <code class="computeroutput"><span class="identifier">opts</span><span class="special">.</span><span class="identifier">max_created_elements</span></code>.
+        </p>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h3"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.exception_safety"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.exception_safety">Exception
+          Safety</a>
+        </h6>
+<p>
+          Basic guarantee. Calls to <code class="computeroutput"><span class="identifier">memory_resource</span><span class="special">::</span><span class="identifier">allocate</span></code>
+          may throw.
+        </p>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h4"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.parameters"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.parameters">Parameters</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Name
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Description
+                  </p>
+                </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">sv</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    JSON Pointer string.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">ref</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The value to assign to pointed element.
+                  </p>
+                </td>
+</tr>
+<tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">opts</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    The options for the algorithm.
+                  </p>
+                </td>
+</tr>
+</tbody>
+</table></div>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h5"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.return_value"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.return_value">Return
+          Value</a>
+        </h6>
+<p>
+          <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">json</span><span class="special">::</span><span class="identifier">result</span><span class="special">&lt;</span><span class="identifier">value</span><span class="special">&amp;&gt;</span></code>
+          containing either a reference to the element identified by <code class="computeroutput"><span class="identifier">ptr</span></code> or a corresponding <code class="computeroutput"><span class="identifier">error_code</span></code>.
+        </p>
+<h6>
+<a name="json.ref.boost__json__value.try_set_at_pointer.h6"></a>
+          <span class="phrase"><a name="json.ref.boost__json__value.try_set_at_pointer.see_also"></a></span><a class="link" href="try_set_at_pointer.html#json.ref.boost__json__value.try_set_at_pointer.see_also">See Also</a>
+        </h6>
+<p>
+          <a class="link" href="../boost__json__set_pointer_options.html" title="set_pointer_options"><code class="computeroutput"><span class="identifier">set_pointer_options</span></code></a>, <a href="https://datatracker.ietf.org/doc/html/rfc6901" target="_top">RFC
+          6901 - JavaScript Object Notation (JSON) Pointer</a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019, 2020 Vinnie Falco<br>Copyright © 2020 Krystian Stasiowski<br>Copyright © 2022 Dmitry Arkhipov<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="try_at_pointer/overload2.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__json__value.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="swap_fr.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

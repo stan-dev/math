@@ -1,0 +1,38 @@
+# Copyright René Ferdinand Rivera Morell 2023-2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import path ;
+import-search [ path.join $(__file__:D) pretty_printers ] ;
+
+using boost-pretty-printers ;
+
+constant boost_dependencies :
+    /boost/align//boost_align
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/container//boost_container
+    /boost/container_hash//boost_container_hash
+    /boost/core//boost_core
+    /boost/describe//boost_describe
+    /boost/endian//boost_endian
+    /boost/mp11//boost_mp11
+    /boost/static_assert//boost_static_assert
+    /boost/system//boost_system
+    /boost/throw_exception//boost_throw_exception ;
+
+project /boost/json ;
+
+alias boost_json : build//boost_json ;
+alias json_deps : build//json_deps ;
+alias json_sources : build//json_sources ;
+
+alias all : boost_json json_deps json_sources bench example fuzzing test ;
+
+call-if
+    : boost-library json
+    : install boost_json
+    ;

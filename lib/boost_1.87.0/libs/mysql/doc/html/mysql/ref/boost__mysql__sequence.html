@@ -1,0 +1,158 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>sequence</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../../pt01.html" title="Part Two: Reference. ">
+<link rel="prev" href="boost__mysql__runtime.html" title="runtime">
+<link rel="next" href="boost__mysql__throw_on_error.html" title="throw_on_error">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__runtime.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__throw_on_error.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="mysql.ref.boost__mysql__sequence"></a><a class="link" href="boost__mysql__sequence.html" title="sequence">sequence</a>
+</h4></div></div></div>
+<p>
+        <a class="indexterm" name="id94709"></a>
+Creates an object that, when formatted, applies a per-element function
+        to a range.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__sequence.h0"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__sequence.synopsis"></a></span><a class="link" href="boost__mysql__sequence.html#mysql.ref.boost__mysql__sequence.synopsis">Synopsis</a>
+      </h5>
+<p>
+        Defined in header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql/sequence.hpp" target="_top">boost/mysql/sequence.hpp</a>&gt;</code>
+      </p>
+<pre class="programlisting"><span class="keyword">template</span><span class="special">&lt;</span>
+    <span class="keyword">class</span> <span class="identifier">Range</span><span class="special">,</span>
+    <span class="keyword">class</span> <span class="identifier">FormatFn</span><span class="special">&gt;</span>
+<a class="link" href="boost__mysql__format_sequence.html" title="format_sequence"><code class="literal">format_sequence</code></a><span class="special">&lt;</span> <a class="link" href="boost__mysql__sequence_range_t.html" title="sequence_range_t"><code class="literal">sequence_range_t</code></a><span class="special">&lt;</span> <span class="identifier">Range</span> <span class="special">&gt;,</span> <span class="keyword">typename</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">decay</span><span class="special">&lt;</span> <span class="identifier">FormatFn</span> <span class="special">&gt;::</span><span class="identifier">type</span> <span class="special">&gt;</span>
+<span class="identifier">sequence</span><span class="special">(</span>
+    <span class="identifier">Range</span><span class="special">&amp;&amp;</span> <span class="identifier">range</span><span class="special">,</span>
+    <span class="identifier">FormatFn</span><span class="special">&amp;&amp;</span> <span class="identifier">fn</span><span class="special">,</span>
+    <a class="link" href="boost__mysql__constant_string_view.html" title="constant_string_view"><code class="literal">constant_string_view</code></a> <span class="identifier">glue</span> <span class="special">=</span> <span class="string">", "</span><span class="special">);</span>
+</pre>
+<h5>
+<a name="mysql.ref.boost__mysql__sequence.h1"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__sequence.description"></a></span><a class="link" href="boost__mysql__sequence.html#mysql.ref.boost__mysql__sequence.description">Description</a>
+      </h5>
+<p>
+        Objects returned by this function satisfy <code class="computeroutput"><span class="identifier">Formattable</span></code>.
+        Formatting such objects invokes <code class="computeroutput"><span class="identifier">fn</span></code>
+        for each element in <code class="computeroutput"><span class="identifier">range</span></code>,
+        outputting <code class="computeroutput"><span class="identifier">glue</span></code> between invocations.
+        This generates an effect similar to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">ranges</span><span class="special">::</span><span class="identifier">views</span><span class="special">::</span><span class="identifier">join</span></code>.
+      </p>
+<p>
+        By default, this function creates an owning object by decay-copying <code class="computeroutput"><span class="identifier">range</span></code> into it. C arrays are copied into
+        <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span></code> objects. This behavior can be disabled
+        by passing <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">reference_wrapper</span></code> objects, which are converted
+        to references (as <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">make_tuple</span></code> does). The <a class="link" href="boost__mysql__sequence_range_t.html" title="sequence_range_t"><code class="computeroutput"><span class="identifier">sequence_range_t</span></code></a> type trait accounts
+        for these transformations.
+      </p>
+<p>
+        Formally:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">Range</span></code> is a (possibly
+            cv-qualified) C array reference (as per <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">is_array</span><span class="special">&lt;</span><span class="identifier">Range</span><span class="special">&gt;</span></code>), and the array has <code class="computeroutput"><span class="identifier">N</span></code> elements of type <code class="computeroutput"><span class="identifier">U</span></code>,
+            the output range type is <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">array</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">remove_cv</span><span class="special">&lt;</span> <span class="identifier">U</span> <span class="special">&gt;,</span> <span class="identifier">N</span><span class="special">&gt;</span></code>, and the range is created as if
+            <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">to_array</span></code> was called.
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">Range</span></code> is a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">reference_wrapper</span><span class="special">&lt;</span>
+            <span class="identifier">U</span> <span class="special">&gt;</span></code>
+            object, or a reference to one, the output range type is <code class="computeroutput"><span class="identifier">U</span><span class="special">&amp;</span></code>.
+            This effectively disables copying the input range. The resulting object
+            will be a view type, and the caller is responsible for lifetime management.
+          </li>
+<li class="listitem">
+            Otherwise, the output range type is <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">remove_cvref_t</span><span class="special">&lt;</span><span class="identifier">Range</span><span class="special">&gt;</span></code>, and it will be created by forwarding
+            the passed <code class="computeroutput"><span class="identifier">range</span></code>.
+          </li>
+</ul></div>
+<p>
+        <code class="computeroutput"><span class="identifier">FormatFn</span></code> is always decay-copied
+        into the resulting object.
+      </p>
+<p>
+        The glue string is always stored as a view, as it should usually point to
+        a compile-time constant.
+      </p>
+<h5>
+<a name="mysql.ref.boost__mysql__sequence.h2"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__sequence.type_requirements"></a></span><a class="link" href="boost__mysql__sequence.html#mysql.ref.boost__mysql__sequence.type_requirements">Type
+        requirements</a>
+      </h5>
+<p>
+        The resulting range and format function should be compatible, and any required
+        copy/move operations should be well defined. Formally:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">decay_t</span><span class="special">&lt;</span><span class="identifier">FormatFn</span><span class="special">&gt;</span></code>
+            should be a formatter function compatible with the elements of the output
+            range. See <a class="link" href="boost__mysql__format_sequence.html" title="format_sequence"><code class="computeroutput"><span class="identifier">format_sequence</span></code></a> for the formal
+            requirements.
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">Range</span></code> is a <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">reference_wrapper</span><span class="special">&lt;</span>
+            <span class="identifier">U</span> <span class="special">&gt;</span></code>,
+            or a reference to one, no further requirements are placed on <code class="computeroutput"><span class="identifier">U</span></code>.
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">Range</span></code> is a lvalue
+            reference to a C array, its elements should be copy-constructible (as
+            per <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">to_array</span></code> requirements).
+          </li>
+<li class="listitem">
+            If <code class="computeroutput"><span class="identifier">Range</span></code> is a rvalue
+            reference to a C array, its elements should be move-constructible (as
+            per <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">to_array</span></code> requirements).
+          </li>
+<li class="listitem">
+            Performing a decay-copy of <code class="computeroutput"><span class="identifier">FormatFn</span></code>
+            should be well defined.
+          </li>
+</ul></div>
+<h5>
+<a name="mysql.ref.boost__mysql__sequence.h3"></a>
+        <span class="phrase"><a name="mysql.ref.boost__mysql__sequence.exception_safety"></a></span><a class="link" href="boost__mysql__sequence.html#mysql.ref.boost__mysql__sequence.exception_safety">Exception
+        safety</a>
+      </h5>
+<p>
+        Basic guarantee. Propagates any exception thrown when constructing the output
+        range and format function.
+      </p>
+<p>
+        Convenience header <code class="literal">&lt;<a href="https://github.com/boostorg/mysql/blob/master/include/boost/mysql.hpp" target="_top">boost/mysql.hpp</a>&gt;</code>
+      </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost__mysql__runtime.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../pt01.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="boost__mysql__throw_on_error.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

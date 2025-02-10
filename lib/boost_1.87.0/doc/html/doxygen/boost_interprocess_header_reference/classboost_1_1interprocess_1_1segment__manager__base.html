@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template segment_manager_base</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.segment__manager_8hpp" title="Header &lt;boost/interprocess/segment_manager.hpp&gt;">
+<link rel="prev" href="structboost_1_1interprocess_1_1segment__manager_1_1deleter.html" title="Struct template deleter">
+<link rel="next" href="classboost_1_1interprocess_1_1shared__memory__object.html" title="Class shared_memory_object">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1interprocess_1_1segment__manager_1_1deleter.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.segment__manager_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1shared__memory__object.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template segment_manager_base</span></h2>
+<p>boost::interprocess::segment_manager_base</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.segment__manager_8hpp" title="Header &lt;boost/interprocess/segment_manager.hpp&gt;">boost/interprocess/segment_manager.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> MemoryAlgorithm<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html" title="Class template segment_manager_base">segment_manager_base</a> <span class="special">:</span> <span class="keyword">private</span> <span class="identifier">MemoryAlgorithm</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html" title="Class template segment_manager_base">segment_manager_base</a><span class="special">&lt;</span> <span class="identifier">MemoryAlgorithm</span> <span class="special">&gt;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1adf468e4ec92c78cfaa52b6ff108daabb"></a><span class="identifier">segment_manager_base_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <span class="identifier">MemoryAlgorithm</span><span class="special">::</span><span class="identifier">void_pointer</span>           <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a4e14ecfdd2956f9e4cf884f41b75c88f"></a><span class="identifier">void_pointer</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">MemoryAlgorithm</span><span class="special">::</span><span class="identifier">mutex_family</span>           <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a9a3e1e54398a68f5a7e132d7a77ad21e"></a><span class="identifier">mutex_family</span><span class="special">;</span>             
+  <span class="keyword">typedef</span> <span class="identifier">MemoryAlgorithm</span>                         <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1aa200963c129f0410a16e929e9d3c055a"></a><span class="identifier">memory_algorithm</span><span class="special">;</span>         
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#id58-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ab283b9f4fc35704a0b8600e43696bf7d"><span class="identifier">segment_manager_base</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a22d60be6b8859272080c80b6d2897344"><span class="identifier">get_size</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ae463417eb7a3d95066e7d01a03286cee"><span class="identifier">get_free_memory</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ad8f5c83e8bb194d0729d6fbf22459fdb"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">nothrow_t</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">MemoryAlgorithm</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1acfc03169a2db9561946cd6a4d1d725f4"><span class="identifier">get_memory_algorithm</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">MemoryAlgorithm</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a03827b0f019cc1c7eba54d74351075e5"><span class="identifier">get_memory_algorithm</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a019ff2632b995e10e28830ed10ec8690"><span class="identifier">allocate</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a901fc38f1f4f694303b631fc6b2cf95c"><span class="identifier">allocate_aligned</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">nothrow_t</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <span class="special">*</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a2623b91c23ae731b507ed3789dcd6242"><span class="identifier">allocate_aligned</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">,</span> <span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1aa1651ba36307dff5c45b86797f0ed5ef"><span class="identifier">deallocate</span></a><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a65f59c2f555934f9921ae5dd900cb13e"><span class="identifier">grow</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a55f7c9a9a5e935d773b87e4c20cce668"><span class="identifier">shrink_to_fit</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a277551ce586a7289b072e7ca92ebc4b5"><span class="identifier">all_memory_deallocated</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ab14c63d038b82b8bba976f2421adece5"><span class="identifier">check_sanity</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">void</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ae176b27f4da64bf5caeb802fae45c1a9"><span class="identifier">zero_free_memory</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a24a3905658cd0250c7959be6be69b4bb"><span class="identifier">size</span></a><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#id59-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1af4054e49520b755f981b14c69a6f0393"><span class="identifier">get_min_size</span></a><span class="special">(</span><span class="identifier">size_type</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__basepublic-data-members">public data members</a></span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">MemAlignment</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">size_type</span> <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html#doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1af35480e8152da4ade86d12828917b446"><span class="identifier">PayloadPerAllocation</span></a><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.17.19.3.45.5.4"></a><h2>Description</h2>
+<p>This object is the public base class of segment manager. This class only depends on the memory allocation algorithm and implements all the allocation features not related to named or unique objects.</p>
+<p>Storing a reference to <a class="link" href="classboost_1_1interprocess_1_1segment__manager.html" title="Class template segment_manager">segment_manager</a> forces the holder class to be dependent on index types and character types. When such dependence is not desirable and only anonymous and raw allocations are needed, <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html" title="Class template segment_manager_base">segment_manager_base</a> is the correct answer. </p>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.45.5.4.4"></a><h3>
+<a name="id58-bb"></a><code class="computeroutput">segment_manager_base</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ab283b9f4fc35704a0b8600e43696bf7d"></a><span class="identifier">segment_manager_base</span><span class="special">(</span><span class="identifier">size_type</span> sz<span class="special">,</span> <span class="identifier">size_type</span> reserved_bytes<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor of the <a class="link" href="classboost_1_1interprocess_1_1segment__manager__base.html" title="Class template segment_manager_base">segment_manager_base</a></p>
+<p>"size" is the size of the memory segment where the basic segment manager is being constructed.</p>
+<p>"reserved_bytes" is the number of bytes after the end of the memory algorithm object itself that the memory algorithm will exclude from dynamic allocation</p>
+<p>Can throw </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a22d60be6b8859272080c80b6d2897344"></a><span class="identifier">get_size</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the size of the memory segment </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ae463417eb7a3d95066e7d01a03286cee"></a><span class="identifier">get_free_memory</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns the number of free bytes of the memory segment </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ad8f5c83e8bb194d0729d6fbf22459fdb"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">size_type</span> nbytes<span class="special">,</span> <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">nothrow_t</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates nbytes bytes. This function is only used in single-segment management. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">MemoryAlgorithm</span> <span class="special">&amp;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1acfc03169a2db9561946cd6a4d1d725f4"></a><span class="identifier">get_memory_algorithm</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a reference to the internal memory algorithm. This function is useful for custom memory algorithms that need additional configuration options after construction. Never throws. This function should be only used by advanced users. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">MemoryAlgorithm</span> <span class="special">&amp;</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a03827b0f019cc1c7eba54d74351075e5"></a><span class="identifier">get_memory_algorithm</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a const reference to the internal memory algorithm. This function is useful for custom memory algorithms that need additional configuration options after construction. Never throws. This function should be only used by advanced users. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a019ff2632b995e10e28830ed10ec8690"></a><span class="identifier">allocate</span><span class="special">(</span><span class="identifier">size_type</span> nbytes<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates nbytes bytes. Throws <a class="link" href="classboost_1_1interprocess_1_1bad__alloc.html" title="Class bad_alloc">boost::interprocess::bad_alloc</a> on failure </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a901fc38f1f4f694303b631fc6b2cf95c"></a><span class="identifier">allocate_aligned</span><span class="special">(</span><span class="identifier">size_type</span> nbytes<span class="special">,</span> <span class="identifier">size_type</span> alignment<span class="special">,</span> 
+                        <span class="keyword">const</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">nothrow_t</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates nbytes bytes. This function is only used in single-segment management. Never throws </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <span class="special">*</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a2623b91c23ae731b507ed3789dcd6242"></a><span class="identifier">allocate_aligned</span><span class="special">(</span><span class="identifier">size_type</span> nbytes<span class="special">,</span> <span class="identifier">size_type</span> alignment<span class="special">)</span><span class="special">;</span></pre>
+<p>Allocates nbytes bytes. This function is only used in single-segment management. Throws <a class="link" href="classboost_1_1interprocess_1_1bad__alloc.html" title="Class bad_alloc">bad_alloc</a> when fails </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1aa1651ba36307dff5c45b86797f0ed5ef"></a><span class="identifier">deallocate</span><span class="special">(</span><span class="keyword">void</span> <span class="special">*</span> addr<span class="special">)</span><span class="special">;</span></pre>
+<p>Deallocates the bytes allocated with allocate/allocate_many() pointed by addr </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a65f59c2f555934f9921ae5dd900cb13e"></a><span class="identifier">grow</span><span class="special">(</span><span class="identifier">size_type</span> extra_size<span class="special">)</span><span class="special">;</span></pre>
+<p>Increases managed memory in extra_size bytes more. This only works with single-segment management. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a55f7c9a9a5e935d773b87e4c20cce668"></a><span class="identifier">shrink_to_fit</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Decreases managed memory to the minimum. This only works with single-segment management. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a277551ce586a7289b072e7ca92ebc4b5"></a><span class="identifier">all_memory_deallocated</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the result of "all_memory_deallocated()" function of the used memory algorithm </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ab14c63d038b82b8bba976f2421adece5"></a><span class="identifier">check_sanity</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Returns the result of "check_sanity()" function of the used memory algorithm </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">void</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1ae176b27f4da64bf5caeb802fae45c1a9"></a><span class="identifier">zero_free_memory</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Writes to zero free memory (memory not yet allocated) of the memory algorithm </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1a24a3905658cd0250c7959be6be69b4bb"></a><span class="identifier">size</span><span class="special">(</span><span class="keyword">const</span> <span class="keyword">void</span> <span class="special">*</span> ptr<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>Returns the size of the buffer previously allocated pointed by ptr. </li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.45.5.4.5"></a><h3>
+<a name="id59-bb"></a><code class="computeroutput">segment_manager_base</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1af4054e49520b755f981b14c69a6f0393"></a><span class="identifier">get_min_size</span><span class="special">(</span><span class="identifier">size_type</span> size<span class="special">)</span><span class="special">;</span></pre>
+<p>Obtains the minimum size needed by the segment manager </p>
+</li></ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.17.19.3.45.5.4.6"></a><h3>
+<a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__basepublic-data-members"></a><code class="computeroutput">segment_manager_base</code> 
+        public
+       public data members</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">const</span> <span class="identifier">size_type</span> <a name="doxygen.boost_interprocess_header_reference.classboost_1_1interprocess_1_1segment__manager__base_1af35480e8152da4ade86d12828917b446"></a><span class="identifier">PayloadPerAllocation</span><span class="special">;</span></pre>
+<p>This constant indicates the payload size associated with each allocation of the memory algorithm </p>
+</li></ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2005-2024 Ion Gaztanaga<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="structboost_1_1interprocess_1_1segment__manager_1_1deleter.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../interprocess/indexes_reference.html#doxygen.boost_interprocess_header_reference.segment__manager_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1interprocess_1_1shared__memory__object.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

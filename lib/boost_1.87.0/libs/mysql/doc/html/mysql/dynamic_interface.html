@@ -1,0 +1,1675 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>The dynamic interface</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="prepared_statements.html" title="Prepared statements">
+<link rel="next" href="static_interface.html" title="The static interface">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="prepared_statements.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="static_interface.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.dynamic_interface"></a><a class="link" href="dynamic_interface.html" title="The dynamic interface">The dynamic interface</a>
+</h2></div></div></div>
+<p>
+      To use the dynamic interface, use the <a class="link" href="ref/boost__mysql__results.html" title="results"><code class="literal">results</code></a>
+      class. <code class="computeroutput"><span class="identifier">results</span></code> is an in-memory
+      representation of a resultset. We can depict it like this (this is actually
+      a simplified representation, since <a class="link" href="multi_resultset.html" title="Multi-resultset: stored procedures and multi-queries">some
+      statements may return more than one resultset</a>).
+    </p>
+<p>
+      <span class="inlinemediaobject"><object type="image/svg+xml" data="images/results.svg" width="675" align="middle"></object></span>
+    </p>
+<p>
+      We can see that <a class="link" href="ref/boost__mysql__results/rows.html" title="results::rows"><code class="literal">results::rows</code></a>
+      returns a matrix-like object, containing the retrieved rows. This section is
+      dedicated on diving deeper on how to use these objects.
+    </p>
+<h4>
+<a name="mysql.dynamic_interface.h0"></a>
+      <span class="phrase"><a name="mysql.dynamic_interface.rows_and_fields"></a></span><a class="link" href="dynamic_interface.html#mysql.dynamic_interface.rows_and_fields">Rows
+      and fields</a>
+    </h4>
+<p>
+      This matrix-like structure is composed of variant-like objects called <span class="emphasis"><em>fields</em></span>.
+      Field objects are capable of representing any value retrieved from MySQL.
+    </p>
+<p>
+      This library defines the following classes to work with rows and fields:
+    </p>
+<div class="variablelist">
+<p class="title"><b></b></p>
+<dl class="variablelist">
+<dt><span class="term"><a class="link" href="ref/boost__mysql__field.html" title="field"><code class="literal">field</code></a></span></dt>
+<dd><p>
+            The smallest unit of data. A single "cell" in a MySQL table.
+            This is an owning, variant-like type.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__field_view.html" title="field_view"><code class="literal">field_view</code></a></span></dt>
+<dd><p>
+            Like <code class="computeroutput"><span class="identifier">field</span></code>, but non-owning.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__row.html" title="row"><code class="literal">row</code></a></span></dt>
+<dd><p>
+            An owning, <code class="computeroutput"><span class="identifier">vector</span></code>-like
+            collection of fields.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__row_view.html" title="row_view"><code class="literal">row_view</code></a></span></dt>
+<dd><p>
+            Like <code class="computeroutput"><span class="identifier">row</span></code>, but non-owning.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__rows.html" title="rows"><code class="literal">rows</code></a></span></dt>
+<dd><p>
+            An owning, matrix-like collection of fields. Represents several rows
+            of the same size in an optimized way.
+          </p></dd>
+<dt><span class="term"><a class="link" href="ref/boost__mysql__rows_view.html" title="rows_view"><code class="literal">rows_view</code></a></span></dt>
+<dd><p>
+            Like <code class="computeroutput"><span class="identifier">rows</span></code>, but non-owning.
+          </p></dd>
+</dl>
+</div>
+<p>
+      <a class="link" href="ref/boost__mysql__results/rows.html" title="results::rows"><code class="literal">results::rows</code></a>
+      returns a <a class="link" href="ref/boost__mysql__rows_view.html" title="rows_view"><code class="literal">rows_view</code></a>
+      object. The memory for the rows is owned by the <code class="computeroutput"><span class="identifier">results</span></code>
+      object. Indexing the returned view also returns view objects:
+    </p>
+<pre class="programlisting"><span class="comment">// Populate a results object</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT 'Hello world'"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// results::rows() returns a rows_view. The underlying memory is owned by the results object</span>
+<span class="identifier">rows_view</span> <span class="identifier">all_rows</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">();</span>
+
+<span class="comment">// Indexing a rows_view yields a row_view. The underlying memory is owned by the results object</span>
+<span class="identifier">row_view</span> <span class="identifier">first_row</span> <span class="special">=</span> <span class="identifier">all_rows</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">);</span>
+
+<span class="comment">// Indexing a row_view yields a field_view. The underlying memory is owned by the results object</span>
+<span class="identifier">field_view</span> <span class="identifier">first_field</span> <span class="special">=</span> <span class="identifier">first_row</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">);</span>  <span class="comment">// Contains the string "Hello world"</span>
+</pre>
+<p>
+      Views behave similarly to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code>.
+      You must make sure that you don't use a view after the storage it points to
+      has gone out of scope. In this case, you must not use any of the views after
+      the <code class="computeroutput"><span class="identifier">results</span></code> object has gone
+      out of scope.
+    </p>
+<p>
+      As it happens with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code>, you can take ownership of a
+      view using its owning counterpart:
+    </p>
+<pre class="programlisting"><span class="comment">// You may use all_rows_owning after result has gone out of scope</span>
+<span class="identifier">rows</span> <span class="identifier">all_rows_owning</span><span class="special">{</span><span class="identifier">all_rows</span><span class="special">};</span>
+
+<span class="comment">// You may use first_row_owning after result has gone out of scope</span>
+<span class="identifier">row</span> <span class="identifier">first_row_owning</span><span class="special">{</span><span class="identifier">first_row</span><span class="special">};</span>
+
+<span class="comment">// You may use first_field_owning after result has gone out of scope</span>
+<span class="identifier">field</span> <span class="identifier">first_field_owning</span><span class="special">{</span><span class="identifier">first_field</span><span class="special">};</span>
+</pre>
+<h4>
+<a name="mysql.dynamic_interface.h1"></a>
+      <span class="phrase"><a name="mysql.dynamic_interface.using_fields"></a></span><a class="link" href="dynamic_interface.html#mysql.dynamic_interface.using_fields">Using
+      fields</a>
+    </h4>
+<p>
+      <a class="link" href="ref/boost__mysql__field.html" title="field"><code class="literal">field</code></a>
+      and <a class="link" href="ref/boost__mysql__field_view.html" title="field_view"><code class="literal">field_view</code></a>
+      are specialized variant-like types that can hold any type you may find in a
+      MySQL table. Once you obtain a field, you can access its contents using the
+      following functions:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          You can query a field's type by using <a class="link" href="ref/boost__mysql__field_view/kind.html" title="field_view::kind"><code class="literal">kind</code></a>,
+          which returns a <a class="link" href="ref/boost__mysql__field_kind.html" title="field_kind"><code class="literal">field_kind</code></a>
+          enum.
+        </li>
+<li class="listitem">
+          You can query whether a field contains a certain type with <code class="computeroutput"><span class="identifier">field</span><span class="special">::</span><span class="identifier">is_xxx</span></code>.
+        </li>
+<li class="listitem">
+          You can get the underlying value with <code class="computeroutput"><span class="identifier">field</span><span class="special">::</span><span class="identifier">as_xxx</span></code>
+          and <code class="computeroutput"><span class="identifier">field</span><span class="special">::</span><span class="identifier">get_xxx</span></code>. The <code class="computeroutput"><span class="identifier">as_xxx</span></code>
+          functions are checked (they will throw an exception if the actual type
+          doesn't match), while the <code class="computeroutput"><span class="identifier">get_xxx</span></code>
+          are unchecked (they result in undefined behavior on type mismatch).
+        </li>
+<li class="listitem">
+          You can stream fields and compare them for equality.
+        </li>
+</ul></div>
+<p>
+      For example:
+    </p>
+<pre class="programlisting"><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT 'abc', 42"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Obtain a field's underlying value using the is_xxx and get_xxx accessors</span>
+<span class="identifier">field_view</span> <span class="identifier">f</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">);</span>  <span class="comment">// f points to the string "abc"</span>
+<span class="keyword">if</span> <span class="special">(</span><span class="identifier">f</span><span class="special">.</span><span class="identifier">is_string</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="comment">// we know it's a string, unchecked access</span>
+    <span class="identifier">string_view</span> <span class="identifier">s</span> <span class="special">=</span> <span class="identifier">f</span><span class="special">.</span><span class="identifier">get_string</span><span class="special">();</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">s</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>  <span class="comment">// Use the string as required</span>
+<span class="special">}</span>
+<span class="keyword">else</span>
+<span class="special">{</span>
+    <span class="comment">// Oops, something went wrong - schema mismatch?</span>
+<span class="special">}</span>
+
+<span class="comment">// Alternative: use the as_xxx accessor</span>
+<span class="identifier">f</span> <span class="special">=</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">().</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">).</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span> <span class="identifier">value</span> <span class="special">=</span> <span class="identifier">f</span><span class="special">.</span><span class="identifier">as_int64</span><span class="special">();</span>  <span class="comment">// Checked access. Throws if f doesn't contain an int</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="identifier">value</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>    <span class="comment">// Use the int as required</span>
+</pre>
+<p>
+      <code class="computeroutput"><span class="identifier">NULL</span></code> values are represented
+      as field objects having <code class="computeroutput"><span class="identifier">kind</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">field_kind</span><span class="special">::</span><span class="identifier">null</span></code>. You
+      can check whether a value is <code class="computeroutput"><span class="identifier">NULL</span></code>
+      or not using <a class="link" href="ref/boost__mysql__field_view/is_null.html" title="field_view::is_null"><code class="literal">is_null</code></a>.
+      This is how <code class="computeroutput"><span class="identifier">NULL</span></code>s are typically
+      handled:
+    </p>
+<pre class="programlisting"><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+
+<span class="comment">// Create some test data</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span>
+    <span class="identifier">R</span><span class="string">"%(
+        CREATE TEMPORARY TABLE products (
+            id VARCHAR(50) PRIMARY KEY,
+            description VARCHAR(256)
+        )
+    )%"</span><span class="special">,</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"INSERT INTO products VALUES ('PTT', 'Potatoes'), ('CAR', NULL)"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="comment">// Retrieve the data. Note that some fields are NULL</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="string">"SELECT id, description FROM products"</span><span class="special">,</span> <span class="identifier">result</span><span class="special">);</span>
+
+<span class="keyword">for</span> <span class="special">(</span><span class="identifier">row_view</span> <span class="identifier">r</span> <span class="special">:</span> <span class="identifier">result</span><span class="special">.</span><span class="identifier">rows</span><span class="special">())</span>
+<span class="special">{</span>
+    <span class="identifier">field_view</span> <span class="identifier">description_fv</span> <span class="special">=</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">1</span><span class="special">);</span>
+    <span class="keyword">if</span> <span class="special">(</span><span class="identifier">description_fv</span><span class="special">.</span><span class="identifier">is_null</span><span class="special">())</span>
+    <span class="special">{</span>
+        <span class="comment">// Handle the NULL value</span>
+        <span class="comment">// Note: description_fv.is_string() will return false here; NULL is represented as a separate</span>
+        <span class="comment">// type</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"No description for product_id "</span> <span class="special">&lt;&lt;</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+    <span class="keyword">else</span>
+    <span class="special">{</span>
+        <span class="comment">// Handle the non-NULL case. Get the underlying value and use it as you want</span>
+        <span class="comment">// If there is any schema mismatch (and description was not defined as VARCHAR), this will</span>
+        <span class="comment">// throw</span>
+        <span class="identifier">string_view</span> <span class="identifier">description</span> <span class="special">=</span> <span class="identifier">description_fv</span><span class="special">.</span><span class="identifier">as_string</span><span class="special">();</span>
+
+        <span class="comment">// Use description as required</span>
+        <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"product_id "</span> <span class="special">&lt;&lt;</span> <span class="identifier">r</span><span class="special">.</span><span class="identifier">at</span><span class="special">(</span><span class="number">0</span><span class="special">)</span> <span class="special">&lt;&lt;</span> <span class="string">": "</span> <span class="special">&lt;&lt;</span> <span class="identifier">description</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span>
+    <span class="special">}</span>
+<span class="special">}</span>
+</pre>
+<h4>
+<a name="mysql.dynamic_interface.h2"></a>
+      <span class="phrase"><a name="mysql.dynamic_interface.mysql_to_c_type_mappings"></a></span><a class="link" href="dynamic_interface.html#mysql.dynamic_interface.mysql_to_c_type_mappings">MySQL
+      to C++ type mappings</a>
+    </h4>
+<p>
+      Every MySQL type is mapped to a single C++ type. The following table shows
+      these mappings:
+    </p>
+<div class="informaltable">
+<a name="mysql.dynamic_interface.accessors"></a><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                <code class="computeroutput"><span class="identifier">field_kind</span></code>
+              </p>
+            </th>
+<th>
+              <p>
+                C++ type
+              </p>
+            </th>
+<th>
+              <p>
+                MySQL types
+              </p>
+            </th>
+<th>
+              <p>
+                <code class="computeroutput"><span class="identifier">is</span></code> accessor
+              </p>
+            </th>
+<th>
+              <p>
+                <code class="computeroutput"><span class="identifier">as</span></code> accessor
+              </p>
+            </th>
+<th>
+              <p>
+                <code class="computeroutput"><span class="identifier">get</span></code> accessor
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">BIGINT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_int64.html" title="field_view::is_int64"><code class="literal">is_int64</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_int64.html" title="field_view::as_int64"><code class="literal">as_int64</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_int64.html" title="field_view::get_int64"><code class="literal">get_int64</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Unsigned <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">BIGINT</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/bit-type.html" target="_top"><code class="computeroutput"><span class="identifier">BIT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_uint64.html" title="field_view::is_uint64"><code class="literal">is_uint64</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_uint64.html" title="field_view::as_uint64"><code class="literal">as_uint64</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_uint64.html" title="field_view::get_uint64"><code class="literal">get_uint64</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                for <code class="computeroutput"><span class="identifier">field_view</span></code>
+              </p>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code> for <code class="computeroutput"><span class="identifier">field</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html" target="_top"><code class="computeroutput"><span class="identifier">CHAR</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html" target="_top"><code class="computeroutput"><span class="identifier">VARCHAR</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/blob.html" target="_top"><code class="computeroutput"><span class="identifier">TEXT</span></code></a> (all sizes), <a href="https://dev.mysql.com/doc/refman/8.0/en/enum.html" target="_top"><code class="computeroutput"><span class="identifier">ENUM</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/set.html" target="_top"><code class="computeroutput"><span class="identifier">SET</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">DECIMAL</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">NUMERIC</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/json.html" target="_top"><code class="computeroutput"><span class="identifier">JSON</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_string.html" title="field_view::is_string"><code class="literal">is_string</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_string.html" title="field_view::as_string"><code class="literal">as_string</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_string.html" title="field_view::get_string"><code class="literal">get_string</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">blob</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+                for <code class="computeroutput"><span class="identifier">field_view</span></code>
+              </p>
+              <p>
+                <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>
+                for <code class="computeroutput"><span class="identifier">field</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html" target="_top"><code class="computeroutput"><span class="identifier">BINARY</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html" target="_top"><code class="computeroutput"><span class="identifier">VARBINARY</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/blob.html" target="_top"><code class="computeroutput"><span class="identifier">BLOB</span></code></a> (all sizes), <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html" target="_top"><code class="computeroutput"><span class="identifier">GEOMETRY</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_blob.html" title="field_view::is_blob"><code class="literal">is_blob</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_blob.html" title="field_view::as_blob"><code class="literal">as_blob</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_blob.html" title="field_view::get_blob"><code class="literal">get_blob</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">float_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">float</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">FLOAT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_float.html" title="field_view::is_float"><code class="literal">is_float</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_float.html" title="field_view::as_float"><code class="literal">as_float</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_float.html" title="field_view::get_float"><code class="literal">get_float</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">double_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">double</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">DOUBLE</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_double.html" title="field_view::is_double"><code class="literal">is_double</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_double.html" title="field_view::as_double"><code class="literal">as_double</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_double.html" title="field_view::get_double"><code class="literal">get_double</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">date</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__date.html" title="date"><code class="literal">date</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">DATE</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_date.html" title="field_view::is_date"><code class="literal">is_date</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_date.html" title="field_view::as_date"><code class="literal">as_date</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_date.html" title="field_view::get_date"><code class="literal">get_date</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">datetime</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__datetime.html" title="datetime"><code class="literal">datetime</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">DATETIME</span></code></a>, <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">TIMESTAMP</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_datetime.html" title="field_view::is_datetime"><code class="literal">is_datetime</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_datetime.html" title="field_view::as_datetime"><code class="literal">as_datetime</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_datetime.html" title="field_view::get_datetime"><code class="literal">get_datetime</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">time</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__time.html" title="time"><code class="literal">time</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/time.html" target="_top"><code class="computeroutput"><span class="identifier">TIME</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_time.html" title="field_view::is_time"><code class="literal">is_time</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/as_time.html" title="field_view::as_time"><code class="literal">as_time</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/get_time.html" title="field_view::get_time"><code class="literal">get_time</code></a>
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">null</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                Any of the above, when they're <code class="computeroutput"><span class="identifier">NULL</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__field_view/is_null.html" title="field_view::is_null"><code class="literal">is_null</code></a>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>
+      No character set conversion is applied on strings. They are provided as the
+      server sends them. If you've run <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>,
+      strings will be encoded according to the passed character set. For details,
+      see <a class="link" href="charsets.html" title="Character sets and collations">this section</a>.
+    </p>
+<h4>
+<a name="mysql.dynamic_interface.h3"></a>
+      <span class="phrase"><a name="mysql.dynamic_interface.the_field_class"></a></span><a class="link" href="dynamic_interface.html#mysql.dynamic_interface.the_field_class">The
+      field class</a>
+    </h4>
+<p>
+      <a class="link" href="ref/boost__mysql__field_view.html" title="field_view"><code class="literal">field_view</code></a>
+      is to <a class="link" href="ref/boost__mysql__field.html" title="field"><code class="literal">field</code></a>
+      what <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span></code> is to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>.
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">field_view</span></code>s are cheap to create
+      and to copy, as they are small objects and don't perform any memory allocations.
+      They are also immutable. On the other hand, <code class="computeroutput"><span class="identifier">field</span></code>s
+      may be more expensive to create and copy, as they may perform memory allocations.
+      <code class="computeroutput"><span class="identifier">field</span></code>s are mutable.
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">field</span></code> and <code class="computeroutput"><span class="identifier">field_view</span></code>
+      use the same underlying types for scalars. For strings and blobs, <code class="computeroutput"><span class="identifier">field</span></code> uses the owning types <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+      and <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>,
+      while <code class="computeroutput"><span class="identifier">field_view</span></code> uses the reference
+      types <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+      and <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>.
+    </p>
+<p>
+      <code class="computeroutput"><span class="identifier">field</span></code> accessors return references,
+      which allow you to mutate the underlying object:
+    </p>
+<pre class="programlisting"><span class="identifier">field</span> <span class="identifier">f</span><span class="special">(</span><span class="string">"my_string"</span><span class="special">);</span>            <span class="comment">// constructs a field that owns the string "my_string"</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span><span class="special">&amp;</span> <span class="identifier">s</span> <span class="special">=</span> <span class="identifier">f</span><span class="special">.</span><span class="identifier">as_string</span><span class="special">();</span>  <span class="comment">// s points into f's storage</span>
+<span class="identifier">s</span><span class="special">.</span><span class="identifier">push_back</span><span class="special">(</span><span class="char">'2'</span><span class="special">);</span>                <span class="comment">// f now holds "my_string2"</span>
+</pre>
+<p>
+      You can also mutate a <code class="computeroutput"><span class="identifier">field</span></code>
+      using the assignment operator. This allows you to also change the underlying
+      type of a <code class="computeroutput"><span class="identifier">field</span></code>:
+    </p>
+<pre class="programlisting"><span class="identifier">field</span> <span class="identifier">f</span><span class="special">(</span><span class="string">"my_string"</span><span class="special">);</span>  <span class="comment">// constructs a field that owns the string "my_string"</span>
+<span class="identifier">f</span> <span class="special">=</span> <span class="number">42</span><span class="special">;</span>                <span class="comment">// destroys "my_string" and stores the value 42 as an int64</span>
+</pre>
+<h4>
+<a name="mysql.dynamic_interface.h4"></a>
+      <span class="phrase"><a name="mysql.dynamic_interface.multi_resultset_and_multi_functi"></a></span><a class="link" href="dynamic_interface.html#mysql.dynamic_interface.multi_resultset_and_multi_functi">Multi-resultset
+      and multi-function operations</a>
+    </h4>
+<p>
+      You can use both with the dynamic interface. Please refer to the sections on
+      <a class="link" href="multi_resultset.html" title="Multi-resultset: stored procedures and multi-queries">multi-resultset operations</a> and
+      <a class="link" href="multi_function.html" title="Multi-function operations">multi-function operations</a> for more
+      information.
+    </p>
+<h4>
+<a name="mysql.dynamic_interface.h5"></a>
+      <span class="phrase"><a name="mysql.dynamic_interface.mysql_to_c_type_mapping_referenc"></a></span><a class="link" href="dynamic_interface.html#mysql.dynamic_interface.mysql_to_c_type_mapping_referenc">MySQL to
+      C++ type mapping reference</a>
+    </h4>
+<p>
+      The following table reflects mapping from database types to C++ types. The
+      range column shows the range of values that MySQL admits for that type. This
+      library guarantees that any field retrieved from the database honors that range.
+      The <code class="computeroutput"><span class="identifier">column_type</span></code> column shows
+      what <a class="link" href="ref/boost__mysql__metadata/type.html" title="metadata::type"><code class="literal">metadata::type</code></a>
+      would return for a column of that type.
+    </p>
+<div class="informaltable">
+<a name="mysql.dynamic_interface.dynamic_field_mappings"></a><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                MySQL type
+              </p>
+            </th>
+<th>
+              <p>
+                <code class="computeroutput"><span class="identifier">field_kind</span></code>
+              </p>
+            </th>
+<th>
+              <p>
+                C++ type
+              </p>
+            </th>
+<th>
+              <p>
+                Range
+              </p>
+            </th>
+<th>
+              <p>
+                <code class="computeroutput"><span class="identifier">column_type</span></code>
+              </p>
+            </th>
+<th>
+              <p>
+                Considerations
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="number">0x80</span></code>
+                to <code class="computeroutput"><span class="number">0x7f</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">tinyint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                1 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">TINYINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="number">0</span></code> to <code class="computeroutput"><span class="number">0xff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">tinyint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                1 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="number">0x8000</span></code>
+                to <code class="computeroutput"><span class="number">0x7fff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">smallint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                2 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">SMALLINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="number">0</span></code> to <code class="computeroutput"><span class="number">0xffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">smallint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                2 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="number">0x800000</span></code>
+                to <code class="computeroutput"><span class="number">0x7fffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">mediumint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                3 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">MEDIUMINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="number">0</span></code> to <code class="computeroutput"><span class="number">0xffffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">mediumint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                3 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="number">0x80000000</span></code>
+                to <code class="computeroutput"><span class="number">0x7fffffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                4 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">INT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="number">0</span></code> to <code class="computeroutput"><span class="number">0xffffffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                4 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">BIGINT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">int64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="special">-</span><span class="number">0</span><span class="identifier">x8000000000000000</span></code> to <code class="computeroutput"><span class="number">0</span><span class="identifier">x7fffffffffffffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">bigint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                8 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/integer-types.html" target="_top"><code class="computeroutput"><span class="identifier">BIGINT</span></code></a> <code class="computeroutput"><span class="identifier">UNSIGNED</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="number">0</span></code> and <code class="computeroutput"><span class="number">0</span><span class="identifier">xffffffffffffffff</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">bigint</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                8 byte integer
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/year.html" target="_top"><code class="computeroutput"><span class="identifier">YEAR</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                [<code class="computeroutput"><span class="number">1901</span></code>, <code class="computeroutput"><span class="number">2155</span></code>], plus zero
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">year</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                1 byte integer type used to represent years
+              </p>
+              <p>
+                Zero is often employed to represent invalid year values. We represent
+                zero year as a numeric 0.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/bit-type.html" target="_top"><code class="computeroutput"><span class="identifier">BIT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">uint64</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">uint64_t</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Depends on the bitset width. Max <code class="computeroutput"><span class="number">0</span></code>
+                to <code class="computeroutput"><span class="number">0</span><span class="identifier">xffffffffffffffff</span></code>.
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">bit</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                A bitset between 1 and 64 bits wide.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">FLOAT</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">float_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">float</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                IEEE 754 <code class="computeroutput"><span class="keyword">float</span></code> range
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">float_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                4 byte floating point type
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">DOUBLE</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">double_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="keyword">double</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                IEEE 754 <code class="computeroutput"><span class="keyword">double</span></code> range
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">double_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                8 byte floating point type
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">DATE</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">date</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__date.html" title="date"><code class="literal">date</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                [<a class="link" href="ref/boost__mysql__min_date.html" title="min_date"><code class="literal">min_date</code></a>,
+                <a class="link" href="ref/boost__mysql__max_date.html" title="max_date"><code class="literal">max_date</code></a>]
+                (some MySQL implementations may allow a narrower range), plus invalid
+                and zero dates (see <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sqlmode_allow_invalid_dates" target="_top"><code class="computeroutput"><span class="identifier">ALLOW_INVALID_DATES</span></code></a> and
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sql-mode-strict" target="_top">strict
+                SQL mode</a>).
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">date</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">DATETIME</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">datetime</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__datetime.html" title="datetime"><code class="literal">datetime</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                [<a class="link" href="ref/boost__mysql__min_datetime.html" title="min_datetime"><code class="literal">min_datetime</code></a>,
+                <a class="link" href="ref/boost__mysql__max_datetime.html" title="max_datetime"><code class="literal">max_datetime</code></a>]
+                (some MySQL implementations may allow a narrower range), plus invalid
+                and zero datetimes (see <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sqlmode_allow_invalid_dates" target="_top"><code class="computeroutput"><span class="identifier">ALLOW_INVALID_DATES</span></code></a> and
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sql-mode-strict" target="_top">strict
+                SQL mode</a>).
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">datetime</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Time point type without time zone, with a resolution of one microsecond.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/datetime.html" target="_top"><code class="computeroutput"><span class="identifier">TIMESTAMP</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">datetime</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__datetime.html" title="datetime"><code class="literal">datetime</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                [<a class="link" href="ref/boost__mysql__min_datetime.html" title="min_datetime"><code class="literal">min_datetime</code></a>,
+                <a class="link" href="ref/boost__mysql__max_datetime.html" title="max_datetime"><code class="literal">max_datetime</code></a>]
+                (the actual MySQL supported range is usually narrower, but we don't
+                enforce it in the client), plus zero timestamps (see <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sql-mode-strict" target="_top">strict
+                SQL mode</a>).
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">timestamp</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Time point type with a resolution of one microsecond.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/time.html" target="_top"><code class="computeroutput"><span class="identifier">TIME</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">time</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__time.html" title="time"><code class="literal">time</code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                [<a class="link" href="ref/boost__mysql__min_time.html" title="min_time"><code class="literal">min_time</code></a>,
+                <a class="link" href="ref/boost__mysql__max_time.html" title="max_time"><code class="literal">max_time</code></a>]
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">time</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Signed time duration, with a resolution of one microsecond.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html" target="_top"><code class="computeroutput"><span class="identifier">CHAR</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">char_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Fixed-size character string.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/char.html" target="_top"><code class="computeroutput"><span class="identifier">VARCHAR</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">varchar</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Variable size character string with a maximum size.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/blob.html" target="_top"><code class="computeroutput"><span class="identifier">TEXT</span></code></a> (all sizes)
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">text</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Variable size character string.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/enum.html" target="_top"><code class="computeroutput"><span class="identifier">ENUM</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">enum_</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Character string with a fixed set of possible values (only one possible).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/set.html" target="_top"><code class="computeroutput"><span class="identifier">SET</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">set</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Character string with a fixed set of possible values (many possible).
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/json.html" target="_top"><code class="computeroutput"><span class="identifier">JSON</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">json</span></code> (MySQL) or
+                <code class="computeroutput"><span class="identifier">text</span></code> (MariaDB)
+              </p>
+            </td>
+<td>
+              <p>
+                A serialized JSON value of any type.
+              </p>
+              <p>
+                Note that <a class="link" href="ref/boost__mysql__metadata/type.html" title="metadata::type"><code class="literal">metadata::type</code></a>
+                is different depending on the DB system. MySQL has a dedicated <code class="computeroutput"><span class="identifier">JSON</span></code> type, while in MariaDB <code class="computeroutput"><span class="identifier">JSON</span></code> is an alias for <code class="computeroutput"><span class="identifier">LONGTEXT</span></code>. JSON values are represented
+                as strings by this library in both cases.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">DECIMAL</span></code></a>/<a href="https://dev.mysql.com/doc/refman/8.0/en/fixed-point-types.html" target="_top"><code class="computeroutput"><span class="identifier">NUMERIC</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__string_view.html" title="string_view"><code class="literal">string_view</code></a>
+                or <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Depends on the column definition
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">decimal</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                A fixed precision numeric value. In this case, the string will contain
+                the textual representation of the number (e.g. the string <code class="computeroutput"><span class="string">"20.52"</span></code> for <code class="computeroutput"><span class="number">20.52</span></code>).
+              </p>
+              <p>
+                This type is mapped to a string to avoid losing precision.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html" target="_top"><code class="computeroutput"><span class="identifier">BINARY</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">blob</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+                or <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">binary</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Fixed-size blob.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/binary-varbinary.html" target="_top"><code class="computeroutput"><span class="identifier">VARBINARY</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">blob</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+                or <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">varbinary</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Variable size blob with a maximum size.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/blob.html" target="_top"><code class="computeroutput"><span class="identifier">BLOB</span></code></a> (all sizes)
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">blob</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+                or <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">blob</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Variable size blob.
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html" target="_top"><code class="computeroutput"><span class="identifier">GEOMETRY</span></code></a>
+              </p>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">blob</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+                or <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>
+              </p>
+            </td>
+<td>
+            </td>
+<td>
+              <p>
+                <code class="computeroutput"><span class="identifier">geometry</span></code>
+              </p>
+            </td>
+<td>
+              <p>
+                Any of the spatial data types. The string contains the binary representation
+                of the geometry type.
+              </p>
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="prepared_statements.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="static_interface.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

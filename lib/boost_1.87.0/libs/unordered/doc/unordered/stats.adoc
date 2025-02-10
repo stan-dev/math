@@ -1,0 +1,71 @@
+[#stats]
+== Statistics
+
+:idprefix: stats_
+
+Open-addressing and concurrent containers can be configured to keep running statistics
+of some internal operations affected by the quality of the supplied hash function.
+
+=== Synopsis
+
+[listing,subs="+macros,+quotes"]
+-----
+struct xref:#stats_stats_summary_type[__stats-summary-type__]
+{
+  double average;
+  double variance;
+  double deviation;
+};
+
+struct xref:#stats_insertion_stats_type[__insertion-stats-type__]
+{
+  std::size_t        count;
+  xref:#stats_stats_summary_type[__stats-summary-type__] probe_length;
+};
+
+struct xref:stats_lookup_stats_type[__lookup-stats-type__]
+{
+  std::size_t        count;
+  xref:#stats_stats_summary_type[__stats-summary-type__] probe_length;
+  xref:#stats_stats_summary_type[__stats-summary-type__] num_comparisons;
+};
+
+struct xref:stats_stats_type[__stats-type__]
+{
+  xref:#stats_insertion_stats_type[__insertion-stats-type__] insertion;
+  xref:stats_lookup_stats_type[__lookup-stats-type__]    successful_lookup,
+                       unsuccessful_lookup;
+};
+-----
+
+==== __stats-summary-type__
+
+Provides the average value, variance and standard deviation of a sequence of numerical values.
+
+==== __insertion-stats-type__
+
+Provides the number of insertion operations performed by a container and
+statistics on the associated __probe length__ (number of
+xref:#structures_open_addressing_containers[bucket groups] accessed per operation).
+
+==== __lookup-stats-type__
+
+For successful (element found) or unsuccessful (not found) lookup,
+provides the number of operations performed by a container and
+statistics on the associated __probe length__ (number of
+xref:#structures_open_addressing_containers[bucket groups] accessed)
+and number of element comparisons per operation.
+
+==== __stats-type__
+
+Provides statistics on insertion, successful and unsuccessful lookups performed by a container.
+If the supplied hash function has good quality, then:
+
+* Average probe lenghts should be close to 1.0.
+* For successful lookups, the average number of element comparisons should be close to 1.0.
+* For unsuccessful lookups, the average number of element comparisons should be close to 0.0.
+
+These statistics can be used to determine if a given hash function
+can be marked as xref:hash_traits_hash_is_avalanching[__avalanching__].
+
+---

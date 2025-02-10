@@ -1,0 +1,344 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class template type_index_facade</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.type__index__facade_8hpp" title="Header &lt;boost/type_index/type_index_facade.hpp&gt;">
+<link rel="prev" href="classboost_1_1typeindex_1_1stl__type__index.html" title="Class stl_type_index">
+<link rel="next" href="type__index__facade_8hpp_1a20a9e97693898043009d53006aaaf3c3.html" title="Function template hash_value">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1typeindex_1_1stl__type__index.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.type__index__facade_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="type__index__facade_8hpp_1a20a9e97693898043009d53006aaaf3c3.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class template type_index_facade</span></h2>
+<p>boost::typeindex::type_index_facade</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.type__index__facade_8hpp" title="Header &lt;boost/type_index/type_index_facade.hpp&gt;">boost/type_index/type_index_facade.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Derived<span class="special">,</span> <span class="keyword">typename</span> TypeInfo<span class="special">&gt;</span> 
+<span class="keyword">class</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html" title="Class template type_index_facade">type_index_facade</a> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">TypeInfo</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a00ea86b6f2988a86bcb8698fce703fec"></a><span class="identifier">type_info_t</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#id-1_3_42_8_11_1_1_1_4-bb">public member functions</a></span>
+  <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a592dc8afebf346a07721293391980dcb"><span class="identifier">name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a50fcb3144a54cacdeeec13ab5305f82a"><span class="identifier">pretty_name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a56e45113630a76ddacd1b1f30da59294"><span class="identifier">equal</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Derived</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a04eb5897b4de19f9a445f8672a0e4a36"><span class="identifier">before</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Derived</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a784cfd6418d0de6da0d0cca78f554c92"><span class="identifier">hash_code</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#id-1_3_42_8_11_1_1_1_5-bb">protected member functions</a></span>
+  <span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a0199e1a80f28dd9d95cd202ed7e39c5e"><span class="identifier">raw_name</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">const</span> <span class="identifier">type_info_t</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a343245d2135b1844d1e00a8f3dae8b8c"><span class="identifier">type_info</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#id-1_3_42_8_11_1_1_1_6-bb">protected static functions</a></span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="identifier">Derived</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a69a7cb9b3dff2da97609c5ff20be10ef"><span class="identifier">type_id</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="identifier">Derived</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a7c867a1935e2db86eae2ea7d02e5c26e"><span class="identifier">type_id_with_cvr</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="identifier">Derived</span> <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1ad3fb0a5425db871e0471e2f0c93b9bd8"><span class="identifier">type_id_runtime</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.42.8.11.3.4"></a><h2>Description</h2>
+<p>This class takes care about the comparison operators, hash functions and ostream operators. Use this class as a public base class for defining new type_info-conforming classes.</p>
+<p><span class="bold"><strong>Example:</strong></span> </p>
+<pre class="programlisting"><span class="keyword">class</span> <span class="identifier">stl_type_index</span><span class="special">:</span> <span class="keyword">public</span> <span class="identifier">type_index_facade</span><span class="special">&lt;</span><span class="identifier">stl_type_index</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">type_info</span><span class="special">&gt;</span> 
+<span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">type_info</span> <span class="identifier">type_info_t</span><span class="special">;</span>
+<span class="keyword">private</span><span class="special">:</span>
+    <span class="keyword">const</span> <span class="identifier">type_info_t</span><span class="special">*</span> <span class="identifier">data_</span><span class="special">;</span>
+
+<span class="keyword">public</span><span class="special">:</span>
+    <span class="identifier">stl_type_index</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">type_info_t</span><span class="special">&amp;</span> <span class="identifier">data</span><span class="special">)</span> <span class="keyword">noexcept</span>
+        <span class="special">:</span> <span class="identifier">data_</span><span class="special">(</span><span class="special">&amp;</span><span class="identifier">data</span><span class="special">)</span>
+    <span class="special">{</span><span class="special">}</span>
+<span class="comment">// ...</span>
+<span class="special">}</span><span class="special">;</span>
+</pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Take a look at the protected methods. They are <span class="bold"><strong>not</strong></span> <span class="bold"><strong>defined</strong></span> in <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html" title="Class template type_index_facade">type_index_facade</a>. Protected member functions <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a0199e1a80f28dd9d95cd202ed7e39c5e">raw_name()</a> <span class="bold"><strong>must</strong></span> be defined in Derived class. All the other methods are mandatory. </p></td></tr>
+</table></div>
+<p>
+</p>
+<p><b>See Also: </b>'Making a custom <a class="link" href="type__index_8hpp_1a92396e4950b1278f4df4b0919f3168be.html" title="Type definition type_index">type_index</a>' section for more information about creating your own <a class="link" href="type__index_8hpp_1a92396e4950b1278f4df4b0919f3168be.html" title="Type definition type_index">type_index</a> using <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html" title="Class template type_index_facade">type_index_facade</a>. </p>
+<p>
+</p>
+<div class="refsect2">
+<a name="id-1.3.42.8.11.3.4.5"></a><h3>Template Parameters</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> Derived</pre>
+<p>Class derived from <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html" title="Class template type_index_facade">type_index_facade</a>. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">typename</span> TypeInfo</pre>
+<p>Class that will be used as a base type_info class. </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.42.8.11.3.4.6"></a><h3>
+<a name="id-1_3_42_8_11_1_1_1_4-bb"></a><code class="computeroutput">type_index_facade</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a592dc8afebf346a07721293391980dcb"></a><span class="identifier">name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Name of a type. By default returns Derived::raw_name(). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a50fcb3144a54cacdeeec13ab5305f82a"></a><span class="identifier">pretty_name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined in Derived class. Overrides may throw. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Human readable type name. By default returns Derived::name(). </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a56e45113630a76ddacd1b1f30da59294"></a><span class="identifier">equal</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Derived</span> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>True if two types are equal. By default compares types by <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a0199e1a80f28dd9d95cd202ed7e39c5e">raw_name()</a>. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a04eb5897b4de19f9a445f8672a0e4a36"></a><span class="identifier">before</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">Derived</span> <span class="special">&amp;</span> rhs<span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>True if rhs is greater than this. By default compares types by <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a0199e1a80f28dd9d95cd202ed7e39c5e">raw_name()</a>. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a784cfd6418d0de6da0d0cca78f554c92"></a><span class="identifier">hash_code</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. 
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>Derived class header <span class="bold"><strong>must</strong></span> include &lt;boost/container_hash/hash.hpp&gt;, <span class="bold"><strong>unless</strong></span> this function is redefined in Derived class to not use boost::hash_range(). </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Hash code of a type. By default hashes types by <a class="link" href="classboost_1_1typeindex_1_1type__index__facade.html#doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a0199e1a80f28dd9d95cd202ed7e39c5e">raw_name()</a>. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.42.8.11.3.4.7"></a><h3>
+<a name="id-1_3_42_8_11_1_1_1_5-bb"></a><code class="computeroutput">type_index_facade</code> protected member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="keyword">char</span> <span class="special">*</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a0199e1a80f28dd9d95cd202ed7e39c5e"></a><span class="identifier">raw_name</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>must</strong></span> be redefined in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Pointer to unredable/raw type name. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">const</span> <span class="identifier">type_info_t</span> <span class="special">&amp;</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a343245d2135b1844d1e00a8f3dae8b8c"></a><span class="identifier">type_info</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. 
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>Const reference to underlying low level type_info_t. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.42.8.11.3.4.8"></a><h3>
+<a name="id-1_3_42_8_11_1_1_1_6-bb"></a><code class="computeroutput">type_index_facade</code> protected static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="identifier">Derived</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a69a7cb9b3dff2da97609c5ff20be10ef"></a><span class="identifier">type_id</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>This is a factory method that is used to create instances of Derived classes. <a class="link" href="type__index_8hpp_1aaa8536b5c80315f205036a85a9e8e3e2.html" title="Function template type_id">boost::typeindex::type_id()</a> will call this method, if Derived has same type as <a class="link" href="type__index_8hpp_1a92396e4950b1278f4df4b0919f3168be.html" title="Type definition type_index">boost::typeindex::type_index</a>.</p>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined and made public in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. Overrides <span class="bold"><strong>must</strong></span> remove const, volatile &amp;&amp; and &amp; modifiers from T. 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Template Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">T</code></span></p></td>
+<td><p>Type for which type_index must be created. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>type_index for type T. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">static</span> <span class="identifier">Derived</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1a7c867a1935e2db86eae2ea7d02e5c26e"></a><span class="identifier">type_id_with_cvr</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>This is a factory method that is used to create instances of Derived classes. <a class="link" href="type__index_8hpp_1a15beb7454116a3e5aa29f30cbaad5315.html" title="Function template type_id_with_cvr">boost::typeindex::type_id_with_cvr()</a> will call this method, if Derived has same type as <a class="link" href="type__index_8hpp_1a92396e4950b1278f4df4b0919f3168be.html" title="Type definition type_index">boost::typeindex::type_index</a>.</p>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined and made public in Derived class. Overrides <span class="bold"><strong>must</strong></span> not throw. Overrides <span class="bold"><strong>must</strong></span> <span class="bold"><strong>not</strong></span> remove const, volatile &amp;&amp; and &amp; modifiers from T. 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Template Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">T</code></span></p></td>
+<td><p>Type for which type_index must be created. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>type_index for type T. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">Derived</span> <a name="doxygen.boost_typeindex_header_reference.classboost_1_1typeindex_1_1type__index__facade_1ad3fb0a5425db871e0471e2f0c93b9bd8"></a><span class="identifier">type_id_runtime</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">T</span> <span class="special">&amp;</span> variable<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>This is a factory method that is used to create instances of Derived classes. <a class="link" href="type__index_8hpp_1ae179d82aeceebc66d4fe38985bdb9e82.html" title="Function template type_id_runtime">boost::typeindex::type_id_runtime(const T&amp;)</a> will call this method, if Derived has same type as <a class="link" href="type__index_8hpp_1a92396e4950b1278f4df4b0919f3168be.html" title="Type definition type_index">boost::typeindex::type_index</a>.</p>
+<p><span class="bold"><strong>Override:</strong></span> This function <span class="bold"><strong>may</strong></span> be redefined and made public in Derived class. 
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">variable</code></span></p></td>
+<td><p>Variable which runtime type will be stored in type_index. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>type_index with runtime type of variable. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2012-2024 Antony Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1typeindex_1_1stl__type__index.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_typeindex_header_reference.html#doxygen.boost_typeindex_header_reference.type__index__facade_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="type__index__facade_8hpp_1a20a9e97693898043009d53006aaaf3c3.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

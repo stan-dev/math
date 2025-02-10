@@ -1,0 +1,438 @@
+
+# Copyright 2006-2008 Daniel James.
+# Copyright 2022-2023 Christian Mazakas
+# Copyright 2024 Joaquin M Lopez Munoz
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import path ;
+import regex ;
+import testing ;
+import config : requires ;
+
+path-constant TOP : . ;
+
+# Adding -Wundef is blocked on (at least)
+# https://github.com/boostorg/type_traits/issues/165
+
+local gcc-flags = -Wsign-promo -Wconversion -Wsign-conversion -Wfloat-equal -Wshadow -Wno-variadic-macros ;
+local clang-flags = $(gcc-flags) -Wno-c99-extensions ;
+local msvc-flags = /wd4494 ;
+
+project
+    : requirements
+        <library>/boost/concept_check//boost_concept_check
+        <library>/boost/compat//boost_compat
+        <library>/boost/iterator//boost_iterator
+        <warnings>pedantic
+        <toolset>intel:<warnings>on
+
+        <toolset>gcc:<cxxflags>$(gcc-flags)
+        <toolset>darwin:<cxxflags>$(gcc-flags)
+        <toolset>clang:<cxxflags>$(clang-flags)
+        <toolset>msvc:<cxxflags>$(msvc-flags)
+
+        <toolset>gcc-4.4:<cxxflags>-Wno-strict-aliasing
+        <toolset>gcc-4.4:<cxxflags>-fno-deduce-init-list
+        <toolset>clang-14:<cxxflags>-Wunused-template
+
+        <toolset>gcc:<warnings-as-errors>on
+        <toolset>clang:<warnings-as-errors>on
+        <toolset>msvc:<warnings-as-errors>on
+    ;
+
+path-constant BOOST_UNORDERED_TEST_DIR : . ;
+
+run quick.cpp ;
+
+compile debuggability/visualization_tests.cpp
+  : <target-os>cygwin:<define>_XOPEN_SOURCE=600
+  ;
+
+compile unordered/self_include_tests_obj.cpp
+  : <define>BOOST_UNORDERED_HEADER="boost/unordered_map.hpp"
+  : tl_unordered_map_hpp ;
+
+compile unordered/self_include_tests_obj.cpp
+  : <define>BOOST_UNORDERED_HEADER="boost/unordered_set.hpp"
+  : tl_unordered_set_hpp ;
+
+local include_root = [ path.make $(TOP)/../include ] ;
+local headers = [ path.glob-tree $(include_root)/boost/unordered : *.hpp ] ;
+
+local paths ;
+local sanitized_paths ;
+
+for local header in $(headers)
+{
+  local path = [ path.relative-to $(include_root) $(header) ] ;
+
+  local sanitized = [ path.relative-to "$(include_root)/boost/unordered" $(header) ] ;
+  sanitized = [ regex.replace $(sanitized) "[/.\\]" "_" ] ;
+
+  paths += $(path) ;
+  sanitized_paths += $(sanitized) ;
+
+  compile unordered/self_include_tests_obj.cpp
+    : <define>BOOST_UNORDERED_HEADER="$(path)" : $(sanitized) ;
+}
+
+alias include_tests
+  : tl_unordered_map_hpp
+    tl_unordered_set_hpp
+    $(sanitized_paths) ;
+
+local FCA_TESTS =
+  allocator_traits
+  assign_tests
+  at_tests
+  bucket_tests
+  compile_map
+  compile_set
+  constructor_tests
+  contains_tests
+  copy_tests
+  deduction_tests
+  emplace_smf_tests
+  emplace_tests
+  equality_tests
+  equivalent_keys_tests
+  erase_equiv_tests
+  erase_if
+  erase_tests
+  explicit_alloc_ctor_tests
+  extract_tests
+  find_tests
+  fwd_map_test
+  fwd_set_test
+  incomplete_test
+  insert_hint_tests
+  insert_stable_tests
+  insert_tests
+  load_factor_tests
+  merge_tests
+  minimal_allocator
+  move_tests
+  narrow_cast_tests
+  node_handle_tests
+  node_handle_allocator_tests
+  noexcept_tests
+  post_move_tests
+  prime_fmod_tests
+  rehash_tests
+  reserve_tests
+  scary_tests
+  scoped_allocator
+  simple_tests
+  swap_tests
+  transparent_tests
+  unnecessary_copy_tests
+  fancy_pointer_noleak
+  pmr_allocator_tests
+;
+
+for local test in $(FCA_TESTS)
+{
+  if $(test) = "erase_tests" {
+    run unordered/$(test).cpp : : : <define>BOOST_UNORDERED_SUPPRESS_DEPRECATED ;
+  } else if $(test) = "scoped_allocator" {
+    run unordered/$(test).cpp : : : <toolset>msvc-14.0:<build>no ;
+  } else {
+    run unordered/$(test).cpp ;
+  }
+}
+
+run unordered/link_test_1.cpp unordered/link_test_2.cpp : : : : link_test ;
+
+run unordered/serialization_tests.cpp
+    : $(BOOST_UNORDERED_TEST_DIR)
+    :
+    : <define>BOOST_UNORDERED_ENABLE_SERIALIZATION_COMPATIBILITY_V0
+      <warnings>off # Boost.Serialization headers are not warning-free
+      <undefined-sanitizer>norecover:<build>no # boost::archive::xml_oarchive does not pass UBSAN
+      <toolset>msvc:<define>_CRT_SECURE_NO_WARNINGS
+      <toolset>msvc:<cxxflags>/bigobj
+      <toolset>gcc:<inlining>on
+      <toolset>gcc:<optimization>space
+      <toolset>clang:<inlining>on
+      <toolset>clang:<optimization>space
+      <library>/boost/serialization//boost_serialization/<warnings>off ;
+
+compile-fail unordered/insert_node_type_fail.cpp : <define>UNORDERED_TEST_MAP      : insert_node_type_fail_map ;
+compile-fail unordered/insert_node_type_fail.cpp : <define>UNORDERED_TEST_MULTIMAP : insert_node_type_fail_multimap ;
+compile-fail unordered/insert_node_type_fail.cpp : <define>UNORDERED_TEST_SET      : insert_node_type_fail_set ;
+compile-fail unordered/insert_node_type_fail.cpp : <define>UNORDERED_TEST_MULTISET : insert_node_type_fail_multiset ;
+
+compile unordered/explicit_instantiation_tests.cpp :                                   : fca_explicit_instantiation_tests ;
+compile unordered/explicit_instantiation_tests.cpp : <define>BOOST_UNORDERED_FOA_TESTS : foa_explicit_instantiation_tests ;
+compile cfoa/explicit_instantiation_tests.cpp      :                                   : cfoa_explicit_instantiation_tests ;
+
+local FCA_EXCEPTION_TESTS =
+  constructor_exception_tests
+  copy_exception_tests
+  assign_exception_tests
+  move_assign_exception_tests
+  insert_exception_tests
+  erase_exception_tests
+  rehash_exception_tests
+  merge_exception_tests
+  less_tests
+  swap_exception_tests
+;
+
+for local test in $(FCA_EXCEPTION_TESTS)
+{
+  if $(test) = "swap_exception_tests" {
+    run exception/$(test).cpp : : : <define>BOOST_UNORDERED_SWAP_METHOD=2 ;
+  } else {
+    run exception/$(test).cpp ;
+  }
+}
+
+alias fca_exception_tests : $(FCA_EXCEPTION_TESTS) ;
+alias fca_tests :
+  $(FCA_TESTS)
+  $(FCA_EXCEPTION_TESTS)
+  link_test
+  insert_node_type_fail_map
+  insert_node_type_fail_multimap
+  insert_node_type_fail_set
+  insert_node_type_fail_multiset
+  serialization_tests
+;
+
+local FOA_TESTS =
+  fwd_set_test
+  fwd_map_test
+  compile_set
+  compile_map
+  noexcept_tests
+  incomplete_test
+  simple_tests
+  equivalent_keys_tests
+  constructor_tests
+  copy_tests
+  move_tests
+  post_move_tests
+  assign_tests
+  insert_tests
+  insert_hint_tests
+  emplace_smf_tests
+  emplace_tests
+  erase_tests
+  explicit_alloc_ctor_tests
+  merge_tests
+  find_tests
+  at_tests
+  load_factor_tests
+  rehash_tests
+  equality_tests
+  swap_tests
+  transparent_tests
+  reserve_tests
+  contains_tests
+  erase_if
+  scary_tests
+  init_type_insert_tests
+  max_load_tests
+  extract_tests
+  node_handle_tests
+  uses_allocator
+  hash_is_avalanching_test
+  fancy_pointer_noleak
+  pmr_allocator_tests
+  stats_tests
+  node_handle_allocator_tests
+;
+
+for local test in $(FOA_TESTS)
+{
+  run unordered/$(test).cpp : : : <define>BOOST_UNORDERED_FOA_TESTS : foa_$(test) ;
+}
+
+run unordered/link_test_1.cpp unordered/link_test_2.cpp : : : <define>BOOST_UNORDERED_FOA_TESTS : foa_link_test ;
+run unordered/scoped_allocator.cpp : : : <toolset>msvc-14.0:<build>no <define>BOOST_UNORDERED_FOA_TESTS : foa_scoped_allocator ;
+
+run unordered/serialization_tests.cpp
+    :
+    :
+    : <define>BOOST_UNORDERED_FOA_TESTS
+      <warnings>off # Boost.Serialization headers are not warning-free
+      <undefined-sanitizer>norecover:<build>no # boost::archive::xml_oarchive does not pass UBSAN
+      <toolset>msvc:<cxxflags>/bigobj
+      <toolset>gcc:<inlining>on
+      <toolset>gcc:<optimization>space
+      <toolset>clang:<inlining>on
+      <toolset>clang:<optimization>space
+      <library>/boost/serialization//boost_serialization/<warnings>off
+    : foa_serialization_tests ;
+
+local FOA_EXCEPTION_TESTS =
+  constructor_exception_tests
+  copy_exception_tests
+  assign_exception_tests
+  move_assign_exception_tests
+  insert_exception_tests
+  erase_exception_tests
+  rehash_exception_tests
+  swap_exception_tests
+  merge_exception_tests
+;
+
+for local test in $(FOA_EXCEPTION_TESTS)
+{
+  run exception/$(test).cpp : : : <define>BOOST_UNORDERED_FOA_TESTS : foa_$(test) ;
+}
+
+local MMAP_CONTAINERS =
+  unordered_flat_map
+  unordered_flat_set
+  unordered_node_map
+  unordered_node_set
+  unordered_map
+  unordered_set
+  unordered_multimap
+  unordered_multiset
+  concurrent_flat_map
+  concurrent_flat_set
+;
+
+for local container in $(MMAP_CONTAINERS)
+{
+  run unordered/mmap_tests.cpp
+    /boost/filesystem//boost_filesystem
+    /boost/interprocess//boost_interprocess
+    /boost/process//boost_process
+    /boost/uuid//boost_uuid
+  : :
+  : <define>BOOST_UNORDERED_FOA_MMAP_MAP_TYPE="boost::$(container)"
+    <warnings>off
+    <link>static
+    <toolset>gcc-4.8:<build>no # Boost.Process does not compile
+    <toolset>gcc-4.9:<build>no # ditto
+    <target-os>cygwin:<build>no
+    <toolset>gcc,<target-os>windows:<build>no # Process on MinGW on Appveyor doesn't compile
+  : foa_mmap_$(container)_tests ;
+}
+
+alias foa_mmap_tests : foa_mmap_$(MMAP_CONTAINERS)_tests ;
+
+alias foa_tests :
+  foa_$(FOA_TESTS)
+  foa_$(FOA_EXCEPTION_TESTS)
+  foa_link_test
+  foa_scoped_allocator
+  foa_serialization_tests
+  foa_mmap_tests
+;
+
+local CFOA_TESTS =
+  erase_tests
+  try_emplace_tests
+  emplace_tests
+  extract_insert_tests
+  constructor_tests
+  assign_tests
+  clear_tests
+  swap_tests
+  merge_tests
+  rehash_tests
+  equality_tests
+  fwd_tests
+  exception_insert_tests
+  exception_erase_tests
+  exception_constructor_tests
+  exception_assign_tests
+  exception_merge_tests
+  rw_spinlock_test
+  rw_spinlock_test2
+  rw_spinlock_test3
+  rw_spinlock_test4
+  rw_spinlock_test5
+  rw_spinlock_test6
+  rw_spinlock_test7
+  rw_spinlock_test8
+  reentrancy_check_test
+  explicit_alloc_ctor_tests
+  pmr_allocator_tests
+  stats_tests
+  node_handle_allocator_tests
+;
+
+for local test in $(CFOA_TESTS)
+{
+  run cfoa/$(test).cpp
+  : requirements <threading>multi
+  : target-name cfoa_$(test)
+  ;
+}
+
+run cfoa/insert_tests.cpp
+    :
+    :
+    : $(CPP11) <threading>multi
+      <toolset>msvc:<cxxflags>/bigobj
+      <toolset>gcc:<inlining>on
+      <toolset>gcc:<optimization>space
+      <toolset>clang:<inlining>on
+      <toolset>clang:<optimization>space
+    : cfoa_insert_tests ;
+
+run cfoa/visit_tests.cpp
+    :
+    :
+    : $(CPP11) <threading>multi
+      <toolset>msvc:<cxxflags>/bigobj
+      <toolset>gcc:<inlining>on
+      <toolset>gcc:<optimization>space
+      <toolset>clang:<inlining>on
+      <toolset>clang:<optimization>space
+    : cfoa_visit_tests ;
+
+run cfoa/serialization_tests.cpp
+    :
+    :
+    : $(CPP11) <threading>multi
+      <warnings>off # Boost.Serialization headers are not warning-free
+      <undefined-sanitizer>norecover:<build>no # boost::archive::xml_oarchive does not pass UBSAN
+      <toolset>msvc:<cxxflags>/bigobj
+      <toolset>gcc:<inlining>on
+      <toolset>gcc:<optimization>space
+      <toolset>clang:<inlining>on
+      <toolset>clang:<optimization>space
+      <library>/boost/serialization//boost_serialization/<warnings>off
+    : cfoa_serialization_tests ;
+
+rule make_cfoa_interprocess_concurrency_tests ( name : defines ? )
+{
+    run cfoa/interprocess_concurrency_tests.cpp : :
+        : <define>$(defines)
+          <warnings>off
+          <link>static
+          <toolset>clang-3.5:<build>no # Boost.Process does not compile
+          <toolset>clang-3.6:<build>no # idem
+          <toolset>clang-3.7:<build>no # idem
+          <toolset>clang-3.8:<build>no # idem
+          <toolset>gcc-4.8:<build>no # idem
+          <toolset>gcc-4.9:<build>no # idem
+          <target-os>cygwin:<build>no
+          <toolset>gcc,<target-os>windows:<build>no # Process on MinGW on Appveyor doesn't compile
+          <library>/boost/filesystem//boost_filesystem
+          <library>/boost/interprocess//boost_interprocess
+          <library>/boost/process//boost_process
+          <library>/boost/uuid//boost_uuid
+        : $(name) ;
+}
+
+make_cfoa_interprocess_concurrency_tests cfoa_interproc_conc_tests ;
+
+make_cfoa_interprocess_concurrency_tests cfoa_interproc_conc_tests_stats
+    :  BOOST_UNORDERED_ENABLE_STATS ;
+
+alias cfoa_tests :
+  cfoa_$(CFOA_TESTS)
+  cfoa_insert_tests
+  cfoa_visit_tests
+  cfoa_serialization_tests
+  cfoa_interproc_conc_tests
+  cfoa_interproc_conc_tests_stats ;

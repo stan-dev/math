@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template subrange</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../headers.html#doxygen.headers.subrange_8hpp" title="Header &lt;boost/parser/subrange.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1parser_1a97519dee29e99043937f35176b4333f6.html" title="Global split">
+<link rel="next" href="namespaceboost_1_1parser_1a50e71aac20bd9b569f32d9202b1d5df7.html" title="Function template make_subrange">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1parser_1a97519dee29e99043937f35176b4333f6.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.subrange_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1parser_1a50e71aac20bd9b569f32d9202b1d5df7.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.headers.structboost_1_1parser_1_1subrange"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template subrange</span></h2>
+<p>boost::parser::subrange</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../headers.html#doxygen.headers.subrange_8hpp" title="Header &lt;boost/parser/subrange.hpp&gt;">boost/parser/subrange.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward_iterator</span> I<span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">sentinel_for</span><span class="special">&lt;</span> <span class="identifier">I</span> <span class="special">&gt;</span> S <span class="special">=</span> <span class="identifier">I</span><span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <span class="special">{</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1parser_1_1subrange.html#id-1_3_27_11_10_1_1_1_3-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1a961dc8f1aafc0e204067fc9543930abd"><span class="identifier">subrange</span></a><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span>
+  <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1ad1735613a8cc435c6e20fc230aed8f4d"><span class="identifier">subrange</span></a><span class="special">(</span><span class="identifier">I</span><span class="special">,</span> <span class="identifier">S</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">explicit</span> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1a613ac42f7ee75a03d2a6223e80ab84e4"><span class="identifier">subrange</span></a><span class="special">(</span><span class="identifier">R</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">constexpr</span> <span class="identifier">I</span> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1ad34db5a8866882b2a6d2bea6f9a5fdee"><span class="identifier">begin</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">constexpr</span> <span class="identifier">S</span> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1a3450b64f04ea4020ea02f81589789e63"><span class="identifier">end</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1a7819a6d4ee8725fcd9b7fd6338ea5e78"><span class="identifier">next</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1aee101c6e380c8874369492df9f67377d"><span class="identifier">prev</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span> <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <span class="special">&amp;</span> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1aa36a1e96604de0862e8ba3cd3f659f08"><span class="identifier">advance</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> I2<span class="special">,</span> <span class="keyword">typename</span> S2<span class="special">,</span> 
+           <span class="keyword">typename</span> Enable <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if_t</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span><span class="identifier">I</span><span class="special">,</span> <span class="identifier">I2</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&amp;&amp;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">,</span> <span class="identifier">S2</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+    <span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html#doxygen.headers.structboost_1_1parser_1_1subrange_1a3dd5fe82f550cf36759d57d6b6940580"><span class="keyword">operator</span> <span class="identifier">subrange</span><span class="special">&lt;</span> <span class="identifier">I2</span><span class="special">,</span> <span class="identifier">S2</span> <span class="special">&gt;</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.27.11.10.3.4"></a><h2>Description</h2>
+<p>A simple view type used throughout the rest of the library in C++17 builds; similar to <code class="computeroutput">std::ranges::subrange</code>. </p>
+<div class="refsect2">
+<a name="id-1.3.27.11.10.3.4.3"></a><h3>
+<a name="id-1_3_27_11_10_1_1_1_3-bb"></a><code class="computeroutput">subrange</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1subrange_1a961dc8f1aafc0e204067fc9543930abd"></a><span class="identifier">subrange</span><span class="special">(</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">default</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><a name="doxygen.headers.structboost_1_1parser_1_1subrange_1ad1735613a8cc435c6e20fc230aed8f4d"></a><span class="identifier">subrange</span><span class="special">(</span><span class="identifier">I</span> first<span class="special">,</span> <span class="identifier">S</span> last<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="keyword">explicit</span> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1a613ac42f7ee75a03d2a6223e80ab84e4"></a><span class="identifier">subrange</span><span class="special">(</span><span class="identifier">R</span> <span class="keyword">const</span> <span class="special">&amp;</span> r<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">constexpr</span> <span class="identifier">I</span> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1ad34db5a8866882b2a6d2bea6f9a5fdee"></a><span class="identifier">begin</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">constexpr</span> <span class="identifier">S</span> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1a3450b64f04ea4020ea02f81589789e63"></a><span class="identifier">end</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1a7819a6d4ee8725fcd9b7fd6338ea5e78"></a><span class="identifier">next</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span> n <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1aee101c6e380c8874369492df9f67377d"></a><span class="identifier">prev</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span> n <span class="special">=</span> <span class="number">1</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">constexpr</span> <a class="link" href="structboost_1_1parser_1_1subrange.html" title="Struct template subrange">subrange</a> <span class="special">&amp;</span> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1aa36a1e96604de0862e8ba3cd3f659f08"></a><span class="identifier">advance</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">ptrdiff_t</span> n<span class="special">)</span><span class="special">;</span></pre></li>
+<li class="listitem"><pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> I2<span class="special">,</span> <span class="keyword">typename</span> S2<span class="special">,</span> 
+         <span class="keyword">typename</span> Enable <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">enable_if_t</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span><span class="identifier">I</span><span class="special">,</span> <span class="identifier">I2</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span> <span class="special">&amp;&amp;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">is_convertible</span><span class="special">&lt;</span><span class="identifier">S</span><span class="special">,</span> <span class="identifier">S2</span><span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">&gt;</span> <span class="special">&gt;</span> 
+  <span class="keyword">constexpr</span> <a name="doxygen.headers.structboost_1_1parser_1_1subrange_1a3dd5fe82f550cf36759d57d6b6940580"></a><span class="keyword">operator</span> <span class="identifier">subrange</span><span class="special">&lt;</span> <span class="identifier">I2</span><span class="special">,</span> <span class="identifier">S2</span> <span class="special">&gt;</span><span class="special">(</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre></li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2020 T. Zachary Laine<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1parser_1a97519dee29e99043937f35176b4333f6.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../headers.html#doxygen.headers.subrange_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1parser_1a50e71aac20bd9b569f32d9202b1d5df7.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

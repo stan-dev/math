@@ -1,0 +1,16 @@
+[#event-loops]
+== Event Loops
+
+Since the coroutines in `cobalt` can `co_await` events, they need to be run on an event-loop.
+That is another piece of code is responsible for tracking outstanding event and resume a resuming coroutines that are awaiting them.
+This pattern is very common and is used in a similar way by node.js or python's `asyncio`.
+
+`cobalt` uses an https://www.boost.org/doc/libs/master/doc/html/boost_asio/reference/io_context.html[`asio::io_context`]
+as its default event loop. That is, the classes <<thread, thread>>, <<main, main>> and the <<run, run>> function
+are using it internally.
+
+You can use any event loop that can produce an https://www.boost.org/doc/libs/master/doc/html/boost_asio/reference/any_io_executor.html[`asio::any_io_executor`]
+with the library. The easiest way to achieve this is by using <<spawn, spawn>>.
+
+The event loop is accessed through an executor (following the asio terminology) and can be manually set using <<this_thread, set_executor>>.
+

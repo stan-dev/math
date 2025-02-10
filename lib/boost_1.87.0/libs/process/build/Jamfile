@@ -1,0 +1,73 @@
+# Copyright (c) 2024 Klemens D. Morgenstern
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+import os ;
+import feature ;
+import-search /boost/config/checks ;
+import config : requires ;
+
+project : requirements
+  <define>BOOST_ASIO_NO_DEPRECATED
+  <toolset>msvc:<define>_SCL_SECURE_NO_WARNINGS
+  <toolset>msvc:<define>_CRT_SECURE_NO_DEPRECATE
+  <toolset>msvc:<cxxflags>/bigobj
+  <target-os>windows:<define>WIN32_LEAN_AND_MEAN
+  <target-os>linux:<linkflags>-lpthread
+  : source-location ../src
+  : common-requirements
+    <library>$(boost_dependencies)
+    <boost.process.fs>std:<define>BOOST_PROCESS_USE_STD_FS=1
+;
+
+alias process_sources
+   : detail/environment_posix.cpp
+     detail/environment_win.cpp
+     detail/last_error.cpp
+     detail/process_handle_windows.cpp
+     detail/throw_error.cpp
+     detail/utf8.cpp
+     ext/cmd.cpp
+     ext/cwd.cpp
+     ext/env.cpp
+     ext/exe.cpp
+     ext/proc_info.cpp
+     posix/close_handles.cpp
+     windows/default_launcher.cpp
+     environment.cpp
+     error.cpp
+     pid.cpp
+     shell.cpp
+   ;
+
+lib shell32 ;
+lib advapi32 ;
+lib ntdll ;
+lib user32 ;
+lib ws2_32 ;
+
+lib kvm ;
+lib procstat ;
+
+lib boost_process
+   : process_sources
+   : requirements <define>BOOST_PROCESS_SOURCE=1
+     <link>shared:<define>BOOST_PROCESS_DYN_LINK=1
+     <boost.process.fs>boost:<library>/boost/filesystem//boost_filesystem
+     <boost.process.disable-close-range>on:<define>BOOST_PROCESS_V2_POSIX_FORCE_DISABLE_CLOSE_RANGE=1
+     <target-os>windows:<library>shell32
+     <target-os>windows:<library>user32
+     <target-os>windows:<library>ntdll
+     <target-os>windows:<library>advapi32
+     <target-os>windows:<library>ws2_32
+     <target-os>bsd:<library>kvm
+     <target-os>freebsd:<library>kvm
+     <target-os>freebsd:<library>procstat
+     <target-os>netbsd:<library>kvm
+     <target-os>openbsd:<library>kvm
+     <target-os>solaris:<library>kvm
+   : usage-requirements
+     <link>shared:<define>BOOST_PROCESS_DYN_LINK=1
+     <boost.process.fs>boost:<library>/boost/filesystem//boost_filesystem
+  ;

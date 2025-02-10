@@ -1,0 +1,19 @@
+{
+    "key": "url",
+    "name": "URL",
+    "authors": [
+        "Vinnie Falco",
+        "Alan de Freitas"
+    ],
+    "description": "URL parsing in C++11",
+    "category": [
+        "Containers",
+        "Data",
+        "IO"
+    ],
+    "maintainers": [
+        "Vinnie Falco <vinnie.falco@gmail.com>",
+        "Alan de Freitas <alandefreitas@gmail.com>"
+    ],
+    "cxxstd": "11"
+}

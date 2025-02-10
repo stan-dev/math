@@ -1,0 +1,302 @@
+<?xml version="1.0" standalone="yes"?>
+<library-reference id="us_base_units_reference"><title>US Base Units Reference</title><header id="doxygen.us_base_units_reference.cup_8hpp" name="boost/units/base_units/us/cup.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1cup__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::cup_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1cup__base__unit_01_4_1a735d868366164be74c451a7404e2e88c" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1cup__base__unit_01_4_1a6684df6af643d26b9895089bad9ce6dd" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a06b4ed77b2a9cf76829103d7bad5afc4" name="cup_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.dram_8hpp" name="boost/units/base_units/us/dram.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1dram__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::dram_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1dram__base__unit_01_4_1a78f9681f67dd8328890ff6e3ea4cb2b7" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1dram__base__unit_01_4_1a1adc3be01c16d93a29224ea68057c67e" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1ac10e8f880ada043b13e23939feb4dc01" name="dram_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 16, static_rational&lt;-2 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.fluid__dram_8hpp" name="boost/units/base_units/us/fluid_dram.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1fluid__dram__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::fluid_dram_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1fluid__dram__base__unit_01_4_1a65477f0914735e59ecfac14d9f4c85cd" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1fluid__dram__base__unit_01_4_1a5a3caa132c91bdd56fe269232e41fb39" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a4042be05f7b28748d7170f5d4ae15d9b" name="fluid_dram_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt;-7 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.fluid__ounce_8hpp" name="boost/units/base_units/us/fluid_ounce.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1fluid__ounce__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::fluid_ounce_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1fluid__ounce__base__unit_01_4_1af28bdb94cabc0773d1dcaef7f14e53d6" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1fluid__ounce__base__unit_01_4_1a8e8a83113d024db9fe8e6d26dc194dc4" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1ab223f6bec887ce169403f7e59d95b8b3" name="fluid_ounce_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 16, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.foot_8hpp" name="boost/units/base_units/us/foot.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1foot__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::foot_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1foot__base__unit_01_4_1ac3b54cd27cd63f4423f16326cac7d68d" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1foot__base__unit_01_4_1a561fff3c91a23fe3211fc7d209ac3940" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1ab83bfe1f13fa8ff5c82d053309f51405" name="foot_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 3, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.gallon_8hpp" name="boost/units/base_units/us/gallon.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1gallon__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::gallon_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1gallon__base__unit_01_4_1a0266dd89ebb56a9239bd3261895e5bea" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1gallon__base__unit_01_4_1ab2706ee5f4bcd2c43dca8972e2b803d5" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a578e6a3302e9ce98333e9f2305d6d4e9" name="gallon_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt; 3 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.gill_8hpp" name="boost/units/base_units/us/gill.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1gill__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::gill_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1gill__base__unit_01_4_1a0817b1f4be7c3b7d6e30ff8b7f64ae3d" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1gill__base__unit_01_4_1a30925a47dc2927bce2ee343897bdb6fe" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1aa8299201244331b19aebd996c5c7c8f5" name="gill_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt;-2 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.grain_8hpp" name="boost/units/base_units/us/grain.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1grain__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::grain_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1grain__base__unit_01_4_1a20ff9deed7c0963116d940a764bf4fe3" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1grain__base__unit_01_4_1ae35c15f503c20a2f24f67d2704c95cc9" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a51628d48b58b2eafacfa0e30eb746af5" name="grain_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 7000, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.hundredweight_8hpp" name="boost/units/base_units/us/hundredweight.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1hundredweight__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::hundredweight_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1hundredweight__base__unit_01_4_1a0a3f8655977dda311584f3229062b78d" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1hundredweight__base__unit_01_4_1a52178eedce5f59d07315361e73195f0a" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a9efdf7d9d86b7de222d85df6e8a2ee89" name="hundredweight_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 100, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.inch_8hpp" name="boost/units/base_units/us/inch.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1inch__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::inch_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1inch__base__unit_01_4_1abc9c3af465713de376b9426fb4afc8a4" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1inch__base__unit_01_4_1ad775b889f1f43d0eda3862dbf115b296" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a456bd821357425400973a9c418e36cfb" name="inch_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 36, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.mil_8hpp" name="boost/units/base_units/us/mil.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1mil__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::mil_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1mil__base__unit_01_4_1a6661804d511956aed75f70daa1920ae4" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1mil__base__unit_01_4_1a1947ce2a1887a81699349c396844de01" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1adf7adf670d05950cadfe93d27a82010f" name="mil_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 36000, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.mile_8hpp" name="boost/units/base_units/us/mile.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1mile__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::mile_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1mile__base__unit_01_4_1aba9650d4c069331ac6a867d34ab3bea6" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1mile__base__unit_01_4_1a9c5070bd779c5e757dfc796153f2840d" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1ab773b8eaaac3c87816b388e42120a2ff" name="mile_base_unit"><type>scaled_base_unit&lt; <classname>yard_base_unit</classname>, scale&lt; 1760, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.minim_8hpp" name="boost/units/base_units/us/minim.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1minim__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::minim_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1minim__base__unit_01_4_1af669e2b096e96fc905a8e8bda8c3b4d8" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1minim__base__unit_01_4_1a3d64cefae3e36d670974ed238fc25021" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a590dd690837d454bdd63f2d434b9a16c" name="minim_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 7680, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.ounce_8hpp" name="boost/units/base_units/us/ounce.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1ounce__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::ounce_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1ounce__base__unit_01_4_1ad73b9715daec1ba0ee832913fd867182" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1ounce__base__unit_01_4_1a665c7eb247676997a9bcedf5a2280ca1" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a1da479f4a8f48c55cc3c1404ce35fee1" name="ounce_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 2, static_rational&lt;-4 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.pint_8hpp" name="boost/units/base_units/us/pint.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="us">
+<struct id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pint__base__unit" name="pint_base_unit"><inherit access="public">boost::units::base_unit&lt; pint_base_unit, si::volume ::dimension_type, -503 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pint__base__unit_1a092ac7970bbaf29f68bb6e2b047d3bcd" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pint__base__unit_1a495dc3ef85bf6b03b6e7a744de83efc3" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.pound_8hpp" name="boost/units/base_units/us/pound.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="us">
+<struct id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pound__base__unit" name="pound_base_unit"><inherit access="public">boost::units::base_unit&lt; pound_base_unit, cgs::gram_base_unit ::dimension_type, -502 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pound__base__unit_1aba7756a122da1fe07de4edd76fe1e5dd" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pound__base__unit_1abe7a6eae74aa8e5d105c24a86f35cde0" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.pound__force_8hpp" name="boost/units/base_units/us/pound_force.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="us">
+<struct id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pound__force__base__unit" name="pound_force_base_unit"><inherit access="public">boost::units::base_unit&lt; pound_force_base_unit, si::force ::dimension_type, -600 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pound__force__base__unit_1a8c1f7fa703dc28af2be97e6db218f58f" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1pound__force__base__unit_1aac307fe3dc768c77f253af03d37977cb" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.quart_8hpp" name="boost/units/base_units/us/quart.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1quart__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::quart_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1quart__base__unit_01_4_1aeb8f16a713a0c533ab92ddab829b60f3" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1quart__base__unit_01_4_1a93f65b322df7fb0659b9f3bcf710737e" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a799459e99476893c15dde24f46624172" name="quart_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.tablespoon_8hpp" name="boost/units/base_units/us/tablespoon.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1tablespoon__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::tablespoon_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1tablespoon__base__unit_01_4_1a7186c63944340251afc989f3c25c7bc0" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1tablespoon__base__unit_01_4_1adb25afc1c5484d46571010acabe51469" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a605d59686b03412534165d38f5f16dcd" name="tablespoon_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 2, static_rational&lt;-5 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.teaspoon_8hpp" name="boost/units/base_units/us/teaspoon.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1teaspoon__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::teaspoon_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1teaspoon__base__unit_01_4_1a3efda568944e8e3a0ce3878e41b1330b" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1teaspoon__base__unit_01_4_1a83166ac0041e66ad5b8fe75ffd0fb631" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1ad428b6c0648e23837011f9d7f18ef865" name="teaspoon_base_unit"><type>scaled_base_unit&lt; <classname>pint_base_unit</classname>, scale&lt; 96, static_rational&lt;-1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.ton_8hpp" name="boost/units/base_units/us/ton.hpp">
+<namespace name="boost">
+<namespace name="units">
+<struct-specialization id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1ton__base__unit_01_4" name="base_unit_info"><template>
+    </template><specialization><template-arg>us::ton_base_unit</template-arg></specialization><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1ton__base__unit_01_4_1aa014fe0f646a1ed29f92f3b70b838886" name="name" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1base__unit__info_3_01us_1_1ton__base__unit_01_4_1acd908e57bc545e0b422f1983ece0e14a" name="symbol" specifiers="static"><type>BOOST_CONSTEXPR const char *</type></method>
+</method-group>
+</struct-specialization><namespace name="us">
+<typedef id="doxygen.us_base_units_reference.namespaceboost_1_1units_1_1us_1a6b691cd4fb0aa372add742a56188e8e5" name="ton_base_unit"><type>scaled_base_unit&lt; <classname>pound_base_unit</classname>, scale&lt; 2000, static_rational&lt; 1 &gt; &gt; &gt;</type></typedef>
+</namespace>
+</namespace>
+</namespace>
+</header>
+<header id="doxygen.us_base_units_reference.yard_8hpp" name="boost/units/base_units/us/yard.hpp">
+<namespace name="boost">
+<namespace name="units">
+<namespace name="us">
+<struct id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1yard__base__unit" name="yard_base_unit"><inherit access="public">boost::units::base_unit&lt; yard_base_unit, si::meter_base_unit ::dimension_type, -501 &gt;</inherit><method-group name="public static functions">
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1yard__base__unit_1a87cd5b13f5bd822396a6d74a9994ca9c" name="name" specifiers="static"><type>const char *</type></method>
+<method id="doxygen.us_base_units_reference.structboost_1_1units_1_1us_1_1yard__base__unit_1a157b381896cbaa29c4bf679cb481be62" name="symbol" specifiers="static"><type>const char *</type></method>
+</method-group>
+</struct></namespace>
+</namespace>
+</namespace>
+</header>
+</library-reference>

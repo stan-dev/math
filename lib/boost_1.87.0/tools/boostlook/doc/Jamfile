@@ -1,0 +1,25 @@
+# Copyright 2017, 2018 Peter Dimov
+# Copyright 2024 Matt Borland
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+import asciidoctor ;
+
+html specimen.html : specimen.adoc
+    :   <use>/boost/boostlook//boostlook
+        <dependency>specimen-docinfo-footer.html
+        ;
+
+install html_ : specimen.html : <location>html ;
+
+pdf specimen.pdf : specimen.adoc ;
+explicit specimen.pdf ;
+
+install pdf_ : specimen.pdf : <location>pdf ;
+explicit pdf_ ;
+
+###############################################################################
+alias boostdoc ;
+explicit boostdoc ;
+alias boostrelease : html_ ;
+explicit boostrelease ;

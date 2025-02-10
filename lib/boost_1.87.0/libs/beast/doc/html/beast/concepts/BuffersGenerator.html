@@ -1,0 +1,310 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>BuffersGenerator</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Beast">
+<link rel="up" href="../concepts.html" title="Concepts">
+<link rel="prev" href="BufferSequence.html" title="BufferSequence">
+<link rel="next" href="DynamicBuffer.html" title="DynamicBuffer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="BufferSequence.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../concepts.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="DynamicBuffer.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="beast.concepts.BuffersGenerator"></a><a class="link" href="BuffersGenerator.html" title="BuffersGenerator">BuffersGenerator</a>
+</h3></div></div></div>
+<p>
+        A <span class="bold"><strong>BuffersGenerator</strong></span> provides a generalized
+        interface for generating serialized data for sequential processing.
+      </p>
+<p>
+        The generator will be asked to produce buffers. The consuming code will signal
+        how much of the data has been consumed, and repeatedly query for buffers
+        until no more data is available, or the generator indicates an error condition.
+      </p>
+<p>
+        In this way, serializers can be adapted as <span class="bold"><strong>BuffersGenerator</strong></span>,
+        for example <a class="link" href="../ref/boost__beast__http__message_generator.html" title="http::message_generator"><code class="computeroutput"><span class="identifier">http</span><span class="special">::</span><span class="identifier">message_generator</span></code></a> which provides
+        a type-erased interface for a variety of concrete http message types.
+      </p>
+<p>
+        Overloads of <a class="link" href="../ref/boost__beast__write.html" title="write"><code class="computeroutput"><span class="identifier">write</span></code></a> and <a class="link" href="../ref/boost__beast__async_write.html" title="async_write"><code class="computeroutput"><span class="identifier">async_write</span></code></a> operations are provided
+        as free functions. These operations will consume the output of a <span class="bold"><strong>BuffersGenerator</strong></span> and process the data by writing them
+        to a <a href="../../../../../../doc/html/boost_asio/reference/SyncWriteStream.html" target="_top"><span class="emphasis"><em>SyncWriteStream</em></span></a>
+        or <a href="../../../../../../doc/html/boost_asio/reference/AsyncWriteStream.html" target="_top"><span class="emphasis"><em>AsyncWriteStream</em></span></a>
+        respectively.
+      </p>
+<h5>
+<a name="beast.concepts.BuffersGenerator.h0"></a>
+        <span class="phrase"><a name="beast.concepts.BuffersGenerator.associated_types"></a></span><a class="link" href="BuffersGenerator.html#beast.concepts.BuffersGenerator.associated_types">Associated
+        Types</a>
+      </h5>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <a class="link" href="../ref/boost__beast__is_buffers_generator.html" title="is_buffers_generator"><code class="computeroutput"><span class="identifier">is_buffers_generator</span></code></a>
+          </li>
+<li class="listitem">
+            <a href="../../../../../../doc/html/boost_asio/reference/ConstBufferSequence.html" target="_top"><span class="emphasis"><em>ConstBufferSequence</em></span></a>
+          </li>
+</ul></div>
+<h5>
+<a name="beast.concepts.BuffersGenerator.h1"></a>
+        <span class="phrase"><a name="beast.concepts.BuffersGenerator.requirements"></a></span><a class="link" href="BuffersGenerator.html#beast.concepts.BuffersGenerator.requirements">Requirements</a>
+      </h5>
+<p>
+        In this table:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">G</span></code> denotes a type meeting
+            the requirements of <span class="bold"><strong>BuffersGenerator</strong></span>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">g</span></code> denotes a value of
+            type <code class="computeroutput"><span class="identifier">G</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">c</span></code> denotes a possibly-const
+            value of type <code class="computeroutput"><span class="identifier">G</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">n</span></code> is a value of type
+            <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span></code>.
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">ec</span></code> is a value of type
+            <a class="link" href="../ref/boost__beast__error_code.html" title="error_code"><code class="computeroutput"><span class="identifier">error_code</span><span class="special">&amp;</span></code></a>.
+          </li>
+</ul></div>
+<div class="table">
+<a name="beast.concepts.BuffersGenerator.valid_expressions"></a><p class="title"><b>Table 1.41. Valid expressions</b></p>
+<div class="table-contents"><table class="table" summary="Valid expressions">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                <p>
+                  Expression
+                </p>
+              </th>
+<th>
+                <p>
+                  Type
+                </p>
+              </th>
+<th>
+                <p>
+                  Semantics, Pre/Post-conditions
+                </p>
+              </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">G</span><span class="special">::</span><span class="identifier">const_buffers_type</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  A type which meets the requirements of <a href="../../../../../../doc/html/boost_asio/reference/ConstBufferSequence.html" target="_top"><span class="emphasis"><em>ConstBufferSequence</em></span></a>.
+                  This is the type of buffer returned by <code class="computeroutput"><span class="identifier">g</span><span class="special">.</span><span class="identifier">prepare</span><span class="special">(</span><span class="identifier">ec</span><span class="special">)</span></code>.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">c</span><span class="special">.</span><span class="identifier">is_done</span><span class="special">()</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="keyword">bool</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Called to ask the generator for its completion status.
+                </p>
+                <p>
+                  A generator has completed when no new buffer will be produced and
+                  previously produced buffers have been fully consumed.
+                </p>
+                <p>
+                  <span class="bold"><strong>Note:</strong></span> The result of invoking
+                  <code class="computeroutput"><span class="identifier">prepare</span></code> on <code class="computeroutput"><span class="identifier">g</span></code> once it has completed is unspecified.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">g</span><span class="special">.</span><span class="identifier">prepare</span><span class="special">(</span><span class="identifier">ec</span><span class="special">)</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">G</span><span class="special">::</span><span class="identifier">const_buffers_type</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  Called to ask the generator to produce buffers containing data
+                  for processing.
+                </p>
+                <p>
+                  The returned value is the <a href="../../../../../../doc/html/boost_asio/reference/ConstBufferSequence.html" target="_top"><span class="emphasis"><em>ConstBufferSequence</em></span></a>
+                  representing unconsumed data.
+                </p>
+                <p>
+                  The function will ensure that <code class="computeroutput"><span class="identifier">ec</span><span class="special">.</span><span class="identifier">failed</span><span class="special">()</span></code> is <code class="computeroutput"><span class="keyword">false</span></code>
+                  if there was no error or set to the appropriate error code if there
+                  was one.
+                </p>
+                <p>
+                  If no unconsumed data is available, this operation shall make progress
+                  to eventually reach completion.
+                </p>
+                <p>
+                  The result of invoking <code class="computeroutput"><span class="identifier">prepare</span></code>
+                  after completion or encountered error(s) is defined by the generator
+                  implementation. It can not be assumed to be meaningful or safe
+                  to do so, in general.
+                </p>
+                <p>
+                  The capacity of the buffer returned is defined by the generator
+                  implementation.
+                </p>
+                <p>
+                  <span class="bold"><strong>Note:</strong></span> Any buffers obtained by
+                  previous calls to <code class="computeroutput"><span class="identifier">prepare</span></code>
+                  are invalidated.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">g</span><span class="special">.</span><span class="identifier">consume</span><span class="special">(</span><span class="identifier">n</span><span class="special">)</span></code>
+                </p>
+              </td>
+<td>
+              </td>
+<td>
+                <p>
+                  This function is called to signal that the consumer (caller) of
+                  the generator has processed part of the data returned by the previous
+                  call to <code class="computeroutput"><span class="identifier">prepare</span></code>.
+                </p>
+                <p>
+                  The value of <code class="computeroutput"><span class="identifier">n</span></code>
+                  indicates how much of the data processed (in bytes).
+                </p>
+                <p>
+                  When <code class="computeroutput"><span class="identifier">n</span></code> exceeds
+                  the number of bytes returned from the last call to <code class="computeroutput"><span class="identifier">prepare</span></code>, <code class="computeroutput"><span class="identifier">consume</span></code>
+                  shall behave as if <code class="computeroutput"><span class="identifier">n</span></code>
+                  was equal to that number.
+                </p>
+                <p>
+                  Remaining unconsumed data will be returned from subsequent calls
+                  to <code class="computeroutput"><span class="identifier">prepare</span></code>.
+                </p>
+                <p>
+                  <span class="bold"><strong>Note:</strong></span> Any buffers obtained by
+                  previous calls to <code class="computeroutput"><span class="identifier">prepare</span></code>
+                  are invalidated.
+                </p>
+              </td>
+</tr>
+<tr>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">is_buffers_generator</span><span class="special">&lt;</span><span class="identifier">G</span><span class="special">&gt;</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">bool_constant</span></code>
+                </p>
+              </td>
+<td>
+                <p>
+                  An alias for <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">true_type</span></code>
+                  for <code class="computeroutput"><span class="identifier">G</span></code>, otherwise
+                  an alias for <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">false_type</span></code>.
+                </p>
+              </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<br class="table-break"><h5>
+<a name="beast.concepts.BuffersGenerator.h2"></a>
+        <span class="phrase"><a name="beast.concepts.BuffersGenerator.exemplar"></a></span><a class="link" href="BuffersGenerator.html#beast.concepts.BuffersGenerator.exemplar">Exemplar</a>
+      </h5>
+<pre class="programlisting"><span class="comment">// A buffer sequence generator</span>
+<span class="keyword">struct</span> <span class="identifier">BuffersGenerator</span>
+<span class="special">{</span>
+    <span class="keyword">using</span> <span class="identifier">const_buffers_type</span> <span class="special">=</span> <span class="identifier">net</span><span class="special">::</span><span class="identifier">const_buffer</span><span class="special">;</span>
+
+    <span class="keyword">bool</span> <span class="identifier">is_done</span><span class="special">()</span> <span class="keyword">const</span><span class="special">;</span>
+    <span class="identifier">const_buffers_type</span> <span class="identifier">prepare</span><span class="special">(</span> <span class="identifier">error_code</span><span class="special">&amp;</span> <span class="identifier">ec</span> <span class="special">);</span>
+    <span class="keyword">void</span> <span class="identifier">consume</span><span class="special">(</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">n</span> <span class="special">);</span>
+<span class="special">};</span>
+
+<span class="keyword">static_assert</span><span class="special">(</span>
+    <span class="identifier">is_buffers_generator</span><span class="special">&lt;</span><span class="identifier">BuffersGenerator</span><span class="special">&gt;::</span><span class="identifier">value</span><span class="special">,</span> <span class="string">""</span><span class="special">);</span>
+</pre>
+<h5>
+<a name="beast.concepts.BuffersGenerator.h3"></a>
+        <span class="phrase"><a name="beast.concepts.BuffersGenerator.models"></a></span><a class="link" href="BuffersGenerator.html#beast.concepts.BuffersGenerator.models">Models</a>
+      </h5>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+            <a class="link" href="../ref/boost__beast__http__message_generator.html" title="http::message_generator"><code class="computeroutput"><span class="identifier">http</span><span class="special">::</span><span class="identifier">message_generator</span></code></a>
+          </li></ul></div>
+<h5>
+<a name="beast.concepts.BuffersGenerator.h4"></a>
+        <span class="phrase"><a name="beast.concepts.BuffersGenerator.algorithms"></a></span><a class="link" href="BuffersGenerator.html#beast.concepts.BuffersGenerator.algorithms">Algorithms</a>
+      </h5>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <a class="link" href="../ref/boost__beast__async_write.html" title="async_write"><code class="computeroutput"><span class="identifier">async_write</span></code></a>
+          </li>
+<li class="listitem">
+            <a class="link" href="../ref/boost__beast__write.html" title="write"><code class="computeroutput"><span class="identifier">write</span></code></a>
+          </li>
+</ul></div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2019 Vinnie
+      Falco<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="BufferSequence.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../concepts.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="DynamicBuffer.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

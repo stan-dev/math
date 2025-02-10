@@ -1,0 +1,22 @@
+# Copyright 2023-2024 René Ferdinand Rivera Morell
+# Copyright 2024 Peter Dimov
+# Distributed under the Boost Software License, Version 1.0.
+# https://www.boost.org/LICENSE_1_0.txt
+
+require-b2 5.2 ;
+
+constant boost_dependencies :
+    /boost/assert//boost_assert
+    /boost/config//boost_config
+    /boost/mp11//boost_mp11
+    ;
+
+project /boost/variant2 ;
+
+explicit
+    [ alias boost_variant2 : : : : <include>include <library>$(boost_dependencies) ]
+    [ alias all : boost_variant2 test ]
+    ;
+
+call-if : boost-library variant2
+    ;

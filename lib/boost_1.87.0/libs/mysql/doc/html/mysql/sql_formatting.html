@@ -1,0 +1,463 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Text queries and client-side SQL formatting</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="prev" href="connection_establishment.html" title="Connection establishment and termination">
+<link rel="next" href="prepared_statements.html" title="Prepared statements">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="connection_establishment.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="prepared_statements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="mysql.sql_formatting"></a><a class="link" href="sql_formatting.html" title="Text queries and client-side SQL formatting">Text queries and client-side SQL
+    formatting</a>
+</h2></div></div></div>
+<p>
+      <span class="emphasis"><em>Text queries</em></span> are those that use MySQL text protocol for
+      execution. Plain strings and <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>
+      use this protocol. This contrasts with <a class="link" href="prepared_statements.html" title="Prepared statements">prepared
+      statements</a>, which are first prepared and then executed separately, and
+      use a binary protocol.
+    </p>
+<div class="warning"><table border="0" summary="Warning">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="../../../../../doc/src/images/warning.png"></td>
+<th align="left">Warning</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+        <span class="bold"><strong>Never compose SQL queries using raw string concatenation</strong></span>.
+        This is insecure and can lead to <span class="bold"><strong>SQL injection vulnerabilities</strong></span>.
+        Use the client-side SQL formatting facilities explained in this section to
+        avoid vulnerabilities.
+      </p></td></tr>
+</table></div>
+<p>
+      Using text queries you can run <a class="link" href="multi_resultset.html#mysql.multi_resultset.multi_queries">multiple
+      semicolon-separated queries</a>, which can improve efficiency.
+    </p>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.sql_formatting.using_with_params_for_simple_que"></a><a class="link" href="sql_formatting.html#mysql.sql_formatting.using_with_params_for_simple_que" title="Using with_params for simple queries">Using
+      with_params for simple queries</a>
+</h3></div></div></div>
+<p>
+        <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>
+        is the easiest way to use client-side SQL formatting. It can be used as a
+        simpler and more flexible alternative to prepared statements. While prepared
+        statements expand queries server-side, SQL formatting does it client-side.
+        Please read the <a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison" title="Prepared statements vs. client-side SQL formatting">comparison
+        with prepared statements</a> and the <a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison.security">security
+        considerations</a> sections for more info.
+      </p>
+<p>
+        <a class="link" href="ref/boost__mysql__with_params.html" title="with_params"><code class="literal">with_params</code></a>
+        takes a SQL query string with placeholders and a set of parameters. When
+        passed to <a class="link" href="ref/boost__mysql__any_connection/execute.html" title="any_connection::execute"><code class="literal">execute</code></a>
+        or <a class="link" href="ref/boost__mysql__any_connection/async_execute.html" title="any_connection::async_execute"><code class="literal">async_execute</code></a>,
+        the query is expanded in the client with the supplied parameters and sent
+        to the server for execution:
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">employee_name</span> <span class="special">=</span> <span class="identifier">get_name</span><span class="special">();</span>  <span class="comment">// employee_name is an untrusted string</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+
+<span class="comment">// Expand the query and execute it. The expansion happens client-side.</span>
+<span class="comment">// If employee_name is "John", the executed query would be:</span>
+<span class="comment">// "SELECT id, salary FROM employee WHERE last_name = 'John'"</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span>
+    <span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT id, salary FROM employee WHERE last_name = {}"</span><span class="special">,</span> <span class="identifier">employee_name</span><span class="special">),</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+</pre>
+<p>
+        Curly braces (<code class="computeroutput"><span class="special">{}</span></code>) represent
+        placeholders (technically called <span class="emphasis"><em>replacement fields</em></span>).
+        The notation and semantics are similar to <a href="https://en.cppreference.com/w/cpp/utility/format/format" target="_top"><code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">format</span></code></a>.
+      </p>
+<p>
+        All fundamental types can be used as query parameters. This includes integers,
+        floating point types, strings, blobs, dates and times:
+      </p>
+<pre class="programlisting"><span class="comment">// Will execute "SELECT id FROM employee WHERE salary &gt; 42000"</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT id FROM employee WHERE salary &gt; {}"</span><span class="special">,</span> <span class="number">42000</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<p>
+        <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> and
+        <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">T</span><span class="special">&gt;</span></code> can
+        also be used:
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">int64_t</span><span class="special">&gt;</span> <span class="identifier">salary</span><span class="special">;</span>  <span class="comment">// get salary from a possibly untrusted source</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+
+<span class="comment">// Depending on whether salary has a value or not, executes:</span>
+<span class="comment">// "UPDATE employee SET salary = 42000 WHERE id = 1"</span>
+<span class="comment">// "UPDATE employee SET salary = NULL WHERE id = 1"</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"UPDATE employee SET salary = {} WHERE id = {}"</span><span class="special">,</span> <span class="identifier">salary</span><span class="special">,</span> <span class="number">1</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<p>
+        Collections and ranges are supported, as long as its elements can be formatted:
+      </p>
+<pre class="programlisting"><span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">long</span><span class="special">&gt;</span> <span class="identifier">ids</span><span class="special">{</span><span class="number">1</span><span class="special">,</span> <span class="number">5</span><span class="special">,</span> <span class="number">20</span><span class="special">};</span>
+
+<span class="comment">// Executes "SELECT * FROM employee WHERE id IN (1, 5, 20)"</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT * FROM employee WHERE id IN ({})"</span><span class="special">,</span> <span class="identifier">ids</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+</pre>
+<p>
+        See <a class="link" href="sql_formatting_advanced.html#mysql.sql_formatting_advanced.ranges" title="Formatting ranges with sequence">this section</a>
+        for more on formatting ranges, and <a class="link" href="sql_formatting_advanced.html#mysql.sql_formatting_advanced.reference" title="Types with built-in support for SQL formatting">this
+        table</a> for a reference of types that have built-in support for SQL
+        formatting.
+      </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          Like with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">format</span></code>, the query string passed to <code class="computeroutput"><span class="identifier">with_params</span></code> must be known at compile-time.
+          You can skip this check using the <a class="link" href="ref/boost__mysql__runtime.html" title="runtime"><code class="literal">runtime</code></a>
+          function.
+        </p></td></tr>
+</table></div>
+<p>
+        Like <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">format</span></code>, you can use arguments with explicit
+        indices:
+      </p>
+<pre class="programlisting"><span class="comment">// Recall that you need to set connect_params::multi_queries to true when connecting</span>
+<span class="comment">// before running semicolon-separated queries. Executes:</span>
+<span class="comment">// "UPDATE employee SET first_name = 'John' WHERE id = 42; SELECT * FROM employee WHERE id = 42"</span>
+<span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+<span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span>
+    <span class="identifier">with_params</span><span class="special">(</span>
+        <span class="string">"UPDATE employee SET first_name = {1} WHERE id = {0}; SELECT * FROM employee WHERE id = {0}"</span><span class="special">,</span>
+        <span class="number">42</span><span class="special">,</span>
+        <span class="string">"John"</span>
+    <span class="special">),</span>
+    <span class="identifier">result</span>
+<span class="special">);</span>
+</pre>
+<p>
+        See <a class="link" href="sql_formatting_advanced.html#mysql.sql_formatting_advanced.format_string_syntax">this
+        section</a> for a reference on the format string syntax.
+      </p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.sql_formatting.errors"></a><a class="link" href="sql_formatting.html#mysql.sql_formatting.errors" title="Common errors and how to fix them">Common errors and how to
+      fix them</a>
+</h3></div></div></div>
+<p>
+        Not all values can be formatted. If the library finds that formatting a certain
+        value can cause an ambiguity that could lead to a security problem, an error
+        will be issued and the query won't be sent to the server. Here are the most
+        common errors:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">invalid_encoding</span></code>
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  Cause: one of your string parameters contains invalid code points.
+                  With the default character set, this means that it contains <span class="bold"><strong>invalid UTF-8</strong></span>.
+                </li>
+<li class="listitem">
+                  Solution: all string values must be encoded according to the connection's
+                  character set (usually UTF-8). Sanitize or reject such values.
+                  Use the <a class="link" href="ref/boost__mysql__blob.html" title="blob"><code class="literal">blob</code></a>
+                  and <a class="link" href="ref/boost__mysql__blob_view.html" title="blob_view"><code class="literal">blob_view</code></a>
+                  types for values that don't represent character strings, but arbitrary
+                  binary values.
+                </li>
+</ul></div>
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">unformattable_value</span></code>
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  Cause: one of your parameters contains an invalid value. For instance,
+                  a <code class="computeroutput"><span class="keyword">double</span></code> contains
+                  a <code class="computeroutput"><span class="identifier">NaN</span></code> or an <code class="computeroutput"><span class="identifier">Inf</span></code>, unsupported by MySQL.
+                </li>
+<li class="listitem">
+                  Solution: reject such values, or replace them by <code class="computeroutput"><span class="identifier">NULL</span></code> before passing them to client-side
+                  SQL formatting.
+                </li>
+</ul></div>
+          </li>
+<li class="listitem">
+            <code class="computeroutput"><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">unknown_character_set</span></code>
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  Cause: your connection doesn't know the character set you're using.
+                  Knowing the character set in use is required to generate queries
+                  securely. This situation can happen after calling <a class="link" href="ref/boost__mysql__any_connection/reset_connection.html" title="any_connection::reset_connection"><code class="literal">reset_connection</code></a>
+                  or if you used a custom <a class="link" href="ref/boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation"><code class="literal">connect_params::connection_collation</code></a>
+                  when connecting.
+                </li>
+<li class="listitem">
+                  Solution: use a <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>
+                  instead of manually resetting connections. If you can't, use the
+                  default <a class="link" href="ref/boost__mysql__connect_params/connection_collation.html" title="connect_params::connection_collation"><code class="literal">connection_collation</code></a>
+                  when connecting, and use <a class="link" href="ref/boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set"><code class="literal">set_character_set</code></a>
+                  or <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>
+                  after resetting connections.
+                </li>
+<li class="listitem">
+                  <a class="link" href="charsets.html#mysql.charsets.tracking">Learn more</a> about
+                  how character set tracking works.
+                </li>
+</ul></div>
+          </li>
+</ul></div>
+<p>
+        For example:
+      </p>
+<pre class="programlisting"><span class="keyword">try</span>
+<span class="special">{</span>
+    <span class="comment">// If the connection is using UTF-8 (the default), this will throw an error,</span>
+    <span class="comment">// because the string to be formatted is not valid UTF-8.</span>
+    <span class="comment">// The query never reaches the server.</span>
+    <span class="identifier">results</span> <span class="identifier">result</span><span class="special">;</span>
+    <span class="identifier">conn</span><span class="special">.</span><span class="identifier">execute</span><span class="special">(</span><span class="identifier">with_params</span><span class="special">(</span><span class="string">"SELECT {}"</span><span class="special">,</span> <span class="string">"bad\xff UTF-8"</span><span class="special">),</span> <span class="identifier">result</span><span class="special">);</span>
+<span class="special">}</span>
+<span class="keyword">catch</span> <span class="special">(</span><span class="keyword">const</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">system_error</span><span class="special">&amp;</span> <span class="identifier">err</span><span class="special">)</span>
+<span class="special">{</span>
+    <span class="identifier">BOOST_TEST</span><span class="special">(</span><span class="identifier">err</span><span class="special">.</span><span class="identifier">code</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">mysql</span><span class="special">::</span><span class="identifier">client_errc</span><span class="special">::</span><span class="identifier">invalid_encoding</span><span class="special">);</span>
+<span class="special">}</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="mysql.sql_formatting.comparison"></a><a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison" title="Prepared statements vs. client-side SQL formatting">Prepared statements
+      vs. client-side SQL formatting</a>
+</h3></div></div></div>
+<p>
+        Although both serve a similar purpose, they are fundamentally different.
+        Prepared statements are parsed and expanded by the server. Client-side SQL
+        expands the query in the client and sends it to the server as a string.
+      </p>
+<p>
+        This means that <span class="bold"><strong>client-side SQL does not understand
+        your queries</strong></span>. It just knows about how to format MySQL types into
+        a string without creating vulnerabilities, but otherwise treats your queries
+        as opaque strings. Client-side SQL yields <span class="bold"><strong>greater flexibility</strong></span>
+        (you can dynamically compose any query), while statements have more limitations.
+        This also means that <span class="bold"><strong>you need to pay more attention
+        to compose valid queries</strong></span>, specially when dealing with complex
+        conditionals. Logic errors may lead to exploits. Please read the <a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison.security">security
+        considerations section</a> for more info.
+      </p>
+<p>
+        Client-side SQL entails <span class="bold"><strong>less round-trips to the server</strong></span>
+        than statements, and is usually more efficient for lightweight queries. However,
+        it uses the less compact text protocol, which may be slower for queries retrieving
+        a lot of data. See the <a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison.efficiency">efficiency
+        considerations section</a> for more info.
+      </p>
+<p>
+        In general, <span class="bold"><strong>use client-side SQL</strong></span> formatting
+        for the following cases:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Simple queries that don't retrieve a lot of data. Default to <code class="computeroutput"><span class="identifier">with_params</span></code> and only switch to statements
+            if your performance measurements says so.
+          </li>
+<li class="listitem">
+            Queries involving dynamic SQL that can't be achieved by statements. Typical
+            cases include:
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  Dynamic filters (<a class="link" href="examples/dynamic_filters.html" title="Queries with dynamic filters">example</a>).
+                </li>
+<li class="listitem">
+                  Batch inserts. Inserting rows one by one can lead to poor efficiency.
+                  You can use client-side SQL formatting to compose a single <code class="computeroutput"><span class="identifier">INSERT</span></code> that inserts several rows
+                  at once (see <a class="link" href="examples/batch_inserts.html" title="Batch inserts using client-side query formatting">example
+                  1</a> and <a class="link" href="examples/batch_inserts_generic.html" title="Generic batch inserts with Boost.Describe">example
+                  2</a>).
+                </li>
+<li class="listitem">
+                  PATCH-like updates, where the field list in an <code class="computeroutput"><span class="identifier">UPDATE</span></code>
+                  must be dynamic (<a class="link" href="examples/patch_updates.html" title="Dynamic UPDATE queries with PATCH-like semantics">example</a>).
+                </li>
+<li class="listitem">
+                  Queries involving dynamic identifiers, like table and field names.
+                </li>
+<li class="listitem">
+                  Conditional sorting.
+                </li>
+<li class="listitem">
+                  Pipelines consisting of several semicolon-separated queries with
+                  dynamic fields.
+                </li>
+</ul></div>
+          </li>
+</ul></div>
+<p>
+        On the other hand, <span class="bold"><strong>prefer prepared statements</strong></span>
+        if:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            You are executing the same query over and over. You can prepare the statement
+            once and execute it several times.
+          </li>
+<li class="listitem">
+            Your query is retrieving a lot of data, and you have performed the relevant
+            performance measurements.
+          </li>
+</ul></div>
+<h5>
+<a name="mysql.sql_formatting.comparison.h0"></a>
+        <span class="phrase"><a name="mysql.sql_formatting.comparison.efficiency"></a></span><a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison.efficiency">Efficiency
+        considerations</a>
+      </h5>
+<p>
+        Both client-side SQL formatting and prepared statements have pros and cons
+        efficiency-wise:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Client-formatted SQL entails <span class="bold"><strong>less round-trips to
+            the server</strong></span>. For prepared statements, you usually need a call
+            to prepare the statement, another one to execute it, and possibly a final
+            one to close it. Client-formatted SQL only requires the execution round-trip.
+            This performance gain increases with network latency and if you are using
+            TLS.
+          </li>
+<li class="listitem">
+            Prepared statements always entail a <span class="bold"><strong>mutation of
+            session state</strong></span>, while client-formatted SQL may not. If you're
+            using a <a class="link" href="ref/boost__mysql__connection_pool.html" title="connection_pool"><code class="literal">connection_pool</code></a>
+            with prepared statements, you can't use <a class="link" href="ref/boost__mysql__pooled_connection/return_without_reset.html" title="pooled_connection::return_without_reset"><code class="literal">pooled_connection::return_without_reset</code></a>,
+            as this will leak the statement. With client-formatted queries, reset
+            may not be required if your SQL doesn't mutate session state.
+          </li>
+<li class="listitem">
+            Client-formatted SQL queries use a usually <span class="bold"><strong>less
+            efficient text-based protocol</strong></span>, while prepared statements use
+            a more compact binary protocol. This is relevant if you're retrieving
+            lots of data that is slow to convert to and from text (like doubles).
+          </li>
+<li class="listitem">
+            <span class="bold"><strong>Prepared statements can be re-used</strong></span>.
+            If you need to execute a query several times, prepared statements will
+            only be parsed once.
+          </li>
+<li class="listitem">
+            Client-formatted SQL allows <span class="bold"><strong>more efficient patterns</strong></span>
+            than prepared statements, like batch inserts and semicolon-separated
+            queries.
+          </li>
+</ul></div>
+<h5>
+<a name="mysql.sql_formatting.comparison.h1"></a>
+        <span class="phrase"><a name="mysql.sql_formatting.comparison.security"></a></span><a class="link" href="sql_formatting.html#mysql.sql_formatting.comparison.security">Security
+        considerations</a>
+      </h5>
+<p>
+        Both client-side SQL formatting and prepared statements <span class="bold"><strong>protect
+        against SQL injection</strong></span>. Statements do so by parsing the query with
+        placeholders server-side, before performing parameter substitution. Client-side
+        SQL quotes and escapes your values to avoid injection, but <span class="bold"><strong>does
+        not understand your queries</strong></span>.
+      </p>
+<p>
+        This means that you need to <span class="bold"><strong>ensure that your queries
+        always expand to valid SQL</strong></span>. This is trivial for simple queries,
+        but may be an issue with more complex ones, involving ranges or dynamic identifiers.
+        For instance, the following query may expand to invalid SQL if the provided
+        range is empty:
+      </p>
+<pre class="programlisting"><span class="comment">// If ids.empty(), generates "SELECT * FROM employee WHERE id IN ()", which is a syntax error.</span>
+<span class="comment">// This is not a security issue for this query, but may be exploitable in more involved scenarios.</span>
+<span class="comment">// Queries involving only scalar values (as opposed to ranges) are not affected by this.</span>
+<span class="comment">// It is your responsibility to check for conditions like ids.empty(), as client-side SQL</span>
+<span class="comment">// formatting does not understand your queries.</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">vector</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">ids</span><span class="special">;</span>
+<span class="keyword">auto</span> <span class="identifier">q</span> <span class="special">=</span> <span class="identifier">format_sql</span><span class="special">(</span><span class="identifier">conn</span><span class="special">.</span><span class="identifier">format_opts</span><span class="special">().</span><span class="identifier">value</span><span class="special">(),</span> <span class="string">"SELECT * FROM employee WHERE id IN ({})"</span><span class="special">,</span> <span class="identifier">ids</span><span class="special">);</span>
+</pre>
+<p>
+        The risk is higher if you're building your query by pieces using <a class="link" href="ref/boost__mysql__format_sql_to.html" title="format_sql_to"><code class="literal">format_sql_to</code></a>.
+      </p>
+<p>
+        To sum up:
+      </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+            Client-side SQL protects against SQL injection.
+          </li>
+<li class="listitem">
+            Client-side SQL does not protect against logic errors. The risk is only
+            present in complex queries. We suggest the following advice:
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  Avoid complex query generation logic as much as possible. Use a
+                  single format string instead of <code class="computeroutput"><span class="identifier">format_sql_to</span></code>,
+                  unless you have no other option.
+                </li>
+<li class="listitem">
+                  When using ranges, consider if the empty range would lead to valid
+                  SQL or not.
+                </li>
+<li class="listitem">
+                  Thoroughly test complex query generation logic.
+                </li>
+</ul></div>
+          </li>
+<li class="listitem">
+            Client-side SQL requires knowing the connection's current character set.
+            This usually happens out of the box, and will lead to a <a class="link" href="sql_formatting.html#mysql.sql_formatting.errors" title="Common errors and how to fix them">controlled
+            error</a> otherwise. Some recommendations:
+            <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; ">
+<li class="listitem">
+                  If in doubt, always use the default character set (<code class="computeroutput"><span class="identifier">utf8mb4</span></code>).
+                </li>
+<li class="listitem">
+                  Never issue <code class="computeroutput"><span class="identifier">SET</span> <span class="identifier">NAMES</span></code> or <code class="computeroutput"><span class="identifier">SET</span>
+                  <span class="identifier">CHARACTER</span> <span class="identifier">SET</span></code>
+                  statements directly - use <a class="link" href="ref/boost__mysql__any_connection/set_character_set.html" title="any_connection::set_character_set"><code class="literal">any_connection::set_character_set</code></a>
+                  or <a class="link" href="ref/boost__mysql__any_connection/async_set_character_set.html" title="any_connection::async_set_character_set"><code class="literal">async_set_character_set</code></a>,
+                  instead.
+                </li>
+<li class="listitem">
+                  If you're using <a class="link" href="ref/boost__mysql__format_sql.html" title="format_sql"><code class="literal">format_sql</code></a>
+                  or <a class="link" href="ref/boost__mysql__format_sql_to.html" title="format_sql_to"><code class="literal">format_sql_to</code></a>,
+                  never craft <a class="link" href="ref/boost__mysql__format_options.html" title="format_options"><code class="literal">format_options</code></a>
+                  values manually. Use <a class="link" href="ref/boost__mysql__any_connection/format_opts.html" title="any_connection::format_opts"><code class="literal">any_connection::format_opts</code></a>,
+                  instead.
+                </li>
+</ul></div>
+          </li>
+</ul></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="connection_establishment.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="prepared_statements.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

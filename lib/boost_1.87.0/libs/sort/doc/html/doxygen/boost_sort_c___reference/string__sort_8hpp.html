@@ -1,0 +1,85 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Header &lt;boost/sort/spreadsort/string_sort.hpp&gt;</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Boost.Sort">
+<link rel="up" href="../../boost_sort_c___reference.html" title="Boost.Sort C++ Reference">
+<link rel="prev" href="namespaceboost_1_1sort_1_1spreadsort_1ac355a603dcfeef332a8cfc20d5dc438e.html" title="Function template spreadsort">
+<link rel="next" href="namespaceboost_1_1sort_1_1spreadsort_1a570174ec84a69d1affbfcbd78f5fb567.html" title="Function template string_sort">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1sort_1_1spreadsort_1ac355a603dcfeef332a8cfc20d5dc438e.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_sort_c___reference.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1sort_1_1spreadsort_1a570174ec84a69d1affbfcbd78f5fb567.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="doxygen.boost_sort_c___reference.string__sort_8hpp"></a>Header &lt;<a href="../../../../../../boost/sort/spreadsort/string_sort.hpp" target="_top">boost/sort/spreadsort/string_sort.hpp</a>&gt;</h5></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">sort</span> <span class="special">{</span>
+    <span class="keyword">namespace</span> <span class="identifier">spreadsort</span> <span class="special">{</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">,</span> <span class="keyword">typename</span> Unsigned_char_type<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a570174ec84a69d1affbfcbd78f5fb567.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">,</span> 
+                         <span class="identifier">Unsigned_char_type</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">,</span> <span class="keyword">typename</span> Unsigned_char_type<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a5fca79cd8320d713a3ab114d9542418a.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Unsigned_char_type</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1ac36b3e2777cf78ab7ebf097926cfa191.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">&gt;</span> <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a809ce0c3a87429f9b93ccb0468408814.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">,</span> <span class="keyword">typename</span> Compare<span class="special">,</span> 
+               <span class="keyword">typename</span> Unsigned_char_type<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a4dfeb97d6b2a168375656f2de144f442.html" title="Function template reverse_string_sort"><span class="identifier">reverse_string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">,</span> 
+                                 <span class="identifier">Unsigned_char_type</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">,</span> <span class="keyword">typename</span> Compare<span class="special">,</span> <span class="keyword">typename</span> Unsigned_char_type<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a36b1af1e0ded50576c19fba4742b26ef.html" title="Function template reverse_string_sort"><span class="identifier">reverse_string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">,</span> <span class="identifier">Unsigned_char_type</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">,</span> <span class="keyword">typename</span> Compare<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1ab59bfb76c292ac046b978e00843b910c.html" title="Function template reverse_string_sort"><span class="identifier">reverse_string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">,</span> <span class="keyword">typename</span> Compare<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a266049cfc730f787bafc63d13bf0a831.html" title="Function template reverse_string_sort"><span class="identifier">reverse_string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">,</span> <span class="keyword">typename</span> Get_char<span class="special">,</span> 
+               <span class="keyword">typename</span> Get_length<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a556f051d6b33a215192a4587c5c47f55.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">Get_char</span><span class="special">,</span> 
+                         <span class="identifier">Get_length</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">,</span> <span class="keyword">typename</span> Get_char<span class="special">,</span> <span class="keyword">typename</span> Get_length<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1af6141b4ef799d54cb42c1d1534a70535.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Get_char</span><span class="special">,</span> <span class="identifier">Get_length</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">,</span> <span class="keyword">typename</span> Get_char<span class="special">,</span> 
+               <span class="keyword">typename</span> Get_length<span class="special">,</span> <span class="keyword">typename</span> Compare<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1af11ceeb894dab87e9cea770614c64e51.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">Get_char</span><span class="special">,</span> 
+                         <span class="identifier">Get_length</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">,</span> <span class="keyword">typename</span> Get_char<span class="special">,</span> <span class="keyword">typename</span> Get_length<span class="special">,</span> 
+               <span class="keyword">typename</span> Compare<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1ac35217c7ffc264186751d63fae114a87.html" title="Function template string_sort"><span class="identifier">string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Get_char</span><span class="special">,</span> <span class="identifier">Get_length</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> RandomAccessIter<span class="special">,</span> <span class="keyword">typename</span> Get_char<span class="special">,</span> 
+               <span class="keyword">typename</span> Get_length<span class="special">,</span> <span class="keyword">typename</span> Compare<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a4502e6d0592a5a106dbf5d5d273841a8.html" title="Function template reverse_string_sort"><span class="identifier">reverse_string_sort</span></a><span class="special">(</span><span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">RandomAccessIter</span><span class="special">,</span> <span class="identifier">Get_char</span><span class="special">,</span> 
+                                 <span class="identifier">Get_length</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+      <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Range<span class="special">,</span> <span class="keyword">typename</span> Get_char<span class="special">,</span> <span class="keyword">typename</span> Get_length<span class="special">,</span> 
+               <span class="keyword">typename</span> Compare<span class="special">&gt;</span> 
+        <span class="keyword">void</span> <a class="link" href="namespaceboost_1_1sort_1_1spreadsort_1a91ede6f2746cc8a33a54daf5d38df872.html" title="Function template reverse_string_sort"><span class="identifier">reverse_string_sort</span></a><span class="special">(</span><span class="identifier">Range</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Get_char</span><span class="special">,</span> <span class="identifier">Get_length</span><span class="special">,</span> <span class="identifier">Compare</span><span class="special">)</span><span class="special">;</span>
+    <span class="special">}</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="copyright-footer">Copyright © 2014-2017 Steven
+      Ross, Francisco Tapia, Orson Peters<p>
+        Distributed under the <a href="http://boost.org/LICENSE_1_0.txt" target="_top">Boost
+        Software License, Version 1.0</a>.
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1sort_1_1spreadsort_1ac355a603dcfeef332a8cfc20d5dc438e.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../boost_sort_c___reference.html"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="namespaceboost_1_1sort_1_1spreadsort_1a570174ec84a69d1affbfcbd78f5fb567.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

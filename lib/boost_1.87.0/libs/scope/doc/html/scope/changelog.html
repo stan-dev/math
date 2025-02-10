@@ -1,0 +1,100 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Changelog</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Scope">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Scope">
+<link rel="prev" href="../doxygen/reference/unique__resource__fwd_8hpp_1a9c005a6f171905bbecb1adb1aca23948.html" title="Function template make_unique_resource_checked">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../doxygen/reference/unique__resource__fwd_8hpp_1a9c005a6f171905bbecb1adb1aca23948.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="scope.changelog"></a><a class="link" href="changelog.html" title="Changelog">Changelog</a>
+</h2></div></div></div>
+<h4>
+<a name="scope.changelog.h0"></a>
+      <span class="phrase"><a name="scope.changelog.boost_1_85"></a></span><a class="link" href="changelog.html#scope.changelog.boost_1_85">Boost
+      1.85</a>
+    </h4>
+<p>
+      The library has been accepted into Boost. Updates according to Boost <a href="https://lists.boost.org/Archives/boost/2024/01/255717.php" target="_top">review</a>
+      comments and conditions:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          Renamed <code class="computeroutput"><span class="identifier">scope_final</span></code> to
+          <code class="computeroutput"><span class="identifier">defer_guard</span></code> and <code class="computeroutput"><span class="identifier">BOOST_SCOPE_FINAL</span></code> to <code class="computeroutput"><span class="identifier">BOOST_SCOPE_DEFER</span></code>.
+          Thanks to Peter Dimov for the <a href="https://lists.boost.org/Archives/boost/2023/12/255501.php" target="_top">suggestion</a>
+          during the review. The name "defer" is being used in other programming
+          languages (Go, Swift and even <a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2895.htm" target="_top">proposed</a>
+          for inclusion in C) for the functionality similar to <code class="computeroutput"><span class="identifier">scope_final</span></code>.
+        </li>
+<li class="listitem">
+          Removed <code class="computeroutput"><span class="identifier">release</span></code> member
+          from the scope guard types. This method was equivalent to <code class="computeroutput"><span class="identifier">set_active</span><span class="special">(</span><span class="keyword">false</span><span class="special">)</span></code> and
+          existed for compatibility with the C++ Extensions for Library Fundamentals
+          TS. Boost review conclusion indicated that conformance with the TS is not
+          a worthy goal.
+        </li>
+<li class="listitem">
+          In <code class="computeroutput"><span class="identifier">unique_resource</span></code>, added
+          <code class="computeroutput"><span class="keyword">explicit</span> <span class="keyword">operator</span>
+          <span class="keyword">bool</span></code> as a way to test if the resource
+          in an allocated state, similar to the <code class="computeroutput"><span class="identifier">allocated</span></code>
+          method. This was suggested by Dmitry Arkhipov before the review. Note that
+          the operator does not test the resource value, which is similar to <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">optional</span></code>.
+        </li>
+<li class="listitem">
+          Added <a class="link" href="unique_resource.html#scope.unique_resource.simplified_resource_traits" title="Simplified resource traits"><code class="computeroutput"><span class="identifier">unallocated_resource</span></code></a> class template
+          for simplifying declaration of resource traits for <code class="computeroutput"><span class="identifier">unique_resource</span></code>.
+          The idea of a more compact <code class="computeroutput"><span class="identifier">unique_resource</span></code>
+          declaration was presented by Janko Dedic in his <a href="https://lists.boost.org/Archives/boost/2023/11/255424.php" target="_top">review</a>.
+        </li>
+<li class="listitem">
+          Added documentation sections describing differences between Boost.Scope
+          and Library Fundamentals TS (see <a class="link" href="scope_guards.html#scope.scope_guards.comparison_with_library_fundamentals_ts" title="Comparison with scope guards defined in C++ Extensions for Library Fundamentals">here</a>
+          and <a class="link" href="unique_resource.html#scope.unique_resource.comparison_with_library_fundamentals_ts" title="Comparison with unique_resource defined in C++ Extensions for Library Fundamentals">here</a>).
+        </li>
+<li class="listitem">
+          <a class="link" href="unique_resource.html" title="Unique resource wrapper"><code class="computeroutput"><span class="identifier">unique_resource</span></code></a>
+          move constructor was modified to preserve the original state of the source
+          argument in case of exception. This deviates from the TS behavior, which
+          specifies to invoke the deleter on the move-constructed resource, but it
+          means the move constructor now maintains strong exception guarantee.
+        </li>
+<li class="listitem">
+          Enforced compile-time correctness checks for <a class="link" href="unique_resource.html" title="Unique resource wrapper"><code class="computeroutput"><span class="identifier">unique_resource</span></code></a> resource traits
+          specified by user. Improved description of requirements for the resource
+          traits.
+        </li>
+<li class="listitem">
+          Many documentation improvements.
+        </li>
+</ul></div>
+<h4>
+<a name="scope.changelog.h1"></a>
+      <span class="phrase"><a name="scope.changelog.0_1"></a></span><a class="link" href="changelog.html#scope.changelog.0_1">0.1</a>
+    </h4>
+<p>
+      Initial release for Boost review.
+    </p>
+</div>
+<div class="copyright-footer">Copyright © 2022-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="https://www.boost.org/LICENSE_1_0.txt" target="_top">https://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="../doxygen/reference/unique__resource__fwd_8hpp_1a9c005a6f171905bbecb1adb1aca23948.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a>
+</div>
+</body>
+</html>

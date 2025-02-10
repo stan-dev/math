@@ -1,0 +1,63 @@
+# Copyright René Ferdinand Rivera Morell 2024
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+require-b2 5.2 ;
+
+import-search /boost/config/checks ;
+import config : requires ;
+
+constant boost_dependencies :
+    /boost/algorithm//boost_algorithm
+    /boost/any//boost_any
+    /boost/array//boost_array
+    /boost/assert//boost_assert
+    /boost/concept_check//boost_concept_check
+    /boost/config//boost_config
+    /boost/container//boost_container
+    /boost/core//boost_core
+    /boost/endian//boost_endian
+    /boost/function_types//boost_function_types
+    /boost/fusion//boost_fusion
+    /boost/integer//boost_integer
+    /boost/iterator//boost_iterator
+    /boost/lexical_cast//boost_lexical_cast
+    /boost/math//boost_math_tr1
+    /boost/mpl//boost_mpl
+    /boost/multiprecision//boost_multiprecision
+    /boost/numeric_conversion//boost_numeric_conversion
+    /boost/polygon//boost_polygon
+    /boost/predef//boost_predef
+    /boost/qvm//boost_qvm
+    /boost/range//boost_range
+    /boost/rational//boost_rational
+    /boost/serialization//boost_serialization
+    /boost/static_assert//boost_static_assert
+    /boost/thread//boost_thread
+    /boost/throw_exception//boost_throw_exception
+    /boost/tokenizer//boost_tokenizer
+    /boost/tuple//boost_tuple
+    /boost/type_traits//boost_type_traits
+    /boost/variant//boost_variant
+    /boost/variant2//boost_variant2 ;
+
+project /boost/geometry
+    : common-requirements
+        <include>include
+    : requirements
+        [ requires
+            cxx14_constexpr
+            cxx14_return_type_deduction
+        ]
+        <toolset>msvc:<asynch-exceptions>on
+    ;
+
+explicit
+    [ alias boost_geometry : : : : <library>$(boost_dependencies) ]
+    [ alias all : boost_geometry test example doc/src/examples index extensions ]
+    ;
+
+call-if : boost-library geometry
+    ;
+

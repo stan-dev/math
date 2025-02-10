@@ -1,0 +1,388 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Reference</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="index.html" title="Chapter 1. Boost.Contract 1.0.0">
+<link rel="up" href="index.html" title="Chapter 1. Boost.Contract 1.0.0">
+<link rel="prev" href="boost_contract/examples.html" title="Examples">
+<link rel="next" href="doxygen/reference/assert_8hpp_1ae303d6f9ab0475779997ce49048c1f82.html" title="Macro BOOST_CONTRACT_ASSERT">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost_contract/examples.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="index.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/reference/assert_8hpp_1ae303d6f9ab0475779997ce49048c1f82.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="reference"></a>Reference</h2></div></div></div>
+<div class="toc"><dl class="toc">
+<dt><span class="section"><a href="reference.html#doxygen.reference.contract_8hpp">Header &lt;boost/contract.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.assert_8hpp">Header &lt;boost/contract/assert.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.base__types_8hpp">Header &lt;boost/contract/base_types.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.call__if_8hpp">Header &lt;boost/contract/call_if.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.check_8hpp">Header &lt;boost/contract/check.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.constructor_8hpp">Header &lt;boost/contract/constructor.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.access_8hpp">Header &lt;boost/contract/core/access.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.check__macro_8hpp">Header &lt;boost/contract/core/check_macro.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.config_8hpp">Header &lt;boost/contract/core/config.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.constructor__precondition_8hpp">Header &lt;boost/contract/core/constructor_precondition.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.exception_8hpp">Header &lt;boost/contract/core/exception.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.specify_8hpp">Header &lt;boost/contract/core/specify.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.virtual_8hpp">Header &lt;boost/contract/core/virtual.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.destructor_8hpp">Header &lt;boost/contract/destructor.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.function_8hpp">Header &lt;boost/contract/function.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.old_8hpp">Header &lt;boost/contract/old.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.override_8hpp">Header &lt;boost/contract/override.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.public__function_8hpp">Header &lt;boost/contract/public_function.hpp&gt;</a></span></dt>
+<dt><span class="section"><a href="reference.html#doxygen.reference.contract__macro_8hpp">Header &lt;boost/contract_macro.hpp&gt;</a></span></dt>
+</dl></div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.contract_8hpp"></a>Header &lt;<a href="../../../../boost/contract.hpp" target="_top">boost/contract.hpp</a>&gt;</h3></div></div></div>
+<p>Include all header files required by this library at once (for convenience). </p>
+<p>All header files <code class="computeroutput">boost/contract/*.hpp</code> are independent from one another and can be included one-by-one to reduce the amount of code to compile from this library in user code (but this was measured to not make an appreciable difference in compile-time so <code class="computeroutput"><a class="link" href="reference.html#doxygen.reference.contract_8hpp" title="Header &lt;boost/contract.hpp&gt;">boost/contract.hpp</a></code> can be included directly in most cases). Instead the headers <code class="computeroutput">boost/contract/core/*.hpp</code> are not independent from other library headers and they are automatically included by the <code class="computeroutput">boost/contract/*.hpp</code> headers (so the <code class="computeroutput">boost/contract/core/*.hpp</code> headers are usually not directly included by programmers).</p>
+<p>All files under the <code class="computeroutput">boost/contract/detail/</code> directory, names within the <code class="computeroutput">boost::contract::detail</code> namespace, names prefixed by <code class="computeroutput">boost_contract_detail</code>... and <code class="computeroutput">BOOST_CONTRACT_DETAIL</code>... (in any namesapce, including user's code) are reserved for internal use of this library and should never be used directly by programmers.</p>
+<p><b>See Also: </b> <a class="link" href="boost_contract/getting_started.html" title="Getting Started"> Getting Started</a> </p>
+<p>
+</p>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.assert_8hpp"></a>Header &lt;<a href="../../../../boost/contract/assert.hpp" target="_top">boost/contract/assert.hpp</a>&gt;</h3></div></div></div>
+<p>Assert contract conditions. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/assert_8hpp_1ae303d6f9ab0475779997ce49048c1f82.html" title="Macro BOOST_CONTRACT_ASSERT">BOOST_CONTRACT_ASSERT</a>(cond)
+<a class="link" href="doxygen/reference/assert_8hpp_1ac08ee32869ac639e5e433c295a57db1f.html" title="Macro BOOST_CONTRACT_ASSERT_AUDIT">BOOST_CONTRACT_ASSERT_AUDIT</a>(cond)
+<a class="link" href="doxygen/reference/assert_8hpp_1a7307c58ac849a68b216a876a60f9aabc.html" title="Macro BOOST_CONTRACT_ASSERT_AXIOM">BOOST_CONTRACT_ASSERT_AXIOM</a>(cond)</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.base__types_8hpp"></a>Header &lt;<a href="../../../../boost/contract/base_types.hpp" target="_top">boost/contract/base_types.hpp</a>&gt;</h3></div></div></div>
+<p>Specify inheritance form base classes (for subcontracting). </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/base__types_8hpp_1a084692eafa31120a150c79bd0178383f.html" title="Macro BOOST_CONTRACT_BASE_TYPES">BOOST_CONTRACT_BASE_TYPES</a>(...)</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.call__if_8hpp"></a>Header &lt;<a href="../../../../boost/contract/call_if.hpp" target="_top">boost/contract/call_if.hpp</a>&gt;</h3></div></div></div>
+<p>Statically disable compilation and execution of functor calls. </p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>These facilities allow to emulate C++17 <code class="computeroutput">if constexpr</code> statements when used together with functor templates (and C++14 generic lambdas). Therefore, they are not useful on C++17 compilers where <code class="computeroutput"> if constexpr</code> can be directly used instead. </p></td></tr>
+</table></div>
+<p>
+</p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">bool</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Then<span class="special">,</span> <span class="keyword">typename</span> ThenResult <span class="special">=</span> <span class="identifier">internal_type</span><span class="special">&gt;</span> 
+      <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement.html" title="Struct template call_if_statement">call_if_statement</a><span class="special">;</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Then<span class="special">&gt;</span> 
+      <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement_3_01false_00_01Then_00_01internal__type_01_4.html" title="Struct template call_if_statement&lt;false, Then, internal_type&gt;">call_if_statement</a><span class="special">&lt;</span><span class="keyword">false</span><span class="special">,</span> <span class="identifier">Then</span><span class="special">,</span> <span class="identifier">internal_type</span><span class="special">&gt;</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Then<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement_3_01true_00_01Then_00_01internal__type_01_4.html" title="Struct template call_if_statement&lt;true, Then, internal_type&gt;">call_if_statement</a><span class="special">&lt;</span><span class="keyword">true</span><span class="special">,</span> <span class="identifier">Then</span><span class="special">,</span> <span class="identifier">internal_type</span><span class="special">&gt;</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Then<span class="special">,</span> <span class="keyword">typename</span> ThenResult<span class="special">&gt;</span> 
+      <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement_3_01true_00_01Then_00_01ThenResult_01_4.html" title="Struct template call_if_statement&lt;true, Then, ThenResult&gt;">call_if_statement</a><span class="special">&lt;</span><span class="keyword">true</span><span class="special">,</span> <span class="identifier">Then</span><span class="special">,</span> <span class="identifier">ThenResult</span><span class="special">&gt;</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Then<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement_3_01true_00_01Then_00_01void_01_4.html" title="Struct template call_if_statement&lt;true, Then, void&gt;">call_if_statement</a><span class="special">&lt;</span><span class="keyword">true</span><span class="special">,</span> <span class="identifier">Then</span><span class="special">,</span> <span class="keyword">void</span><span class="special">&gt;</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">bool</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Then<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement.html" title="Struct template call_if_statement">call_if_statement</a><span class="special">&lt;</span> <span class="identifier">Pred</span><span class="special">,</span> <span class="identifier">Then</span> <span class="special">&gt;</span> <a class="link" href="doxygen/reference/call__if_8hpp_1a3336b7effe0970fe1eead502c9bf77cf.html" title="Function template call_if_c"><span class="identifier">call_if_c</span></a><span class="special">(</span><span class="identifier">Then</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Then<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/structboost_1_1contract_1_1call__if__statement.html" title="Struct template call_if_statement">call_if_statement</a><span class="special">&lt;</span> <span class="identifier">Pred</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="identifier">Then</span> <span class="special">&gt;</span> <a class="link" href="doxygen/reference/call__if_8hpp_1afa1764b62ace33374fd5efe14a6be389.html" title="Function template call_if"><span class="identifier">call_if</span></a><span class="special">(</span><span class="identifier">Then</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">bool</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Then<span class="special">&gt;</span> <span class="keyword">bool</span> <a class="link" href="doxygen/reference/call__if_8hpp_1a2eab22a6f7e96a1fa1e46f2df9773889.html" title="Function template condition_if_c"><span class="identifier">condition_if_c</span></a><span class="special">(</span><span class="identifier">Then</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Pred<span class="special">,</span> <span class="keyword">typename</span> Then<span class="special">&gt;</span> 
+      <span class="keyword">bool</span> <a class="link" href="doxygen/reference/call__if_8hpp_1a8a584bd0f704cf1f74964db8fd225f4a.html" title="Function template condition_if"><span class="identifier">condition_if</span></a><span class="special">(</span><span class="identifier">Then</span><span class="special">,</span> <span class="keyword">bool</span> <span class="special">=</span> <span class="keyword">true</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.check_8hpp"></a>Header &lt;<a href="../../../../boost/contract/check.hpp" target="_top">boost/contract/check.hpp</a>&gt;</h3></div></div></div>
+<p>RAII object that checks contracts. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1check.html" title="Class check">check</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.constructor_8hpp"></a>Header &lt;<a href="../../../../boost/contract/constructor.hpp" target="_top">boost/contract/constructor.hpp</a>&gt;</h3></div></div></div>
+<p>Program contracts for constructors. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Class<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__old__postcondition__except.html" title="Class template specify_old_postcondition_except">specify_old_postcondition_except</a> <a class="link" href="doxygen/reference/constructor_8hpp_1af4aef97442a6fd8ad0cc954a1caed7f4.html" title="Function template constructor"><span class="identifier">constructor</span></a><span class="special">(</span><span class="identifier">Class</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.access_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/access.hpp" target="_top">boost/contract/core/access.hpp</a>&gt;</h3></div></div></div>
+<p>Allow to declare invariants, base types, etc all as private members. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1access.html" title="Class access">access</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.check__macro_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/check_macro.hpp" target="_top">boost/contract/core/check_macro.hpp</a>&gt;</h3></div></div></div>
+<p>Macros for implementation checks. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/check__macro_8hpp_1aea60f0f7f581396043404fb0cc92b69b.html" title="Macro BOOST_CONTRACT_CHECK">BOOST_CONTRACT_CHECK</a>(cond)
+<a class="link" href="doxygen/reference/check__macro_8hpp_1a7598becf0009a46a02a441f3b1c1c524.html" title="Macro BOOST_CONTRACT_CHECK_AUDIT">BOOST_CONTRACT_CHECK_AUDIT</a>(cond)
+<a class="link" href="doxygen/reference/check__macro_8hpp_1af45e583aea740cd33c0efe3fe609987f.html" title="Macro BOOST_CONTRACT_CHECK_AXIOM">BOOST_CONTRACT_CHECK_AXIOM</a>(cond)</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.config_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/config.hpp" target="_top">boost/contract/core/config.hpp</a>&gt;</h3></div></div></div>
+<p>Configure this library compile-time and run-time behaviours. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/config_8hpp_1ae7608ee303c033a2f26517403eb65b8b.html" title="Macro BOOST_CONTRACT_DYN_LINK">BOOST_CONTRACT_DYN_LINK</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a152bbd480a9ca4198bfdafd5f957983b.html" title="Macro BOOST_CONTRACT_STATIC_LINK">BOOST_CONTRACT_STATIC_LINK</a>
+<a class="link" href="doxygen/reference/config_8hpp_1af78d7228a01fe5120c4211ff38f99bca.html" title="Macro BOOST_CONTRACT_HEADER_ONLY">BOOST_CONTRACT_HEADER_ONLY</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a71fcf209d090b29cdc9ae693c0d08b1b.html" title="Macro BOOST_CONTRACT_DISABLE_THREADS">BOOST_CONTRACT_DISABLE_THREADS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a24be2fcacc0d0c3bf8f497648292d2f4.html" title="Macro BOOST_CONTRACT_MAX_ARGS">BOOST_CONTRACT_MAX_ARGS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a25403805359610408446a1e236146592.html" title="Macro BOOST_CONTRACT_BASES_TYPEDEF">BOOST_CONTRACT_BASES_TYPEDEF</a>
+<a class="link" href="doxygen/reference/config_8hpp_1acd802a317f21884f29421d0ca22674c3.html" title="Macro BOOST_CONTRACT_INVARIANT_FUNC">BOOST_CONTRACT_INVARIANT_FUNC</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a60dbb63e9091f9227fec63eca62bb792.html" title="Macro BOOST_CONTRACT_STATIC_INVARIANT_FUNC">BOOST_CONTRACT_STATIC_INVARIANT_FUNC</a>
+<a class="link" href="doxygen/reference/config_8hpp_1aa27e2230209c5c925b96ba1331b34be7.html" title="Macro BOOST_CONTRACT_PERMISSIVE">BOOST_CONTRACT_PERMISSIVE</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a7b518507edc9622fbc46a22ce6dba267.html" title="Macro BOOST_CONTRACT_ON_MISSING_CHECK_DECL">BOOST_CONTRACT_ON_MISSING_CHECK_DECL</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a4ba8e7194c3bf4c2e373a9cc658aa69d.html" title="Macro BOOST_CONTRACT_PRECONDITIONS_DISABLE_NO_ASSERTION">BOOST_CONTRACT_PRECONDITIONS_DISABLE_NO_ASSERTION</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a72009af8d1c09ef45c18c6163a7b2aa4.html" title="Macro BOOST_CONTRACT_ALL_DISABLE_NO_ASSERTION">BOOST_CONTRACT_ALL_DISABLE_NO_ASSERTION</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a4622a4aade6f9a4e83cf9af8982276ce.html" title="Macro BOOST_CONTRACT_AUDITS">BOOST_CONTRACT_AUDITS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a972f1ee4b1dbd017799ed4c9f1d88048.html" title="Macro BOOST_CONTRACT_NO_CHECKS">BOOST_CONTRACT_NO_CHECKS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1ade6b6bf8b2b1cbeec7750d1f09e8c62e.html" title="Macro BOOST_CONTRACT_NO_PRECONDITIONS">BOOST_CONTRACT_NO_PRECONDITIONS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a0c8a2c13bf3571be1f583914ba670992.html" title="Macro BOOST_CONTRACT_NO_POSTCONDITIONS">BOOST_CONTRACT_NO_POSTCONDITIONS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a30fc93945c54011425d85b0dd688a46d.html" title="Macro BOOST_CONTRACT_NO_EXCEPTS">BOOST_CONTRACT_NO_EXCEPTS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a50e421d06711e45e1143e3fb46b08efa.html" title="Macro BOOST_CONTRACT_NO_ENTRY_INVARIANTS">BOOST_CONTRACT_NO_ENTRY_INVARIANTS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a7aef17f1f7f4a2af5ecb547cc42ffd1d.html" title="Macro BOOST_CONTRACT_NO_EXIT_INVARIANTS">BOOST_CONTRACT_NO_EXIT_INVARIANTS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a1b67f7aa046f5d3cfbec5636c78fa2a0.html" title="Macro BOOST_CONTRACT_NO_INVARIANTS">BOOST_CONTRACT_NO_INVARIANTS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1af9623b580ef4d78557bae1ef07524542.html" title="Macro BOOST_CONTRACT_NO_OLDS">BOOST_CONTRACT_NO_OLDS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a3f23f0f76c0977db0778b5a0756a8769.html" title="Macro BOOST_CONTRACT_NO_CONSTRUCTORS">BOOST_CONTRACT_NO_CONSTRUCTORS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a3a4f80a5eaed9d13384e1f4df2b7c456.html" title="Macro BOOST_CONTRACT_NO_DESTRUCTORS">BOOST_CONTRACT_NO_DESTRUCTORS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1aa88070f1035170dd62fa0ff3ff46ad57.html" title="Macro BOOST_CONTRACT_NO_PUBLIC_FUNCTIONS">BOOST_CONTRACT_NO_PUBLIC_FUNCTIONS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a5acbc152f924da6922b3f8a13b609486.html" title="Macro BOOST_CONTRACT_NO_FUNCTIONS">BOOST_CONTRACT_NO_FUNCTIONS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1a590381b2d3481cc02422777df06c85c8.html" title="Macro BOOST_CONTRACT_NO_CONDITIONS">BOOST_CONTRACT_NO_CONDITIONS</a>
+<a class="link" href="doxygen/reference/config_8hpp_1ad5b12d3113233e05dd03e73b4f2d03c6.html" title="Macro BOOST_CONTRACT_NO_ALL">BOOST_CONTRACT_NO_ALL</a></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.constructor__precondition_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/constructor_precondition.hpp" target="_top">boost/contract/core/constructor_precondition.hpp</a>&gt;</h3></div></div></div>
+<p>Program preconditions for constructors. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Class<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1constructor__precondition.html" title="Class template constructor_precondition">constructor_precondition</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.exception_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/exception.hpp" target="_top">boost/contract/core/exception.hpp</a>&gt;</h3></div></div></div>
+<p>Handle contract assertion failures. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1assertion__failure.html" title="Class assertion_failure">assertion_failure</a><span class="special">;</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1bad__virtual__result__cast.html" title="Class bad_virtual_result_cast">bad_virtual_result_cast</a><span class="special">;</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1exception.html" title="Class exception">exception</a><span class="special">;</span>
+
+    <span class="keyword">enum</span> <a class="link" href="doxygen/reference/exception_8hpp_1aaee382eb222b7a1fef1aa38e36cd76dc.html" title="Type from">from</a><span class="special">;</span>
+    <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">function</span><span class="special">&lt;</span> <span class="keyword">void</span><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">&gt;</span> <a class="link" href="doxygen/reference/exception_8hpp_1a571028b27e2fcb8abd7d5c9b2bb8aacf.html" title="Type definition from_failure_handler"><span class="identifier">from_failure_handler</span></a><span class="special">;</span>
+    <span class="keyword">typedef</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">function</span><span class="special">&lt;</span> <span class="keyword">void</span><span class="special">(</span><span class="special">)</span><span class="special">&gt;</span> <a class="link" href="doxygen/reference/exception_8hpp_1aee4c1bc6fb1d279bcb6d46014396745c.html" title="Type definition failure_handler"><span class="identifier">failure_handler</span></a><span class="special">;</span>
+    <span class="identifier">failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="doxygen/reference/exception_8hpp_1a569025f9ed61636abd47afeea5d16f3c.html" title="Function set_check_failure"><span class="identifier">set_check_failure</span></a><span class="special">(</span><span class="identifier">failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1a5254757eed9f50bf04c888d6de08fae7.html" title="Function get_check_failure"><span class="identifier">get_check_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1a0247c4afa6b632bd6116296bf8b34fbb.html" title="Function check_failure"><span class="identifier">check_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> 
+    <a class="link" href="doxygen/reference/exception_8hpp_1a9cc6fe2577f29cdd17f9b06d7c306618.html" title="Function set_precondition_failure"><span class="identifier">set_precondition_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1adad107f1c5f97c2543b7f215f4a70ae4.html" title="Function get_precondition_failure"><span class="identifier">get_precondition_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1a878bccce08e2b7a9ade57827982533a3.html" title="Function precondition_failure"><span class="identifier">precondition_failure</span></a><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> 
+    <a class="link" href="doxygen/reference/exception_8hpp_1aa768e1ef094edbf3c5de71fabee21047.html" title="Function set_postcondition_failure"><span class="identifier">set_postcondition_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1a91fd26118d4847fea3e15d1aa8884c8f.html" title="Function get_postcondition_failure"><span class="identifier">get_postcondition_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1a9610a2c2d867ccf64f9dd47183b23144.html" title="Function postcondition_failure"><span class="identifier">postcondition_failure</span></a><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> 
+    <a class="link" href="doxygen/reference/exception_8hpp_1ad07708df750d7e6214fe4c34edbc9e9e.html" title="Function set_except_failure"><span class="identifier">set_except_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1a9bf4a302bf5ccb5583cf1ab40f03759a.html" title="Function get_except_failure"><span class="identifier">get_except_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1af98d0350771ed6c28c103edc30bc19df.html" title="Function except_failure"><span class="identifier">except_failure</span></a><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="doxygen/reference/exception_8hpp_1a8ddf64b384316fec4b22aeb204ce4305.html" title="Function set_old_failure"><span class="identifier">set_old_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1aa9c50a5d5fb3825b304469c3c6d6b528.html" title="Function get_old_failure"><span class="identifier">get_old_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1a0dab02b91ec3f83e11e36a7cc6f70925.html" title="Function old_failure"><span class="identifier">old_failure</span></a><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> 
+    <a class="link" href="doxygen/reference/exception_8hpp_1a5e610ca1ad474c7f4db95bc1b270dcd2.html" title="Function set_entry_invariant_failure"><span class="identifier">set_entry_invariant_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1a0844f9bff273142cb663758d9a8ae7a2.html" title="Function get_entry_invariant_failure"><span class="identifier">get_entry_invariant_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1a34560d4c9ea237959164e8cd5e5a7cf2.html" title="Function entry_invariant_failure"><span class="identifier">entry_invariant_failure</span></a><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> 
+    <a class="link" href="doxygen/reference/exception_8hpp_1a9f20782205d7e14e2ec6e9fafb8ed881.html" title="Function set_exit_invariant_failure"><span class="identifier">set_exit_invariant_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <a class="link" href="doxygen/reference/exception_8hpp_1a91d5c8ac76c9b5f1a2eeb649b9e97dc3.html" title="Function get_exit_invariant_failure"><span class="identifier">get_exit_invariant_failure</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">void</span> <a class="link" href="doxygen/reference/exception_8hpp_1ac96ee6df86f02da680a0108ccacfa192.html" title="Function exit_invariant_failure"><span class="identifier">exit_invariant_failure</span></a><span class="special">(</span><span class="identifier">from</span><span class="special">)</span><span class="special">;</span>
+    <span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span> 
+    <a class="link" href="doxygen/reference/exception_8hpp_1aeeb283071406f924e4b9e60c10ac3e39.html" title="Function set_invariant_failure"><span class="identifier">set_invariant_failure</span></a><span class="special">(</span><span class="identifier">from_failure_handler</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.specify_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/specify.hpp" target="_top">boost/contract/core/specify.hpp</a>&gt;</h3></div></div></div>
+<p>Specify preconditions, old values copied at body, postconditions, and exception guarantees. </p>
+<p>Preconditions, old values copied at body, postconditions, and exception guarantees are all optionals but, when they are specified, they need to be specified in that order. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__except.html" title="Class specify_except">specify_except</a><span class="special">;</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__nothing.html" title="Class specify_nothing">specify_nothing</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> VirtualResult <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__old__postcondition__except.html" title="Class template specify_old_postcondition_except">specify_old_postcondition_except</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> VirtualResult <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__postcondition__except.html" title="Class template specify_postcondition_except">specify_postcondition_except</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> VirtualResult <span class="special">=</span> <span class="keyword">void</span><span class="special">&gt;</span> 
+      <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.virtual_8hpp"></a>Header &lt;<a href="../../../../boost/contract/core/virtual.hpp" target="_top">boost/contract/core/virtual.hpp</a>&gt;</h3></div></div></div>
+<p>Handle virtual public functions with contracts (for subcontracting). </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.destructor_8hpp"></a>Header &lt;<a href="../../../../boost/contract/destructor.hpp" target="_top">boost/contract/destructor.hpp</a>&gt;</h3></div></div></div>
+<p>Program contracts for destructors. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Class<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__old__postcondition__except.html" title="Class template specify_old_postcondition_except">specify_old_postcondition_except</a> <a class="link" href="doxygen/reference/destructor_8hpp_1ada75fa78795e2c1bb894cc49fd7e7156.html" title="Function template destructor"><span class="identifier">destructor</span></a><span class="special">(</span><span class="identifier">Class</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.function_8hpp"></a>Header &lt;<a href="../../../../boost/contract/function.hpp" target="_top">boost/contract/function.hpp</a>&gt;</h3></div></div></div>
+<p>Program contracts for (non-public) functions. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a> <a class="link" href="doxygen/reference/function_8hpp_1ad293a3bf388b43d667bc6dbf2aef873a.html" title="Function function"><span class="identifier">function</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.old_8hpp"></a>Header &lt;<a href="../../../../boost/contract/old.hpp" target="_top">boost/contract/old.hpp</a>&gt;</h3></div></div></div>
+<p>Handle old values. </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/old_8hpp_1a07326d65350421d14684447dec36d1ba.html" title="Macro BOOST_CONTRACT_OLDOF">BOOST_CONTRACT_OLDOF</a>(...)</pre>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1is__old__value__copyable.html" title="Struct template is_old_value_copyable">is_old_value_copyable</a><span class="special">;</span>
+
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__pointer.html" title="Class old_pointer">old_pointer</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__ptr.html" title="Class template old_ptr">old_ptr</a><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__ptr__if__copyable.html" title="Class template old_ptr_if_copyable">old_ptr_if_copyable</a><span class="special">;</span>
+    <span class="keyword">class</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__value.html" title="Class old_value">old_value</a><span class="special">;</span>
+
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">&gt;</span> <span class="keyword">struct</span> <a class="link" href="doxygen/reference/structboost_1_1contract_1_1old__value__copy.html" title="Struct template old_value_copy">old_value_copy</a><span class="special">;</span>
+    <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__value.html" title="Class old_value">old_value</a> <a class="link" href="doxygen/reference/old_8hpp_1a729f8e824d9ff1e0c285ad7a854f0042.html" title="Function null_old"><span class="identifier">null_old</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__pointer.html" title="Class old_pointer">old_pointer</a> <a class="link" href="doxygen/reference/old_8hpp_1ac830f5b87c0287b13b7579e384bb63b2.html" title="Function make_old"><span class="identifier">make_old</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__value.html" title="Class old_value">old_value</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__pointer.html" title="Class old_pointer">old_pointer</a> <a class="link" href="doxygen/reference/old_8hpp_1ae26e922bef0d14fc34f91b3c41467d39.html" title="Function make_old"><span class="identifier">make_old</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a> <span class="special">*</span><span class="special">,</span> <a class="link" href="doxygen/reference/classboost_1_1contract_1_1old__value.html" title="Class old_value">old_value</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="doxygen/reference/old_8hpp_1a67a705321c3509e497c8a131375caa31.html" title="Function copy_old"><span class="identifier">copy_old</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">bool</span> <a class="link" href="doxygen/reference/old_8hpp_1a457fc123a1bcceae4e044ea6e90d0255.html" title="Function copy_old"><span class="identifier">copy_old</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.override_8hpp"></a>Header &lt;<a href="../../../../boost/contract/override.hpp" target="_top">boost/contract/override.hpp</a>&gt;</h3></div></div></div>
+<p>Handle public function overrides (for subcontracting). </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/override_8hpp_1abce9471683cf762dee90186646091265.html" title="Macro BOOST_CONTRACT_NAMED_OVERRIDE">BOOST_CONTRACT_NAMED_OVERRIDE</a>(type_name, func_name)
+<a class="link" href="doxygen/reference/override_8hpp_1a125e503b1a6512c79cc56047a902e732.html" title="Macro BOOST_CONTRACT_OVERRIDE">BOOST_CONTRACT_OVERRIDE</a>(func_name)
+<a class="link" href="doxygen/reference/override_8hpp_1a22769e3cf1ab60ebee1e1caa730b70df.html" title="Macro BOOST_CONTRACT_OVERRIDES">BOOST_CONTRACT_OVERRIDES</a>(...)</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.public__function_8hpp"></a>Header &lt;<a href="../../../../boost/contract/public_function.hpp" target="_top">boost/contract/public_function.hpp</a>&gt;</h3></div></div></div>
+<p>Program contracts for public functions (including subcontracting). </p>
+<p>The different overloads handle public functions that are static, virtual void, virtual non-void, overriding void, and overriding non-void. </p>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">contract</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Class<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a> <a class="link" href="doxygen/reference/public__function_8hpp_1af4be705243ef0a8eba4ace7cf17fa79d.html" title="Function template public_function"><span class="identifier">public_function</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Class<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a> <a class="link" href="doxygen/reference/public__function_8hpp_1a9040cbb73e9b91207b86ad744b41a387.html" title="Function template public_function"><span class="identifier">public_function</span></a><span class="special">(</span><span class="identifier">Class</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Class<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a> 
+      <a class="link" href="doxygen/reference/public__function_8hpp_1ad970d75ce14ea2c757ab17423125de7f.html" title="Function template public_function"><span class="identifier">public_function</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a> <span class="special">*</span><span class="special">,</span> <span class="identifier">Class</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> VirtualResult<span class="special">,</span> <span class="keyword">typename</span> Class<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a><span class="special">&lt;</span> <span class="identifier">VirtualResult</span> <span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/public__function_8hpp_1a9d0a70c758fb78bbeaaa99ace1a679d9.html" title="Function template public_function"><span class="identifier">public_function</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a> <span class="special">*</span><span class="special">,</span> <span class="identifier">VirtualResult</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Class</span> <span class="special">*</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Override<span class="special">,</span> <span class="keyword">typename</span> F<span class="special">,</span> <span class="keyword">typename</span> Class<span class="special">,</span> <span class="keyword">typename</span><span class="special">...</span> Args<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a> 
+      <a class="link" href="doxygen/reference/public__function_8hpp_1a4037967f8701754a3e4e1276913b69b7.html" title="Function template public_function"><span class="identifier">public_function</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a> <span class="special">*</span><span class="special">,</span> <span class="identifier">F</span><span class="special">,</span> <span class="identifier">Class</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Override<span class="special">,</span> <span class="keyword">typename</span> VirtualResult<span class="special">,</span> <span class="keyword">typename</span> F<span class="special">,</span> 
+             <span class="keyword">typename</span> Class<span class="special">,</span> <span class="keyword">typename</span><span class="special">...</span> Args<span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/classboost_1_1contract_1_1specify__precondition__old__postcondition__except.html" title="Class template specify_precondition_old_postcondition_except">specify_precondition_old_postcondition_except</a><span class="special">&lt;</span> <span class="identifier">VirtualResult</span> <span class="special">&gt;</span> 
+      <a class="link" href="doxygen/reference/public__function_8hpp_1accfc67154bac242093203713579a6f3c.html" title="Function template public_function"><span class="identifier">public_function</span></a><span class="special">(</span><a class="link" href="doxygen/reference/classboost_1_1contract_1_1virtual__.html" title="Class virtual_">virtual_</a> <span class="special">*</span><span class="special">,</span> <span class="identifier">VirtualResult</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">F</span><span class="special">,</span> <span class="identifier">Class</span> <span class="special">*</span><span class="special">,</span> <span class="identifier">Args</span> <span class="special">&amp;</span><span class="special">...</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.reference.contract__macro_8hpp"></a>Header &lt;<a href="../../../../boost/contract_macro.hpp" target="_top">boost/contract_macro.hpp</a>&gt;</h3></div></div></div>
+<p>Allow to disable contracts to completely remove their compile-time and run-time overhead. </p>
+<p>This header automatically includes all header files <code class="computeroutput">boost/contract/*.hpp</code> necessary to use its macros.</p>
+<p>Almost all the macros defined in this header file are variadic macros. On compilers that do not support variadic macros, programmers can manually code <code class="computeroutput">#ifndef BOOST_CONTRACT_NO_...</code> statements instead (see  <a class="link" href="boost_contract/extras.html#boost_contract.extras.disable_contract_compilation__macro_interface_" title="Disable Contract Compilation (Macro Interface)">
+Disable Contract Compilation</a>). </p>
+<pre class="synopsis">
+
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a13ba7615c4f553870d175e0b964d7399.html" title="Macro BOOST_CONTRACT_PRECONDITION">BOOST_CONTRACT_PRECONDITION</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1af6dfb552cf20bd72e90810c04ebabf73.html" title="Macro BOOST_CONTRACT_POSTCONDITION">BOOST_CONTRACT_POSTCONDITION</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a2fd179e4b9a7e057f661991785ee71ac.html" title="Macro BOOST_CONTRACT_EXCEPT">BOOST_CONTRACT_EXCEPT</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a1a85a0b0137be4fc4a404b57d88170af.html" title="Macro BOOST_CONTRACT_OLD">BOOST_CONTRACT_OLD</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a581c27e42b19855750dc8f8578cd24d5.html" title="Macro BOOST_CONTRACT_OLD_PTR">BOOST_CONTRACT_OLD_PTR</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1ad7d5d96cf273ae00839c2e90efd979d4.html" title="Macro BOOST_CONTRACT_OLD_PTR_IF_COPYABLE">BOOST_CONTRACT_OLD_PTR_IF_COPYABLE</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1aebdcf2bb0cbd7a2501a3a210ef83b4ab.html" title="Macro BOOST_CONTRACT_INVARIANT">BOOST_CONTRACT_INVARIANT</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1afb95261134b0c30c018ec33f96612f98.html" title="Macro BOOST_CONTRACT_INVARIANT_VOLATILE">BOOST_CONTRACT_INVARIANT_VOLATILE</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1aa2cd5c99a0379ee16f1903031cbd8b87.html" title="Macro BOOST_CONTRACT_STATIC_INVARIANT">BOOST_CONTRACT_STATIC_INVARIANT</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a028ef0324f44b21c81e8adc558491d8d.html" title="Macro BOOST_CONTRACT_CONSTRUCTOR">BOOST_CONTRACT_CONSTRUCTOR</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a078888cb53d31e2a3d6665f2cc03770b.html" title="Macro BOOST_CONTRACT_CONSTRUCTOR_PRECONDITION">BOOST_CONTRACT_CONSTRUCTOR_PRECONDITION</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1ac6cd9d941a614253224eb95c32b8cb46.html" title="Macro BOOST_CONTRACT_DESTRUCTOR">BOOST_CONTRACT_DESTRUCTOR</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1ab3165eed8bfd8962d279dd16a0d637ed.html" title="Macro BOOST_CONTRACT_FUNCTION">BOOST_CONTRACT_FUNCTION</a>()
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1a46ce9dc7eb2cddf179b0bbbb3b629ec4.html" title="Macro BOOST_CONTRACT_STATIC_PUBLIC_FUNCTION">BOOST_CONTRACT_STATIC_PUBLIC_FUNCTION</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1add3e11b9b6fa852f0b5670f456410f8e.html" title="Macro BOOST_CONTRACT_PUBLIC_FUNCTION">BOOST_CONTRACT_PUBLIC_FUNCTION</a>(...)
+<a class="link" href="doxygen/reference/contract__macro_8hpp_1ac27fde7c1ce2a2b24fe5a45304f760aa.html" title="Macro BOOST_CONTRACT_PUBLIC_FUNCTION_OVERRIDE">BOOST_CONTRACT_PUBLIC_FUNCTION_OVERRIDE</a>(...)</pre>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2008-2019 Lorenzo Caminiti<p>
+        Distributed under the Boost Software License, Version 1.0 (see accompanying
+        file LICENSE_1_0.txt or a copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="boost_contract/examples.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="index.html"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="doxygen/reference/assert_8hpp_1ae303d6f9ab0475779997ce49048c1f82.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

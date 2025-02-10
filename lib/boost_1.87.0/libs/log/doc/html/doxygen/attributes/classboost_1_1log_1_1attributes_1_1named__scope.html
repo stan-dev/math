@@ -1,0 +1,128 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class named_scope</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../attributes.html#doxygen.attributes.named__scope_8hpp" title="Header &lt;boost/log/attributes/named_scope.hpp&gt;">
+<link rel="prev" href="classboost_1_1log_1_1attributes_1_1mutable__constant_3_01T_00_01void_00_01void_00_01void_01_4_1_1impl.html" title="Class impl">
+<link rel="next" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html" title="Struct sentry">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1attributes_1_1mutable__constant_3_01T_00_01void_00_01void_00_01void_01_4_1_1impl.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.named__scope_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class named_scope</span></h2>
+<p>boost::log::attributes::named_scope — A class of an attribute that holds stack of named scopes of the current thread. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../attributes.html#doxygen.attributes.named__scope_8hpp" title="Header &lt;boost/log/attributes/named_scope.hpp&gt;">boost/log/attributes/named_scope.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html" title="Class named_scope">named_scope</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">attribute</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope__list.html" title="Class named_scope_list">named_scope_list</a>       <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1ab14fa77fcfde9195e38f37bad376f36c"></a><span class="identifier">value_type</span><span class="special">;</span>   <span class="comment">// Scope names stack (the attribute value type) </span>
+  <span class="keyword">typedef</span> <span class="identifier">value_type</span><span class="special">::</span><span class="identifier">value_type</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1af5225f473be61a90920f766f387b3e01"></a><span class="identifier">scope_entry</span><span class="special">;</span>  <span class="comment">// Scope entry. </span>
+
+  <span class="comment">// member classes/structs/unions</span>
+
+  <span class="comment">// Sentry object class to automatically push and pop scopes.</span>
+
+  <span class="keyword">struct</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html" title="Struct sentry">sentry</a> <span class="special">{</span>
+
+    <span class="comment">// <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html#id54-bb">public member functions</a></span>
+    <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry_1aefa49d573757decc4e23cab8371c040a"><span class="identifier">sentry</span></a><span class="special">(</span><span class="identifier">string_literal</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">string_literal</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">,</span> <span class="keyword">unsigned</span> <span class="keyword">int</span><span class="special">,</span> 
+           <span class="identifier">scope_entry</span><span class="special">::</span><span class="identifier">scope_name_type</span> <span class="special">=</span> <span class="identifier">scope_entry</span><span class="special">::</span><span class="identifier">general</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+    <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry_1a91bf451aba5be8a9a5ea898b742b6ebb"><span class="special">~</span><span class="identifier">sentry</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+    <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry_1a31517e38489123852e9b5c20396a6d96"><span class="identifier">sentry</span></a><span class="special">(</span><a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html" title="Struct sentry">sentry</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+    <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html" title="Struct sentry">sentry</a> <span class="special">&amp;</span> <a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html#doxygen.attributes.structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry_1ab1ecccfd0608fb8dfc4c14c7ee9cd796"><span class="keyword">operator</span><span class="special">=</span></a><span class="special">(</span><a class="link" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html" title="Struct sentry">sentry</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="special">=</span> <span class="keyword">delete</span><span class="special">;</span>
+  <span class="special">}</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#id55-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1aaf30eef66b2fc1f968932c6da68eb86f"><span class="identifier">named_scope</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1a6c93e3237f881a4fa158f2846dcee313"><span class="identifier">named_scope</span></a><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html" title="Class cast_source">cast_source</a> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#id56-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1a41e1a71d8691b0b6c1704179306ffdc5"><span class="identifier">push_scope</span></a><span class="special">(</span><span class="identifier">scope_entry</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">void</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1acce735395e680488b70ead1383f83e72"><span class="identifier">pop_scope</span></a><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a class="link" href="classboost_1_1log_1_1attributes_1_1named__scope.html#doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1aabd3a700371eca08f769dfeee9fd374e"><span class="identifier">get_scopes</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id36817"></a><h2>Description</h2>
+<p>The basic_named_scope attribute is essentially a hook to the thread-specific instance of scope list. This means that the attribute will generate different values if get_value is called in different threads. The attribute generates value with stored type <code class="computeroutput">basic_named_scope_list&lt; CharT &gt;</code>.</p>
+<p>The attribute class can also be used to gain access to the scope stack instance, e.g. to get its copy or to push or pop a scope entry. However, it is highly not recommended to maintain scope list manually. Use <code class="computeroutput">BOOST_LOG_NAMED_SCOPE</code> or <code class="computeroutput">BOOST_LOG_FUNCTION</code> macros instead. </p>
+<div class="refsect2">
+<a name="id36824"></a><h3>
+<a name="id55-bb"></a><code class="computeroutput">named_scope</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1aaf30eef66b2fc1f968932c6da68eb86f"></a><span class="identifier">named_scope</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor. Creates an attribute. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1a6c93e3237f881a4fa158f2846dcee313"></a><span class="identifier">named_scope</span><span class="special">(</span><a class="link" href="classboost_1_1log_1_1attributes_1_1cast__source.html" title="Class cast_source">cast_source</a> <span class="keyword">const</span> <span class="special">&amp;</span> source<span class="special">)</span><span class="special">;</span></pre>
+<p>Constructor for casting support </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id36851"></a><h3>
+<a name="id56-bb"></a><code class="computeroutput">named_scope</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1a41e1a71d8691b0b6c1704179306ffdc5"></a><span class="identifier">push_scope</span><span class="special">(</span><span class="identifier">scope_entry</span> <span class="keyword">const</span> <span class="special">&amp;</span> entry<span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method pushes the scope to the back of the current thread's scope list</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">void</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1acce735395e680488b70ead1383f83e72"></a><span class="identifier">pop_scope</span><span class="special">(</span><span class="special">)</span> <span class="keyword">noexcept</span><span class="special">;</span></pre>
+<p>The method pops the last pushed scope from the current thread's scope list</p>
+<p><span class="bold"><strong>Throws:</strong></span> Nothing. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">value_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <a name="doxygen.attributes.classboost_1_1log_1_1attributes_1_1named__scope_1aabd3a700371eca08f769dfeee9fd374e"></a><span class="identifier">get_scopes</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>
+</p>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>The returned reference is only valid until the current thread ends. The scopes in the returned container may change if the execution scope is changed (i.e. either <code class="computeroutput">push_scope</code> or <code class="computeroutput">pop_scope</code> is called). User has to copy the stack if he wants to keep it intact regardless of the execution scope. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>The current thread's list of scopes</p></td>
+</tr></tbody>
+</table></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1attributes_1_1mutable__constant_3_01T_00_01void_00_01void_00_01void_01_4_1_1impl.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../attributes.html#doxygen.attributes.named__scope_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1log_1_1attributes_1_1named__scope_1_1sentry.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

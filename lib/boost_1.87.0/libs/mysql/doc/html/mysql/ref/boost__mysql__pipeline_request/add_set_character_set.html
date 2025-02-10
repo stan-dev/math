@@ -1,0 +1,116 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>pipeline_request::add_set_character_set</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__pipeline_request.html" title="pipeline_request">
+<link rel="prev" href="add_reset_connection.html" title="pipeline_request::add_reset_connection">
+<link rel="next" href="clear.html" title="pipeline_request::clear">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="add_reset_connection.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__pipeline_request.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="clear.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set"></a><a class="link" href="add_set_character_set.html" title="pipeline_request::add_set_character_set">pipeline_request::add_set_character_set</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id79855"></a>
+Adds a set character set stage.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.synopsis"></a></span><a class="link" href="add_set_character_set.html#mysql.ref.boost__mysql__pipeline_request.add_set_character_set.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><a class="link" href="../boost__mysql__pipeline_request.html" title="pipeline_request"><code class="literal">pipeline_request</code></a><span class="special">&amp;</span>
+<span class="identifier">add_set_character_set</span><span class="special">(</span>
+    <a class="link" href="../boost__mysql__character_set.html" title="character_set"><code class="literal">character_set</code></a> <span class="identifier">charset</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.description"></a></span><a class="link" href="add_set_character_set.html#mysql.ref.boost__mysql__pipeline_request.add_set_character_set.description">Description</a>
+        </h6>
+<p>
+          Creates a stage that sets the connection's character set. The resulting
+          stage has effects equivalent to <code class="computeroutput"><span class="identifier">conn</span><span class="special">.</span><span class="identifier">set_character_set</span><span class="special">(</span><span class="identifier">charset</span><span class="special">)</span></code>.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.exception_safety"></a></span><a class="link" href="add_set_character_set.html#mysql.ref.boost__mysql__pipeline_request.add_set_character_set.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          Strong guarantee. Throws if the supplied character set name is not valid
+          (i.e. <code class="computeroutput"><span class="identifier">charset</span><span class="special">.</span><span class="identifier">name</span></code> contains non-ASCII characters).
+          The check is performed as a hardening measure, and never happens with the
+          character sets provided by this library.
+        </p>
+<p>
+          Additionally, memory allocations may throw.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.exceptions"></a></span><a class="link" href="add_set_character_set.html#mysql.ref.boost__mysql__pipeline_request.add_set_character_set.exceptions">Exceptions</a>
+        </h6>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+                  <p>
+                    Type
+                  </p>
+                </th>
+<th>
+                  <p>
+                    Thrown On
+                  </p>
+                </th>
+</tr></thead>
+<tbody><tr>
+<td>
+                  <p>
+                    <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">invalid_argument</span></code>
+                  </p>
+                </td>
+<td>
+                  <p>
+                    If <code class="computeroutput"><span class="identifier">charset</span><span class="special">.</span><span class="identifier">name</span></code> contains non-ASCII characters.
+                  </p>
+                </td>
+</tr></tbody>
+</table></div>
+<h6>
+<a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.h4"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__pipeline_request.add_set_character_set.preconditions"></a></span><a class="link" href="add_set_character_set.html#mysql.ref.boost__mysql__pipeline_request.add_set_character_set.preconditions">Preconditions</a>
+        </h6>
+<p>
+          The passed character set should not be default-constructed (<code class="computeroutput"><span class="identifier">charset</span><span class="special">.</span><span class="identifier">name</span> <span class="special">!=</span> <span class="keyword">nullptr</span></code>).
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="add_reset_connection.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__pipeline_request.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="clear.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

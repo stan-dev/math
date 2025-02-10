@@ -1,0 +1,28 @@
+
+# (C) Copyright Tobias Schwinger
+#
+# Use, modification and distribution are subject to the Boost Software License,
+# Version 1.0. (See http://www.boost.org/LICENSE_1_0.txt).
+
+#-------------------------------------------------------------------------------
+
+project : requirements <library>/boost/function_types//boost_function_types ;
+
+exe  interpreter_example     : interpreter_example.cpp
+    : <library>/boost/tokenizer//boost_tokenizer
+      <library>/boost/lexical_cast//boost_lexical_cast
+    ;
+
+exe  result_of_example       : result_of_example.cpp   ;
+
+exe  interface_example       : interface_example.cpp   ;
+
+exe  fast_mem_fn_example     : fast_mem_fn_example.cpp
+    : <include>. # needed for Boost.PP file iteration with some compilers
+      <library>/boost/timer//boost_timer
+      <library>/boost/bind//boost_bind
+    ;
+
+exe  macro_type_args_example : macro_type_args_example.cpp ;
+
+

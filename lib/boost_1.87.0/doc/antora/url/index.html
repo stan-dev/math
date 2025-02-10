@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Boost.URL :: Boost Libraries Documentation</title>
+  <link rel="canonical" href="https://antora.cppalliance.org/master/lib/doc/url/index.html">
+    <link rel="next" href="quicklook.html">
+  <meta name="generator" content="Antora 3.1.9">
+    <link rel="stylesheet" href="../_/css/boostlook.css">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/vendor/tabs.css">
+    <script>var uiRootPath = '../_'</script>
+  </head>
+  <body class="article toc2 toc-left">
+    <div class="boostlook">
+  <div id="header">
+    <div id="toc" class="nav-container toc2" data-component="url" data-version="">
+  <aside class="nav">
+    <button class="nav-close"></button>
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+      <h3 class="title"><a href="index.html">Boost.URL</a></h3>
+      <ul class="nav-list">
+        <ul class="nav-list">
+        <li class="" data-depth="1">
+            <a class="nav-link" href="quicklook.html">Quick Look</a>
+        </li>
+              <li class="" data-depth="1">
+            <a class="nav-link" href="urls/index.html">URLs</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="urls/parsing.html">Parsing</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/containers.html">Containers</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/segments.html">Segments</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/params.html">Params</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/normalization.html">Normalization</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/stringtoken.html">String Token</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/percent-encoding.html">Percent Encoding</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="urls/formatting.html">Formatting</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="grammar/index.html">Customization</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/rules.html">Parse Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/charset.html">Character Sets</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/combinators.html">Compound Rules</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/range.html">Ranges</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="grammar/rfc3986.html">RFC 3986</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <span class="nav-text">Examples</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <a class="nav-link" href="examples/qrcode.html">QR Code</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/finicky.html">Finicky</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/mailto.html">mailto URLs</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/magnet-link.html">Magnet Link</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/file-router.html">File Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/router.html">Router</a>
+        </li>
+              <li class="" data-depth="2">
+            <a class="nav-link" href="examples/sanitize.html">Sanitizing URLs</a>
+        </li>
+        </ul>
+        <li class="" data-depth="1">
+            <a class="nav-link" href="reference.html">Reference</a>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="2">
+            <span class="nav-text">Concepts</span>
+        </li>
+        <ul class="nav-list">
+        <li class="" data-depth="3">
+            <a class="nav-link" href="concepts/CharSet.html">CharSet</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="concepts/Rule.html">Rule</a>
+        </li>
+              <li class="" data-depth="3">
+            <a class="nav-link" href="concepts/StringToken.html">StringToken</a>
+        </li>
+        </ul>
+        <li class="" data-depth="2">
+            <a class="nav-link" href="HelpCard.html">Help Card</a>
+        </li>
+        </ul>
+  </ul>
+  </ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+</div>
+  <div id="content">
+    <article class="doc max-width-reset">
+  <div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Boost.URL</a></li>
+  </ul>
+</nav>
+<div class="spirit-nav">
+    <a accesskey="p" href="quicklook.html"><span class="material-symbols-outlined" title="Next: Quick Look">arrow_forward</span></a>
+</div>
+</div>
+    <h1 class="page">Boost.URL</h1>
+  <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Boost.URL is a portable C++ library which provides containers and algorithms which model a "URL," more formally described using the
+<a href="https://datatracker.ietf.org/doc/html/rfc3986" target="blank_">Uniform Resource Identifier (URI)</a>
+specification (henceforth referred to as <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>).
+A URL is a compact sequence of characters that identifies an abstract or physical resource.
+For example, this is a valid URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-asciidoc hljs" data-lang="asciidoc">https://www.example.com/path/to/file.txt?userid=1001&amp;pages=3&amp;results=full#page1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This library understands the grammars related to URLs and provides functionality to validate, parse, examine, and modify urls, and apply normalization or resolution algorithms.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_features"><a class="anchor" href="#_features"></a>Features</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While the library is general purpose, special care has been taken to ensure that the implementation and data representation are friendly to network programs which need to handle URLs efficiently and securely, including the case where the inputs come from untrusted sources.
+Interfaces are provided for using error codes instead of exceptions as needed, and most algorithms have the means to opt-out of dynamic memory allocation.
+Another feature of the library is that all modifications leave the URL in a valid state.
+Code which uses this library is easy to read, flexible, and performant.</p>
+</div>
+<div class="paragraph">
+<p>Boost.URL offers these features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>C++11 as only requirement</p>
+</li>
+<li>
+<p>Fast compilation, few templates</p>
+</li>
+<li>
+<p>Strict compliance with <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a></p>
+</li>
+<li>
+<p>Containers that maintain valid URLs</p>
+</li>
+<li>
+<p>Parsing algorithms that work without exceptions</p>
+</li>
+<li>
+<p>Control over storage and allocation for URLs</p>
+</li>
+<li>
+<p>Support for <code>-fno-exceptions</code>, detected automatically</p>
+</li>
+<li>
+<p>Features that work well on embedded devices</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Currently the library does not handle
+<a href="https://www.rfc-editor.org/rfc/rfc3987.html" target="blank_">Internationalized Resource Identifiers</a> (IRIs).
+These are different from URLs, come from Unicode strings instead of low-ASCII strings, and are covered by a separate specification.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements"><a class="anchor" href="#_requirements"></a>Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The library requires a compiler supporting at least C++11.</p>
+</div>
+<div class="paragraph">
+<p>For standard types, such as <code><a href="https://en.cppreference.com/w/cpp/error/error_code" target="_blank" rel="noopener">std::error_code</a></code> or <code><a href="https://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank" rel="noopener">std::string_view</a></code>, the library uses their Boost equivalents <code><a href="https://www.boost.org/doc/libs/master/libs/system/doc/html/system.html#ref_error_code" target="_blank" rel="noopener">boost::system::error_code</a></code> and <code><a href="https://www.boost.org/doc/libs/master/libs/core/doc/html/" target="_blank" rel="noopener">boost::core::string_view</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>Boost.URL works great on embedded devices.
+It can be used in a way that avoids all dynamic memory allocations.
+Furthermore it offers alternative interfaces that work without exceptions if desired.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_tested_compilers"><a class="anchor" href="#_tested_compilers"></a>Tested Compilers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Boost.URL has been tested with the following compilers:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>clang: 3.8, 4, 5, 6, 7, 8, 9, 10, 11, 12</p>
+</li>
+<li>
+<p>gcc: 4.8, 4.9, 5, 6, 7, 8, 9, 10, 11</p>
+</li>
+<li>
+<p>msvc: 14.1, 14.2, 14.3</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>and these architectures: x86, x64, ARM64, S390x.</p>
+</div>
+<div class="paragraph">
+<p>We do not test and support gcc 8.0.1.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quality_assurance"><a class="anchor" href="#_quality_assurance"></a>Quality Assurance</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The development infrastructure for the library includes these per-commit analyses:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Coverage reports</p>
+</li>
+<li>
+<p>Compilation and tests on Drone.io and GitHub Actions</p>
+</li>
+<li>
+<p>Regular code audits for security</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_nomenclature"><a class="anchor" href="#_nomenclature"></a>Nomenclature</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Various names have been used historically to refer to different flavors of resource identifiers, including <em>URI</em>, <em>URL</em>, <em>URN</em>, and even <em>IRI</em>.
+Over time, the distinction between URIs and URLs has disappeared when discussed in technical documents and informal works.
+In this library we use the term <strong>URL</strong> to refer to all strings which are valid according to the top-level grammar rules found in <a href="https://tools.ietf.org/html/rfc3986" target="blank_">rfc3986</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_abnf"><a class="anchor" href="#_abnf"></a>ABNF</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This documentation uses the Augmented
+<a href="https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form" target="blank_">Backus-Naur Form</a>
+(ABNF) notation of
+<a href="https://datatracker.ietf.org/doc/html/rfc5234" target="blank_">rfc5234</a>
+to specify particular grammars used by algorithms and containers.
+While a complete understanding of the notation is not a requirement for using the library, it may help for an understanding of how valid components of URLs are defined.
+In particular, this is of interest to users who wish to compose parsing algorithms using the combinators provided by the library.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_acknowledgments"><a class="anchor" href="#_acknowledgments"></a>Acknowledgments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This library wouldn&#8217;t be where it is today without the help of
+<a href="https://github.com/pdimov" target="blank_">Peter Dimov</a>
+for design advice and general assistance.</p>
+</div>
+</div>
+</div>
+  <div class="edit-this-page">
+      <a href="https://github.com/boostorg/url/edit/develop/doc/modules/ROOT/pages/index.adoc">Edit this Page</a>
+      </div>
+      <nav class="pagination">
+        <span class="next"><a href="quicklook.html">Quick Look</a></span>
+    </nav>
+</article>
+</div>
+  <div id="footer">
+  <script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script async src="../_/js/vendor/tabs.js" data-sync-storage-key="preferred-tab"></script>
+</div>
+</div>
+  </body>
+</html>

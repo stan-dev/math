@@ -1,0 +1,286 @@
+[/
+ / Distributed under the Boost Software License, Version 1.0. (See accompanying
+ / file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ /]
+
+[library Boost.Parser
+    [quickbook 1.3]
+    [authors [Laine, Zach]]
+    [copyright 2020 T. Zachary Laine]
+    [category template]
+    [id parser]
+    [dirname parser]
+    [purpose
+        A string and rope library targeting standardization.
+    ]
+    [license
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        [@http://www.boost.org/LICENSE_1_0.txt])
+    ]
+]
+
+[/ QuickBook Document version 1.3 ]
+
+[/ Imports ]
+
+[/ Examples ]
+[import ../include/boost/parser/parser.hpp]
+[import ../example/hello.cpp]
+[import ../example/trivial.cpp]
+[import ../example/trivial_skipper.cpp]
+[import ../example/semantic_actions.cpp]
+[import ../example/rule_intro.cpp]
+[import ../example/roman_numerals.cpp]
+[import ../example/self_filling_symbol_table.cpp]
+[import ../example/json.cpp]
+[import ../example/callback_json.cpp]
+[import ../example/parsing_into_a_struct.cpp]
+[import ../example/parsing_into_a_class.cpp]
+[import ../example/struct_rule.cpp]
+[import ../example/user_error_handler.cpp]
+[import ../test/parser.cpp]
+[import ../test/parser_rule.cpp]
+[import ../test/parser_quoted_string.cpp]
+
+[import ../include/boost/parser/concepts.hpp]
+[import ../include/boost/parser/error_handling_fwd.hpp]
+
+[/ Images ]
+
+[def __note__              [$images/note.png]]
+[def __tip__               [$images/tip.png]]
+[def __important__         [$images/important.png]]
+[def __caution__           [$images/caution.png]]
+[def __warning__           [$images/warning.png]]
+
+[/ Links ]
+
+[def _Parser_              Boost.Parser]
+
+[def _p_iface_             [classref boost::parser::parser_interface `parser_interface`]]
+
+[def _null_sent_           [classref boost::parser::null_sentinel_t `null_sentinel_t`]]
+[def _v_                   [classref boost::parser::subrange `subrange`]]
+[def _n_                   [classref boost::parser::none `none`]]
+[def _symbols_             [classref boost::parser::symbols `symbols`]]
+[def _symbols_t_           [classref boost::parser::symbols `symbols<T>`]]
+[def _r_                   [classref boost::parser::rule `rule`]]
+[def _rs_                  [classref boost::parser::rule `rule`s]]
+[def _cb_r_                [classref boost::parser::callback_rule `callback_rule`]]
+[def _cb_rs_               [classref boost::parser::callback_rules `callback_rule`s]]
+
+[def _skp_p_               [classref boost::parser::skip_parser `skip_parser`]]
+[def _xfm_p_               [classref boost::parser::transform_parser `tranform_parser`]]
+[def _noc_p_               [classref boost::parser::no_case_parser `no_case_parser`]]
+[def _sv_p_                [classref boost::parser::string_view_parser `string_view_parser`]]
+[def _raw_p_               [classref boost::parser::raw_parser `raw_parser`]]
+[def _omt_p_               [classref boost::parser::omit_parser `omit_parser`]]
+[def _rpt_p_               [classref boost::parser::repeat_parser `repeat_parser`]]
+[def _lex_p_               [classref boost::parser::lexeme_parser `lexeme_parser`]]
+[def _seq_p_               [classref boost::parser::seq_parser `seq_parser`]]
+[def _seq_ps_              [classref boost::parser::seq_parser `seq_parser`s]]
+
+[def _bp_tup_              [classref boost::parser::tuple `boost::parser::tuple`]]
+[def _bp_get_              [funcref boost::parser::get `boost::parser::get`]]
+[def _bh_tup_              `boost::hana::tuple`]
+[def _std_tup_             `std::tuple`]
+
+[def _default_eh_          [classref boost::parser::default_error_handler `default_error_handler`]]
+[def _stream_eh_           [classref boost::parser::stream_error_handler `stream_error_handler`]]
+[def _cb_eh_               [classref boost::parser::callback_error_handler `callback_error_handler`]]
+[def _rethrow_eh_          [classref boost::parser::rethrow_error_handler `rethrow_error_handler`]]
+[def _vs_output_eh_        [classref boost::parser::vs_output_error_handler `vs_output_error_handler`]]
+
+[def _trace_               [enumref boost::parser::trace `boost::parser::trace`]]
+
+[def _search_              [funcref boost::parser::search `boost::parser::search()`]]
+[def _search_all_          [globalref boost::parser::search_all `boost::parser::search_all`]]
+[def _search_all_v_        [classref boost::parser::search_all_view `boost::parser::search_all_view`]]
+[def _search_all_vs_       [classref boost::parser::search_all_view `boost::parser::search_all_view`s]]
+[def _split_               [globalref boost::parser::split `boost::parser::split`]]
+[def _split_v_             [classref boost::parser::split_view `boost::parser::split_view`]]
+[def _split_vs_            [classref boost::parser::split_view `boost::parser::split_view`s]]
+[def _replace_             [globalref boost::parser::replace `boost::parser::replace`]]
+[def _replace_v_           [classref boost::parser::replace_view `boost::parser::replace_view`]]
+[def _replace_vs_          [classref boost::parser::replace_view `boost::parser::replace_view`s]]
+[def _trans_replace_       [globalref boost::parser::transform_replace `boost::parser::transform_replace`]]
+[def _trans_replace_v_     [classref boost::parser::transform_replace_view `boost::parser::transform_replace_view`]]
+[def _trans_replace_vs_    [classref boost::parser::transform_replace_view `boost::parser::transform_replace_view`s]]
+
+
+[def _std_str_             `std::string`]
+[def _std_vec_char_        `std::vector<char>`]
+[def _std_vec_char32_      `std::vector<char32_t>`]
+
+[def _p_                   [funcref boost::parser::parse `parse()`]]
+[def _p_np_                [funcref boost::parser::parse `parse`]]
+[def _pp_                  [funcref boost::parser::prefix_parse `prefix_parse()`]]
+[def _pp_np_               [funcref boost::parser::prefix_parse `prefix_parse`]]
+[def _cbp_                 [funcref boost::parser::callback_parse `callback_parse()`]]
+[def _cbpp_                [funcref boost::parser::callback_prefix_parse `callback_prefix_parse()`]]
+
+[def _attr_                [classref boost::parser::attribute `attribute`]]
+[def _attr_t_              [classref boost::parser::attribute_t `attribute_t`]]
+
+[def _w_glb_               [funcref boost::parser::with_globals `with_globals()`]]
+[def _w_eh_                [funcref boost::parser::with_error_handler `with_error_handler()`]]
+
+[def __attr_               [funcref boost::parser::_attr `_attr()`]]
+[def _val_                 [funcref boost::parser::_val `_val()`]]
+[def _pass_                [funcref boost::parser::_pass `_pass()`]]
+[def _begin_               [funcref boost::parser::_begin `_begin()`]]
+[def _end_                 [funcref boost::parser::_end `_end()`]]
+[def _where_               [funcref boost::parser::_where `_where()`]]
+[def _globals_             [funcref boost::parser::_globals `_globals()`]]
+[def _locals_              [funcref boost::parser::_locals `_locals()`]]
+[def _params_              [funcref boost::parser::_params `_params()`]]
+[def _no_case_func_        [funcref boost::parser::_no_case `_no_case()`]]
+[def _error_handler_       [funcref boost::parser::_error_handler `_error_handler()`]]
+[def _report_error_        [funcref boost::parser::_report_error `_report_error()`]]
+[def _report_warning_      [funcref boost::parser::_report_warning `_report_warning()`]]
+[def _val_np_              [funcref boost::parser::_val `_val`]]
+[def _where_np_            [funcref boost::parser::_where `_where`]]
+[def _locals_np_           [funcref boost::parser::_locals `_locals`]]
+[def _params_np_           [funcref boost::parser::_params `_params`]]
+
+[def _RULES_               [macroref BOOST_PARSER_DEFINE_RULES `BOOST_PARSER_DEFINE_RULES`]]
+[def _AGGR_SIZE_           [macroref BOOST_PARSER_MAX_AGGREGATE_SIZE `BOOST_PARSER_MAX_AGGREGATE_SIZE`]]
+[def _SUBRNG_              [macroref BOOST_PARSER_SUBRANGE `BOOST_PARSER_SUBRANGE`]]
+
+[def __p_                  [globalref boost::parser::_p `_p`]]
+
+[def _lit_np_              [funcref boost::parser::lit `lit`]]
+[def _str_np_              [funcref boost::parser::string `string`]]
+[def _attr_np_             [funcref boost::parser::attr `attr`]]
+[def _rpt_np_              [funcref boost::parser::repeat `repeat`]]
+[def _if_np_               [funcref boost::parser::if_ `if_`]]
+[def _sw_np_               [funcref boost::parser::switch_ `switch_`]]
+
+[def _lit_                 [funcref boost::parser::lit `lit()`]]
+[def _str_                 [funcref boost::parser::string `string()`]]
+[def _attr_                [funcref boost::parser::attr `attr()`]]
+[def _rpt_                 [funcref boost::parser::repeat `repeat()`]]
+[def _if_                  [funcref boost::parser::if_ `if_()`]]
+[def _sw_                  [funcref boost::parser::switch_ `switch_()`]]
+
+[def _inf_                 [globalref boost::parser::Inf `Inf`]]
+
+[def _e_                   [globalref boost::parser::eps `eps`]]
+[def _ws_                  [globalref boost::parser::ws `ws`]]
+[def _eol_                 [globalref boost::parser::eol `eol`]]
+[def _eoi_                 [globalref boost::parser::eoi `eoi`]]
+[def _ch_                  [globalref boost::parser::char_ `char_`]]
+[def _cp_                  [globalref boost::parser::cp `cp`]]
+[def _cu_                  [globalref boost::parser::cu `cu`]]
+[def _b_                   [globalref boost::parser::bool_ `bool_`]]
+
+[def _bin_                 [globalref boost::parser::bin `bin`]]
+[def _oct_                 [globalref boost::parser::oct `oct`]]
+[def _hex_                 [globalref boost::parser::hex `hex`]]
+
+[def _us_                  [globalref boost::parser::ushort_ `ushort_`]]
+[def _ui_                  [globalref boost::parser::uint_ `uint_`]]
+[def _ul_                  [globalref boost::parser::ulong_ `ulong_`]]
+[def _ull_                 [globalref boost::parser::ulong_long `ulong_long`]]
+
+[def _s_                   [globalref boost::parser::short_ `short_`]]
+[def _i_                   [globalref boost::parser::int_ `int_`]]
+[def _l_                   [globalref boost::parser::long_ `long_`]]
+[def _ll_                  [globalref boost::parser::long_long `long_long`]]
+
+[def _f_                   [globalref boost::parser::float_ `float_`]]
+[def _d_                   [globalref boost::parser::double_ `double_`]]
+
+[def _omit_                [globalref boost::parser::omit `omit[]`]]
+[def _raw_                 [globalref boost::parser::raw `raw[]`]]
+[def _lexeme_              [globalref boost::parser::lexeme `lexeme[]`]]
+[def _no_case_             [globalref boost::parser::no_case `no_case[]`]]
+[def _string_view_         [globalref boost::parser::string_view `string_view[]`]]
+[def _skip_                [globalref boost::parser::skip `skip[]`]]
+[def _merge_               [globalref boost::parser::merge `merge[]`]]
+[def _sep_                 [globalref boost::parser::separate `separate[]`]]
+[def _transform_           [globalref boost::parser::transform `transform(f)[]`]]
+
+[def _omit_np_             [globalref boost::parser::omit `omit`]]
+[def _raw_np_              [globalref boost::parser::raw `raw`]]
+[def _lexeme_np_           [globalref boost::parser::lexeme `lexeme`]]
+[def _no_case_np_          [globalref boost::parser::no_case `no_case`]]
+[def _string_view_np_      [globalref boost::parser::string_view `string_view`]]
+[def _skip_np_             [globalref boost::parser::skip `skip`]]
+[def _merge_np_            [globalref boost::parser::merge `merge`]]
+[def _sep_np_              [globalref boost::parser::separate `separate`]]
+[def _transform_np_        [globalref boost::parser::transform `transform`]]
+
+[def _blank_               [globalref boost::parser::blank `blank`]]
+[def _control_             [globalref boost::parser::control `control`]]
+[def _digit_               [globalref boost::parser::digit `digit`]]
+[def _punct_               [globalref boost::parser::punct `punct`]]
+[def _hex_digit_           [globalref boost::parser::hex_digit `hex_digit`]]
+[def _lower_               [globalref boost::parser::lower `lower`]]
+[def _upper_               [globalref boost::parser::upper `upper`]]
+
+[def _quot_str_            [globalref boost::parser::quoted_string `quoted_string`]]
+
+[def _RES_                 ['[^RESOLVE]]`()`]
+[def _RES_np_              ['[^RESOLVE]]]
+[def _ATTR_                ['[^ATTR]]`()`]
+[def _ATTR_np_             ['[^ATTR]]]
+
+[def _p_api_               [link boost_parser.tutorial.the__parse____api The `parse()` API]]
+[def _parsers_uses_        [link boost_parser.tutorial.the_parsers_and_their_uses The Parsers And Their Uses]]
+[def _parse_ctx_           [link boost_parser.tutorial.the_parse_context The Parse Context]]
+[def _rule_parsers_        [link boost_parser.tutorial.rule_parsers Rule Parsers]]
+[def _parsing_structs_     [link boost_parser.tutorial.parsing_into__struct_s_and__class_es Parsing into `struct`s and `class`es]]
+[def _expect_pts_          [link boost_parser.tutorial.backtracking.expectation_points Expectation points]]
+[def _attr_gen_            [link boost_parser.tutorial.attribute_generation Attribute Generation]]
+[def _directives_          [link boost_parser.tutorial.directives Directives]]
+[def _eh_debugging_        [link boost_parser.tutorial.error_handling_and_debugging Error Handling and Debugging]]
+[def _more_about_rules_    [link boost_parser.tutorial.more_about_rules More About Rules]]
+[def _unicode_             [link boost_parser.tutorial.unicode_support Unicode Support]]
+[def _concepts_            [link boost_parser.concepts Concepts]]
+[def _ex_json_             [link boost_parser.extended_examples.parsing_json Parsing JSON]]
+[def _ex_cb_json_          [link boost_parser.extended_examples.parsing_json_with_callbacks Parsing JSON With Callbacks]]
+[def _rationale_           [link boost_parser.rationale Rationale]]
+[def _n_is_weird_          [link boost_parser.rationale._classname_alt__boost__parser__none___code__phrase_role__identifier__none__phrase___code___classname__is_weird `none` is weird]]
+
+[def _err_fwd_hpp_         [headerref boost/parser/error_handling_fwd.hpp error_handling_fwd.hpp]]
+[def _err_hpp_             [headerref boost/parser/error_handling.hpp error_handling.hpp]]
+
+[def _kl_                  [@https://en.wikipedia.org/wiki/Kleene_star Kleene star]]
+[def _comb_                [@https://en.wikipedia.org/wiki/Parser_combinator parser combinator]]
+[def _udl_                 [@https://en.cppreference.com/w/cpp/language/user_literal UDL]]
+[def _udls_                [@https://en.cppreference.com/w/cpp/language/user_literal UDLs]]
+[def _yaml_                [@https://yaml.org/spec/1.2/spec.html YAML 1.2]]
+
+[def _Spirit_              [@https://www.boost.org/doc/libs/release/libs/spirit Boost.Spirit]]
+[def _spirit_reals_        [@https://www.boost.org/doc/libs/release/libs/spirit/doc/html/spirit/qi/reference/numeric/real.html real number parsers]]
+
+[def _emdash_              \u2014]
+
+[include tables.qbk]
+[include intro.qbk]
+[include tutorial.qbk]
+[include examples.qbk]
+[include concepts.qbk]
+
+[section Compiler Support]
+
+_Parser_ requires C++17 or later.  It is known to work with these compilers:
+
+* GCC 9 and later
+* Clang 11 and later (and XCode 10.3 and later)
+* Visual Studio 2022 and later
+
+[heading C++20 Support]
+
+C++20 concept-based constraints on template parameters are used if you build
+in C++20 (or later) mode, and the compiler defines `__cpp_lib_concepts`.  In
+C++17 mode, most templates are simply unconstrained.  If you want to disable
+the use of concepts entirely, you can define `BOOST_PARSER_DISABLE_CONCEPTS`.
+
+[endsect]
+
+[xinclude parser_reference.xml]
+
+[include rationale.qbk]

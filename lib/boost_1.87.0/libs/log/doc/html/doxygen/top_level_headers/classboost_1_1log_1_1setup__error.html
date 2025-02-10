@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class setup_error</title>
+<link rel="stylesheet" href="../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="Chapter 1. Boost.Log v2">
+<link rel="up" href="../../log/reference.html#doxygen.top_level_headers.exceptions_8hpp" title="Header &lt;boost/log/exceptions.hpp&gt;">
+<link rel="prev" href="classboost_1_1log_1_1runtime__error.html" title="Class runtime_error">
+<link rel="next" href="classboost_1_1log_1_1system__error.html" title="Class system_error">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr><td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../boost.png"></td></tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1runtime__error.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../log/reference.html#doxygen.top_level_headers.exceptions_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1system__error.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.top_level_headers.classboost_1_1log_1_1setup__error"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Class setup_error</span></h2>
+<p>boost::log::setup_error — Exception class that is used to indicate invalid library setup. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../log/reference.html#doxygen.top_level_headers.exceptions_8hpp" title="Header &lt;boost/log/exceptions.hpp&gt;">boost/log/exceptions.hpp</a>&gt;
+
+</span>
+<span class="keyword">class</span> <a class="link" href="classboost_1_1log_1_1setup__error.html" title="Class setup_error">setup_error</a> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">logic_error</span> <span class="special">{</span>
+<span class="keyword">public</span><span class="special">:</span>
+
+  <span class="comment">// <a class="link" href="classboost_1_1log_1_1setup__error.html#id12-bb">public member functions</a></span>
+  <a class="link" href="classboost_1_1log_1_1setup__error.html#doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1a9d33c13c6f2f12d9f50d380fef95c04a"><span class="identifier">setup_error</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">explicit</span> <a class="link" href="classboost_1_1log_1_1setup__error.html#doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1ab351b8a1e497ecfb9a9d593fdd3e7e13"><span class="identifier">setup_error</span></a><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <a class="link" href="classboost_1_1log_1_1setup__error.html#doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1a1b49638ab5404ad9c688eb4c99059003"><span class="special">~</span><span class="identifier">setup_error</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id26080"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id26082"></a><h3>
+<a name="id12-bb"></a><code class="computeroutput">setup_error</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1a9d33c13c6f2f12d9f50d380fef95c04a"></a><span class="identifier">setup_error</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Default constructor. Creates an exception with the default error message. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">explicit</span> <a name="doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1ab351b8a1e497ecfb9a9d593fdd3e7e13"></a><span class="identifier">setup_error</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="keyword">const</span> <span class="special">&amp;</span> descr<span class="special">)</span><span class="special">;</span></pre>
+<p>Initializing constructor. Creates an exception with the specified error message. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.top_level_headers.classboost_1_1log_1_1setup__error_1a1b49638ab5404ad9c688eb4c99059003"></a><span class="special">~</span><span class="identifier">setup_error</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Destructor </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007-2024 Andrey Semashev<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>).
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="classboost_1_1log_1_1runtime__error.html"><img src="../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../log/reference.html#doxygen.top_level_headers.exceptions_8hpp"><img src="../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="classboost_1_1log_1_1system__error.html"><img src="../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

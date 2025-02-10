@@ -1,0 +1,160 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>functor</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="up" href="../index.html" title="Chapter 1. Boost.Core">
+<link rel="prev" href="first_scalar.html" title="first_scalar">
+<link rel="next" href="identity.html" title="identity">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="first_scalar.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="identity.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="core.functor"></a><a class="link" href="functor.html" title="functor">functor</a>
+</h2></div></div></div>
+<div class="toc"><dl class="toc"><dt><span class="section"><a href="functor.html#core.functor.header_boost_core_functor_hpp">Header &lt;boost/core/functor.hpp&gt;</a></span></dt></dl></div>
+<div class="simplesect">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="id9522"></a>Authors</h3></div></div></div>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+          Andrey Semashev
+        </li></ul></div>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="core.functor.header_boost_core_functor_hpp"></a><a class="link" href="functor.html#core.functor.header_boost_core_functor_hpp" title="Header &lt;boost/core/functor.hpp&gt;">Header &lt;boost/core/functor.hpp&gt;</a>
+</h3></div></div></div>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+          This component requires a compiler supporting C++17 or newer.
+        </p></td></tr>
+</table></div>
+<p>
+        The header <code class="computeroutput"><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">core</span><span class="special">/</span><span class="identifier">functor</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span></code>
+        defines the <code class="computeroutput"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">functor</span></code> class template that wraps a raw
+        function specified in its template parameter into a function object class.
+        The function object forwards any arguments passed to it to the wrapped function
+        and returns the result of the call.
+      </p>
+<p>
+        The <code class="computeroutput"><span class="identifier">functor</span></code> wrapper can be
+        useful in cases when a function object class type is required, for example,
+        for use with smart pointers such as <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span></code>,
+        where the actual logic of the function object is already implemented as a
+        raw function, possibly provided by a third party library. Since <code class="computeroutput"><span class="identifier">functor</span></code> is default-constructible and does
+        not store a pointer to the wrapped function internally, using <code class="computeroutput"><span class="identifier">functor</span></code> is less error-prone and more efficient
+        than using the pointer to function instead. For example, with <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span></code>
+        you don't need to pass a pointer to the deleter function in the <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span></code>
+        constructor, and the <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span></code>
+        object does not store and invoke a pointer to the deleter function. With
+        <code class="computeroutput"><span class="identifier">functor</span></code>, the deleter function
+        becomes part of the <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span></code> type, which prevents mixing
+        pointers with incompatible deleters.
+      </p>
+<pre class="programlisting"><span class="keyword">void</span> <span class="identifier">my_deleter</span><span class="special">(</span><span class="keyword">void</span><span class="special">*</span> <span class="identifier">p</span><span class="special">);</span>
+
+<span class="keyword">using</span> <span class="identifier">malloc_ptr</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span><span class="special">&lt;</span> <span class="keyword">char</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">functor</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">free</span> <span class="special">&gt;</span> <span class="special">&gt;;</span>
+<span class="keyword">using</span> <span class="identifier">my_ptr</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">unique_ptr</span><span class="special">&lt;</span> <span class="keyword">char</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">functor</span><span class="special">&lt;</span> <span class="identifier">my_deleter</span> <span class="special">&gt;</span> <span class="special">&gt;;</span>
+
+<span class="identifier">my_ptr</span> <span class="identifier">create_string</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">size</span><span class="special">);</span>
+<span class="keyword">void</span> <span class="identifier">consume_string</span><span class="special">(</span><span class="identifier">my_ptr</span><span class="special">&amp;&amp;</span> <span class="identifier">str</span><span class="special">);</span>
+
+<span class="identifier">malloc_ptr</span> <span class="identifier">ptr1</span><span class="special">(</span><span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">char</span><span class="special">*</span> <span class="special">&gt;(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">malloc</span><span class="special">(</span><span class="identifier">size</span><span class="special">)));</span>
+<span class="comment">// ptr1 = allocate_string(size); // error, cannot convert my_ptr to malloc_ptr</span>
+<span class="identifier">my_ptr</span> <span class="identifier">ptr2</span> <span class="special">=</span> <span class="identifier">create_string</span><span class="special">(</span><span class="identifier">size</span><span class="special">);</span> <span class="comment">// ok</span>
+
+<span class="comment">// consume_string(std::move(ptr1)); // error, cannot convert malloc_ptr&amp;&amp; to my_ptr</span>
+<span class="identifier">consume_string</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">move</span><span class="special">(</span><span class="identifier">ptr2</span><span class="special">));</span> <span class="comment">// ok</span>
+</pre>
+<p>
+        Using <code class="computeroutput"><span class="identifier">functor</span></code> may also be
+        beneficial for reducing generated code sizes. For example, in order to avoid
+        storing and invoking a pointer to the deleter function in <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">shared_ptr</span></code>,
+        one may be inclined to use lambda functions to wrap the deleter function
+        call like this:
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">shared_ptr</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;</span> <span class="identifier">ptr</span><span class="special">(</span><span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">int</span><span class="special">*</span> <span class="special">&gt;(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">malloc</span><span class="special">(</span><span class="keyword">sizeof</span><span class="special">(</span><span class="keyword">int</span><span class="special">))),</span> <span class="special">[](</span><span class="keyword">int</span><span class="special">*</span> <span class="identifier">p</span><span class="special">)</span> <span class="special">{</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">free</span><span class="special">(</span><span class="identifier">p</span><span class="special">);</span> <span class="special">});</span>
+</pre>
+<p>
+        The problem is that every lambda function declaration introduces a unique
+        type, even if the lambda function definition matches exactly one of the previously
+        declared lambda functions. Thus, if <code class="computeroutput"><span class="identifier">std</span><span class="special">::</span><span class="identifier">shared_ptr</span></code>
+        objects like the one above are created in multiple places in the program,
+        the definition of the shared pointer counter and associated code and data
+        (e.g. virtual function table) will be duplicated for each instance.
+      </p>
+<p>
+        Replacing the lambda function with <code class="computeroutput"><span class="identifier">functor</span></code>
+        solves this problem without sacrificing readability or efficiency:
+      </p>
+<pre class="programlisting"><span class="identifier">std</span><span class="special">::</span><span class="identifier">shared_ptr</span><span class="special">&lt;</span> <span class="keyword">int</span> <span class="special">&gt;</span> <span class="identifier">ptr</span><span class="special">(</span><span class="keyword">static_cast</span><span class="special">&lt;</span> <span class="keyword">int</span><span class="special">*</span> <span class="special">&gt;(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">malloc</span><span class="special">(</span><span class="keyword">sizeof</span><span class="special">(</span><span class="keyword">int</span><span class="special">))),</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span><span class="special">::</span><span class="identifier">functor</span><span class="special">&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">free</span> <span class="special">&gt;());</span>
+</pre>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.functor.header_boost_core_functor_hpp.synopsis"></a><a class="link" href="functor.html#core.functor.header_boost_core_functor_hpp.synopsis" title="Synopsis">Synopsis</a>
+</h4></div></div></div>
+<pre class="programlisting"><span class="keyword">namespace</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">core</span> <span class="special">{</span>
+
+<span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">auto</span> <span class="identifier">Function</span> <span class="special">&gt;</span>
+<span class="keyword">struct</span> <span class="identifier">functor</span>
+<span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span><span class="special">...</span> <span class="identifier">Args</span> <span class="special">&gt;</span>
+    <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <span class="keyword">operator</span><span class="special">()</span> <span class="special">(</span><span class="identifier">Args</span><span class="special">&amp;&amp;...</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">(...);</span>
+<span class="special">};</span>
+
+<span class="special">}</span> <span class="comment">// namespace boost::core</span>
+</pre>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="core.functor.header_boost_core_functor_hpp.template_typename_args_decltype_"></a><a class="link" href="functor.html#core.functor.header_boost_core_functor_hpp.template_typename_args_decltype_" title="template&lt; typename... Args &gt; decltype(auto) operator() (Args&amp;&amp;... args) const noexcept(...);"><code class="computeroutput"><span class="keyword">template</span><span class="special">&lt;</span> <span class="keyword">typename</span><span class="special">...</span> <span class="identifier">Args</span> <span class="special">&gt;</span> <span class="keyword">decltype</span><span class="special">(</span><span class="keyword">auto</span><span class="special">)</span> <span class="keyword">operator</span><span class="special">()</span> <span class="special">(</span><span class="identifier">Args</span><span class="special">&amp;&amp;...</span> <span class="identifier">args</span><span class="special">)</span> <span class="keyword">const</span> <span class="keyword">noexcept</span><span class="special">(...);</span></code></a>
+</h4></div></div></div>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              <span class="bold"><strong>Effects:</strong></span> <code class="computeroutput"><span class="keyword">return</span>
+              <span class="identifier">Function</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span>
+              <span class="identifier">Args</span> <span class="special">&gt;(</span><span class="identifier">args</span><span class="special">)...)</span></code>.
+            </li>
+<li class="listitem">
+              <span class="bold"><strong>Throws:</strong></span> Nothing, unless invoking
+              <code class="computeroutput"><span class="identifier">Function</span></code> throws.
+            </li>
+<li class="listitem">
+              <span class="bold"><strong>Note:</strong></span> This function only participates
+              in overload resolution if <code class="computeroutput"><span class="identifier">Function</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">forward</span><span class="special">&lt;</span> <span class="identifier">Args</span>
+              <span class="special">&gt;(</span><span class="identifier">args</span><span class="special">)...)</span></code> is a valid call expression.
+            </li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2014 Peter Dimov<br>Copyright © 2014 Glen Fernandes<br>Copyright © 2014 Andrey Semashev<p>
+        Distributed under the <a href="http://boost.org/LICENSE_1_0.txt" target="_top">Boost
+        Software License, Version 1.0</a>.
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="first_scalar.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../index.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="identity.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

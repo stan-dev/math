@@ -1,0 +1,533 @@
+[/
+    Copyright (c) 2019-2024 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+   
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+]
+
+[section:dynamic_interface The dynamic interface]
+[nochunk]
+
+To use the dynamic interface, use the [reflink results] class. `results` is
+an in-memory representation of a resultset. We can depict it like this
+(this is actually a simplified representation, since
+[link mysql.multi_resultset some statements may return more than one resultset]).
+
+[$mysql/images/results.svg [align center] [scale 125]]
+
+We can see that [refmem results rows] returns a matrix-like object,
+containing the retrieved rows. This section is dedicated on diving deeper
+on how to use these objects.
+
+[heading Rows and fields]
+
+This matrix-like structure is composed of variant-like objects called ['fields].
+Field objects are capable of representing any value retrieved from MySQL.
+
+This library defines the following classes to work with rows and fields:
+
+[variablelist
+    [
+        [[reflink field]]
+        [The smallest unit of data. A single "cell" in a MySQL table. This is an owning, variant-like type.]
+    ]
+    [
+        [[reflink field_view]]
+        [Like `field`, but non-owning.]
+    ]
+    [
+        [[reflink row]]
+        [An owning, `vector`-like collection of fields.]
+    ]
+    [
+        [[reflink row_view]]
+        [Like `row`, but non-owning.]
+    ]
+    [
+        [[reflink rows]]
+        [An owning, matrix-like collection of fields. Represents several rows of the same size in an optimized way.]
+    ]
+    [
+        [[reflink rows_view]]
+        [Like `rows`, but non-owning.]
+    ]
+]
+
+[refmem results rows] returns a [reflink rows_view] object. The memory for the rows is owned by the
+`results` object. Indexing the returned view also returns view objects:
+
+[dynamic_views]
+
+Views behave similarly to `std::string_view`. You must make sure that you don't use a view after the
+storage it points to has gone out of scope. In this case, you must not use any of the views after the
+`results` object has gone out of scope.
+
+As it happens with `std::string_view`, you can take ownership of a view using its owning counterpart:
+
+[dynamic_taking_ownership]
+
+[heading Using fields]
+
+[reflink field] and [reflink field_view] are specialized variant-like types that can hold any type
+you may find in a MySQL table. Once you obtain a field, you can access its contents using the following functions:
+
+* You can query a field's type by using [refmemunq field_view kind],
+  which returns a [reflink field_kind] enum.
+* You can query whether a field contains a certain type with `field::is_xxx`.
+* You can get the underlying value with `field::as_xxx` and `field::get_xxx`.
+  The `as_xxx` functions are checked (they will throw an exception if the
+  actual type doesn't match), while the `get_xxx` are unchecked (they result
+  in undefined behavior on type mismatch).
+* You can stream fields and compare them for equality.
+
+For example:
+
+[dynamic_using_fields]
+
+`NULL` values are represented as field objects having `kind() == field_kind::null`.
+You can check whether a value is `NULL` or not using [refmemunq field_view is_null].
+This is how `NULL`s are typically handled:
+
+[dynamic_handling_nulls]
+
+[heading MySQL to C++ type mappings]
+
+Every MySQL type is mapped to a single C++ type. The following table shows these mappings:
+
+[table:accessors
+    [
+        [`field_kind`]
+        [C++ type]
+        [MySQL types]
+        [`is` accessor]
+        [`as` accessor]
+        [`get` accessor]
+    ]
+    [
+        [`int64`]
+        [`std::int64_t`]
+        [__TINYINT__, __SMALLINT__, __MEDIUMINT__, __INT__, __BIGINT__]
+        [[refmemunq field_view is_int64]]
+        [[refmemunq field_view as_int64]]
+        [[refmemunq field_view get_int64]]
+    ]
+    [
+        [`uint64`]
+        [`std::uint64_t`]
+        [Unsigned __TINYINT__, __SMALLINT__, __MEDIUMINT__, __INT__, __BIGINT__, __YEAR__, __BIT__]
+        [[refmemunq field_view is_uint64]]
+        [[refmemunq field_view as_uint64]]
+        [[refmemunq field_view get_uint64]]
+    ]
+    [
+        [`string`]
+        [
+            [reflink string_view] for `field_view`
+            
+            `std::string` for `field`
+        ]
+        [
+            __CHAR__, __VARCHAR__, __TEXT__ (all sizes), __ENUM__, __SET__, __DECIMAL__, __NUMERIC__, __JSON__
+        ]
+        [[refmemunq field_view is_string]]
+        [[refmemunq field_view as_string]]
+        [[refmemunq field_view get_string]]
+    ]
+    [
+        [`blob`]
+        [
+            [reflink blob_view] for `field_view`
+            
+            [reflink blob] for `field`
+        ]
+        [__BINARY__, __VARBINARY__,  __BLOB__  (all sizes), __GEOMETRY__]
+        [[refmemunq field_view is_blob]]
+        [[refmemunq field_view as_blob]]
+        [[refmemunq field_view get_blob]]
+    ]
+    [
+        [`float_`]
+        [`float`]
+        [__FLOAT__]
+        [[refmemunq field_view is_float]]
+        [[refmemunq field_view as_float]]
+        [[refmemunq field_view get_float]]
+    ]
+    [
+        [`double_`]
+        [`double`]
+        [__DOUBLE__]
+        [[refmemunq field_view is_double]]
+        [[refmemunq field_view as_double]]
+        [[refmemunq field_view get_double]]
+    ]
+    [
+        [`date`]
+        [[reflink date]]
+        [__DATE__]
+        [[refmemunq field_view is_date]]
+        [[refmemunq field_view as_date]]
+        [[refmemunq field_view get_date]]
+    ]
+    [
+        [`datetime`]
+        [[reflink datetime]]
+        [__DATETIME__, __TIMESTAMP__]
+        [[refmemunq field_view is_datetime]]
+        [[refmemunq field_view as_datetime]]
+        [[refmemunq field_view get_datetime]]
+    ]
+    [
+        [`time`]
+        [[reflink time]]
+        [__TIME__]
+        [[refmemunq field_view is_time]]
+        [[refmemunq field_view as_time]]
+        [[refmemunq field_view get_time]]
+    ]
+    [
+        [`null`]
+        []
+        [Any of the above, when they're `NULL`]
+        [[refmemunq field_view is_null]]
+        []
+        []
+    ]
+]
+
+No character set conversion is applied on strings. They are provided
+as the server sends them. If you've run [refmemunq any_connection async_set_character_set],
+strings will be encoded according to the passed character set. For details, see [link mysql.charsets this section].
+
+[heading The field class]
+
+[reflink field_view] is to [reflink field] what `std::string_view` is to `std::string`.
+
+`field_view`s are cheap to create and to copy, as they are small objects and don't perform
+any memory allocations. They are also immutable. On the other hand, `field`s may be more
+expensive to create and copy, as they may perform memory allocations. `field`s are mutable.
+
+`field` and `field_view` use the same underlying types for scalars. For strings and blobs,
+`field` uses the owning types `std::string` and [reflink blob], while `field_view` uses the
+reference types [reflink string_view] and [reflink blob_view].
+
+`field` accessors return references, which allow you to mutate the underlying object:
+
+[dynamic_field_accessor_references]
+
+You can also mutate a `field` using the assignment operator. This allows you to also
+change the underlying type of a `field`:
+
+[dynamic_field_assignment]
+
+[heading Multi-resultset and multi-function operations]
+
+You can use both with the dynamic interface. Please refer to the sections
+on [link mysql.multi_resultset multi-resultset operations] and
+[link mysql.multi_function multi-function operations] for more information.
+
+[heading MySQL to C++ type mapping reference]
+
+The following table reflects mapping from database types to C++ types.
+The range column shows the range of values that MySQL admits for that type. This library
+guarantees that any field retrieved from the database honors that range. The `column_type`
+column shows what [refmem metadata type] would return for a column of that type.
+
+[table:dynamic_field_mappings
+    [
+        [MySQL type]
+        [`field_kind`]
+        [C++ type]
+        [Range]
+        [`column_type`]
+        [Considerations]
+    ]
+    [
+        [__TINYINT__]
+        [`int64`]
+        [`std::int64_t`]
+        [`-0x80` to `0x7f`]
+        [`tinyint`]
+        [1 byte integer]
+    ]
+    [
+        [__TINYINT__ `UNSIGNED`]
+        [`uint64`]
+        [`std::uint64_t`]
+        [`0` to `0xff`]
+        [`tinyint`]
+        [1 byte integer]
+    ]
+    [
+        [__SMALLINT__]
+        [`int64`]
+        [`std::int64_t`]
+        [`-0x8000` to `0x7fff`]
+        [`smallint`]
+        [2 byte integer]
+    ]
+    [
+        [__SMALLINT__ `UNSIGNED`]
+        [`uint64`]
+        [`std::uint64_t`]
+        [`0` to `0xffff`]
+        [`smallint`]
+        [2 byte integer]
+    ]
+    [
+        [__MEDIUMINT__]
+        [`int64`]
+        [`std::int64_t`]
+        [`-0x800000` to `0x7fffff`]
+        [`mediumint`]
+        [3 byte integer]
+    ]
+    [
+        [__MEDIUMINT__ `UNSIGNED`]
+        [`uint64`]
+        [`std::uint64_t`]
+        [`0` to `0xffffff`]
+        [`mediumint`]
+        [3 byte integer]
+    ]
+    [
+        [__INT__]
+        [`int64`]
+        [`std::int64_t`]
+        [`-0x80000000` to `0x7fffffff`]
+        [`int_`]
+        [4 byte integer]
+    ]
+    [
+        [__INT__ `UNSIGNED`]
+        [`uint64`]
+        [`std::uint64_t`]
+        [`0` to `0xffffffff`]
+        [`int_`]
+        [4 byte integer]
+    ]
+    [
+        [__BIGINT__]
+        [`int64`]
+        [`std::int64_t`]
+        [`-0x8000000000000000` to `0x7fffffffffffffff`]
+        [`bigint`]
+        [8 byte integer]
+    ]
+    [
+        [__BIGINT__ `UNSIGNED`]
+        [`uint64`]
+        [`std::uint64_t`]
+        [`0` and `0xffffffffffffffff`]
+        [`bigint`]
+        [8 byte integer]
+    ]
+    [
+        [__YEAR__]
+        [`uint64`]
+        [`std::uint64_t`]
+        [\[`1901`, `2155`\], plus zero]
+        [`year`]
+        [
+            1 byte integer type used to represent years
+
+            Zero is often employed to represent invalid year values. We represent zero year as a numeric 0.
+        ]
+    ]
+    [
+        [__BIT__]
+        [`uint64`]
+        [`std::uint64_t`]
+        [Depends on the bitset width. Max `0` to `0xffffffffffffffff`.]
+        [`bit`]
+        [
+            A bitset between 1 and 64 bits wide.
+        ]
+    ]
+    [
+        [__FLOAT__]
+        [`float_`]
+        [`float`]
+        [IEEE 754 `float` range]
+        [`float_`]
+        [
+            4 byte floating point type
+        ]
+    ]
+    [
+        [__DOUBLE__]
+        [`double_`]
+        [`double`]
+        [IEEE 754 `double` range]
+        [`double_`]
+        [
+            8 byte floating point type
+        ]
+    ]
+    [
+        [__DATE__]
+        [`date`]
+        [[reflink date]]
+        [
+            \[[reflink min_date], [reflink max_date]\] (some MySQL implementations may allow a narrower range),
+            plus invalid and zero dates (see __allow_invalid_dates__ and  __strict_sql__).
+        ]
+        [`date`]
+        []
+    ]
+    [
+        [__DATETIME__]
+        [`datetime`]
+        [[reflink datetime]]
+        [
+            \[[reflink min_datetime], [reflink max_datetime]\] (some MySQL implementations may allow a narrower range),
+            plus invalid and zero datetimes (see __allow_invalid_dates__ and  __strict_sql__).
+        ]
+        [`datetime`]
+        [
+            Time point type without time zone, with a resolution of one microsecond.
+        ]
+    ]
+    [
+        [__TIMESTAMP__]
+        [`datetime`]
+        [[reflink datetime]]
+        [
+            \[[reflink min_datetime], [reflink max_datetime]\] (the actual MySQL supported range is usually
+            narrower, but we don't enforce it in the client), plus zero timestamps (see __strict_sql__).
+        ]
+        [`timestamp`]
+        [
+            Time point type with a resolution of one microsecond.
+        ]
+    ]
+    [
+        [__TIME__]
+        [`time`]
+        [[reflink time]]
+        [
+            \[[reflink min_time], [reflink max_time]\]
+        ]
+        [`time`]
+        [
+            Signed time duration, with a resolution of one microsecond.
+        ]
+    ]
+    [
+        [__CHAR__]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        []
+        [`char_`]
+        [
+            Fixed-size character string.
+        ]
+    ]
+    [
+        [__VARCHAR__]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        []
+        [`varchar`]
+        [
+            Variable size character string with a maximum size.
+        ]
+    ]
+    [
+        [__TEXT__ (all sizes)]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        []
+        [`text`]
+        [
+            Variable size character string.
+        ]
+    ]
+    [
+        [__ENUM__]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        []
+        [`enum_`]
+        [
+            Character string with a fixed set of possible values (only one possible).
+        ]
+    ]
+    [
+        [__SET__]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        []
+        [`set`]
+        [
+            Character string with a fixed set of possible values (many possible).
+        ]
+    ]
+    [
+        [__JSON__]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        []
+        [`json` (MySQL) or `text` (MariaDB)]
+        [
+            A serialized JSON value of any type.
+            
+            Note that [refmem metadata type] is different depending on the DB system. MySQL has a dedicated `JSON` type, while in MariaDB `JSON` is an alias for `LONGTEXT`. JSON values are represented as strings by this library in both cases.
+        ]
+    ]
+    [
+        [__DECIMAL__/__NUMERIC__]
+        [`string`]
+        [[reflink string_view] or `std::string`]
+        [Depends on the column definition]
+        [`decimal`]
+        [
+            A fixed precision numeric value. In this case, the string will contain
+            the textual representation of the number (e.g. the string `"20.52"` for `20.52`).
+
+            This type is mapped to a string to avoid losing precision.
+        ]
+    ]
+    [
+        [__BINARY__]
+        [`blob`]
+        [[reflink blob_view] or [reflink blob]]
+        []
+        [`binary`]
+        [
+            Fixed-size blob.
+        ]
+    ]
+    [
+        [__VARBINARY__]
+        [`blob`]
+        [[reflink blob_view] or [reflink blob]]
+        []
+        [`varbinary`]
+        [
+            Variable size blob with a maximum size.
+        ]
+    ]
+    [
+        [__BLOB__ (all sizes)]
+        [`blob`]
+        [[reflink blob_view] or [reflink blob]]
+        []
+        [`blob`]
+        [
+            Variable size blob.
+        ]
+    ]
+    [
+        [__GEOMETRY__]
+        [`blob`]
+        [[reflink blob_view] or [reflink blob]]
+        []
+        [`geometry`]
+        [
+            Any of the spatial data types. The string contains the binary representation of the geometry type.
+        ]
+    ]
+]
+
+[endsect]

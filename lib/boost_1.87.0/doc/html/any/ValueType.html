@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ValueType requirements</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../any.html" title="Chapter 4. Boost.Any 1.2">
+<link rel="prev" href="examples.html" title="Examples">
+<link rel="next" href="../reference_section_of_boost_any.html" title="Reference Section of Boost.Any">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="examples.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../any.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../reference_section_of_boost_any.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h2 class="title" style="clear: both">
+<a name="any.ValueType"></a><a class="link" href="ValueType.html" title="ValueType requirements"><span class="emphasis"><em>ValueType</em></span> requirements</a>
+</h2></div></div></div>
+<p>
+      Values are strongly informational objects for which identity is not significant,
+      i.e. the focus is principally on their state content and any behavior organized
+      around that. Another distinguishing feature of values is their granularity:
+      normally fine-grained objects representing simple concepts in the system such
+      as quantities.
+    </p>
+<p>
+      As the emphasis of a value lies in its state not its identity, values can be
+      copied and typically assigned one to another, requiring the explicit or implicit
+      definition of a public copy constructor and public assignment operator. Values
+      typically live within other scopes, i.e. within objects or blocks, rather than
+      on the heap. Values are therefore normally passed around and manipulated directly
+      as variables or through references, but not as pointers that emphasize identity
+      and indirection.
+    </p>
+<p>
+      The specific requirements on value types to be used in an <code class="computeroutput"><a class="link" href="../doxygen/reference_section_of_boost_any/classboost_1_1any.html" title="Class any">boost::any</a></code>
+      and <code class="computeroutput"><a class="link" href="../doxygen/reference_section_of_boost_any/classboost_1_1anys_1_1basic__any.html" title="Class template basic_any">boost::anys::basic_any</a></code>
+      are:
+    </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+          A <span class="emphasis"><em>ValueType</em></span> is <span class="emphasis"><em>CopyConstructible</em></span>.
+        </li>
+<li class="listitem">
+          The destructor for a <span class="emphasis"><em>ValueType</em></span> upholds the no-throw
+          exception-safety guarantee.
+        </li>
+</ul></div>
+</div>
+<div class="copyright-footer">Copyright © 2001 Kevlin Henney<br>Copyright © 2013-2024 Antony Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="examples.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../any.html"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="../reference_section_of_boost_any.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

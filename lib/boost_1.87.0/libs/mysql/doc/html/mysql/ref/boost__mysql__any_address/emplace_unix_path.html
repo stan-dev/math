@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>any_address::emplace_unix_path</title>
+<link rel="stylesheet" href="../../../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../index.html" title="Chapter 1. Boost.MySQL">
+<link rel="up" href="../boost__mysql__any_address.html" title="any_address">
+<link rel="prev" href="emplace_host_and_port.html" title="any_address::emplace_host_and_port">
+<link rel="next" href="operator_eq__eq_.html" title="any_address::operator==">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="emplace_host_and_port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__any_address.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_eq__eq_.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h5 class="title">
+<a name="mysql.ref.boost__mysql__any_address.emplace_unix_path"></a><a class="link" href="emplace_unix_path.html" title="any_address::emplace_unix_path">any_address::emplace_unix_path</a>
+</h5></div></div></div>
+<p>
+          <a class="indexterm" name="id40238"></a>
+Replaces the current object with a UNIX socket
+          path.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.h0"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.synopsis"></a></span><a class="link" href="emplace_unix_path.html#mysql.ref.boost__mysql__any_address.emplace_unix_path.synopsis">Synopsis</a>
+        </h6>
+<pre class="programlisting"><span class="keyword">void</span>
+<span class="identifier">emplace_unix_path</span><span class="special">(</span>
+    <span class="identifier">std</span><span class="special">::</span><span class="identifier">string</span> <span class="identifier">path</span><span class="special">);</span>
+</pre>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.h1"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.description"></a></span><a class="link" href="emplace_unix_path.html#mysql.ref.boost__mysql__any_address.emplace_unix_path.description">Description</a>
+        </h6>
+<p>
+          Destroys the current contained object and constructs a new UNIX socket
+          path from the passed value. This function can change the underlying type
+          of object held by <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>.
+        </p>
+<p>
+          The constructed object has <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">type</span><span class="special">()</span> <span class="special">==</span> <span class="identifier">address_type</span><span class="special">::</span><span class="identifier">unix_path</span></code>
+          and <code class="computeroutput"><span class="keyword">this</span><span class="special">-&gt;</span><span class="identifier">unix_socket_path</span><span class="special">()</span>
+          <span class="special">==</span> <span class="identifier">path</span></code>.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.h2"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.exception_safety"></a></span><a class="link" href="emplace_unix_path.html#mysql.ref.boost__mysql__any_address.emplace_unix_path.exception_safety">Exception
+          safety</a>
+        </h6>
+<p>
+          Basic guarantee. Memory allocations may throw.
+        </p>
+<h6>
+<a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.h3"></a>
+          <span class="phrase"><a name="mysql.ref.boost__mysql__any_address.emplace_unix_path.object_lifetimes"></a></span><a class="link" href="emplace_unix_path.html#mysql.ref.boost__mysql__any_address.emplace_unix_path.object_lifetimes">Object
+          lifetimes</a>
+        </h6>
+<p>
+          Invalidates views pointing into <code class="computeroutput"><span class="special">*</span><span class="keyword">this</span></code>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2019-2024 Ruben Perez<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="emplace_host_and_port.html"><img src="../../../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../boost__mysql__any_address.html"><img src="../../../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../index.html"><img src="../../../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="operator_eq__eq_.html"><img src="../../../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

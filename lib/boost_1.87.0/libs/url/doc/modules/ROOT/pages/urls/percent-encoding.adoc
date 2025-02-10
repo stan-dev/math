@@ -1,0 +1,159 @@
+//
+// Copyright (c) 2023 Alan de Freitas (alandefreitas@gmail.com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
+// Official repository: https://github.com/boostorg/url
+//
+
+= Percent Encoding
+
+== Encoding
+
+The cpp:encode[] can be used to percent-encode strings with the specified __CharSet__.
+
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_1,indent=0]
+----
+
+A few parameters, such as encoding spaces as plus (cpp:+[]), can be adjusted with cpp:encoding_opts[]:
+
+// snippet_encoding_2
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_2,indent=0]
+----
+
+The result type of the function can also be specified via a __StringToken__
+so that strings can be reused or appended.
+
+// snippet_encoding_3
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_3,indent=0]
+----
+
+We can also use cpp:encoded_size[] to determine the required size before attempting to encode:
+
+// snippet_encoding_4
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_4,indent=0]
+----
+
+In other scenarios, strings can also be directly encoded into buffers:
+
+// snippet_encoding_5
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_5,indent=0]
+----
+
+== Validating
+
+The class cpp:pct_string_view[] represents a reference percent-encoded strings:
+
+// snippet_encoding_6
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_6,indent=0]
+----
+
+cpp:pct_string_view[] is analogous to cpp:string_view[], with the main difference that the percent-encoding of the underlying buffer is always validated.
+Attempting to directly construct a cpp:pct_string_view[] from an invalid string throws an exception.
+
+To simply validate a string without recurring to exceptions, a cpp:result[]
+can be returned with the
+cpp:make_pct_string_view[]:
+
+// snippet_encoding_7
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_7,indent=0]
+----
+
+This means cpp:make_pct_string_view[]
+can also be used to validate strings and keep that information for future use.
+The modifying functions in classes such as cpp:url[] expect instances of
+cpp:pct_string_view[] that have already been validated.
+This completely removes the responsibility of revalidating this information or throwing exceptions from these functions:
+
+// snippet_encoding_8
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_8,indent=0]
+----
+
+When exceptions are acceptable, a common pattern is to let a literal string or other type convertible to cpp:string_view[] be implicitly converted to
+cpp:pct_string_view[].
+
+// snippet_encoding_9
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_9,indent=0]
+----
+
+If the input is invalid, note that an exception is thrown while the
+cpp:pct_string_view[] is implicitly constructed and not from the modifying function.
+
+Reusing the validation guarantee is particularly useful when the
+cpp:pct_string_view[] comes from another source where the data is also ensured to be validated:
+
+// snippet_encoding_10
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_10,indent=0]
+----
+
+In the example above,
+cpp:url_base::set_encoded_path[set_encoded_path]
+does not to revalidate any information from
+cpp:encoded_path[]
+because these references are passed as cpp:pct_string_view[].
+
+== Decode
+
+The class cpp:pct_string_view[] represents a reference percent-encoded strings.
+cpp:decode_view[] is analogous to cpp:pct_string_view[], with the main difference that the underlying buffer always dereferences to decoded characters.
+
+// snippet_encoding_11
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_11,indent=0]
+----
+
+A cpp:decode_view[] can also be created from a cpp:pct_string_view[] with the
+cpp:pct_string_view::operator*[operator*].
+The also gives us an opportunity to validate external strings:
+
+// snippet_encoding_12
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_12,indent=0]
+----
+
+This is particularly useful when the decoded string need to be accessed for comparisons with no necessity to explicitly decoding the string into a buffer:
+
+// snippet_encoding_13
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_13,indent=0]
+----
+
+The member function
+cpp:pct_string_view::decode[]
+can be used to decode the data into a buffer.
+Like the free-function
+cpp:encode[], decoding options and the string token can be customized.
+
+// snippet_encoding_14
+[source,cpp]
+----
+include::example$unit/snippets.cpp[tag=snippet_encoding_14,indent=0]
+----
+
+
+
+

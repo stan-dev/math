@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Function template for_each_field_with_name</title>
+<link rel="stylesheet" href="../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../../reference_section_of_pfr.html#doxygen.reference_section_of_pfr.core__name_8hpp" title="Header &lt;boost/pfr/core_name.hpp&gt;">
+<link rel="prev" href="core__name_8hpp_1adefd2900157dc0c909a5df8a5a0e18bc.html" title="Function template names_as_array">
+<link rel="next" href="functions__for_8hpp_1a4092167ce3b09df7a69fe9123cf48c6a.html" title="Macro BOOST_PFR_FUNCTIONS_FOR">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../boost.png"></td>
+<td align="center"><a href="../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="core__name_8hpp_1adefd2900157dc0c909a5df8a5a0e18bc.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference_section_of_pfr.html#doxygen.reference_section_of_pfr.core__name_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="functions__for_8hpp_1a4092167ce3b09df7a69fe9123cf48c6a.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.reference_section_of_pfr.core__name_8hpp_1a8c6c718187b9f6e884e6fc9f53c5d7e6"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Function template for_each_field_with_name</span></h2>
+<p>boost::pfr::for_each_field_with_name</p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../../reference_section_of_pfr.html#doxygen.reference_section_of_pfr.core__name_8hpp" title="Header &lt;boost/pfr/core_name.hpp&gt;">boost/pfr/core_name.hpp</a>&gt;
+
+</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> T<span class="special">,</span> <span class="keyword">typename</span> F<span class="special">&gt;</span> 
+  <span class="keyword">constexpr</span> <span class="keyword">void</span> <span class="identifier">for_each_field_with_name</span><span class="special">(</span><span class="identifier">T</span> <span class="special">&amp;&amp;</span> value<span class="special">,</span> <span class="identifier">F</span> <span class="special">&amp;&amp;</span> func<span class="special">)</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.28.10.5.8.4"></a><h2>Description</h2>
+<p>Calls <code class="computeroutput">func</code> for each field with its name of a <code class="computeroutput">value</code></p>
+<p>
+<span class="bold"><strong>Example:</strong></span> </p>
+<pre class="programlisting"><span class="keyword">struct</span> <span class="identifier">Toto</span> <span class="special">{</span> <span class="keyword">int</span> <span class="identifier">a</span><span class="special">;</span> <span class="keyword">char</span> <span class="identifier">c</span><span class="special">;</span> <span class="special">}</span><span class="special">;</span>
+<span class="identifier">Toto</span> <span class="identifier">t</span> <span class="special">{</span><span class="number">5</span><span class="special">,</span> <span class="char">'c'</span><span class="special">}</span><span class="special">;</span>
+<span class="keyword">auto</span> <span class="identifier">print</span> <span class="special">=</span> <span class="special">[</span><span class="special">]</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">string_view</span> <span class="identifier">name</span><span class="special">,</span> <span class="keyword">const</span> <span class="keyword">auto</span><span class="special">&amp;</span> <span class="identifier">value</span><span class="special">)</span><span class="special">{</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">cout</span> <span class="special">&lt;&lt;</span> <span class="string">"Name: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">name</span> <span class="special">&lt;&lt;</span> <span class="string">" Value: "</span> <span class="special">&lt;&lt;</span> <span class="identifier">value</span> <span class="special">&lt;&lt;</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">endl</span><span class="special">;</span> <span class="special">}</span><span class="special">;</span>
+<a class="link" href="core__name_8hpp_1a8c6c718187b9f6e884e6fc9f53c5d7e6.html" title="Function template for_each_field_with_name"><span class="identifier">for_each_field_with_name</span></a><span class="special">(</span><span class="identifier">t</span><span class="special">,</span> <span class="identifier">print</span><span class="special">)</span><span class="special">;</span>
+</pre>
+<p> </p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">value</code></span></p></td>
+<td><p>To each field of this variable will be the <code class="computeroutput">func</code> applied.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">func</code></span></p></td>
+<td>
+<p>must have one of the following signatures:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem"><p>any_return_type func(std::string_view name, U&amp;&amp; field) // field of value is perfect forwarded to function</p></li>
+<li class="listitem"><p>any_return_type func(std::string_view name, U&amp;&amp; field, std::size_t i)</p></li>
+<li class="listitem"><p>any_return_type func(std::string_view name, U&amp;&amp; value, I i) // Here I is an <code class="computeroutput">std::integral_constant&lt;size_t, field_index&gt;</code></p></li>
+</ul></div>
+<p>
+</p>
+</td>
+</tr>
+</tbody>
+</table></div></td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2016-2024 Antony
+      Polukhin<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="core__name_8hpp_1adefd2900157dc0c909a5df8a5a0e18bc.html"><img src="../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../../reference_section_of_pfr.html#doxygen.reference_section_of_pfr.core__name_8hpp"><img src="../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../index.html"><img src="../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="functions__for_8hpp_1a4092167ce3b09df7a69fe9123cf48c6a.html"><img src="../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

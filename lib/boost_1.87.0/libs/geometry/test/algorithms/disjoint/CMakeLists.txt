@@ -1,0 +1,21 @@
+# Boost.Geometry
+# Copyright (c) 2024 Barend Gehrels, Amsterdam, the Netherlands.
+# Use, modification and distribution is subject to the Boost Software License,
+# Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
+# http://www.boost.org/LICENSE_1_0.txt)
+
+foreach(item IN ITEMS
+    disjoint
+    disjoint_coverage_a_a
+    disjoint_coverage_l_a
+    disjoint_coverage_l_l
+    disjoint_coverage_p_a
+    disjoint_coverage_p_l
+    disjoint_coverage_p_p
+    disjoint_multi
+    disjoint_point_box_geometry
+    disjoint_seg_box
+    disjoint_sph
+  )
+  boost_geometry_add_unit_test("algorithms" ${item})
+endforeach()

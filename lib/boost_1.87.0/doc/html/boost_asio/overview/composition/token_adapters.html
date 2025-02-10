@@ -1,0 +1,326 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Completion Token Adapters</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../../../boost_asio.html" title="Boost.Asio">
+<link rel="up" href="../composition.html" title="Composition and Completion Tokens">
+<link rel="prev" href="compose.html" title="Compositions as Asynchronous Operations">
+<link rel="next" href="type_erasure.html" title="Type Erasure, Separate Compilation and Virtual Functions">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="compose.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="type_erasure.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h4 class="title">
+<a name="boost_asio.overview.composition.token_adapters"></a><a class="link" href="token_adapters.html" title="Completion Token Adapters">Completion
+        Token Adapters</a>
+</h4></div></div></div>
+<p>
+          A <span class="emphasis"><em>completion token adapter</em></span> is a utility that can be
+          generically applied to a <a class="link" href="../model/completion_tokens.html" title="Completion Tokens">completion
+          token</a>, to produce a new completion token with modified behaviour.
+          Common uses of completion token adapters include:
+        </p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
+<li class="listitem">
+              Automatically wrapping the completion handler to add <a class="link" href="../model/associators.html" title="Associated Characteristics and Associators">associated
+              characteristics</a>.
+            </li>
+<li class="listitem">
+              Transforming the completion signature and arguments passed to the completion
+              handler.
+            </li>
+</ul></div>
+<p>
+          Boost.Asio includes a number of completion token adapters as described
+          below.
+        </p>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h0"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.bind_executor__bind_allocator__bind_cancellation_slot__and_bind_immediate_executor"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.bind_executor__bind_allocator__bind_cancellation_slot__and_bind_immediate_executor">bind_executor,
+          bind_allocator, bind_cancellation_slot, and bind_immediate_executor</a>
+        </h6>
+<p>
+          The <a class="link" href="../../reference/bind_executor.html" title="bind_executor"><code class="computeroutput"><span class="identifier">bind_executor</span></code></a>
+          function adapts a completion token to imbue the completion handler with
+          an <a class="link" href="../model/executors.html" title="Executors">associated executor</a>.
+        </p>
+<p>
+          This example shows the <code class="computeroutput"><span class="identifier">bind_executor</span></code>
+          adapter applied to a lambda, to specify that the handler should execute
+          in the specified strand. The arguments to the completion handler are passed
+          through as-is.
+        </p>
+<pre class="programlisting"><span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">bind_executor</span><span class="special">(</span><span class="identifier">my_strand</span><span class="special">,</span>
+      <span class="special">[](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">error</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_transferred</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">}));</span>
+</pre>
+<p>
+          When applied to completion tokens that cause the initiating function to
+          produce a result, such as <a class="link" href="../../reference/use_awaitable.html" title="use_awaitable"><code class="computeroutput"><span class="identifier">use_awaitable</span></code></a>, the result is returned
+          unmodified.
+        </p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">my_coroutine</span><span class="special">()</span>
+<span class="special">{</span>
+  <span class="comment">// ...</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_transferred</span> <span class="special">=</span>
+    <span class="identifier">co_await</span> <span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">bind_executor</span><span class="special">(</span><span class="identifier">my_strand</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_awaitable</span><span class="special">));</span>
+  <span class="comment">// ...</span>
+<span class="special">}</span>
+</pre>
+<p>
+          The <a class="link" href="../../reference/bind_allocator.html" title="bind_allocator"><code class="computeroutput"><span class="identifier">bind_allocator</span></code></a>,
+          <a class="link" href="../../reference/bind_cancellation_slot.html" title="bind_cancellation_slot"><code class="computeroutput"><span class="identifier">bind_cancellation_slot</span></code></a>, and <a class="link" href="../../reference/bind_immediate_executor.html" title="bind_immediate_executor"><code class="computeroutput"><span class="identifier">bind_immediate_executor</span></code></a>
+          adapters work similarly, to imbue the completion handler with an <a class="link" href="../model/allocators.html" title="Allocators">associated allocator</a>,
+          <a class="link" href="../model/cancellation.html" title="Cancellation">associated cancellation
+          slot</a>, and associated immediate executor respectively.
+        </p>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h1"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.redirect_error"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.redirect_error">redirect_error</a>
+        </h6>
+<p>
+          The <a class="link" href="../../reference/redirect_error.html" title="redirect_error"><code class="computeroutput"><span class="identifier">redirect_error</span></code></a>
+          function adapts a completion token to capture the <code class="computeroutput"><span class="identifier">error_code</span></code>
+          produced by an operation into a specified variable. In doing so, it modifies
+          the completion signature to remove the initial <code class="computeroutput"><span class="identifier">error_code</span></code>
+          parameter.
+        </p>
+<p>
+          This example shows the <code class="computeroutput"><span class="identifier">redirect_error</span></code>
+          adapter applied to a lambda, to specify that the error should be captured
+          into <code class="computeroutput"><span class="identifier">my_error</span></code>. The <code class="computeroutput"><span class="identifier">error_code</span></code> is no longer passed to the
+          completion handler, but the remaining arguments are passed through as-is.
+        </p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">my_error</span><span class="special">;</span> <span class="comment">// N.B. must be valid until operation completes</span>
+<span class="comment">// ...</span>
+<span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span><span class="special">(</span>
+      <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_transferred</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">},</span> <span class="identifier">my_error</span><span class="special">));</span>
+</pre>
+<p>
+          When applied to completion tokens that cause the initiating function to
+          produce a result, such as <a class="link" href="../../reference/use_awaitable.html" title="use_awaitable"><code class="computeroutput"><span class="identifier">use_awaitable</span></code></a>, the result is returned
+          unmodified. However, if the operation fails, the <code class="computeroutput"><span class="identifier">co_await</span></code>
+          expression will no longer throw an exception on resumption.
+        </p>
+<pre class="programlisting"><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">my_coroutine</span><span class="special">()</span>
+<span class="special">{</span>
+  <span class="comment">// ...</span>
+  <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">my_error</span><span class="special">;</span>
+  <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span> <span class="identifier">bytes_transferred</span> <span class="special">=</span>
+    <span class="identifier">co_await</span> <span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">redirect_error</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_awaitable</span><span class="special">,</span> <span class="identifier">my_error</span><span class="special">));</span>
+  <span class="comment">// ...</span>
+<span class="special">}</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h2"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.as_tuple"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.as_tuple">as_tuple</a>
+        </h6>
+<p>
+          The <a class="link" href="../../reference/as_tuple.html" title="as_tuple"><code class="computeroutput"><span class="identifier">as_tuple</span></code></a>
+          adapter can be used to specify that the completion handler arguments should
+          be combined into a single tuple argument.
+        </p>
+<p>
+          For example, the <code class="computeroutput"><span class="identifier">as_tuple</span></code>
+          adapter may be used in conjunction with <a class="link" href="../../reference/use_awaitable.html" title="use_awaitable"><code class="computeroutput"><span class="identifier">use_awaitable</span></code></a> and structured bindings
+          as follows:
+        </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="special">[</span><span class="identifier">e</span><span class="special">,</span> <span class="identifier">n</span><span class="special">]</span> <span class="special">=</span>
+  <span class="identifier">co_await</span> <span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple</span><span class="special">(</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_awaitable</span><span class="special">));</span>
+</pre>
+<p>
+          This adapter may also be used as a default completion token:
+        </p>
+<pre class="programlisting"><span class="keyword">using</span> <span class="identifier">default_token</span> <span class="special">=</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">as_tuple_t</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_awaitable_t</span><span class="special">&lt;&gt;&gt;;</span>
+<span class="keyword">using</span> <span class="identifier">tcp_socket</span> <span class="special">=</span> <span class="identifier">default_token</span><span class="special">::</span><span class="identifier">as_default_on_t</span><span class="special">&lt;</span><span class="identifier">tcp</span><span class="special">::</span><span class="identifier">socket</span><span class="special">&gt;;</span>
+<span class="comment">// ...</span>
+<span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">awaitable</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">do_read</span><span class="special">(</span><span class="identifier">tcp_socket</span> <span class="identifier">my_socket</span><span class="special">)</span>
+<span class="special">{</span>
+  <span class="comment">// ...</span>
+  <span class="keyword">auto</span> <span class="special">[</span><span class="identifier">e</span><span class="special">,</span> <span class="identifier">n</span><span class="special">]</span> <span class="special">=</span> <span class="identifier">co_await</span> <span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">);</span>
+  <span class="comment">// ...</span>
+<span class="special">}</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h3"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.as_single"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.as_single">as_single</a>
+        </h6>
+<div class="note"><table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="../../../../../doc/src/images/note.png"></td>
+<th align="left">Note</th>
+</tr>
+<tr><td align="left" valign="top"><p>
+            This is an experimental feature.
+          </p></td></tr>
+</table></div>
+<p>
+          The <a class="link" href="../../reference/experimental__as_single.html" title="experimental::as_single"><code class="computeroutput"><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">as_single</span></code></a> adapter can be used
+          to specify that the completion handler arguments should be combined into
+          a single argument. For completion signatures with a single parameter, the
+          argument is passed through as-is. For signatures with two or more parameters,
+          the arguments are combined into a tuple.
+        </p>
+<p>
+          For example, when applied to a timer wait operation, the single <code class="computeroutput"><span class="identifier">error_code</span></code> argument is passed directly
+          to the completion handler:
+        </p>
+<pre class="programlisting"><span class="identifier">my_timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">as_single</span><span class="special">(</span>
+      <span class="special">[](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">error</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">}));</span>
+</pre>
+<p>
+          When applied to a socket read operation, where the completion signature
+          specifies two parameters, the handler is passed the result as a tuple:
+        </p>
+<pre class="programlisting"><span class="identifier">my_socket</span><span class="special">.</span><span class="identifier">async_read_some</span><span class="special">(</span><span class="identifier">my_buffer</span><span class="special">,</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">experimental</span><span class="special">::</span><span class="identifier">as_single</span><span class="special">,</span>
+      <span class="special">[](</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">,</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">size_t</span><span class="special">&gt;</span> <span class="identifier">result</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">}));</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h4"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.append"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.append">append</a>
+        </h6>
+<p>
+          The <a class="link" href="../../reference/append.html" title="append"><code class="computeroutput"><span class="identifier">append</span></code></a>
+          completion token adapter can be used to pass additional completion handler
+          arguments at the end of the completion signature.
+        </p>
+<p>
+          For example:
+        </p>
+<pre class="programlisting"><span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">append</span><span class="special">(</span>
+      <span class="special">[](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">,</span> <span class="keyword">int</span> <span class="identifier">i</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">},</span>
+      <span class="number">42</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">&gt;</span> <span class="identifier">f</span> <span class="special">=</span> <span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">append</span><span class="special">(</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_future</span><span class="special">,</span>
+      <span class="number">42</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h5"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.prepend"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.prepend">prepend</a>
+        </h6>
+<p>
+          The <a class="link" href="../../reference/prepend.html" title="prepend"><code class="computeroutput"><span class="identifier">prepend</span></code></a>
+          completion token adapter can be used to pass additional completion handler
+          arguments before the existing completion handler arguments.
+        </p>
+<p>
+          For example:
+        </p>
+<pre class="programlisting"><span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">prepend</span><span class="special">(</span>
+      <span class="special">[](</span><span class="keyword">int</span> <span class="identifier">i</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">},</span>
+      <span class="number">42</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">tuple</span><span class="special">&lt;</span><span class="keyword">int</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span><span class="special">&gt;&gt;</span> <span class="identifier">f</span> <span class="special">=</span> <span class="identifier">timer</span><span class="special">.</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">prepend</span><span class="special">(</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_future</span><span class="special">,</span>
+      <span class="number">42</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h6"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.consign"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.consign">consign</a>
+        </h6>
+<p>
+          The <a class="link" href="../../reference/consign.html" title="consign"><code class="computeroutput"><span class="identifier">consign</span></code></a>
+          completion token adapter can be used to attach additional values to a completion
+          handler. This is typically used to keep at least one copy of an object,
+          such as a smart pointer, alive until the completion handler is called.
+        </p>
+<p>
+          For example:
+        </p>
+<pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">timer1</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">make_shared</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">steady_timer</span><span class="special">&gt;(</span><span class="identifier">my_io_context</span><span class="special">);</span>
+<span class="identifier">timer1</span><span class="special">-&gt;</span><span class="identifier">expires_after</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">seconds</span><span class="special">(</span><span class="number">1</span><span class="special">));</span>
+<span class="identifier">timer1</span><span class="special">-&gt;</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">consign</span><span class="special">(</span>
+      <span class="special">[](</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">system</span><span class="special">::</span><span class="identifier">error_code</span> <span class="identifier">ec</span><span class="special">)</span>
+      <span class="special">{</span>
+        <span class="comment">// ...</span>
+      <span class="special">},</span>
+      <span class="identifier">timer1</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+
+<span class="keyword">auto</span> <span class="identifier">timer2</span> <span class="special">=</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">make_shared</span><span class="special">&lt;</span><span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">steady_timer</span><span class="special">&gt;(</span><span class="identifier">my_io_context</span><span class="special">);</span>
+<span class="identifier">timer2</span><span class="special">-&gt;</span><span class="identifier">expires_after</span><span class="special">(</span><span class="identifier">std</span><span class="special">::</span><span class="identifier">chrono</span><span class="special">::</span><span class="identifier">seconds</span><span class="special">(</span><span class="number">30</span><span class="special">));</span>
+<span class="identifier">std</span><span class="special">::</span><span class="identifier">future</span><span class="special">&lt;</span><span class="keyword">void</span><span class="special">&gt;</span> <span class="identifier">f</span> <span class="special">=</span>
+  <span class="identifier">timer2</span><span class="special">-&gt;</span><span class="identifier">async_wait</span><span class="special">(</span>
+    <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">consign</span><span class="special">(</span>
+      <span class="identifier">boost</span><span class="special">::</span><span class="identifier">asio</span><span class="special">::</span><span class="identifier">use_future</span><span class="special">,</span>
+      <span class="identifier">timer2</span>
+    <span class="special">)</span>
+  <span class="special">);</span>
+</pre>
+<h6>
+<a name="boost_asio.overview.composition.token_adapters.h7"></a>
+          <span class="phrase"><a name="boost_asio.overview.composition.token_adapters.see_also"></a></span><a class="link" href="token_adapters.html#boost_asio.overview.composition.token_adapters.see_also">See Also</a>
+        </h6>
+<p>
+          <a class="link" href="../../reference/bind_executor.html" title="bind_executor">bind_executor</a>,
+          <a class="link" href="../../reference/bind_allocator.html" title="bind_allocator">bind_allocator</a>,
+          <a class="link" href="../../reference/bind_cancellation_slot.html" title="bind_cancellation_slot">bind_cancellation_slot</a>,
+          <a class="link" href="../../reference/redirect_error.html" title="redirect_error">redirect_error</a>,
+          <a class="link" href="../../reference/as_tuple.html" title="as_tuple">as_tuple</a>, <a class="link" href="../../reference/experimental__as_single.html" title="experimental::as_single">experimental::as_single</a>,
+          <a class="link" href="../../reference/append.html" title="append">append</a>, <a class="link" href="../../reference/prepend.html" title="prepend">prepend</a>.
+        </p>
+</div>
+<div class="copyright-footer">Copyright © 2003-2024 Christopher M. Kohlhoff<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="compose.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../composition.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../../../boost_asio.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="type_erasure.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

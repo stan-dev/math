@@ -1,0 +1,633 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Struct template c_regex_traits</title>
+<link rel="stylesheet" href="../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost C++ Libraries BoostBook Documentation Subset">
+<link rel="up" href="../xpressive/reference.html#doxygen.c__regex__traits_8hpp" title="Header &lt;boost/xpressive/traits/c_regex_traits.hpp&gt;">
+<link rel="prev" href="namespaceboost_1_1xpressive_1a1e5f02aeb148c73341681727f388d063.html" title="Function template operator&lt;&lt;">
+<link rel="next" href="structboost_1_1xpressive_1_1has__fold__case_3_01c__regex__traits_3_01char_01_4_01_4.html" title="Struct has_fold_case&lt;c_regex_traits&lt; char &gt;&gt;">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../boost.png"></td>
+<td align="center"><a href="../../../index.html">Home</a></td>
+<td align="center"><a href="../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1xpressive_1a1e5f02aeb148c73341681727f388d063.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../xpressive/reference.html#doxygen.c__regex__traits_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1xpressive_1_1has__fold__case_3_01c__regex__traits_3_01char_01_4_01_4.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="refentry">
+<a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits"></a><div class="titlepage"></div>
+<div class="refnamediv">
+<h2><span class="refentrytitle">Struct template c_regex_traits</span></h2>
+<p>boost::xpressive::c_regex_traits — Encapsaulates the standard C locale functions for use by the <code class="computeroutput"><a class="link" href="structboost_1_1xpressive_1_1basic__regex.html" title="Struct template basic_regex">basic_regex</a>&lt;&gt;</code> class template. </p>
+</div>
+<h2 class="refsynopsisdiv-title">Synopsis</h2>
+<div class="refsynopsisdiv"><pre class="synopsis"><span class="comment">// In header: &lt;<a class="link" href="../xpressive/reference.html#doxygen.c__regex__traits_8hpp" title="Header &lt;boost/xpressive/traits/c_regex_traits.hpp&gt;">boost/xpressive/traits/c_regex_traits.hpp</a>&gt;
+
+</span><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> Char<span class="special">&gt;</span> 
+<span class="keyword">struct</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a> <span class="special">{</span>
+  <span class="comment">// types</span>
+  <span class="keyword">typedef</span> <span class="identifier">Char</span>                           <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1af5c80ad8555def88c9d02221f1a931c4"></a><span class="identifier">char_type</span><span class="special">;</span>      
+  <span class="keyword">typedef</span> <span class="identifier">std</span><span class="special">::</span><span class="identifier">basic_string</span><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1aa9bb731cf63e68ec4f9085629e891f46"></a><span class="identifier">string_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                    <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a8bf4b877dbccfa653d0c3085204a6c9f"></a><span class="identifier">locale_type</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                    <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1af6fc69a00cb75ea318f4542ba58514b6"></a><span class="identifier">char_class_type</span><span class="special">;</span>
+  <span class="keyword">typedef</span> <a class="link" href="structboost_1_1xpressive_1_1regex__traits__version__2__tag.html" title="Struct regex_traits_version_2_tag">regex_traits_version_2_tag</a>     <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a5a70d494b9b1af35a63e41d7453e91db"></a><span class="identifier">version_tag</span><span class="special">;</span>    
+  <span class="keyword">typedef</span> <span class="emphasis"><em><span class="identifier">unspecified</span></em></span>                    <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a7957e6e1f2f7f7ba1938919d2151ad06"></a><span class="identifier">base_type</span><span class="special">;</span>      
+
+  <span class="comment">// <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#id-1_3_46_5_13_2_1_1_9-bb">public member functions</a></span>
+  <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1ae5f8bb563b9143ad6b9a7e713a3d574c"><span class="identifier">c_regex_traits</span></a><span class="special">(</span><span class="identifier">locale_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> <span class="special">=</span> <span class="identifier">locale_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a6d91aed834a133d1578e7dcff5d4e4c0"><span class="keyword">operator</span><span class="special">==</span></a><span class="special">(</span><a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="keyword">bool</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a569d586c97ccb137c0c8ac962472df71"><span class="keyword">operator</span><span class="special">!=</span></a><span class="special">(</span><a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">string_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a4e7bc08aa0ea143bdf8a1492a1bd0a1a"><span class="identifier">fold_case</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span>
+  <span class="identifier">locale_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a69e16e45f9a2641b4b9719319ff487a9"><span class="identifier">imbue</span></a><span class="special">(</span><span class="identifier">locale_type</span><span class="special">)</span><span class="special">;</span>
+
+  <span class="comment">// <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#id-1_3_46_5_13_2_1_1_10-bb">public static functions</a></span>
+  <span class="keyword">static</span> <span class="identifier">char_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1ac97f9e57376d551652bc0b35c3a1c6d4"><span class="identifier">widen</span></a><span class="special">(</span><span class="keyword">char</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a6c04ab5fe1cb32d4ea5c50c597e1cabb"><span class="identifier">hash</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">char_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a0252e570650f2f861757366e5c5d659c"><span class="identifier">translate</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">char_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a5a84c366e83afd3eef709e3c361c81ba"><span class="identifier">translate_nocase</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">char_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a65a73faa412ba38a8525fe2921c59122"><span class="identifier">tolower</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">char_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a86cdde74c6d2d0ae857e0614d8233898"><span class="identifier">toupper</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1ad342ca4c058fba962d7ed4fbc040da36"><span class="identifier">in_range</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a1c8e5400da1831993a8c0392d3009b39"><span class="identifier">in_range_nocase</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">char_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> <span class="keyword">static</span> <span class="identifier">string_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a5965958dcb1a2c822283b742bac59705"><span class="identifier">transform</span></a><span class="special">(</span><span class="identifier">FwdIter</span><span class="special">,</span> <span class="identifier">FwdIter</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">string_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1abf1cdfe19e033b5f2db42a6e993e7ca8"><span class="identifier">transform_primary</span></a><span class="special">(</span><span class="identifier">FwdIter</span><span class="special">,</span> <span class="identifier">FwdIter</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">string_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a792d8403cc3c4820675ccf8db65a8f43"><span class="identifier">lookup_collatename</span></a><span class="special">(</span><span class="identifier">FwdIter</span><span class="special">,</span> <span class="identifier">FwdIter</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+    <span class="keyword">static</span> <span class="identifier">char_class_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a086557e10ef7cf900d7c7298b1d744bc"><span class="identifier">lookup_classname</span></a><span class="special">(</span><span class="identifier">FwdIter</span><span class="special">,</span> <span class="identifier">FwdIter</span><span class="special">,</span> <span class="keyword">bool</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">bool</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a3577ca6b0bfdd8166e9b12e6f4133962"><span class="identifier">isctype</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">,</span> <span class="identifier">char_class_type</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="keyword">int</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a438ee1ca45895e74f7bee0ff8c089ff5"><span class="identifier">value</span></a><span class="special">(</span><span class="identifier">char_type</span><span class="special">,</span> <span class="keyword">int</span><span class="special">)</span><span class="special">;</span>
+  <span class="keyword">static</span> <span class="identifier">locale_type</span> <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a3c88ef40bf79ecbc471298deea330b17"><span class="identifier">getloc</span></a><span class="special">(</span><span class="special">)</span><span class="special">;</span>
+<span class="special">}</span><span class="special">;</span></pre></div>
+<div class="refsect1">
+<a name="id-1.3.46.5.14.4.4"></a><h2>Description</h2>
+<div class="refsect2">
+<a name="id-1.3.46.5.14.4.4.2"></a><h3>
+<a name="id-1_3_46_5_13_2_1_1_9-bb"></a><code class="computeroutput">c_regex_traits</code> public member functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1ae5f8bb563b9143ad6b9a7e713a3d574c"></a><span class="identifier">c_regex_traits</span><span class="special">(</span><span class="identifier">locale_type</span> <span class="keyword">const</span> <span class="special">&amp;</span> loc <span class="special">=</span> <span class="identifier">locale_type</span><span class="special">(</span><span class="special">)</span><span class="special">)</span><span class="special">;</span></pre>
+<p>Initialize a <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a> object to use the global C locale. </p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a6d91aed834a133d1578e7dcff5d4e4c0"></a><span class="keyword">operator</span><span class="special">==</span><span class="special">(</span><a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Checks two <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a> objects for equality</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">bool</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a569d586c97ccb137c0c8ac962472df71"></a><span class="keyword">operator</span><span class="special">!=</span><span class="special">(</span><a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a><span class="special">&lt;</span> <span class="identifier">char_type</span> <span class="special">&gt;</span> <span class="keyword">const</span> <span class="special">&amp;</span><span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Checks two <a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a> objects for inequality</p>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>false. </p></td>
+</tr></tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">string_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a4e7bc08aa0ea143bdf8a1492a1bd0a1a"></a><span class="identifier">fold_case</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">)</span> <span class="keyword">const</span><span class="special">;</span></pre>
+<p>Returns a <code class="computeroutput">string_type</code> containing all the characters that compare equal disregrarding case to the one passed in. This function can only be called if <code class="computeroutput"><a class="link" href="structboost_1_1xpressive_1_1has__fold__case.html" title="Struct template has_fold_case">has_fold_case</a>&lt;<a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html" title="Struct template c_regex_traits">c_regex_traits</a>&lt;Char&gt; &gt;<a class="link" href="structboost_1_1xpressive_1_1c__regex__traits.html#doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a438ee1ca45895e74f7bee0ff8c089ff5">value</a></code> is <code class="computeroutput">true</code>.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p><code class="computeroutput">string_type</code> containing all chars which are equal to <code class="computeroutput">ch</code> when disregarding case </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="identifier">locale_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a69e16e45f9a2641b4b9719319ff487a9"></a><span class="identifier">imbue</span><span class="special">(</span><span class="identifier">locale_type</span> loc<span class="special">)</span><span class="special">;</span></pre>
+<p>No-op </p>
+</li>
+</ol></div>
+</div>
+<div class="refsect2">
+<a name="id-1.3.46.5.14.4.4.3"></a><h3>
+<a name="id-1_3_46_5_13_2_1_1_10-bb"></a><code class="computeroutput">c_regex_traits</code> public static functions</h3>
+<div class="orderedlist"><ol class="orderedlist" type="1">
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">char_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1ac97f9e57376d551652bc0b35c3a1c6d4"></a><span class="identifier">widen</span><span class="special">(</span><span class="keyword">char</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Convert a char to a Char</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>ch if Char is char, std::btowc(ch) if Char is wchar_t. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a6c04ab5fe1cb32d4ea5c50c597e1cabb"></a><span class="identifier">hash</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a hash value for a Char in the range [0, UCHAR_MAX]</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>a value between 0 and UCHAR_MAX, inclusive. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">char_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a0252e570650f2f861757366e5c5d659c"></a><span class="identifier">translate</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>No-op</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>ch </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">char_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a5a84c366e83afd3eef709e3c361c81ba"></a><span class="identifier">translate_nocase</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Converts a character to lower-case using the current global C locale.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>std::tolower(ch) if Char is char, std::towlower(ch) if Char is wchar_t. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">char_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a65a73faa412ba38a8525fe2921c59122"></a><span class="identifier">tolower</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Converts a character to lower-case using the current global C locale.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>std::tolower(ch) if Char is char, std::towlower(ch) if Char is wchar_t. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">char_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a86cdde74c6d2d0ae857e0614d8233898"></a><span class="identifier">toupper</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Converts a character to upper-case using the current global C locale.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody><tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr></tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>std::toupper(ch) if Char is char, std::towupper(ch) if Char is wchar_t. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1ad342ca4c058fba962d7ed4fbc040da36"></a><span class="identifier">in_range</span><span class="special">(</span><span class="identifier">char_type</span> first<span class="special">,</span> <span class="identifier">char_type</span> last<span class="special">,</span> <span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Checks to see if a character is within a character range.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">first</code></span></p></td>
+<td><p>The bottom of the range, inclusive. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">last</code></span></p></td>
+<td><p>The top of the range, inclusive. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>first &lt;= ch &amp;&amp; ch &lt;= last. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a1c8e5400da1831993a8c0392d3009b39"></a><span class="identifier">in_range_nocase</span><span class="special">(</span><span class="identifier">char_type</span> first<span class="special">,</span> <span class="identifier">char_type</span> last<span class="special">,</span> <span class="identifier">char_type</span> ch<span class="special">)</span><span class="special">;</span></pre>
+<p>Checks to see if a character is within a character range, irregardless of case.</p>
+<p>
+
+</p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>The default implementation doesn't do proper Unicode case folding, but this is the best we can do with the standard C locale functions. </p></td></tr>
+</table></div>
+<p>
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">first</code></span></p></td>
+<td><p>The bottom of the range, inclusive. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">last</code></span></p></td>
+<td><p>The top of the range, inclusive. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The source character. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>in_range(first, last, ch) || in_range(first, last, tolower(ch)) || in_range(first,
+    last, toupper(ch)) </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">string_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a5965958dcb1a2c822283b742bac59705"></a><span class="identifier">transform</span><span class="special">(</span><span class="identifier">FwdIter</span> begin<span class="special">,</span> <span class="identifier">FwdIter</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a sort key for the character sequence designated by the iterator range [F1, F2) such that if the character sequence [G1, G2) sorts before the character sequence [H1, H2) then v.transform(G1, G2) &lt; v.transform(H1, H2).</p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not currently used </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">string_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1abf1cdfe19e033b5f2db42a6e993e7ca8"></a><span class="identifier">transform_primary</span><span class="special">(</span><span class="identifier">FwdIter</span> begin<span class="special">,</span> <span class="identifier">FwdIter</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a sort key for the character sequence designated by the iterator range [F1, F2) such that if the character sequence [G1, G2) sorts before the character sequence [H1, H2) when character case is not considered then v.transform_primary(G1, G2) &lt; v.transform_primary(H1, H2).</p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not currently used </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">string_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a792d8403cc3c4820675ccf8db65a8f43"></a><span class="identifier">lookup_collatename</span><span class="special">(</span><span class="identifier">FwdIter</span> begin<span class="special">,</span> <span class="identifier">FwdIter</span> end<span class="special">)</span><span class="special">;</span></pre>
+<p>Returns a sequence of characters that represents the collating element consisting of the character sequence designated by the iterator range [F1, F2). Returns an empty string if the character sequence is not a valid collating element.</p>
+<div class="important"><table border="0" summary="Important">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="../../../doc/src/images/important.png"></td>
+<th align="left">Important</th>
+</tr>
+<tr><td align="left" valign="top"><p>Not currently used </p></td></tr>
+</table></div>
+<p>
+</p>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> FwdIter<span class="special">&gt;</span> 
+  <span class="keyword">static</span> <span class="identifier">char_class_type</span> 
+  <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a086557e10ef7cf900d7c7298b1d744bc"></a><span class="identifier">lookup_classname</span><span class="special">(</span><span class="identifier">FwdIter</span> begin<span class="special">,</span> <span class="identifier">FwdIter</span> end<span class="special">,</span> <span class="keyword">bool</span> icase<span class="special">)</span><span class="special">;</span></pre>
+<p>For the character class name represented by the specified character sequence, return the corresponding bitmask representation.</p>
+<p>
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">begin</code></span></p></td>
+<td><p>A forward iterator to the start of the character sequence representing the name of the character class. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">end</code></span></p></td>
+<td><p>The end of the character sequence. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">icase</code></span></p></td>
+<td><p>Specifies whether the returned bitmask should represent the case-insensitive version of the character class. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>A bitmask representing the character class. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">bool</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a3577ca6b0bfdd8166e9b12e6f4133962"></a><span class="identifier">isctype</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">,</span> <span class="identifier">char_class_type</span> mask<span class="special">)</span><span class="special">;</span></pre>
+<p>Tests a character against a character class bitmask.</p>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The character to test. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">mask</code></span></p></td>
+<td><p>The character class bitmask against which to test. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>mask is a bitmask returned by lookup_classname, or is several such masks bit-or'ed together. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>true if the character is a member of any of the specified character classes, false otherwise. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="keyword">int</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a438ee1ca45895e74f7bee0ff8c089ff5"></a><span class="identifier">value</span><span class="special">(</span><span class="identifier">char_type</span> ch<span class="special">,</span> <span class="keyword">int</span> radix<span class="special">)</span><span class="special">;</span></pre>
+<p>Convert a digit character into the integer it represents.</p>
+<p>
+
+
+</p>
+<div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term">Parameters:</span></p></td>
+<td><div class="variablelist"><table border="0" class="variablelist compact">
+<colgroup>
+<col align="left" valign="top">
+<col>
+</colgroup>
+<tbody>
+<tr>
+<td><p><span class="term"><code class="computeroutput">ch</code></span></p></td>
+<td><p>The digit character. </p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="computeroutput">radix</code></span></p></td>
+<td><p>The radix to use for the conversion. </p></td>
+</tr>
+</tbody>
+</table></div></td>
+</tr>
+<tr>
+<td><p><span class="term">Requires:</span></p></td>
+<td><p>radix is one of 8, 10, or 16. </p></td>
+</tr>
+<tr>
+<td><p><span class="term">Returns:</span></p></td>
+<td><p>-1 if ch is not a digit character, the integer value of the character otherwise. If char_type is char, std::strtol is used for the conversion. If char_type is wchar_t, std::wcstol is used. </p></td>
+</tr>
+</tbody>
+</table></div>
+</li>
+<li class="listitem">
+<pre class="literallayout"><span class="keyword">static</span> <span class="identifier">locale_type</span> <a name="doxygen.structboost_1_1xpressive_1_1c__regex__traits_1a3c88ef40bf79ecbc471298deea330b17"></a><span class="identifier">getloc</span><span class="special">(</span><span class="special">)</span><span class="special">;</span></pre>
+<p>No-op </p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="copyright-footer">Copyright © 2007 Eric Niebler<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="namespaceboost_1_1xpressive_1a1e5f02aeb148c73341681727f388d063.html"><img src="../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../xpressive/reference.html#doxygen.c__regex__traits_8hpp"><img src="../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="structboost_1_1xpressive_1_1has__fold__case_3_01c__regex__traits_3_01char_01_4_01_4.html"><img src="../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>

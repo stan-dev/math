@@ -1,0 +1,67 @@
+#
+# Copyright (c) 2019-2023 Ruben Perez Hidalgo (rubenperez038 at gmail dot com)
+# Copyright (c) 2024 Matt Borland
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+
+import common ;
+import regex ;
+
+local all_fuzzers = [ regex.replace-list
+    [ glob "fuzz_*.cpp" ] : ".cpp" : ""
+] ;
+
+for local fuzzer in $(all_fuzzers)
+{
+    # These two fuzzers are the most complex ones. The rest are really
+    # simple, so less time is enough
+    local fuzz_time = 30 ;
+
+    # Create the output corpus directories
+    make /tmp/corpus/$(fuzzer) : : common.MkDir ;
+    make /tmp/mincorpus/$(fuzzer) : : common.MkDir ;
+
+    # Build the fuzzer
+    exe $(fuzzer)
+        :
+            $(fuzzer).cpp
+        : requirements
+            <debug-symbols>on
+            <optimization>speed
+            <address-sanitizer>on
+            <undefined-sanitizer>norecover
+            <cxxflags>-fsanitize=fuzzer
+            <linkflags>-fsanitize=fuzzer
+            <library>/boost/charconv//boost_charconv
+    ;
+
+    # Make sure that any old crashes are run without problems
+    local old_crashes = [ glob-tree-ex old_crashes/$(fuzzer) : * ] ;
+    if $(old_crashes)
+    {
+        run $(fuzzer)
+            : target-name $(fuzzer)-old-crashes
+            : input-files [ SORT $(old_crashes) ]
+        ;
+    }
+
+    # Run the fuzzer for a short while
+    run $(fuzzer)
+        : <testing.arg>"seedcorpus/$(fuzzer) -max_total_time=$(fuzz_time)"
+        : target-name $(fuzzer)-fuzzing
+        : requirements
+            <dependency>/tmp/corpus/$(fuzzer)
+    ;
+
+    # Minimize the corpus
+    run $(fuzzer)
+        : <testing.arg>"/tmp/mincorpus/$(fuzzer) /tmp/corpus/$(fuzzer) -merge=1"
+        : target-name $(fuzzer)-minimize-corpus
+        : requirements
+            <dependency>$(fuzzer)-fuzzing
+            <dependency>/tmp/corpus/$(fuzzer)
+            <dependency>/tmp/mincorpus/$(fuzzer)
+    ;
+}

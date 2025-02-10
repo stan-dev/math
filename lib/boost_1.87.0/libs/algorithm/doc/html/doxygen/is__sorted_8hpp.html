@@ -1,0 +1,83 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Header &lt;boost/algorithm/cxx11/is_sorted.hpp&gt;</title>
+<link rel="stylesheet" href="../../../../../doc/src/boostbook.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.79.1">
+<link rel="home" href="../index.html" title="The Boost Algorithm Library">
+<link rel="up" href="../algorithm/reference.html" title="Reference">
+<link rel="prev" href="cxx14_2is__permutation_8hpp_1a825859459fbf0d99fd7a85613514cc3f.html" title="Function template is_permutation">
+<link rel="next" href="is__sorted_8hpp_1a8cb4f93a99a1fd52273acb6e99b9839f.html" title="Function template is_sorted_until">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table cellpadding="2" width="100%"><tr>
+<td valign="top"><img alt="Boost C++ Libraries" width="277" height="86" src="../../../../../boost.png"></td>
+<td align="center"><a href="../../../../../index.html">Home</a></td>
+<td align="center"><a href="../../../../../libs/libraries.htm">Libraries</a></td>
+<td align="center"><a href="http://www.boost.org/users/people.html">People</a></td>
+<td align="center"><a href="http://www.boost.org/users/faq.html">FAQ</a></td>
+<td align="center"><a href="../../../../../more/index.htm">More</a></td>
+</tr></table>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cxx14_2is__permutation_8hpp_1a825859459fbf0d99fd7a85613514cc3f.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../algorithm/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="is__sorted_8hpp_1a8cb4f93a99a1fd52273acb6e99b9839f.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+<div class="section">
+<div class="titlepage"><div><div><h3 class="title">
+<a name="doxygen.is__sorted_8hpp"></a>Header &lt;<a href="../../../../../boost/algorithm/cxx11/is_sorted.hpp" target="_top">boost/algorithm/cxx11/is_sorted.hpp</a>&gt;</h3></div></div></div>
+<pre class="synopsis"><span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
+  <span class="keyword">namespace</span> <span class="identifier">algorithm</span> <span class="special">{</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">,</span> <span class="keyword">typename</span> Pred<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">ForwardIterator</span> 
+      <a class="link" href="is__sorted_8hpp_1a8cb4f93a99a1fd52273acb6e99b9839f.html" title="Function template is_sorted_until"><span class="identifier">is_sorted_until</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">Pred</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">ForwardIterator</span> 
+      <a class="link" href="is__sorted_8hpp_1aee4693ccf0d6ce5f49f0ffddcb07ae4b.html" title="Function template is_sorted_until"><span class="identifier">is_sorted_until</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">,</span> <span class="keyword">typename</span> Pred<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> 
+      <a class="link" href="is__sorted_8hpp_1aaf5cd0912dd265bf13df79f33579165c.html" title="Function template is_sorted"><span class="identifier">is_sorted</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">Pred</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="is__sorted_8hpp_1a47fc03a09ea42feb2609c6559409dcaf.html" title="Function template is_sorted"><span class="identifier">is_sorted</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">,</span> <span class="keyword">typename</span> Pred<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">lazy_disable_if_c</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_same</span><span class="special">&lt;</span> <span class="identifier">R</span><span class="special">,</span> <span class="identifier">Pred</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="identifier">typenameboost</span><span class="special">::</span><span class="identifier">range_iterator</span><span class="special">&lt;</span> <span class="identifier">constR</span> <span class="special">&gt;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="is__sorted_8hpp_1a3fe21207a79d423e85cc3d04d57ee9af.html" title="Function template is_sorted_until"><span class="identifier">is_sorted_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Pred</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">range_iterator</span><span class="special">&lt;</span> <span class="identifier">constR</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="is__sorted_8hpp_1ab15c8125b0941bb0216c87d1afb11393.html" title="Function template is_sorted_until"><span class="identifier">is_sorted_until</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">,</span> <span class="keyword">typename</span> Pred<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">lazy_disable_if_c</span><span class="special">&lt;</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">is_same</span><span class="special">&lt;</span> <span class="identifier">R</span><span class="special">,</span> <span class="identifier">Pred</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">value</span><span class="special">,</span> <span class="identifier">boost</span><span class="special">::</span><span class="identifier">type_identity</span><span class="special">&lt;</span> <span class="keyword">bool</span> <span class="special">&gt;</span> <span class="special">&gt;</span><span class="special">::</span><span class="identifier">type</span> 
+      <a class="link" href="is__sorted_8hpp_1adb7fdb06f3532311b0ac11323cbddac6.html" title="Function template is_sorted"><span class="identifier">is_sorted</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">,</span> <span class="identifier">Pred</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="is__sorted_8hpp_1a8d484b729a9ac23861bc028afefae0cc.html" title="Function template is_sorted"><span class="identifier">is_sorted</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> 
+      <a class="link" href="is__sorted_8hpp_1a8b76c64019b7f0a801b2cc65d2e887c3.html" title="Function template is_increasing"><span class="identifier">is_increasing</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="is__sorted_8hpp_1ae230700ad6a18c821dc70aa621dac285.html" title="Function template is_increasing"><span class="identifier">is_increasing</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> 
+      <a class="link" href="is__sorted_8hpp_1ab2e692b64a10962abff688900537d5b7.html" title="Function template is_decreasing"><span class="identifier">is_decreasing</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="is__sorted_8hpp_1a62e0992366a0a760c538cf3672bfce38.html" title="Function template is_decreasing"><span class="identifier">is_decreasing</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> 
+      <a class="link" href="is__sorted_8hpp_1a1cda96ed1c5d92c74de5ab82c7c81d2c.html" title="Function template is_strictly_increasing"><span class="identifier">is_strictly_increasing</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="is__sorted_8hpp_1ae7797326192c40abc1a7e3fe28ddba89.html" title="Function template is_strictly_increasing"><span class="identifier">is_strictly_increasing</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> ForwardIterator<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> 
+      <a class="link" href="is__sorted_8hpp_1ad1c39536c9f84ff94fa0587242832a78.html" title="Function template is_strictly_decreasing"><span class="identifier">is_strictly_decreasing</span></a><span class="special">(</span><span class="identifier">ForwardIterator</span><span class="special">,</span> <span class="identifier">ForwardIterator</span><span class="special">)</span><span class="special">;</span>
+    <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> R<span class="special">&gt;</span> 
+      <span class="identifier">BOOST_CXX14_CONSTEXPR</span> <span class="keyword">bool</span> <a class="link" href="is__sorted_8hpp_1a3ab88da04370e6a17a800ccd48745f3d.html" title="Function template is_strictly_decreasing"><span class="identifier">is_strictly_decreasing</span></a><span class="special">(</span><span class="keyword">const</span> <span class="identifier">R</span> <span class="special">&amp;</span><span class="special">)</span><span class="special">;</span>
+  <span class="special">}</span>
+<span class="special">}</span></pre>
+</div>
+<div class="copyright-footer">Copyright © 2010-2012 Marshall Clow<p>
+        Distributed under the Boost Software License, Version 1.0. (See accompanying
+        file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt" target="_top">http://www.boost.org/LICENSE_1_0.txt</a>)
+      </p>
+</div>
+<hr>
+<div class="spirit-nav">
+<a accesskey="p" href="cxx14_2is__permutation_8hpp_1a825859459fbf0d99fd7a85613514cc3f.html"><img src="../../../../../doc/src/images/prev.png" alt="Prev"></a><a accesskey="u" href="../algorithm/reference.html"><img src="../../../../../doc/src/images/up.png" alt="Up"></a><a accesskey="h" href="../index.html"><img src="../../../../../doc/src/images/home.png" alt="Home"></a><a accesskey="n" href="is__sorted_8hpp_1a8cb4f93a99a1fd52273acb6e99b9839f.html"><img src="../../../../../doc/src/images/next.png" alt="Next"></a>
+</div>
+</body>
+</html>
