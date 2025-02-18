@@ -57,8 +57,6 @@ TEST(mathMixScalFun, multiplyLog2_vec) {
   expect_test(f, x6, 5.5);
 }
 
-
-
 TEST(mathMixScalFun, multiplyLog2_zero_vec_vec) {
   auto f = [](const auto& x1, const auto& x2) {
     using stan::math::multiply_log;
@@ -93,5 +91,3 @@ TEST(mathMixScalFun, multiplyLog2_zero_vec_scalar) {
   };
   expect_test(f, x1, 0.0);
 }
-
-

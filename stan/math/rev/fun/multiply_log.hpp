@@ -30,20 +30,20 @@ template <typename T1, typename T2,
           require_all_stan_scalar_t<T1, T2>* = nullptr,
           require_any_var_t<T1, T2>* = nullptr>
 inline var multiply_log(const T1& a, const T2& b) {
-  if (value_of(a) == 0.0 && value_of(b) == 0.0){
+  if (value_of(a) == 0.0 && value_of(b) == 0.0) {
     return var(0.0);
   }
-  return make_callback_var(multiply_log(value_of(a), value_of(b)),
-                          [a, b](const auto& res) mutable {
-    if constexpr (!is_constant<T1>::value && !is_constant<T2>::value) {
-      a.adj() += res.adj() * log(b.val());
-      b.adj() += res.adj() * a.val() / b.val();
-    } else if constexpr (!is_constant<T1>::value) {
-      a.adj() += res.adj() * log(b);
-    } else {
-      b.adj() += res.adj() * a / b.val();
-    }
-  });
+  return make_callback_var(
+      multiply_log(value_of(a), value_of(b)), [a, b](const auto& res) mutable {
+        if constexpr (!is_constant<T1>::value && !is_constant<T2>::value) {
+          a.adj() += res.adj() * log(b.val());
+          b.adj() += res.adj() * a.val() / b.val();
+        } else if constexpr (!is_constant<T1>::value) {
+          a.adj() += res.adj() * log(b);
+        } else {
+          b.adj() += res.adj() * a / b.val();
+        }
+      });
 }
 
 /**
@@ -64,34 +64,32 @@ inline auto multiply_log(T1&& a, T2&& b) {
   check_matching_dims("multiply_log", "a", a, "b", b);
   arena_t<T1> arena_a = std::forward<T1>(a);
   arena_t<T2> arena_b = std::forward<T2>(b);
-  using return_t
-    = return_var_matrix_t<decltype(multiply_log(value_of(arena_a), value_of(arena_b))), T1, T2>;
+  using return_t = return_var_matrix_t<
+      decltype(multiply_log(value_of(arena_a), value_of(arena_b))), T1, T2>;
   arena_t<return_t> res = multiply_log(value_of(arena_a), value_of(arena_b));
 
   if constexpr (is_not_constant_v<T1> && is_not_constant_v<T2>) {
-    reverse_pass_callback(
-        [res, arena_a, arena_b]() mutable {
-          auto is_zero = (arena_a.val().array() == 0.0 && arena_b.val().array() == 0.0);
-          arena_a.adj().array()
-              += is_zero.select(0.0, res.adj().array() * arena_b.val().array().log());
-          arena_b.adj().array() += is_zero.select(0.0, res.adj().array() * arena_a.val().array()
-                                   / arena_b.val().array());
-        });
+    reverse_pass_callback([res, arena_a, arena_b]() mutable {
+      auto is_zero
+          = (arena_a.val().array() == 0.0 && arena_b.val().array() == 0.0);
+      arena_a.adj().array() += is_zero.select(
+          0.0, res.adj().array() * arena_b.val().array().log());
+      arena_b.adj().array()
+          += is_zero.select(0.0, res.adj().array() * arena_a.val().array()
+                                     / arena_b.val().array());
+    });
   } else if constexpr (is_not_constant_v<T1>) {
-        reverse_pass_callback(
-        [res, arena_a, arena_b]() mutable {
-          auto is_zero = (arena_a.val().array() == 0.0 && arena_b.array() == 0.0);
-          arena_a.adj().array()
-                += is_zero.select(0.0, res.adj().array() * arena_b.array().log());
-                             });
+    reverse_pass_callback([res, arena_a, arena_b]() mutable {
+      auto is_zero = (arena_a.val().array() == 0.0 && arena_b.array() == 0.0);
+      arena_a.adj().array()
+          += is_zero.select(0.0, res.adj().array() * arena_b.array().log());
+    });
   } else {
-        reverse_pass_callback(
-        [res, arena_a, arena_b]() mutable {
-          auto is_zero = (arena_a.array() == 0.0 && arena_b.val().array() == 0.0);
-          arena_b.adj().array() += is_zero.select(0.0, res.adj().array()
-                                  * arena_a.array()
-                                  / arena_b.val().array());
-                             });
+    reverse_pass_callback([res, arena_a, arena_b]() mutable {
+      auto is_zero = (arena_a.array() == 0.0 && arena_b.val().array() == 0.0);
+      arena_b.adj().array() += is_zero.select(
+          0.0, res.adj().array() * arena_a.array() / arena_b.val().array());
+    });
   }
   return res;
 }
@@ -114,28 +112,32 @@ template <typename T1, typename T2, require_rev_matrix_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto multiply_log(T1&& a, T2&& b) {
   arena_t<T1> arena_a = a;
-  using return_t
-    = return_var_matrix_t<decltype(multiply_log(value_of(arena_a), value_of(b))), T1, T2>;
+  using return_t = return_var_matrix_t<
+      decltype(multiply_log(value_of(arena_a), value_of(b))), T1, T2>;
   arena_t<return_t> res = multiply_log(value_of(arena_a), value_of(b));
   if constexpr (is_not_constant_v<T1> && is_not_constant_v<T2>) {
-    reverse_pass_callback(
-        [res, arena_a, b]() mutable {
-          auto is_zero = ((arena_a.val().array() == 0.0) + (b.val() == 0.0) > 1);
-          arena_a.adj().array() += is_zero.select(0.0, res.adj().array() * log(b.val()));
-            b.adj() += is_zero.select(0.0, (res.adj().array() * arena_a.val().array()) / b.val()).sum();
-        });
+    reverse_pass_callback([res, arena_a, b]() mutable {
+      auto is_zero = ((arena_a.val().array() == 0.0) + (b.val() == 0.0) > 1);
+      arena_a.adj().array()
+          += is_zero.select(0.0, res.adj().array() * log(b.val()));
+      b.adj() += is_zero
+                     .select(0.0, (res.adj().array() * arena_a.val().array())
+                                      / b.val())
+                     .sum();
+    });
   } else if constexpr (is_not_constant_v<T1>) {
-    reverse_pass_callback(
-        [res, arena_a, b]() mutable {
-          auto is_zero = ((arena_a.val().array() == 0.0) + (b == 0.0) > 1);
-          arena_a.adj().array() += is_zero.select(0.0, res.adj().array() * log(b));
-        });
+    reverse_pass_callback([res, arena_a, b]() mutable {
+      auto is_zero = ((arena_a.val().array() == 0.0) + (b == 0.0) > 1);
+      arena_a.adj().array() += is_zero.select(0.0, res.adj().array() * log(b));
+    });
   } else {
-    reverse_pass_callback(
-        [res, arena_a, b]() mutable {
-          auto is_zero = ((arena_a.array() == 0.0) + (b.val() == 0.0) > 1);
-          b.adj() += is_zero.select(0.0, (res.adj().array() * arena_a.val().array()) / b.val()).sum();
-        });
+    reverse_pass_callback([res, arena_a, b]() mutable {
+      auto is_zero = ((arena_a.array() == 0.0) + (b.val() == 0.0) > 1);
+      b.adj() += is_zero
+                     .select(0.0, (res.adj().array() * arena_a.val().array())
+                                      / b.val())
+                     .sum();
+    });
   }
   return res;
 }
@@ -153,30 +155,31 @@ template <typename T1, typename T2, require_stan_scalar_t<T1>* = nullptr,
           require_rev_matrix_t<T2>* = nullptr>
 inline auto multiply_log(T1&& a, T2&& b) {
   arena_t<T2> arena_b = std::forward<T2>(b);
-  using return_t
-    = return_var_matrix_t<decltype(multiply_log(value_of(a), value_of(arena_b))), T1, T2>;
+  using return_t = return_var_matrix_t<
+      decltype(multiply_log(value_of(a), value_of(arena_b))), T1, T2>;
   arena_t<return_t> res = multiply_log(value_of(a), value_of(arena_b));
   if constexpr (is_not_constant_v<T1> && is_not_constant_v<T2>) {
-    reverse_pass_callback(
-        [res, a, arena_b]() mutable {
-          auto is_zero = ((a.val() == 0.0) + (arena_b.val().array() == 0.0) > 1);
-          a.adj() += is_zero.select(0.0, res.adj().array() * arena_b.val().array().log()).sum();
-          arena_b.adj().array()
-              += is_zero.select(0.0, a.val() * res.adj().array() / arena_b.val().array());
-        });
+    reverse_pass_callback([res, a, arena_b]() mutable {
+      auto is_zero = ((a.val() == 0.0) + (arena_b.val().array() == 0.0) > 1);
+      a.adj()
+          += is_zero
+                 .select(0.0, res.adj().array() * arena_b.val().array().log())
+                 .sum();
+      arena_b.adj().array() += is_zero.select(
+          0.0, a.val() * res.adj().array() / arena_b.val().array());
+    });
   } else if constexpr (is_not_constant_v<T1>) {
-    reverse_pass_callback(
-        [res, a, arena_b]() mutable {
-          auto is_zero = ((a.val() == 0.0) + (arena_b.array() == 0.0) > 1);
-          a.adj() += is_zero.select(0.0, res.adj().array() * arena_b.array().log()).sum();
-        });
+    reverse_pass_callback([res, a, arena_b]() mutable {
+      auto is_zero = ((a.val() == 0.0) + (arena_b.array() == 0.0) > 1);
+      a.adj() += is_zero.select(0.0, res.adj().array() * arena_b.array().log())
+                     .sum();
+    });
   } else {
-    reverse_pass_callback(
-        [res, a, arena_b]() mutable {
-          auto is_zero = ((a == 0.0) + (arena_b.val().array() == 0.0) > 1);
-          arena_b.adj().array()
-              += is_zero.select(0.0, a * res.adj().array() / arena_b.val().array());
-        });
+    reverse_pass_callback([res, a, arena_b]() mutable {
+      auto is_zero = ((a == 0.0) + (arena_b.val().array() == 0.0) > 1);
+      arena_b.adj().array()
+          += is_zero.select(0.0, a * res.adj().array() / arena_b.val().array());
+    });
   }
   return res;
 }

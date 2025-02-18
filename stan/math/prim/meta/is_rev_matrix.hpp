@@ -47,7 +47,8 @@ template <typename... Types>
 using require_all_not_rev_matrix_t
     = require_all_not_t<is_rev_matrix<std::decay_t<Types>>...>;
 
-/*! \brief Require at least one of the types do not satisfy @ref is_rev_matrix */
+/*! \brief Require at least one of the types do not satisfy @ref is_rev_matrix
+ */
 /*! @tparam Types The types that are checked */
 template <typename... Types>
 using require_any_not_rev_matrix_t
