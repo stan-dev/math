@@ -14,38 +14,11 @@
 namespace stan {
 namespace math {
 
-namespace internal {
-class multiply_log_vv_vari : public op_vv_vari {
- public:
-  multiply_log_vv_vari(vari* avi, vari* bvi)
-      : op_vv_vari(multiply_log(avi->val_, bvi->val_), avi, bvi) {}
-  void chain() {
-    using std::log;
-    avi_->adj_ += adj_ * log(bvi_->val_);
-    bvi_->adj_ += adj_ * avi_->val_ / bvi_->val_;
-  }
-};
-class multiply_log_vd_vari : public op_vd_vari {
- public:
-  multiply_log_vd_vari(vari* avi, double b)
-      : op_vd_vari(multiply_log(avi->val_, b), avi, b) {}
-  void chain() {
-    using std::log;
-    avi_->adj_ += adj_ * log(bd_);
-  }
-};
-class multiply_log_dv_vari : public op_dv_vari {
- public:
-  multiply_log_dv_vari(double a, vari* bvi)
-      : op_dv_vari(multiply_log(a, bvi->val_), a, bvi) {}
-  void chain() { bvi_->adj_ += adj_ * ad_ / bvi_->val_; }
-};
-}  // namespace internal
-
 /**
  * Return the value of a*log(b).
  *
- * When both a and b are 0, the value returned is 0.
+ * When both a and b are 0, the value returned is 0
+ * and no gradients are accumulated.
  * The partial derivative with respect to a is log(b).
  * The partial derivative with respect to b is a/b.
  *
@@ -53,37 +26,29 @@ class multiply_log_dv_vari : public op_dv_vari {
  * @param b Second variable.
  * @return Value of a*log(b)
  */
-inline var multiply_log(const var& a, const var& b) {
-  return var(new internal::multiply_log_vv_vari(a.vi_, b.vi_));
-}
-/**
- * Return the value of a*log(b).
- *
- * When both a and b are 0, the value returned is 0.
- * The partial derivative with respect to a is log(b).
- *
- * @param a First variable.
- * @param b Second scalar.
- * @return Value of a*log(b)
- */
-inline var multiply_log(const var& a, double b) {
-  return var(new internal::multiply_log_vd_vari(a.vi_, b));
-}
-/**
- * Return the value of a*log(b).
- *
- * When both a and b are 0, the value returned is 0.
- * The partial derivative with respect to b is a/b.
- *
- * @param a First scalar.
- * @param b Second variable.
- * @return Value of a*log(b)
- */
-inline var multiply_log(double a, const var& b) {
-  if (a == 1.0) {
-    return log(b);
+template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>* = nullptr,
+  require_any_var_t<T1, T2>* = nullptr>
+inline var multiply_log(const T1& a, const T2& b) {
+  if (value_of(a) == 0.0 && value_of(b) == 0.0) {
+    return var(0.0);
   }
-  return var(new internal::multiply_log_dv_vari(a, b.vi_));
+  if constexpr (!is_constant<T1>::value && !is_constant<T2>::value) {
+    return make_callback_var(multiply_log(a.val(), b.val()),
+                             [a, b](const auto& res) mutable {
+                               a.adj() += res.adj() * log(b.val());
+                               b.adj() += res.adj() * a.val() / b.val();
+                             });
+  } else if constexpr (!is_constant<T1>::value) {
+    return make_callback_var(multiply_log(a.val(), b),
+                             [a, b](const auto& res) mutable {
+                               a.adj() += res.adj() * log(b);
+                             });
+  } else {
+    return make_callback_var(multiply_log(a, b.val()),
+                             [a, b](const auto& res) mutable {
+                               b.adj() += res.adj() * a / b.val();
+                             });
+  }
 }
 
 /**
