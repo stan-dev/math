@@ -26,8 +26,9 @@ namespace math {
  * @param b Second variable.
  * @return Value of a*log(b)
  */
-template <typename T1, typename T2, require_all_stan_scalar_t<T1, T2>* = nullptr,
-  require_any_var_t<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_stan_scalar_t<T1, T2>* = nullptr,
+          require_any_var_t<T1, T2>* = nullptr>
 inline var multiply_log(const T1& a, const T2& b) {
   if (value_of(a) == 0.0 && value_of(b) == 0.0){
     return var(0.0);
