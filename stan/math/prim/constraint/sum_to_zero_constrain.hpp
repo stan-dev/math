@@ -156,7 +156,8 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
  * @param[in, out] lp unused
  * @return Zero-sum vectors of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename T, typename Lp, require_std_vector_t<T>* = nullptr>
+template <bool Jacobian, typename T, typename Lp,
+          require_std_vector_t<T>* = nullptr>
 inline auto sum_to_zero_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
       y, [](auto&& v) { return sum_to_zero_constrain(v); });
