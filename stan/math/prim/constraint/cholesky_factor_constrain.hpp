@@ -70,9 +70,10 @@ cholesky_factor_constrain(const T& x, int M, int N) {
  * determinant
  * @return Cholesky factor
  */
-template <typename T, require_eigen_vector_t<T>* = nullptr>
+template <typename T, typename Lp, require_eigen_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
+cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
   check_size_match("cholesky_factor_constrain", "x.size()", x.size(),
                    "((N * (N + 1)) / 2 + (M - N) * N)",
                    ((N * (N + 1)) / 2 + (M - N) * N));
@@ -99,15 +100,18 @@ cholesky_factor_constrain(const T& x, int M, int N, return_type_t<T>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
  * @param[in,out] lp log density accumulator
  * @return Cholesky factor
  */
-template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N,
-                                      return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_not_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
   if (Jacobian) {
     return cholesky_factor_constrain(x, M, N, lp);
   } else {
@@ -129,15 +133,18 @@ inline auto cholesky_factor_constrain(const T& x, int M, int N,
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
  * @param[in,out] lp log density accumulator
  * @return Cholesky factor
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N,
-                                      return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
   return apply_vector_unary<T>::apply(x, [&lp, M, N](auto&& v) {
     return cholesky_factor_constrain<Jacobian>(v, M, N, lp);
   });

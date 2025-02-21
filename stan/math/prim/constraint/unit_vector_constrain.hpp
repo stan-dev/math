@@ -68,12 +68,16 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param y vector of K unrestricted variables
  * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
  */
-template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_not_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto unit_vector_constrain(const T& y, Lp& lp) {
   if (Jacobian) {
     return unit_vector_constrain(y, lp);
   } else {
@@ -93,12 +97,16 @@ inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param y vector of K unrestricted variables
  * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto unit_vector_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
       y, [&lp](auto&& v) { return unit_vector_constrain<Jacobian>(v, lp); });
 }

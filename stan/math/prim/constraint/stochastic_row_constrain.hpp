@@ -46,14 +46,17 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
  * stick-breaking process.
  *
  * @tparam Mat type of the matrix
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
+ * be convertable to this.
  * @param y Free matrix input of dimensionality (N, K - 1).
  * @param lp Log probability reference to increment.
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
-template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
-          require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
-                                                  value_type_t<Mat>& lp) {
+template <typename Mat, typename Lp,
+          require_eigen_matrix_dynamic_t<Mat>* = nullptr,
+          require_not_st_var<Mat>* = nullptr,
+          require_convertible_t<value_type_t<Mat>, Lp>* = nullptr>
+inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
   Eigen::Index Km1 = y_ref.cols();
@@ -85,13 +88,16 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
  * @tparam Mat A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and dynamic columns
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
+ * be convertable to this.
  * @param[in] y free matrix
  * @param[in, out] lp log density accumulator
  * @return Matrix with simplexes along the rows of dimensionality (N, K).
  */
-template <bool Jacobian, typename Mat, require_not_std_vector_t<Mat>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
-                                                  return_type_t<Mat>& lp) {
+template <bool Jacobian, typename Mat, typename Lp,
+          require_not_std_vector_t<Mat>* = nullptr,
+          require_convertible_t<return_type_t<Mat>, Lp>* = nullptr>
+inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
   if (Jacobian) {
     return stochastic_row_constrain(y, lp);
   } else {
@@ -111,12 +117,16 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y,
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param[in] y free vector with matrices of size (N, K - 1)
  * @param[in, out] lp log density accumulator
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_row_constrain(const T& y, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto stochastic_row_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
       y, [&lp](auto&& v) { return stochastic_row_constrain<Jacobian>(v, lp); });
 }

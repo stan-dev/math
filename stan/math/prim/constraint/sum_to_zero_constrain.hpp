@@ -81,14 +81,14 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
  * This is a linear transform, with no Jacobian.
  *
  * @tparam Vec type of the vector
+ * @tparam Lp unused
  * @param y Free vector input of dimensionality K - 1.
  * @param lp unused
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+template <typename Vec, typename Lp, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
-                                               value_type_t<Vec>& lp) {
+inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
   return sum_to_zero_constrain(y);
 }
 
@@ -116,13 +116,14 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam Lp unused
  * @param[in] y free vector
  * @param[in, out] lp unused
  * @return Zero-sum vector of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
-                                               return_type_t<Vec>& lp) {
+template <bool Jacobian, typename Vec, typename Lp,
+          require_not_std_vector_t<Vec>* = nullptr>
+inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
   return sum_to_zero_constrain(y);
 }
 
@@ -150,12 +151,13 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * @tparam Vec A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp unused
  * @param[in] y free vector
  * @param[in, out] lp unused
  * @return Zero-sum vectors of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp, require_std_vector_t<T>* = nullptr>
+inline auto sum_to_zero_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
       y, [](auto&& v) { return sum_to_zero_constrain(v); });
 }

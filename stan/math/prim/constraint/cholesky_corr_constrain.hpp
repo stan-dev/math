@@ -43,9 +43,11 @@ cholesky_corr_constrain(const EigVec& y, int K) {
 }
 
 // FIXME to match above after debugged
-template <typename EigVec, require_eigen_vector_t<EigVec>* = nullptr>
+template <typename EigVec, typename Lp,
+          require_eigen_vector_t<EigVec>* = nullptr,
+          require_convertible_t<return_type_t<EigVec>, Lp>* = nullptr>
 inline Eigen::Matrix<value_type_t<EigVec>, Eigen::Dynamic, Eigen::Dynamic>
-cholesky_corr_constrain(const EigVec& y, int K, return_type_t<EigVec>& lp) {
+cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -85,13 +87,17 @@ cholesky_corr_constrain(const EigVec& y, int K, return_type_t<EigVec>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
  *  column major order elements of the lower triangurlar
  * @param K The size of the matrix to return
  * @param[in,out] lp log density accumulator
  */
-template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_not_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
   if (Jacobian) {
     return cholesky_corr_constrain(y, K, lp);
   } else {
@@ -110,13 +116,17 @@ inline auto cholesky_corr_constrain(const T& y, int K, return_type_t<T>& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
  *  column major order elements of the lower triangurlar
  * @param K The size of the matrix to return
  * @param[in,out] lp log density accumulator
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
   return apply_vector_unary<T>::apply(y, [&lp, K](auto&& v) {
     return cholesky_corr_constrain<Jacobian>(v, K, lp);
   });

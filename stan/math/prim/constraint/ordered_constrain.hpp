@@ -46,12 +46,16 @@ inline plain_type_t<EigVec> ordered_constrain(const EigVec& x) {
  * will have the same dimensionality as the specified free vector.
  *
  * @tparam T type of the vector
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Free vector of scalars.
  * @param lp Log probability reference.
  * @return Positive, increasing ordered vector.
  */
-template <typename EigVec, require_eigen_col_vector_t<EigVec>* = nullptr>
-inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
+template <typename EigVec, typename Lp,
+          require_eigen_col_vector_t<EigVec>* = nullptr,
+          require_convertible_t<value_type_t<EigVec>, Lp>* = nullptr>
+inline auto ordered_constrain(const EigVec& x, Lp& lp) {
   const auto& x_ref = to_ref(x);
   if (likely(x.size() > 1)) {
     lp += sum(x_ref.tail(x.size() - 1));
@@ -73,12 +77,16 @@ inline auto ordered_constrain(const EigVec& x, value_type_t<EigVec>& lp) {
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
  *  and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
-template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_not_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto ordered_constrain(const T& x, Lp& lp) {
   if (Jacobian) {
     return ordered_constrain(x, lp);
   } else {
@@ -100,12 +108,16 @@ inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator
  * @return Positive, increasing ordered vector.
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, return_type_t<T>& lp) {
+template <bool Jacobian, typename T, typename Lp,
+          require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto ordered_constrain(const T& x, Lp& lp) {
   return apply_vector_unary<T>::apply(
       x, [&lp](auto&& v) { return ordered_constrain<Jacobian>(v, lp); });
 }
