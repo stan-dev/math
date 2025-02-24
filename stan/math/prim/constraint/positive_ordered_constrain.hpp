@@ -110,7 +110,7 @@ inline auto positive_ordered_constrain(const T& x, Lp... lp) {
 template <bool Jacobian, typename Vec, typename Lp,
           require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
 inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return positive_ordered_constrain(x, lp);
   } else {
     return positive_ordered_constrain(x);
