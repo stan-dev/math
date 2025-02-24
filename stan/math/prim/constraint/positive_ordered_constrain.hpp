@@ -70,23 +70,22 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
- * inner type inheriting from `Eigen::EigenBase`
- * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
- * be convertable to this.
+ * @tparam Vec A standard vector with inner type inheriting from
+ * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
+ * `Eigen::EigenBase`
+ * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulato
  * @return Positive, increasing ordered vector
  */
-template <bool Jacobian, typename Vec, typename Lp,
-          require_not_std_vector_t<Vec>* = nullptr,
-          require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
-inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
-  if (Jacobian) {
-    return positive_ordered_constrain(x, lp);
-  } else {
-    return positive_ordered_constrain(x);
-  }
+template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+inline auto positive_ordered_constrain(const T& x, Lp... lp) {
+  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
+                "positive_ordered_constrain should be called with either "
+                "one or two");
+  return apply_vector_unary<T>::apply(
+      x, [&lp...](auto&& v) { return positive_ordered_constrain(v, &lp...); });
 }
 
 /**
@@ -100,22 +99,22 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Vec A standard vector with inner type inheriting from
- * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
- * `Eigen::EigenBase`
- * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * @tparam Vec A type inheriting from `Eigen::EigenBase`, a `var_value` with
+ * inner type inheriting from `Eigen::EigenBase`
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
+ * be convertable to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulato
  * @return Positive, increasing ordered vector
  */
-template <bool Jacobian, typename T, typename Lp,
-          require_std_vector_t<T>* = nullptr,
-          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto positive_ordered_constrain(const T& x, Lp& lp) {
-  return apply_vector_unary<T>::apply(x, [&lp](auto&& v) {
-    return positive_ordered_constrain<Jacobian>(v, lp);
-  });
+template <bool Jacobian, typename Vec, typename Lp,
+          require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
+inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
+  if (Jacobian) {
+    return positive_ordered_constrain(x, lp);
+  } else {
+    return positive_ordered_constrain(x);
+  }
 }
 
 }  // namespace math
