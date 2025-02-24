@@ -143,6 +143,17 @@ ignored = [
     "lmultiply", # synonym for multiply_log
     "std_normal_qf", # synonym for inv_Phi
     "if_else",
+    # these are all slight renames compared to stan math
+    "cholesky_factor_corr_jacobian",
+    "cholesky_factor_cov_jacobian",
+    "cholesky_factor_corr_constrain",
+    "cholesky_factor_cov_constrain",
+    "lower_bound_jacobian",
+    "upper_bound_jacobian",
+    "lower_upper_bound_jacobian",
+    "lower_bound_constrain",
+    "upper_bound_constrain",
+    "lower_upper_bound_constrain",
 ]
 
 # list of function argument indices, for which real valued arguments are not differentiable

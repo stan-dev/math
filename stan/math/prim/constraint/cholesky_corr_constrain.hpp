@@ -77,32 +77,26 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
 }
 
 /**
- * Return The cholesky of a `KxK` correlation matrix. If the `Jacobian`
- * parameter is `true`, the log density accumulator is incremented with the log
- * absolute Jacobian determinant of the transform.  All of the transforms are
- * specified with their Jacobians in the *Stan Reference Manual* chapter
- * Constraint Transforms.
- * @tparam Jacobian if `true`, increment log density accumulator with log
- * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
- * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * Return The cholesky of a `KxK` correlation matrix.
+ * This overload handles looping over the elements of a standard vector.
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
+ * argument. The scalar type of T should be convertable to this.
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
  *  column major order elements of the lower triangurlar
  * @param K The size of the matrix to return
- * @param[in,out] lp log density accumulator
+ * @param[in,out] lp log density accumulator or empty
  */
-template <bool Jacobian, typename T, typename Lp,
-          require_not_std_vector_t<T>* = nullptr,
-          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
-  if (Jacobian) {
-    return cholesky_corr_constrain(y, K, lp);
-  } else {
-    return cholesky_corr_constrain(y, K);
-  }
+template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+inline auto cholesky_corr_constrain(const T& y, int K, Lp&... lp) {
+  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
+                "cholesky_corr_constrain should be called with either "
+                "two or three arguments");
+  return apply_vector_unary<T>::apply(y, [&lp..., K](auto&& v) {
+    return cholesky_corr_constrain(v, K, lp...);
+  });
 }
 
 /**
@@ -113,9 +107,9 @@ inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
  * Constraint Transforms.
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
  * convertable to this.
  * @param y Linearly Serialized vector of size `(K * (K - 1))/2` holding the
@@ -124,12 +118,13 @@ inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
  * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T, typename Lp,
-          require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cholesky_corr_constrain(const T& y, int K, Lp& lp) {
-  return apply_vector_unary<T>::apply(y, [&lp, K](auto&& v) {
-    return cholesky_corr_constrain<Jacobian>(v, K, lp);
-  });
+  if constexpr (Jacobian) {
+    return cholesky_corr_constrain(y, K, lp);
+  } else {
+    return cholesky_corr_constrain(y, K);
+  }
 }
 
 }  // namespace math

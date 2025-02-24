@@ -91,33 +91,26 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
 
 /**
  * Return the symmetric, positive-definite matrix of dimensions K by K resulting
- * from transforming the specified finite vector of size K plus (K choose 2). If
- * the `Jacobian` parameter is `true`, the log density accumulator is
- * incremented with the log absolute Jacobian determinant of the transform.  All
- * of the transforms are specified with their Jacobians in the *Stan Reference
- * Manual* chapter Constraint Transforms.
+ * from transforming the specified finite vector of size K plus (K choose 2).
+ * This overload handles looping over the elements of a standard vector.
  *
- * @tparam Jacobian if `true`, increment log density accumulator with log
- * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
- * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
+ * argument. The scalar type of T should be convertable to this.
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
- * @param[in, out] lp log density accumulator
+ * @param[in, out] lp log density accumulator or empty
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <bool Jacobian, typename T, typename Lp,
-          require_not_std_vector_t<T>* = nullptr,
-          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
-  if (Jacobian) {
-    return cov_matrix_constrain(x, K, lp);
-  } else {
-    return cov_matrix_constrain(x, K);
-  }
+template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp&... lp) {
+  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
+                "cov_matrix_constrain should be called with either "
+                "two or three arguments");
+  return apply_vector_unary<T>::apply(
+      x, [&lp..., K](auto&& v) { return cov_matrix_constrain(v, K, lp...); });
 }
 
 /**
@@ -130,9 +123,9 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column, or standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
  * convertable to this.
  * @param x The vector to convert to a covariance matrix
@@ -141,12 +134,13 @@ inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
 template <bool Jacobian, typename T, typename Lp,
-          require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
-  return apply_vector_unary<T>::apply(x, [&lp, K](auto&& v) {
-    return cov_matrix_constrain<Jacobian>(v, K, lp);
-  });
+  if constexpr (Jacobian) {
+    return cov_matrix_constrain(x, K, lp);
+  } else {
+    return cov_matrix_constrain(x, K);
+  }
 }
 
 }  // namespace math
