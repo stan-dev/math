@@ -100,7 +100,7 @@ inline auto ordered_constrain(const T& x, Lp&... lp) {
  * absolute Jacobian determinant of constraining transform
  * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ *  and 1 column, or a standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
  * convertable to this.
  * @param x Free vector of scalars
@@ -108,7 +108,6 @@ inline auto ordered_constrain(const T& x, Lp&... lp) {
  * @return Positive, increasing ordered vector.
  */
 template <bool Jacobian, typename T, typename Lp,
-          require_not_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto ordered_constrain(const T& x, Lp& lp) {
   if (Jacobian) {
