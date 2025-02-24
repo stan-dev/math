@@ -74,12 +74,12 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  * @return Positive, increasing ordered vector
  */
 template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto positive_ordered_constrain(const T& x, Lp... lp) {
+inline auto positive_ordered_constrain(const T& x, Lp&... lp) {
   static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
                 "positive_ordered_constrain should be called with either "
                 "one or two arguments");
   return apply_vector_unary<T>::apply(
-      x, [&lp...](auto&& v) { return positive_ordered_constrain(v, &lp...); });
+      x, [&lp...](auto&& v) { return positive_ordered_constrain(v, lp...); });
 }
 
 /**

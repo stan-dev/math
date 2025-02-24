@@ -69,14 +69,13 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  * @param[in, out] lp log density accumulator or empty
  * @return Unit length vector of dimension K
  */
-template <typename T, typename... Lp,
-          require_std_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, Lp... lp) {
+template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+inline auto unit_vector_constrain(const T& y, Lp&... lp) {
   static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
                 "unit_vector_constrain should be called with either "
                 "one or two arguments");
   return apply_vector_unary<T>::apply(
-      y, [&lp...](auto&& v) { return unit_vector_constrain(v, &lp...); });
+      y, [&lp...](auto&& v) { return unit_vector_constrain(v, lp...); });
 }
 
 /**

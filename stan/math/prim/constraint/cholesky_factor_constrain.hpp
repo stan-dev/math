@@ -104,12 +104,12 @@ cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
  * @return Cholesky factor
  */
 template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp... lp) {
+inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp&... lp) {
   static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
                 "cholesky_factor_constrain should be called with either "
                 "three or four arguments");
   return apply_vector_unary<T>::apply(x, [&lp..., M, N](auto&& v) {
-    return cholesky_factor_constrain(v, M, N, &lp...);
+    return cholesky_factor_constrain(v, M, N, lp...);
   });
 }
 

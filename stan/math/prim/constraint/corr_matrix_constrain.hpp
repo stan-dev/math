@@ -82,31 +82,24 @@ corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
  * the specified vector of unconstrained values. The input vector must be of
  * length \f${k \choose 2} = \frac{k(k-1)}{2}\f$.  The values in the input
  * vector represent unconstrained (partial) correlations among the dimensions.
- * If the `Jacobian` parameter is `true`, the log density accumulator is
- * incremented with the log absolute Jacobian determinant of the transform.  All
- * of the transforms are specified with their Jacobians in the *Stan Reference
- * Manual* chapter Constraint Transforms.
+ * This overload handles looping over the elements of a standard vector.
  *
- * @tparam Jacobian if `true`, increment log density accumulator with log
- * absolute Jacobian determinant of constraining transform
- * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
- * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
- * convertable to this.
- * @param x Vector of unconstrained partial correlations
- * @param k Dimensionality of returned correlation matrix
- * @param[in,out] lp log density accumulator
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
+ * argument. The scalar type of T should be convertable to this.
+ * @param y Vector of unconstrained partial correlations
+ * @param K Dimensionality of returned correlation matrix
+ * @param[in, out] lp log density accumulator or empty
  */
-template <bool Jacobian, typename T, typename Lp,
-          require_not_std_vector_t<T>* = nullptr,
-          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
-  if (Jacobian) {
-    return corr_matrix_constrain(x, k, lp);
-  } else {
-    return corr_matrix_constrain(x, k);
-  }
+template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+inline auto corr_matrix_constrain(const T& y, int K, Lp&... lp) {
+  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
+                "corr_matrix_constrain should be called with either "
+                "two or three arguments");
+  return apply_vector_unary<T>::apply(
+      y, [&lp..., K](auto&& v) { return corr_matrix_constrain(v, K, lp...); });
 }
 
 /**
@@ -121,22 +114,23 @@ inline auto corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam T A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam T A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column or standard vector thereof
  * @tparam Lp A scalar type for the lp argument. The scalar type of T should be
  * convertable to this.
- * @param y Vector of unconstrained partial correlations
- * @param K Dimensionality of returned correlation matrix
+ * @param x Vector of unconstrained partial correlations
+ * @param k Dimensionality of returned correlation matrix
  * @param[in,out] lp log density accumulator
  */
 template <bool Jacobian, typename T, typename Lp,
-          require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto corr_matrix_constrain(const T& y, int K, Lp& lp) {
-  return apply_vector_unary<T>::apply(y, [&lp, K](auto&& v) {
-    return corr_matrix_constrain<Jacobian>(v, K, lp);
-  });
+inline auto corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
+  if constexpr (Jacobian) {
+    return corr_matrix_constrain(x, k, lp);
+  } else {
+    return corr_matrix_constrain(x, k);
+  }
 }
 
 }  // namespace math

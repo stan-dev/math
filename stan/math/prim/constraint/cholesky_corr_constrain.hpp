@@ -90,12 +90,12 @@ cholesky_corr_constrain(const EigVec& y, int K, Lp& lp) {
  * @param[in,out] lp log density accumulator or empty
  */
 template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_corr_constrain(const T& y, int K, Lp... lp) {
+inline auto cholesky_corr_constrain(const T& y, int K, Lp&... lp) {
   static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
                 "cholesky_corr_constrain should be called with either "
                 "two or three arguments");
   return apply_vector_unary<T>::apply(y, [&lp..., K](auto&& v) {
-    return cholesky_corr_constrain(v, K, &lp...);
+    return cholesky_corr_constrain(v, K, lp...);
   });
 }
 

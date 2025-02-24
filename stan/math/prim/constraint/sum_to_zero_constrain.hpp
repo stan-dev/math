@@ -105,9 +105,8 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
  * @param[in, out] lp unused
  * @return Zero-sum vectors of dimensionality one greater than `y`
  */
-template <typename T, typename... Lp,
-          require_std_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y, Lp... lp) {
+template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+inline auto sum_to_zero_constrain(const T& y, Lp&... lp) {
   static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
                 "sum_to_zero_constrain should be called with either "
                 "one or two arguments");
