@@ -9,6 +9,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/eval.hpp>
 #include <stan/math/prim/functor/apply.hpp>
 #include <cmath>
 
@@ -58,7 +59,7 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu,
   check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of_rec(sigma_ref));
-  return fma(sigma_ref, x, mu_ref);
+  return stan::math::eval(fma(sigma_ref, x, mu_ref));
 }
 
 /**
@@ -114,7 +115,7 @@ inline auto offset_multiplier_constrain(const T& x, const M& mu, const S& sigma,
   } else {
     lp += sum(log(sigma_ref));
   }
-  return fma(sigma_ref, x, mu_ref);
+  return stan::math::eval(fma(sigma_ref, x, mu_ref));
 }
 
 /**
