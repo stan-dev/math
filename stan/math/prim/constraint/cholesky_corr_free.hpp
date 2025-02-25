@@ -14,6 +14,7 @@ template <typename T, require_eigen_t<T>* = nullptr>
 auto cholesky_corr_free(const T& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
+  using std::sqrt;
 
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths
@@ -26,7 +27,7 @@ auto cholesky_corr_free(const T& x) {
     z.coeffRef(k++) = corr_free(x_ref.coeff(i, 0));
     auto sum_sqs = square(x_ref.coeff(i, 0));
     for (int j = 1; j < i; ++j) {
-      z.coeffRef(k++) = corr_free(x_ref.coeff(i, j) / std::sqrt(1.0 - sum_sqs));
+      z.coeffRef(k++) = corr_free(x_ref.coeff(i, j) / sqrt(1.0 - sum_sqs));
       sum_sqs += square(x_ref.coeff(i, j));
     }
   }
