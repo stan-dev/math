@@ -24,7 +24,7 @@ auto cholesky_corr_free(const T& x) {
   int k = 0;
   for (int i = 1; i < x.rows(); ++i) {
     z.coeffRef(k++) = corr_free(x_ref.coeff(i, 0));
-    double sum_sqs = square(x_ref.coeff(i, 0));
+    auto sum_sqs = square(x_ref.coeff(i, 0));
     for (int j = 1; j < i; ++j) {
       z.coeffRef(k++) = corr_free(x_ref.coeff(i, j) / std::sqrt(1.0 - sum_sqs));
       sum_sqs += square(x_ref.coeff(i, j));
