@@ -139,22 +139,25 @@ special_arg_values = {
 # list of functions we do not test. These are mainly functions implemented in compiler
 # (not in Stan Math).
 ignored = [
-    "lchoose", # synonym for binomial_coefficient_log
-    "lmultiply", # synonym for multiply_log
     "std_normal_qf", # synonym for inv_Phi
     "if_else",
-    # these are all slight renames compared to stan math
-    "cholesky_factor_corr_jacobian",
-    "cholesky_factor_cov_jacobian",
-    "cholesky_factor_corr_constrain",
-    "cholesky_factor_cov_constrain",
-    "lower_bound_jacobian",
-    "upper_bound_jacobian",
-    "lower_upper_bound_jacobian",
-    "lower_bound_constrain",
-    "upper_bound_constrain",
-    "lower_upper_bound_constrain",
 ]
+
+# these are all slight renames compared to stan math
+renames = {
+    "lchoose": "binomial_coefficient_log",
+    "lmultiply": "multiply_log",
+    "cholesky_factor_corr_constrain": "cholesky_corr_constrain",
+    "cholesky_factor_corr_unconstrain": "cholesky_corr_free",
+    "cholesky_factor_cov_constrain": "cholesky_factor_constrain",
+    "cholesky_factor_cov_unconstrain": "cholesky_factor_free",
+    "lower_bound_constrain": "lb_constrain",
+    "lower_bound_unconstrain": "lb_free",
+    "upper_bound_constrain": "ub_constrain",
+    "upper_bound_unconstrain": "ub_free",
+    "lower_upper_bound_constrain": "lub_constrain",
+    "lower_upper_bound_unconstrain": "lub_free",
+}
 
 # list of function argument indices, for which real valued arguments are not differentiable
 # - they need to be double even in autodiff overloads
@@ -276,6 +279,14 @@ def get_signatures():
 
     return res + internal_signatures
 
+def handle_rename(function_name):
+    """
+    Replace certain function names with their stan math counterparts
+    """
+    fname = renames.get(function_name, function_name)
+    if fname.endswith("_unconstrain"):
+        fname = fname.replace("_unconstrain", "_free")
+    return fname
 
 def parse_signature(signature):
     """
@@ -292,7 +303,7 @@ def parse_signature(signature):
         for i in args
         if i.strip()
     ]
-    return return_type.strip(), function_name.strip(), args
+    return return_type.strip(), handle_rename(function_name.strip()), args
 
 
 def handle_function_list(functions_input):
