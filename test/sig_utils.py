@@ -61,13 +61,10 @@ def get_cpp_type(stan_type):
 
 
 simplex = "simplex"
+stochastic = "stochastic_matrix"
 pos_definite = "positive_definite_matrix"
 scalar_return_type = "scalar_return_type"
 
-make_special_arg_values = {
-    simplex: "make_simplex",
-    pos_definite: "make_pos_definite_matrix",
-}
 
 # list of function arguments that need special scalar values.
 # None means to use the default argument value.
@@ -79,6 +76,9 @@ special_arg_values = {
     "log1m_exp": [-0.6],
     "categorical_rng": [simplex, None],
     "categorical_lpmf": [None, simplex],
+    "corr_matrix_constrain": [None, 2],
+    "corr_matrix_free": [1],
+    "cov_matrix_constrain": [None, 1],
     "cholesky_decompose": [pos_definite, None],
     "cholesky_corr_constrain": [None, 2],
     "cholesky_factor_constrain": [None, 1,1],
@@ -93,6 +93,8 @@ special_arg_values = {
     "lkj_corr_lpdf": [1, None],
     "log_diff_exp": [3, None],
     "log_inv_logit_diff": [1.2, 0.4],
+    "lb_constrain": [None, 0.1],
+    "lb_free": [0.5, 0.1],
     "lub_constrain": [None, 0.1, 0.9],
     "lub_free": [0.5, 0.1, 0.9],
     "mdivide_left_spd": [pos_definite, None],
@@ -123,12 +125,17 @@ special_arg_values = {
     "offset_multiplier_free": [10, None, None],
     "simplex_constrain": [None, scalar_return_type],
     "simplex_free": [simplex],
+    "sum_to_zero_free": [0],
     "std_normal_log_qf": [-0.1],
+    "stochastic_column_free": [stochastic],
+    "stochastic_row_free": [stochastic],
     "student_t_cdf": [0.8, None, 0.4, None],
     "student_t_cdf_log": [0.8, None, 0.4, None],
     "student_t_ccdf_log": [0.8, None, 0.4, None],
     "student_t_lccdf": [0.8, None, 0.4, None],
     "student_t_lcdf": [0.8, None, 0.4, None],
+    "ub_constrain": [None, 0.9],
+    "ub_free": [0.5, 0.9],
     "unit_vector_constrain": [None, scalar_return_type],
     "unit_vector_free": [simplex],
     "uniform_cdf": [None, 0.2, 0.9],
@@ -322,6 +329,7 @@ def handle_function_list(functions_input):
     function_names = []
     function_signatures = []
     for f in functions_input:
+        f = f.strip()
         if ("." in f) or ("/" in f) or ("\\" in f):
             with open(f) as fh:
                 functions_input.extend(parse_signature_file(fh))
