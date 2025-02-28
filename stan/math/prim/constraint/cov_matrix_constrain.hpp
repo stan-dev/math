@@ -126,7 +126,7 @@ template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
   return apply_vector_unary<T>::apply(
-      x, [&lp, K](auto&& v) { return cov_matrix_constrain(v, K, lp) });
+      x, [&lp, K](auto&& v) { return cov_matrix_constrain(v, K, lp); });
 }
 
 /**
