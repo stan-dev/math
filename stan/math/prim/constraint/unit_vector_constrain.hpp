@@ -85,7 +85,7 @@ inline auto unit_vector_constrain(const T& y) {
  * @return Unit length vector of dimension K
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
-                   require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto unit_vector_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
       y, [&lp](auto&& v) { return unit_vector_constrain(v, lp); });
