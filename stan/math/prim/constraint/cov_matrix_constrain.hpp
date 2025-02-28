@@ -97,20 +97,36 @@ cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
  * @param x The vector to convert to a covariance matrix
  * @param K The dimensions of the resulting covariance matrix
- * @param[in, out] lp log density accumulator or empty
  * @throws std::domain_error if (x.size() != K + (K choose 2)).
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "cov_matrix_constrain should be called with either "
-                "two or three arguments");
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K) {
   return apply_vector_unary<T>::apply(
-      x, [&lp..., K](auto&& v) { return cov_matrix_constrain(v, K, lp...); });
+      x, [K](auto&& v) { return cov_matrix_constrain(v, K); });
+}
+
+/**
+ * Return the symmetric, positive-definite matrix of dimensions K by K resulting
+ * from transforming the specified finite vector of size K plus (K choose 2).
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param x The vector to convert to a covariance matrix
+ * @param K The dimensions of the resulting covariance matrix
+ * @param[in, out] lp log density accumulator
+ * @throws std::domain_error if (x.size() != K + (K choose 2)).
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto cov_matrix_constrain(const T& x, Eigen::Index K, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      x, [&lp, K](auto&& v) { return cov_matrix_constrain(v, K, lp) });
 }
 
 /**

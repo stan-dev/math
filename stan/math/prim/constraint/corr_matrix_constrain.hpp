@@ -87,19 +87,36 @@ corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
  * @param y Vector of unconstrained partial correlations
  * @param K Dimensionality of returned correlation matrix
- * @param[in, out] lp log density accumulator or empty
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto corr_matrix_constrain(const T& y, int K, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "corr_matrix_constrain should be called with either "
-                "two or three arguments");
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto corr_matrix_constrain(const T& y, int K) {
   return apply_vector_unary<T>::apply(
-      y, [&lp..., K](auto&& v) { return corr_matrix_constrain(v, K, lp...); });
+      y, [K](auto&& v) { return corr_matrix_constrain(v, K, ); });
+}
+
+/**
+ * Return the correlation matrix of the specified dimensionality derived from
+ * the specified vector of unconstrained values. The input vector must be of
+ * length \f${k \choose 2} = \frac{k(k-1)}{2}\f$.  The values in the input
+ * vector represent unconstrained (partial) correlations among the dimensions.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param y Vector of unconstrained partial correlations
+ * @param K Dimensionality of returned correlation matrix
+ * @param[in, out] lp log density accumulator o
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto corr_matrix_constrain(const T& y, int K, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      y, [&lp, K](auto&& v) { return corr_matrix_constrain(v, K, lp); });
 }
 
 /**

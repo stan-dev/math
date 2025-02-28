@@ -72,19 +72,35 @@ inline auto ordered_constrain(const EigVec& x, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
+ * @param x Free vector of scalars
+ * @return Positive, increasing ordered vector.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto ordered_constrain(const T& x) {
+  return apply_vector_unary<T>::apply(
+      x, [](auto&& v) { return ordered_constrain(v); });
+}
+
+/**
+ * Return a positive valued, increasing ordered vector derived from the
+ * specified free vector. The returned constrained vector will have the same
+ * dimensionality as the specified free vector.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param x Free vector of scalars
  * @param[in, out] lp log density accumulator or empty
  * @return Positive, increasing ordered vector.
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto ordered_constrain(const T& x, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "ordered_constrain should be called with either "
-                "one or two arguments");
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto ordered_constrain(const T& x, Lp& lp) {
   return apply_vector_unary<T>::apply(
-      x, [&lp...](auto&& v) { return ordered_constrain(v, lp...); });
+      x, [&lp](auto&& v) { return ordered_constrain(v, lp); });
 }
 
 /**

@@ -95,21 +95,39 @@ cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
  * @param x Vector of unconstrained values
  * @param M number of rows
  * @param N number of columns
- * @param[in,out] lp log density accumulator or empty
  * @return Cholesky factor
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "cholesky_factor_constrain should be called with either "
-                "three or four arguments");
-  return apply_vector_unary<T>::apply(x, [&lp..., M, N](auto&& v) {
-    return cholesky_factor_constrain(v, M, N, lp...);
+template <typename T, , require_std_vector_t<T>* = nullptr>
+inline auto cholesky_factor_constrain(const T& x, int M, int N) {
+  return apply_vector_unary<T>::apply(
+      x, [M, N](auto&& v) { return cholesky_factor_constrain(v, M, N); });
+}
+
+/**
+ * Return the Cholesky factor of the specified size read from the specified
+ * vector. A total of (N choose 2) + N + N * (M - N) free parameters are
+ * required to read an M by N Cholesky factor.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param x Vector of unconstrained values
+ * @param M number of rows
+ * @param N number of columns
+ * @param[in,out] lp log density accumulator
+ * @return Cholesky factor
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
+  return apply_vector_unary<T>::apply(x, [&lp, M, N](auto&& v) {
+    return cholesky_factor_constrain(v, M, N, lp);
   });
 }
 

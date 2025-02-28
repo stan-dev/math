@@ -83,19 +83,33 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
  * @param[in] y free vector with matrices of size (N, K - 1)
- * @param[in, out] lp log density accumulator or empty
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_row_constrain(const T& y, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "stochastic_row_constrain should be called with either "
-                "one or two arguments");
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto stochastic_row_constrain(const T& y) {
   return apply_vector_unary<T>::apply(
-      y, [&lp...](auto&& v) { return stochastic_row_constrain(v, lp...); });
+      y, [](auto&& v) { return stochastic_row_constrain(v); });
+}
+
+/**
+ * Return a row stochastic matrix.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param[in] y free vector with matrices of size (N, K - 1)
+ * @param[in, out] lp log density accumulator
+ * @return vector of matrices with simplex rows of dimensionality (N, K)
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto stochastic_row_constrain(const T& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      y, [&lp](auto&& v) { return stochastic_row_constrain(v, lp); });
 }
 
 /**

@@ -62,6 +62,22 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y, Lp& lp) {
   }
   return ret;
 }
+/**
+ * Return a vector of column stochastic matrices.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
+ * @param[in] y free vector
+ * @return Standard vector containing matrices with simplex columns of
+ * dimensionality (K, M).
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto stochastic_column_constrain(const T& y) {
+  return apply_vector_unary<T>::apply(
+      y, [](auto&& v) { return stochastic_column_constrain(v); });
+}
 
 /**
  * Return a vector of column stochastic matrices.
@@ -70,20 +86,18 @@ inline plain_type_t<Mat> stochastic_column_constrain(const Mat& y, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and dynamic columns
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param[in] y free vector
- * @param[in, out] lp log density accumulator or empty
+ * @param[in, out] lp log density accumulator
  * @return Standard vector containing matrices with simplex columns of
  * dimensionality (K, M).
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_column_constrain(const T& y, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "stochastic_column_constrain should be called with either "
-                "one or two arguments");
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto stochastic_column_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
-      y, [&lp...](auto&& v) { return stochastic_column_constrain(v, lp...); });
+      y, [&lp](auto&& v) { return stochastic_column_constrain(v, lp); });
 }
 
 /**

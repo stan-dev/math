@@ -67,19 +67,34 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
  * `Eigen::EigenBase`
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
  * @param x Free vector of scalars
- * @param[in, out] lp log density accumulator or empty
  * @return Positive, increasing ordered vector
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
+template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto positive_ordered_constrain(const T& x, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "positive_ordered_constrain should be called with either "
-                "one or two arguments");
   return apply_vector_unary<T>::apply(
-      x, [&lp...](auto&& v) { return positive_ordered_constrain(v, lp...); });
+      x, [](auto&& v) { return positive_ordered_constrain(v); });
+}
+
+/**
+ * Return a positive valued, increasing positive ordered vector derived from the
+ * specified free vector.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::EigenBase`, a `var_value` with inner type inheriting from
+ * `Eigen::EigenBase`
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
+ * @param x Free vector of scalars
+ * @param[in, out] lp log density accumulator
+ * @return Positive, increasing ordered vector
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto positive_ordered_constrain(const T& x, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      x, [&lp](auto&& v) { return positive_ordered_constrain(v, lp); });
 }
 
 /**

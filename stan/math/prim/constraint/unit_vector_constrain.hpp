@@ -55,6 +55,21 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
   lp -= 0.5 * SN;
   return y_ref.array() / sqrt(SN);
 }
+/**
+ * Return the unit length vector corresponding to the free vector y.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam T A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @param y vector of K unrestricted variables
+ * @return Unit length vector of dimension K
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto unit_vector_constrain(const T& y) {
+  return apply_vector_unary<T>::apply(
+      y, [](auto&& v) { return unit_vector_constrain(v); });
+}
 
 /**
  * Return the unit length vector corresponding to the free vector y.
@@ -63,19 +78,17 @@ inline plain_type_t<T1> unit_vector_constrain(const T1& y, T2& lp) {
  * @tparam T A standard vector with inner type inheriting from
  * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
  * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @tparam Lp A pack that is either empty, or exactly one scalar type for the lp
- * argument. The scalar type of T should be convertable to this.
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param y vector of K unrestricted variables
- * @param[in, out] lp log density accumulator or empty
+ * @param[in, out] lp log density accumulator
  * @return Unit length vector of dimension K
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto unit_vector_constrain(const T& y, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "unit_vector_constrain should be called with either "
-                "one or two arguments");
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+                   require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto unit_vector_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
-      y, [&lp...](auto&& v) { return unit_vector_constrain(v, lp...); });
+      y, [&lp](auto&& v) { return unit_vector_constrain(v, lp); });
 }
 
 /**
