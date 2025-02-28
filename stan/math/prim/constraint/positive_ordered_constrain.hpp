@@ -71,7 +71,7 @@ inline auto positive_ordered_constrain(const Vec& x, Lp& lp) {
  * @return Positive, increasing ordered vector
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto positive_ordered_constrain(const T& x, Lp&... lp) {
+inline auto positive_ordered_constrain(const T& x) {
   return apply_vector_unary<T>::apply(
       x, [](auto&& v) { return positive_ordered_constrain(v); });
 }

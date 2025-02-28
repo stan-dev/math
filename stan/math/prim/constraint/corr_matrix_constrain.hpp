@@ -93,7 +93,7 @@ corr_matrix_constrain(const T& x, Eigen::Index k, Lp& lp) {
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto corr_matrix_constrain(const T& y, int K) {
   return apply_vector_unary<T>::apply(
-      y, [K](auto&& v) { return corr_matrix_constrain(v, K, ); });
+      y, [K](auto&& v) { return corr_matrix_constrain(v, K); });
 }
 
 /**

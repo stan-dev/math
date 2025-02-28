@@ -100,7 +100,7 @@ cholesky_factor_constrain(const T& x, int M, int N, Lp& lp) {
  * @param N number of columns
  * @return Cholesky factor
  */
-template <typename T, , require_std_vector_t<T>* = nullptr>
+template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto cholesky_factor_constrain(const T& x, int M, int N) {
   return apply_vector_unary<T>::apply(
       x, [M, N](auto&& v) { return cholesky_factor_constrain(v, M, N); });
