@@ -14,6 +14,7 @@
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
 #include <stan/math/prim/fun/value_of.hpp>
+#include <stan/math/prim/prob/beta_lpdf.hpp>
 #include <stan/math/prim/functor/partials_propagator.hpp>
 #include <cmath>
 
@@ -53,9 +54,49 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   check_positive_finite(function, "First shape parameter", alpha_ref);
   check_positive_finite(function, "Second shape parameter", beta_ref);
   check_bounded(function, "Random variable", value_of(y_ref), 0, 1);
+  
+  const auto& y_arr = as_value_column_array_or_scalar(y_ref);
+  const auto& alpha_arr = as_value_column_array_or_scalar(alpha_ref);
+  const auto& beta_arr = as_value_column_array_or_scalar(beta_ref);
 
-  T_partials_return P(1.0);
   auto ops_partials = make_partials_propagator(y_ref, alpha_ref, beta_ref);
+  // Explicit return for extreme values
+  // The gradients are technically ill-defined, but treated as zero
+  if (any(y_arr <= 0)) {
+    return ops_partials.build(0.0);
+  }
+
+
+  
+  T_partials_return P = prod(inc_beta(alpha_arr, beta_arr, y_arr));
+  if (!is_constant_all<T_y>::value) {
+    partials<0>(ops_partials)[0] =
+      apply_scalar_ternary([](const auto& y_dbl, const auto& alpha_dbl, const auto& beta_dbl) {
+        return exp(beta_lpdf(y_dbl, alpha_dbl, beta_dbl));
+      }, y_arr, alpha_arr, beta_arr);
+  }
+
+  if (!is_constant_all<T_scale_succ>::value) {
+    partials<1>(ops_partials)[0] =
+      apply_scalar_ternary([](const auto& y_dbl, const auto& alpha_dbl, const auto& beta_dbl) {
+        return inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma(alpha_dbl), digamma(alpha_dbl + beta_dbl));
+      }, y_arr, alpha_arr, beta_arr);
+  }
+
+  if (!is_constant_all<T_scale_fail>::value) {
+    partials<2>(ops_partials)[0] =
+      apply_scalar_ternary([](const auto& y_dbl, const auto& alpha_dbl, const auto& beta_dbl) {
+        return inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma(beta_dbl), digamma(alpha_dbl + beta_dbl));
+      }, y_arr, alpha_arr, beta_arr);
+  }
+
+
+  //const auto& digamma_alpha = digamma(alpha_arr);
+  //const auto& digamma_beta = digamma(beta_arr);
+  //const auto& digamma_sum = digamma(alpha_arr + beta_arr);
+
+
+/*
   scalar_seq_view<T_y_ref> y_vec(y_ref);
   scalar_seq_view<T_alpha_ref> alpha_vec(alpha_ref);
   scalar_seq_view<T_beta_ref> beta_vec(beta_ref);
@@ -64,13 +105,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
   size_t size_alpha_beta = max_size(alpha, beta);
   size_t N = max_size(y, alpha, beta);
 
-  // Explicit return for extreme values
-  // The gradients are technically ill-defined, but treated as zero
-  for (size_t i = 0; i < stan::math::size(y); i++) {
-    if (y_vec.val(i) <= 0) {
-      return ops_partials.build(0.0);
-    }
-  }
 
   VectorBuilder<!is_constant_all<T_scale_succ>::value, T_partials_return,
                 T_scale_succ>
@@ -98,7 +132,6 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
       digamma_sum[n] = digamma(alpha_vec.val(n) + beta_vec.val(n));
     }
   }
-
   for (size_t n = 0; n < N; n++) {
     const T_partials_return y_dbl = y_vec.val(n);
 
@@ -114,43 +147,25 @@ return_type_t<T_y, T_scale_succ, T_scale_fail> beta_cdf(
     const T_partials_return inv_Pn
         = is_constant_all<T_y, T_scale_succ, T_scale_fail>::value ? 0 : inv(Pn);
 
-    P *= Pn;
+    //P *= Pn;
 
     if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials)[n]
-          += inc_beta_ddz(alpha_dbl, beta_dbl, y_dbl) * inv_Pn;
+          += exp(beta_lpdf(y_dbl, alpha_dbl, beta_dbl));
     }
 
     if (!is_constant_all<T_scale_succ>::value) {
       partials<1>(ops_partials)[n]
           += inc_beta_dda(alpha_dbl, beta_dbl, y_dbl, digamma_alpha[n],
-                          digamma_sum[n])
-             * inv_Pn;
+                          digamma_sum[n]);
     }
     if (!is_constant_all<T_scale_fail>::value) {
       partials<2>(ops_partials)[n]
           += inc_beta_ddb(alpha_dbl, beta_dbl, y_dbl, digamma_beta[n],
-                          digamma_sum[n])
-             * inv_Pn;
+                          digamma_sum[n]);
     }
   }
-
-  if (!is_constant_all<T_y>::value) {
-    for (size_t n = 0; n < stan::math::size(y); ++n) {
-      partials<0>(ops_partials)[n] *= P;
-    }
-  }
-  if (!is_constant_all<T_scale_succ>::value) {
-    for (size_t n = 0; n < stan::math::size(alpha); ++n) {
-      partials<1>(ops_partials)[n] *= P;
-    }
-  }
-  if (!is_constant_all<T_scale_fail>::value) {
-    for (size_t n = 0; n < stan::math::size(beta); ++n) {
-      partials<2>(ops_partials)[n] *= P;
-    }
-  }
-
+*/
   return ops_partials.build(P);
 }
 
