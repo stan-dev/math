@@ -7,4 +7,12 @@ TEST_F(AgradRev, mathMixScalFun_std_normal) {
   stan::test::expect_ad(f, -0.3);
   stan::test::expect_ad(f, 0.0);
   stan::test::expect_ad(f, 1.7);
+
+  Eigen::VectorXd x(3);
+  x << -0.3, 0.0, 1.7;
+  std::vector<double> x2{0.0, 1.7};
+
+  stan::test::expect_ad(f, x);
+  stan::test::expect_ad(f, x.transpose().eval());
+  stan::test::expect_ad(f, x2);
 }
