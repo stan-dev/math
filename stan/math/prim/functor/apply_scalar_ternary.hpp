@@ -162,7 +162,7 @@ template <typename F, typename T1, typename T2, typename T3,
 inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
                                  const T3& z) {
   return apply_scalar_binary(
-    [f, z](const auto& a, const auto& b) { return f(a, b, z); }, x, y);
+      [f, z](const auto& a, const auto& b) { return f(a, b, z); }, x, y);
 }
 
 /**
@@ -187,7 +187,7 @@ template <typename F, typename T1, typename T2, typename T3,
 inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
                                  const T3& z) {
   return apply_scalar_binary(
-    [f, y](const auto& a, const auto& c) { return f(a, y, c); }, x, z);
+      [f, y](const auto& a, const auto& c) { return f(a, y, c); }, x, z);
 }
 
 /**
@@ -212,7 +212,7 @@ template <typename F, typename T1, typename T2, typename T3,
 inline auto apply_scalar_ternary(const F& f, const T1& x, const T2& y,
                                  const T3& z) {
   return apply_scalar_binary(
-    [f, x](const auto& b, const auto& c) { return f(x, b, c); }, y, z);
+      [f, x](const auto& b, const auto& c) { return f(x, b, c); }, y, z);
 }
 
 }  // namespace math

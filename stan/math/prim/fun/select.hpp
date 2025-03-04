@@ -88,7 +88,8 @@ inline ReturnT select(const bool c, const T_true& y_true,
     return apply_scalar_binary(
         [](const auto& y_true_inner, const auto& y_false_inner) {
           return y_false_inner;
-        }, y_true, y_false);
+        },
+        y_true, y_false);
   }
 }
 
@@ -120,7 +121,8 @@ inline ReturnT select(const bool c, const T_true y_true,
     return apply_scalar_binary(
         [](const auto& y_true_inner, const auto& y_false_inner) {
           return y_true_inner;
-        }, y_true, y_false);
+        },
+        y_true, y_false);
   } else {
     return y_false;
   }
