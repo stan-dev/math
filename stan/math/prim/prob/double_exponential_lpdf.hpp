@@ -57,7 +57,6 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     return 0.0;
   }
 
-  T_partials_return logp(0.0);
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
@@ -71,10 +70,10 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   const auto& inv_sigma = to_ref(inv(sigma_val));
   const auto& y_m_mu
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
-  const auto& abs_diff_y_mu = abs(y_m_mu);
-  const auto& scaled_diff
-      = to_ref_if<!is_constant<T_scale>::value>(abs_diff_y_mu * inv_sigma);
+  const auto& scaled_abs_diff
+      = to_ref_if<!is_constant<T_scale>::value>(abs(y_m_mu) * inv_sigma);
 
+  T_partials_return logp = -sum(scaled_abs_diff);
   const size_t N = max_size(y, mu, sigma);
   if (include_summand<propto>::value) {
     logp -= N * LOG_TWO;
@@ -82,13 +81,12 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
-  logp -= sum(scaled_diff);
 
   if (!is_constant_all<T_y, T_loc>::value) {
-    const auto& diff_sign = sign(y_m_mu);
     const auto& rep_deriv
         = to_ref_if<(!is_constant<T_y>::value
-                     && !is_constant<T_loc>::value)>(diff_sign * inv_sigma);
+                     && !is_constant<T_loc>::value)>(sign(y_m_mu) * inv_sigma);
+
     if (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
@@ -97,7 +95,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     }
   }
   if (!is_constant<T_scale>::value) {
-    partials<2>(ops_partials) = inv_sigma * (scaled_diff - 1);
+    partials<2>(ops_partials) = inv_sigma * (scaled_abs_diff - 1);
   }
 
   return ops_partials.build(logp);

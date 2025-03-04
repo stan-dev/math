@@ -8,9 +8,11 @@
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/digamma.hpp>
+#include <stan/math/prim/fun/lgamma.hpp>
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/multiply_log.hpp>
+#include <stan/math/prim/fun/pow.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/size.hpp>
 #include <stan/math/prim/fun/size_zero.hpp>
@@ -78,11 +80,11 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     return 0;
   }
 
-  auto ops_partials = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
-  const auto& inv_beta1p = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);
+  const auto& inv_beta1p = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);  // sus T_shape
   const auto& diff = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
-  const auto& scaled_abs_diff = to_ref_if<!is_constant<T_scale>::value>(abs(diff) / alpha_val);
-  const auto& scaled_abs_diff_pow = to_ref(pow(scaled_abs_diff, beta_val));
+  const auto& inv_alpha = to_ref(inv(alpha_val));
+  const auto& scaled_abs_diff = to_ref_if<!is_constant_all<T_y, T_loc, T_shape>::value>(abs(diff) * inv_alpha);
+  const auto& scaled_abs_diff_pow = to_ref_if<!is_constant_all<T_scale, T_shape>::value>(pow(scaled_abs_diff, beta_val));
   const size_t N = max_size(y, mu, alpha, beta);
 
   T_partials_return logp = -sum(scaled_abs_diff_pow);
@@ -97,25 +99,25 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     logp -= sum(lgamma(inv_beta1p)) * (N / math::size(beta));
   }
 
-  if (!is_constant_all<T_y, T_loc, T_scale>::value) {
-    const auto& beta_scaled_abs_diff_pow = to_ref_if<(!is_constant_all<T_y>::value 
-                                                     + !is_constant_all<T_loc>::value
-                                                     + !is_constant_all<T_scale>::value
-                                                     >= 2)>(beta_val * scaled_abs_diff_pow);
+  auto ops_partials = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
 
-    if (!is_constant_all<T_y, T_loc>::value) {
-      const auto& deriv = to_ref_if<(!is_constant<T_y>::value
-                      && !is_constant<T_loc>::value)>(sign(diff) * beta_scaled_abs_diff_pow / alpha_val);
-      if (!is_constant<T_y>::value) {
-        partials<0>(ops_partials) = -deriv;
-      }
-      if (!is_constant<T_loc>::value) {
-        partials<1>(ops_partials) = std::move(deriv);
-      }
+  if (!is_constant_all<T_y, T_loc>::value) {
+    // note: The partial derivatives for y, mu are undefined when y == mu && beta < 1.
+    // The derivative limit as mu -> y goes:
+    //   to 0 from both sides if beta > 1 (defined as 0)
+    //   to +1/alpha from right but -1/alpha from left if beta == 1 (defined as 0, consistent with double_exponential_lpdf)
+    //   to +∞ from right but -∞ from left as y -> mu if beta < 1 (undefined)
+    const auto& rep_deriv = to_ref_if<!is_constant<T_y>::value
+                    && !is_constant<T_loc>::value>(sign(diff) * beta_val * pow(scaled_abs_diff, beta_val-1) * inv_alpha);
+    if (!is_constant<T_y>::value) {
+      partials<0>(ops_partials) = -rep_deriv;
     }
-    if (!is_constant<T_scale>::value) {
-      partials<2>(ops_partials) = (beta_scaled_abs_diff_pow - 1) / alpha_val;
+    if (!is_constant<T_loc>::value) {
+      partials<1>(ops_partials) = std::move(rep_deriv);
     }
+  }
+  if (!is_constant<T_scale>::value) {
+    partials<2>(ops_partials) = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
   }
   if (!is_constant<T_shape>::value) {
       partials<3>(ops_partials) = digamma(inv_beta1p) / square(beta_val) - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
