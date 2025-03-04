@@ -120,7 +120,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     partials<2>(ops_partials) = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
   }
   if (!is_constant<T_shape>::value) {
-      partials<3>(ops_partials) = digamma(inv_beta1p) / square(beta_val) - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
+      partials<3>(ops_partials) = digamma(inv_beta1p) * inv_square(beta_val) - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
   }
 
   return ops_partials.build(logp);
