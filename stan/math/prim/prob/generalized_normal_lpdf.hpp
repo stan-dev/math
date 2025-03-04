@@ -27,7 +27,8 @@ namespace math {
 /** \ingroup prob_dists
  * The log of the generalized normal density for the specified scalar(s) given
  * the specified location, scale and shape parameters. y, mu, alpha, or beta can
- * each be either a scalar or a vector. Any vector inputs must be the same length.
+ * each be either a scalar or a vector. Any vector inputs must be the same
+ * length.
  *
  * <p>The result log probability is defined to be the sum of the
  * log probabilities for each observation/mean/scale/shape tuple.
@@ -55,8 +56,8 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   using T_alpha_ref = ref_type_if_not_constant_t<T_scale>;
   using T_beta_ref = ref_type_if_not_constant_t<T_shape>;
   static constexpr const char* function = "generalized_normal_lpdf";
-  check_consistent_sizes(function, "Random variable", y, "Location parameter", mu,
-                        "Scale parameter", alpha, "Shape parameter", beta);
+  check_consistent_sizes(function, "Random variable", y, "Location parameter",
+                         mu, "Scale parameter", alpha, "Shape parameter", beta);
 
   T_y_ref y_ref = std::forward<T_y>(y);
   T_mu_ref mu_ref = std::forward<T_loc>(mu);
@@ -71,7 +72,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive(function, "Scale parameter", alpha_val);
-  check_positive(function, "Shape parameter", beta_val);  // With β = +∞ this could be defined to be uniform, but we don't support that.
+  check_positive(function, "Shape parameter",
+                 beta_val);  // With β = +∞ this could be defined to be uniform,
+                             // but we don't support that.
 
   if (size_zero(y, mu, alpha, beta)) {
     return 0;
@@ -80,11 +83,17 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     return 0;
   }
 
-  const auto& inv_beta1p = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);  
-  const auto& diff = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
+  const auto& inv_beta1p
+      = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);
+  const auto& diff
+      = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
   const auto& inv_alpha = to_ref(inv(alpha_val));
-  const auto& scaled_abs_diff = to_ref_if<!is_constant_all<T_y, T_loc, T_shape>::value>(abs(diff) * inv_alpha);
-  const auto& scaled_abs_diff_pow = to_ref_if<!is_constant_all<T_scale, T_shape>::value>(pow(scaled_abs_diff, beta_val));
+  const auto& scaled_abs_diff
+      = to_ref_if<!is_constant_all<T_y, T_loc, T_shape>::value>(abs(diff)
+                                                                * inv_alpha);
+  const auto& scaled_abs_diff_pow
+      = to_ref_if<!is_constant_all<T_scale, T_shape>::value>(
+          pow(scaled_abs_diff, beta_val));
   const size_t N = max_size(y, mu, alpha, beta);
 
   T_partials_return logp = -sum(scaled_abs_diff_pow);
@@ -99,16 +108,21 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     logp -= sum(lgamma(inv_beta1p)) * (N / math::size(beta));
   }
 
-  auto ops_partials = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
+  auto ops_partials
+      = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
 
   if (!is_constant_all<T_y, T_loc>::value) {
-    // note: The partial derivatives for y, mu are undefined when y == mu && beta < 1.
-    // The derivative limit as mu -> y goes:
+    // note: The partial derivatives for y, mu are undefined when y == mu &&
+    // beta < 1. The derivative limit as mu -> y goes:
     //   to 0 from both sides if beta > 1 (defined as 0)
-    //   to +1/alpha from right but -1/alpha from left if beta == 1 (defined as 0, consistent with double_exponential_lpdf)
-    //   to +∞ from right but -∞ from left as y -> mu if beta < 1 (undefined)
-    const auto& rep_deriv = to_ref_if<!is_constant<T_y>::value
-                    && !is_constant<T_loc>::value>(sign(diff) * beta_val * pow(scaled_abs_diff, beta_val-1) * inv_alpha);
+    //   to +1/alpha from right but -1/alpha from left if beta == 1 (defined as
+    //   0, consistent with double_exponential_lpdf) to +∞ from right but -∞
+    //   from left as y -> mu if beta < 1 (undefined)
+    const auto& rep_deriv
+        = to_ref_if < !is_constant<T_y>::value
+          && !is_constant<T_loc>::value
+                 > (sign(diff) * beta_val * pow(scaled_abs_diff, beta_val - 1)
+                    * inv_alpha);
     if (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
@@ -117,10 +131,13 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     }
   }
   if (!is_constant<T_scale>::value) {
-    partials<2>(ops_partials) = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
+    partials<2>(ops_partials)
+        = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
   }
   if (!is_constant<T_shape>::value) {
-      partials<3>(ops_partials) = digamma(inv_beta1p) * inv_square(beta_val) - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
+    partials<3>(ops_partials)
+        = digamma(inv_beta1p) * inv_square(beta_val)
+          - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
   }
 
   return ops_partials.build(logp);
@@ -129,10 +146,9 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
 template <typename T_y, typename T_loc, typename T_scale, typename T_shape>
 inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     T_y&& y, T_loc&& mu, T_scale&& alpha, T_shape&& beta) {
-  return generalized_normal_lpdf<false>(std::forward<T_y>(y),
-                                      std::forward<T_loc>(mu),
-                                      std::forward<T_scale>(alpha),
-                                      std::forward<T_shape>(beta));
+  return generalized_normal_lpdf<false>(
+      std::forward<T_y>(y), std::forward<T_loc>(mu),
+      std::forward<T_scale>(alpha), std::forward<T_shape>(beta));
 }
 
 }  // namespace math

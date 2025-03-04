@@ -84,8 +84,8 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
 
   if (!is_constant_all<T_y, T_loc>::value) {
     const auto& rep_deriv
-        = to_ref_if<(!is_constant<T_y>::value
-                     && !is_constant<T_loc>::value)>(sign(y_m_mu) * inv_sigma);
+        = to_ref_if<(!is_constant<T_y>::value && !is_constant<T_loc>::value)>(
+            sign(y_m_mu) * inv_sigma);
 
     if (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;

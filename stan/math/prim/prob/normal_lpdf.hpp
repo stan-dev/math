@@ -85,10 +85,10 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {
-    auto scaled_diff = to_ref_if<!is_constant<T_y>::value
-                                     + !is_constant<T_scale>::value
-                                     + !is_constant<T_loc>::value
-                                 >= 2>(inv_sigma * y_scaled);
+    auto scaled_diff
+        = to_ref_if<!is_constant<T_y>::value + !is_constant<T_scale>::value
+                        + !is_constant<T_loc>::value
+                    >= 2>(inv_sigma * y_scaled);
     if (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -scaled_diff;
     }
