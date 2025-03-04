@@ -71,7 +71,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   check_not_nan(function, "Random variable", y_val);
   check_finite(function, "Location parameter", mu_val);
   check_positive(function, "Scale parameter", alpha_val);
-  check_positive(function, "Shape parameter", beta_val);
+  check_positive(function, "Shape parameter", beta_val);  // With β = +∞ this could be defined to be uniform, but we don't support that.
 
   if (size_zero(y, mu, alpha, beta)) {
     return 0;
@@ -80,7 +80,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
     return 0;
   }
 
-  const auto& inv_beta1p = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);  // sus T_shape
+  const auto& inv_beta1p = to_ref_if<!is_constant<T_shape>::value>(inv(beta_val) + 1);  
   const auto& diff = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
   const auto& inv_alpha = to_ref(inv(alpha_val));
   const auto& scaled_abs_diff = to_ref_if<!is_constant_all<T_y, T_loc, T_shape>::value>(abs(diff) * inv_alpha);
