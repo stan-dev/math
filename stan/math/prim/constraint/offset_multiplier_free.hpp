@@ -56,7 +56,9 @@ inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
   check_finite("offset_multiplier_constrain", "offset", value_of(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of(sigma_ref));
-  return stan::math::eval(divide(subtract(std::forward<T>(y), std::forward<decltype(mu_ref)>(mu_ref)), std::forward<decltype(sigma_ref)>(sigma_ref)));
+  return stan::math::eval(divide(
+      subtract(std::forward<T>(y), std::forward<decltype(mu_ref)>(mu_ref)),
+      std::forward<decltype(sigma_ref)>(sigma_ref)));
 }
 
 /**
@@ -64,8 +66,7 @@ inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
  */
 template <typename T, typename M, typename S,
           require_all_not_std_vector_t<M, S>* = nullptr>
-inline auto offset_multiplier_free(const std::vector<T>& x, M&& mu,
-                                   S&& sigma) {
+inline auto offset_multiplier_free(const std::vector<T>& x, M&& mu, S&& sigma) {
   std::vector<plain_type_t<decltype(offset_multiplier_free(x[0], mu, sigma))>>
       ret;
   ret.reserve(x.size());

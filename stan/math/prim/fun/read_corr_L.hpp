@@ -63,8 +63,10 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
     position += pull;
     pull--;
     L(i, i) = sqrt(acc(i - 1));
-    L.col(i).tail(pull) = CPCs_ref.segment(position, pull).array() * acc.tail(pull).sqrt();
-    acc.tail(pull) *= T_scalar(1.0) - CPCs_ref.segment(position, pull).array().square();
+    L.col(i).tail(pull)
+        = CPCs_ref.segment(position, pull).array() * acc.tail(pull).sqrt();
+    acc.tail(pull)
+        *= T_scalar(1.0) - CPCs_ref.segment(position, pull).array().square();
   }
   L(K - 1, K - 1) = sqrt(acc(K - 2));
   return L;

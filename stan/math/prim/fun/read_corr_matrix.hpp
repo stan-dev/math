@@ -28,7 +28,8 @@ read_corr_matrix(T_CPCs&& CPCs, size_t K) {
   if (K == 0) {
     return {};
   }
-  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<T_CPCs>(CPCs), K));
+  return multiply_lower_tri_self_transpose(
+      read_corr_L(std::forward<T_CPCs>(CPCs), K));
 }
 
 /**
@@ -60,7 +61,8 @@ read_corr_matrix(T_CPCs&& CPCs, size_t K, Lp& log_prob) {
   if (K == 0) {
     return {};
   }
-  return multiply_lower_tri_self_transpose(read_corr_L(std::forward<T_CPCs>(CPCs), K, log_prob));
+  return multiply_lower_tri_self_transpose(
+      read_corr_L(std::forward<T_CPCs>(CPCs), K, log_prob));
 }
 
 }  // namespace math

@@ -43,8 +43,9 @@ auto cholesky_corr_free(T&& x) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 auto cholesky_corr_free(T&& x) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [](auto&& v) { return cholesky_corr_free(std::forward<decltype(v)>(v)); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return cholesky_corr_free(std::forward<decltype(v)>(v));
+  });
 }
 
 }  // namespace math

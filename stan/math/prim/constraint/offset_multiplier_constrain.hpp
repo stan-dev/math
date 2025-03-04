@@ -42,8 +42,7 @@ namespace math {
 template <typename T, typename M, typename S,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr>
-inline auto offset_multiplier_constrain(T&& x, M&& mu,
-                                        S&& sigma) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
   auto&& sigma_ref = to_ref(std::forward<S>(sigma));
   if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
@@ -59,7 +58,9 @@ inline auto offset_multiplier_constrain(T&& x, M&& mu,
   check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of_rec(sigma_ref));
-  return stan::math::eval(fma(std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<T>(x), std::forward<decltype(mu_ref)>(mu_ref)));
+  return stan::math::eval(fma(std::forward<decltype(sigma_ref)>(sigma_ref),
+                              std::forward<T>(x),
+                              std::forward<decltype(mu_ref)>(mu_ref)));
 }
 
 /**
@@ -93,8 +94,7 @@ template <typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr>
-inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma,
-                                        Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   auto&& mu_ref = to_ref(std::forward<M>(mu));
   auto&& sigma_ref = to_ref(std::forward<S>(sigma));
   if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
@@ -115,7 +115,9 @@ inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma,
   } else {
     lp += sum(log(sigma_ref));
   }
-  return stan::math::eval(fma(std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<T>(x), std::forward<decltype(mu_ref)>(mu_ref)));
+  return stan::math::eval(fma(std::forward<decltype(sigma_ref)>(sigma_ref),
+                              std::forward<T>(x),
+                              std::forward<decltype(mu_ref)>(mu_ref)));
 }
 
 /**
@@ -202,8 +204,7 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
 template <typename T, typename M, typename S,
           require_not_std_vector_t<S>* = nullptr>
 inline auto offset_multiplier_constrain(const std::vector<T>& x,
-                                        const std::vector<M>& mu,
-                                        S&& sigma) {
+                                        const std::vector<M>& mu, S&& sigma) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   std::vector<
       plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0], sigma))>>
@@ -223,8 +224,8 @@ template <typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_not_std_vector_t<S>* = nullptr>
 inline auto offset_multiplier_constrain(const std::vector<T>& x,
-                                        const std::vector<M>& mu,
-                                        S&& sigma, Lp& lp) {
+                                        const std::vector<M>& mu, S&& sigma,
+                                        Lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   std::vector<plain_type_t<decltype(
       offset_multiplier_constrain(x[0], mu[0], sigma, lp))>>
@@ -303,12 +304,13 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  */
 template <bool Jacobian, typename T, typename M, typename S, typename Lp,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr>
-inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma,
-                                        Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   if constexpr (Jacobian) {
-    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu), std::forward<S>(sigma), lp);
+    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu),
+                                       std::forward<S>(sigma), lp);
   } else {
-    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu), std::forward<S>(sigma));
+    return offset_multiplier_constrain(std::forward<T>(x), std::forward<M>(mu),
+                                       std::forward<S>(sigma));
   }
 }
 

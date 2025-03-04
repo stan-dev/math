@@ -86,8 +86,7 @@ inline plain_type_t<Vec> sum_to_zero_constrain(Vec&& y) {
  * @param lp unused
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename Vec, typename Lp,
-          require_not_st_var<Vec>* = nullptr>
+template <typename Vec, typename Lp, require_not_st_var<Vec>* = nullptr>
 inline plain_type_t<Vec> sum_to_zero_constrain(Vec&& y, Lp& lp) {
   return sum_to_zero_constrain(std::forward<Vec>(y));
 }
@@ -107,8 +106,9 @@ inline plain_type_t<Vec> sum_to_zero_constrain(Vec&& y, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto sum_to_zero_constrain(T&& y) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(y), [](auto&& v) { return sum_to_zero_constrain(std::forward<decltype(v)>(v)); });
+  return apply_vector_unary<T>::apply(std::forward<T>(y), [](auto&& v) {
+    return sum_to_zero_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**

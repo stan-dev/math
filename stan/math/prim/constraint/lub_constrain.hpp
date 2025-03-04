@@ -120,8 +120,8 @@ template <typename T, typename L, typename U, require_eigen_t<T>* = nullptr,
           require_all_stan_scalar_t<L, U>* = nullptr,
           require_not_var_t<return_type_t<T, L, U>>* = nullptr>
 inline auto lub_constrain(T&& x, const L& lb, const U& ub) {
-  return eval(
-      std::forward<T>(x).unaryExpr([ub, lb](auto&& xx) { return lub_constrain(xx, lb, ub); }));
+  return eval(std::forward<T>(x).unaryExpr(
+      [ub, lb](auto&& xx) { return lub_constrain(xx, lb, ub); }));
 }
 
 /**
@@ -148,7 +148,8 @@ template <typename T, typename L, typename U,
 inline auto lub_constrain(T&& x, L&& lb, const U& ub) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
   return eval(std::forward<T>(x).binaryExpr(
-      std::forward<L>(lb), [ub](auto&& x, auto&& lb) { return lub_constrain(x, lb, ub); }));
+      std::forward<L>(lb),
+      [ub](auto&& x, auto&& lb) { return lub_constrain(x, lb, ub); }));
 }
 
 /**
@@ -162,9 +163,9 @@ template <typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, const U& ub, Lp& lp) {
   check_matching_dims("lub_constrain", "x", x, "lb", lb);
-  return eval(std::forward<T>(x).binaryExpr(std::forward<L>(lb), [ub, &lp](auto&& x, auto&& lb) {
-    return lub_constrain(x, lb, ub, lp);
-  }));
+  return eval(std::forward<T>(x).binaryExpr(
+      std::forward<L>(lb),
+      [ub, &lp](auto&& x, auto&& lb) { return lub_constrain(x, lb, ub, lp); }));
 }
 
 /**
@@ -400,9 +401,11 @@ template <bool Jacobian, typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
   if constexpr (Jacobian) {
-    return lub_constrain(std::forward<T>(x), std::forward<L>(lb), std::forward<U>(ub), lp);
+    return lub_constrain(std::forward<T>(x), std::forward<L>(lb),
+                         std::forward<U>(ub), lp);
   } else {
-    return lub_constrain(std::forward<T>(x), std::forward<L>(lb), std::forward<U>(ub));
+    return lub_constrain(std::forward<T>(x), std::forward<L>(lb),
+                         std::forward<U>(ub));
   }
 }
 
@@ -411,7 +414,8 @@ inline auto lub_constrain(T&& x, L&& lb, U&& ub, Lp& lp) {
  */
 template <typename T, typename L, typename U>
 inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds) {
-  return lub_constrain(std::forward<T>(x), std::get<0>(bounds), std::get<1>(bounds));
+  return lub_constrain(std::forward<T>(x), std::get<0>(bounds),
+                       std::get<1>(bounds));
 }
 
 /**
@@ -420,7 +424,8 @@ inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds) {
 template <typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
-  return lub_constrain(std::forward<T>(x), std::get<0>(bounds), std::get<1>(bounds), lp);
+  return lub_constrain(std::forward<T>(x), std::get<0>(bounds),
+                       std::get<1>(bounds), lp);
 }
 
 /**
@@ -429,8 +434,8 @@ inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
 template <bool Jacobian, typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(T&& x, const std::tuple<L, U>& bounds, Lp& lp) {
-  return lub_constrain<Jacobian>(std::forward<T>(x), std::get<0>(bounds), std::get<1>(bounds),
-                                 lp);
+  return lub_constrain<Jacobian>(std::forward<T>(x), std::get<0>(bounds),
+                                 std::get<1>(bounds), lp);
 }
 
 }  // namespace math

@@ -83,7 +83,8 @@ template <typename T, typename L, require_eigen_t<T>* = nullptr,
           require_stan_scalar_t<L>* = nullptr,
           require_all_not_st_var<T, L>* = nullptr>
 inline auto lb_constrain(T&& x, L&& lb) {
-  return eval(std::forward<T>(x).unaryExpr([lb](auto&& x) { return lb_constrain(x, lb); }));
+  return eval(std::forward<T>(x).unaryExpr(
+      [lb](auto&& x) { return lb_constrain(x, lb); }));
 }
 
 /**
@@ -104,8 +105,8 @@ template <typename T, typename L, typename Lp, require_eigen_t<T>* = nullptr,
           require_convertible_t<return_type_t<T, L>, Lp>* = nullptr>
 
 inline auto lb_constrain(T&& x, const L& lb, Lp& lp) {
-  return eval(
-    std::forward<T>(x).unaryExpr([lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
+  return eval(std::forward<T>(x).unaryExpr(
+      [lb, &lp](auto&& xx) { return lb_constrain(xx, lb, lp); }));
 }
 
 /**
@@ -123,7 +124,8 @@ template <typename T, typename L, require_all_eigen_t<T, L>* = nullptr,
 inline auto lb_constrain(T&& x, L&& lb) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(std::forward<T>(x).binaryExpr(
-    std::forward<L>(lb), [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
+      std::forward<L>(lb),
+      [](auto&& x, auto&& lb) { return lb_constrain(x, lb); }));
 }
 
 /**
@@ -145,7 +147,8 @@ template <typename T, typename L, typename Lp,
 inline auto lb_constrain(T&& x, L&& lb, Lp& lp) {
   check_matching_dims("lb_constrain", "x", x, "lb", lb);
   return eval(std::forward<T>(x).binaryExpr(
-    std::forward<L>(lb), [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));
+      std::forward<L>(lb),
+      [&lp](auto&& xx, auto&& lbb) { return lb_constrain(xx, lbb, lp); }));
 }
 
 /**

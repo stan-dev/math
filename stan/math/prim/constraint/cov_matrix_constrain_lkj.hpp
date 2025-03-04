@@ -84,8 +84,7 @@ cov_matrix_constrain_lkj(T&& x, size_t k, return_type_t<T>& lp) {
  * correlations and deviations.
  */
 template <bool Jacobian, typename T, require_not_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain_lkj(T&& x, size_t k,
-                                     return_type_t<T>& lp) {
+inline auto cov_matrix_constrain_lkj(T&& x, size_t k, return_type_t<T>& lp) {
   if constexpr (Jacobian) {
     return cov_matrix_constrain_lkj(std::forward<T>(x), k, lp);
   } else {
@@ -114,10 +113,10 @@ inline auto cov_matrix_constrain_lkj(T&& x, size_t k,
  * correlations and deviations.
  */
 template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto cov_matrix_constrain_lkj(T&& x, size_t k,
-                                     return_type_t<T>& lp) {
+inline auto cov_matrix_constrain_lkj(T&& x, size_t k, return_type_t<T>& lp) {
   return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp, k](auto&& v) {
-    return cov_matrix_constrain_lkj<Jacobian>(std::forward<decltype(v)>(v), k, lp);
+    return cov_matrix_constrain_lkj<Jacobian>(std::forward<decltype(v)>(v), k,
+                                              lp);
   });
 }
 

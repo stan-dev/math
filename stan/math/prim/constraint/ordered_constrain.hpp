@@ -77,8 +77,9 @@ inline auto ordered_constrain(EigVec&& x, Lp& lp) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto ordered_constrain(T&& x) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [](auto&& v) { return ordered_constrain(std::forward<decltype(v)>(v)); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [](auto&& v) {
+    return ordered_constrain(std::forward<decltype(v)>(v));
+  });
 }
 
 /**
@@ -99,8 +100,9 @@ inline auto ordered_constrain(T&& x) {
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto ordered_constrain(T&& x, Lp& lp) {
-  return apply_vector_unary<T>::apply(
-      std::forward<T>(x), [&lp](auto&& v) { return ordered_constrain(std::forward<decltype(v)>(v), lp); });
+  return apply_vector_unary<T>::apply(std::forward<T>(x), [&lp](auto&& v) {
+    return ordered_constrain(std::forward<decltype(v)>(v), lp);
+  });
 }
 
 /**
