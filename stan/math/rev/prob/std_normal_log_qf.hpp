@@ -19,7 +19,7 @@ namespace math {
  */
 template <typename T, require_stan_scalar_or_eigen_t<T>* = nullptr>
 inline auto std_normal_log_qf(const var_value<T>& log_p) {
-  const auto& arena_rtn = to_arena(std_normal_log_qf(log_p.val()));
+  auto arena_rtn = to_arena(std_normal_log_qf(log_p.val()));
   return make_callback_var(arena_rtn, [log_p, arena_rtn](auto& vi) mutable {
     if constexpr (is_eigen<decltype(arena_rtn)>::value) {
       auto deriv = exp(log_p.val() - arena_rtn.unaryExpr([](auto x) {

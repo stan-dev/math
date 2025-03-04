@@ -36,7 +36,7 @@ inline var inv_Phi(const var& p) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi(const T& p) {
-  const auto& arena_rtn = to_arena(inv_Phi(p.val()));
+  auto arena_rtn = to_arena(inv_Phi(p.val()));
   return make_callback_var(arena_rtn, [p, arena_rtn](auto& vi) mutable {
     auto deriv
         = arena_rtn.unaryExpr([](auto x) { return exp(-std_normal_lpdf(x)); });
