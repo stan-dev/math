@@ -37,7 +37,7 @@ namespace math {
  */
 template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
+inline plain_type_t<Vec> sum_to_zero_constrain(Vec&& y) {
   const auto N = y.size();
 
   plain_type_t<Vec> z = Eigen::VectorXd::Zero(N + 1);
@@ -45,12 +45,12 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
     return z;
   }
 
-  auto&& y_ref = to_ref(y);
+  auto&& y_ref = to_ref(std::forward<Vec>(y));
 
   value_type_t<Vec> sum_w(0);
   for (int i = N; i > 0; --i) {
     double n = static_cast<double>(i);
-    auto w = y_ref(i - 1) * inv_sqrt(n * (n + 1));
+    const auto w = y_ref.coeff(i - 1) * inv_sqrt(n * (n + 1));
     sum_w += w;
 
     z.coeffRef(i - 1) += sum_w;
@@ -86,10 +86,10 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
  * @param lp unused
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename Vec, typename Lp, require_eigen_col_vector_t<Vec>* = nullptr,
+template <typename Vec, typename Lp,
           require_not_st_var<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
-  return sum_to_zero_constrain(y);
+inline plain_type_t<Vec> sum_to_zero_constrain(Vec&& y, Lp& lp) {
+  return sum_to_zero_constrain(std::forward<Vec>(y));
 }
 
 /**
@@ -105,13 +105,10 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
  * @param[in, out] lp unused
  * @return Zero-sum vectors of dimensionality one greater than `y`
  */
-template <typename T, typename... Lp, require_std_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y, Lp&... lp) {
-  static_assert(sizeof...(lp) == 0 || sizeof...(lp) == 1,
-                "sum_to_zero_constrain should be called with either "
-                "one or two arguments");
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto sum_to_zero_constrain(T&& y) {
   return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return sum_to_zero_constrain(v); });
+      std::forward<T>(y), [](auto&& v) { return sum_to_zero_constrain(std::forward<decltype(v)>(v)); });
 }
 
 /**
@@ -144,8 +141,8 @@ inline auto sum_to_zero_constrain(const T& y, Lp&... lp) {
  * @return Zero-sum vector of dimensionality one greater than `y`
  */
 template <bool Jacobian, typename Vec, typename Lp>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
-  return sum_to_zero_constrain(y);
+inline plain_type_t<Vec> sum_to_zero_constrain(Vec&& y, Lp& lp) {
+  return sum_to_zero_constrain(std::forward<Vec>(y));
 }
 
 }  // namespace math

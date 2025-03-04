@@ -26,16 +26,17 @@ namespace math {
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline plain_type_t<Vec> simplex_constrain(const Vec& y) {
+inline plain_type_t<Vec> simplex_constrain(Vec&& y) {
   // cut & paste simplex_constrain(Eigen::Matrix, T) w/o Jacobian
   using std::log;
   using T = value_type_t<Vec>;
 
-  int Km1 = y.size();
+  auto&& y_ref = to_ref(std::forward<Vec>(y));
+  const Eigen::Index Km1 = y_ref.size();
   plain_type_t<Vec> x(Km1 + 1);
   T stick_len(1.0);
   for (Eigen::Index k = 0; k < Km1; ++k) {
-    T z_k = inv_logit(y.coeff(k) - log(Km1 - k));
+    T z_k = inv_logit(y_ref.coeff(k) - log(Km1 - k));
     x.coeffRef(k) = stick_len * z_k;
     stick_len -= x.coeff(k);
   }
@@ -61,13 +62,13 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y) {
 template <typename Vec, typename Lp, require_eigen_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr,
           require_convertible_t<value_type_t<Vec>, Lp>* = nullptr>
-inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
+inline plain_type_t<Vec> simplex_constrain(Vec&& y, Lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
   using T = value_type_t<Vec>;
-
-  int Km1 = y.size();  // K = Km1 + 1
+  auto&& y_ref = to_ref(std::forward<Vec>(y));
+  const Eigen::Index Km1 = y.size();  // K = Km1 + 1
   plain_type_t<Vec> x(Km1 + 1);
   T stick_len(1.0);
   for (Eigen::Index k = 0; k < Km1; ++k) {
@@ -75,9 +76,7 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
     T adj_y_k = y.coeff(k) + eq_share;
     T z_k = inv_logit(adj_y_k);
     x.coeffRef(k) = stick_len * z_k;
-    lp += log(stick_len);
-    lp -= log1p_exp(-adj_y_k);
-    lp -= log1p_exp(adj_y_k);
+    lp += log(stick_len) - log1p_exp(-adj_y_k) - log1p_exp(adj_y_k);
     stick_len -= x.coeff(k);  // equivalently *= (1 - z_k);
   }
   x.coeffRef(Km1) = stick_len;  // no Jacobian contrib for last dim
@@ -95,9 +94,9 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
  * @return simplex of dimensionality one greater than `y`
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto simplex_constrain(const T& y) {
+inline auto simplex_constrain(T&& y) {
   return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return simplex_constrain(v); });
+      std::forward<T>(y), [](auto&& v) { return simplex_constrain(std::forward<decltype(v)>(v)); });
 }
 
 /**
@@ -115,9 +114,9 @@ inline auto simplex_constrain(const T& y) {
  */
 template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
-inline auto simplex_constrain(const T& y, Lp& lp) {
+inline auto simplex_constrain(T&& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return simplex_constrain(v, lp); });
+      std::forward<T>(y), [&lp](auto&& v) { return simplex_constrain(std::forward<decltype(v)>(v), lp); });
 }
 
 /**
@@ -140,11 +139,11 @@ inline auto simplex_constrain(const T& y, Lp& lp) {
  */
 template <bool Jacobian, typename Vec, typename Lp,
           require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
-inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
+inline plain_type_t<Vec> simplex_constrain(Vec&& y, Lp& lp) {
   if constexpr (Jacobian) {
-    return simplex_constrain(y, lp);
+    return simplex_constrain(std::forward<Vec>(y), lp);
   } else {
-    return simplex_constrain(y);
+    return simplex_constrain(std::forward<Vec>(y));
   }
 }
 

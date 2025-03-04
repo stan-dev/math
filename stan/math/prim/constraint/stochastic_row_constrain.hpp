@@ -24,8 +24,8 @@ namespace math {
  */
 template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
-  auto&& y_ref = to_ref(y);
+inline plain_type_t<Mat> stochastic_row_constrain(Mat&& y) {
+  auto&& y_ref = to_ref(std::forward<Mat>(y));
   const Eigen::Index N = y_ref.rows();
   int Km1 = y_ref.cols();
   plain_type_t<Mat> x(N, Km1 + 1);
@@ -56,13 +56,13 @@ template <typename Mat, typename Lp,
           require_eigen_matrix_dynamic_t<Mat>* = nullptr,
           require_not_st_var<Mat>* = nullptr,
           require_convertible_t<value_type_t<Mat>, Lp>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
-  auto&& y_ref = to_ref(y);
+inline plain_type_t<Mat> stochastic_row_constrain(Mat&& y, Lp& lp) {
+  auto&& y_ref = to_ref(std::forward<Mat>(y));
   const Eigen::Index N = y_ref.rows();
   Eigen::Index Km1 = y_ref.cols();
   plain_type_t<Mat> x(N, Km1 + 1);
   Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len
-      = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
+      = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Ones(N);
   for (Eigen::Index k = 0; k < Km1; ++k) {
     const auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
     auto adj_y_k = (y_ref.array().col(k) + eq_share).eval();
@@ -87,9 +87,9 @@ inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
  * @return vector of matrices with simplex rows of dimensionality (N, K)
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto stochastic_row_constrain(const T& y) {
+inline auto stochastic_row_constrain(T&& y) {
   return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return stochastic_row_constrain(v); });
+    std::forward<T>(y), [](auto&& v) { return stochastic_row_constrain(std::forward<decltype(v)>(v)); });
 }
 
 /**
@@ -109,7 +109,7 @@ template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto stochastic_row_constrain(const T& y, Lp& lp) {
   return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return stochastic_row_constrain(v, lp); });
+    std::forward<T>(y), [&lp](auto&& v) { return stochastic_row_constrain(std::forward<decltype(v)>(v), lp); });
 }
 
 /**
@@ -132,11 +132,11 @@ inline auto stochastic_row_constrain(const T& y, Lp& lp) {
  */
 template <bool Jacobian, typename Mat, typename Lp,
           require_convertible_t<return_type_t<Mat>, Lp>* = nullptr>
-inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
+inline plain_type_t<Mat> stochastic_row_constrain(Mat&& y, Lp& lp) {
   if constexpr (Jacobian) {
-    return stochastic_row_constrain(y, lp);
+    return stochastic_row_constrain(std::forward<Mat>(y), lp);
   } else {
-    return stochastic_row_constrain(y);
+    return stochastic_row_constrain(std::forward<Mat>(y));
   }
 }
 

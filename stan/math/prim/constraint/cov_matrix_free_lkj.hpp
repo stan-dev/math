@@ -29,7 +29,7 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
-    const T& y) {
+    T&& y) {
   using Eigen::Array;
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -41,7 +41,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
   Eigen::Index k_choose_2 = (k * (k - 1)) / 2;
   Matrix<T_scalar, Dynamic, 1> x(k_choose_2 + k);
   bool successful
-      = factor_cov_matrix(y, x.head(k_choose_2).array(), x.tail(k).array());
+      = factor_cov_matrix(std::forward<T>(y), x.head(k_choose_2).array(), x.tail(k).array());
   if (!successful) {
     throw_domain_error("cov_matrix_free_lkj", "factor_cov_matrix failed on y",
                        "", "");
@@ -57,9 +57,9 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cov_matrix_free_lkj(
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cov_matrix_free_lkj(const T& x) {
+auto cov_matrix_free_lkj(T&& x) {
   return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return cov_matrix_free_lkj(v); });
+      std::forward<T>(x), [](auto&& v) { return cov_matrix_free_lkj(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math

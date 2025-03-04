@@ -24,10 +24,10 @@ namespace math {
  */
 template <typename T, require_eigen_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
-    const T& y) {
+    T&& y) {
   using std::log;
 
-  const auto& y_ref = to_ref(y);
+  auto&& y_ref = to_ref(std::forward<T>(y));
   check_cholesky_factor("cholesky_factor_free", "y", y_ref);
   int M = y.rows();
   int N = y.cols();
@@ -56,9 +56,9 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cholesky_factor_free(const T& x) {
+auto cholesky_factor_free(T&& x) {
   return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return cholesky_factor_free(v); });
+      std::forward<T>(x), [](auto&& v) { return cholesky_factor_free(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math

@@ -35,7 +35,7 @@ namespace math {
  */
 template <typename T, require_eigen_vector_t<T>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const T& CPCs,  // on (-1, 1)
+    T&& CPCs,  // on (-1, 1)
     size_t K) {
   using T_scalar = value_type_t<T>;
   if (K == 0) {
@@ -47,7 +47,6 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
   }
 
   using std::sqrt;
-  Eigen::Array<T_scalar, Eigen::Dynamic, 1> temp;
   Eigen::Array<T_scalar, Eigen::Dynamic, 1> acc(K - 1);
   acc.setOnes();
   // Cholesky factor of correlation matrix
@@ -56,17 +55,16 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
 
   size_t position = 0;
   size_t pull = K - 1;
-
+  auto&& CPCs_ref = to_ref(std::forward<T>(CPCs));
   L(0, 0) = 1.0;
-  L.col(0).tail(pull) = temp = CPCs.head(pull);
-  acc.tail(pull) = T_scalar(1.0) - temp.square();
+  L.col(0).tail(pull) = CPCs_ref.head(pull);
+  acc.tail(pull) = T_scalar(1.0) - CPCs_ref.head(pull).array().square();
   for (size_t i = 1; i < (K - 1); i++) {
     position += pull;
     pull--;
-    temp = CPCs.segment(position, pull);
     L(i, i) = sqrt(acc(i - 1));
-    L.col(i).tail(pull) = temp * acc.tail(pull).sqrt();
-    acc.tail(pull) *= T_scalar(1.0) - temp.square();
+    L.col(i).tail(pull) = CPCs_ref.segment(position, pull).array() * acc.tail(pull).sqrt();
+    acc.tail(pull) *= T_scalar(1.0) - CPCs_ref.segment(position, pull).array().square();
   }
   L(K - 1, K - 1) = sqrt(acc(K - 2));
   return L;
@@ -102,7 +100,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
 template <typename T, typename Lp, require_eigen_vector_t<T>* = nullptr,
           require_convertible_t<value_type_t<T>, Lp>* = nullptr>
 Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
-    const T& CPCs, size_t K, Lp& log_prob) {
+    T&& CPCs, size_t K, Lp& log_prob) {
   using T_scalar = value_type_t<T>;
   if (K == 0) {
     return {};
@@ -112,7 +110,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
                                                                              1);
   }
 
-  const Eigen::Ref<const plain_type_t<T>>& CPCs_ref = CPCs;
+  auto&& CPCs_ref = to_ref(std::forward<T>(CPCs));
   size_t pos = 0;
   T_scalar acc = 0;
   // no need to abs() because this Jacobian determinant
@@ -126,7 +124,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, Eigen::Dynamic> read_corr_L(
   }
 
   log_prob += 0.5 * acc;
-  return read_corr_L(CPCs_ref, K);
+  return read_corr_L(std::forward<decltype(CPCs_ref)>(CPCs_ref), K);
 }
 
 }  // namespace math

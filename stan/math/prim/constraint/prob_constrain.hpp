@@ -70,7 +70,7 @@ inline T prob_constrain(const T& x, T& lp) {
  */
 template <bool Jacobian, typename T>
 inline auto prob_constrain(const T& x, T& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return prob_constrain(x, lp);
   } else {
     return prob_constrain(x);

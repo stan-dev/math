@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 template <typename T, require_eigen_t<T>* = nullptr>
-auto cholesky_corr_free(const T& x) {
+auto cholesky_corr_free(T&& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -19,7 +19,7 @@ auto cholesky_corr_free(const T& x) {
   check_square("cholesky_corr_free", "x", x);
   // should validate lower-triangular, unit lengths
 
-  const auto& x_ref = to_ref(x);
+  auto&& x_ref = to_ref(std::forward<T>(x));
   int K = (x.rows() * (x.rows() - 1)) / 2;
   Matrix<value_type_t<T>, Dynamic, 1> z(K);
   int k = 0;
@@ -42,9 +42,9 @@ auto cholesky_corr_free(const T& x) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cholesky_corr_free(const T& x) {
+auto cholesky_corr_free(T&& x) {
   return apply_vector_unary<T>::apply(
-      x, [](auto&& v) { return cholesky_corr_free(v); });
+      std::forward<T>(x), [](auto&& v) { return cholesky_corr_free(std::forward<decltype(v)>(v)); });
 }
 
 }  // namespace math
