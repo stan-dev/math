@@ -116,7 +116,9 @@ struct apply_scalar_unary<F, T, require_complex_t<T>> {
    * @return Result of applying F to the scalar.
    */
   template <typename TT>
-  static inline auto apply(TT&& x) { return F::fun(x); }
+  static inline auto apply(TT&& x) {
+    return F::fun(x);
+  }
   /**
    * The return type
    */
@@ -164,8 +166,8 @@ struct apply_scalar_unary<F, T, require_std_vector_t<T>> {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  using return_t = typename std::vector<
-      plain_type_t<typename apply_scalar_unary<F, std::decay_t<value_type_t<T>>>::return_t>>;
+  using return_t = typename std::vector<plain_type_t<
+      typename apply_scalar_unary<F, std::decay_t<value_type_t<T>>>::return_t>>;
 
   /**
    * Apply the function specified by F elementwise to the
@@ -184,8 +186,8 @@ struct apply_scalar_unary<F, T, require_std_vector_t<T>> {
         fx[i] = apply_scalar_unary<F, std::decay_t<decltype(x[i])>>::apply(
             std::move(x[i]));
       } else {
-        fx[i] = apply_scalar_unary<F, std::decay_t<decltype(x[i])>>::apply(
-            x[i]);
+        fx[i]
+            = apply_scalar_unary<F, std::decay_t<decltype(x[i])>>::apply(x[i]);
       }
     }
     return fx;
