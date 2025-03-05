@@ -3,6 +3,8 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -85,17 +87,17 @@ inline return_type_t<T_y, T_loc, T_scale> normal_lpdf(T_y&& y, T_loc&& mu,
   }
 
   if (!is_constant_all<T_y, T_scale, T_loc>::value) {
-    auto scaled_diff
-        = to_ref_if<!is_constant<T_y>::value + !is_constant<T_scale>::value
-                        + !is_constant<T_loc>::value
-                    >= 2>(inv_sigma * y_scaled);
-    if (!is_constant<T_y>::value) {
+    auto scaled_diff = to_ref_if<!is_constant_all<T_y>::value
+                                     + !is_constant_all<T_scale>::value
+                                     + !is_constant_all<T_loc>::value
+                                 >= 2>(inv_sigma * y_scaled);
+    if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -scaled_diff;
     }
-    if (!is_constant<T_scale>::value) {
+    if (!is_constant_all<T_scale>::value) {
       partials<2>(ops_partials) = inv_sigma * y_scaled_sq - inv_sigma;
     }
-    if (!is_constant<T_loc>::value) {
+    if (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = std::move(scaled_diff);
     }
   }

@@ -2,6 +2,7 @@
 #include <stan/math/prim/prob/double_exponential_lpdf.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 
+using stan::math::var;
 using std::numeric_limits;
 using std::vector;
 
