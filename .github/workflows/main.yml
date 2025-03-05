@@ -23,6 +23,7 @@ jobs:
     name: ${{ matrix.config.label }} tests (${{ matrix.config.os }})
     runs-on: ${{ matrix.config.os }}
     strategy:
+      fail-fast: false
       matrix:
         config:
           - { os: windows-latest, label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' }
@@ -79,6 +80,7 @@ jobs:
     name: mix fun and prob tests ${{ matrix.config.group }} (${{ matrix.config.os }})
     runs-on: ${{ matrix.config.os }}
     strategy:
+      fail-fast: false
       matrix:
         config:
           - { os: windows-latest, group: 1 }
