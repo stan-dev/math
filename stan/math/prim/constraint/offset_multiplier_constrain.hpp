@@ -39,7 +39,7 @@ namespace math {
  * @throw std::domain_error if sigma <= 0
  * @throw std::domain_error if mu is not finite
  */
-template <typename T, typename M, typename S,
+template <typename T, typename M, typename S, require_all_not_std_vector_t<T, M, S>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr>
 inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
@@ -91,6 +91,7 @@ inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
  * @throw std::domain_error if mu is not finite
  */
 template <typename T, typename M, typename S, typename Lp,
+          require_all_not_std_vector_t<T, M, S>* = nullptr,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr>
@@ -124,8 +125,9 @@ inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
  * Overload for array of x and non-array mu and sigma
  */
 template <typename T, typename M, typename S,
+          require_std_vector_t<T>* = nullptr,
           require_all_not_std_vector_t<M, S>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
+inline auto offset_multiplier_constrain(T&& x, M&& mu,
                                         S&& sigma) {
   std::vector<
       plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma))>>
@@ -143,9 +145,10 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
  * Overload for array of x and non-array mu and sigma with lp
  */
 template <typename T, typename M, typename S, typename Lp,
+          require_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_all_not_std_vector_t<M, S>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
+inline auto offset_multiplier_constrain(T&& x, M&& mu,
                                         S&& sigma, Lp& lp) {
   std::vector<
       plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma, lp))>>
@@ -163,9 +166,11 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
  * Overload for array of x and sigma and non-array mu
  */
 template <typename T, typename M, typename S,
+          require_std_vector_t<T>* = nullptr,
+          require_std_vector_t<S>* = nullptr,
           require_not_std_vector_t<M>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
-                                        const std::vector<S>& sigma) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu,
+                                        S&& sigma) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   std::vector<
       plain_type_t<decltype(offset_multiplier_constrain(x[0], mu, sigma[0]))>>
@@ -182,10 +187,12 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
  * Overload for array of x and sigma and non-array mu with lp
  */
 template <typename T, typename M, typename S, typename Lp,
+require_std_vector_t<T>* = nullptr,
+require_std_vector_t<S>* = nullptr,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_not_std_vector_t<M>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
-                                        const std::vector<S>& sigma, Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu,
+                                        S&& sigma, Lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   std::vector<plain_type_t<decltype(
       offset_multiplier_constrain(x[0], mu, sigma[0], lp))>>
@@ -202,9 +209,11 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x, M&& mu,
  * Overload for array of x and mu and non-array sigma
  */
 template <typename T, typename M, typename S,
+require_std_vector_t<T>* = nullptr,
+require_std_vector_t<M>* = nullptr,
           require_not_std_vector_t<S>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x,
-                                        const std::vector<M>& mu, S&& sigma) {
+inline auto offset_multiplier_constrain(T&& x,
+                                        M&& mu, S&& sigma) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   std::vector<
       plain_type_t<decltype(offset_multiplier_constrain(x[0], mu[0], sigma))>>
@@ -221,10 +230,12 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
  * Overload for array of x and mu and non-array sigma with lp
  */
 template <typename T, typename M, typename S, typename Lp,
+require_std_vector_t<T>* = nullptr,
+require_std_vector_t<M>* = nullptr,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_not_std_vector_t<S>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x,
-                                        const std::vector<M>& mu, S&& sigma,
+inline auto offset_multiplier_constrain(T&& x,
+                                        M&& mu, S&& sigma,
                                         Lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   std::vector<plain_type_t<decltype(
@@ -241,10 +252,8 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
 /**
  * Overload for array of x, mu, and sigma
  */
-template <typename T, typename M, typename S>
-inline auto offset_multiplier_constrain(const std::vector<T>& x,
-                                        const std::vector<M>& mu,
-                                        const std::vector<S>& sigma) {
+template <typename T, typename M, typename S, require_all_std_vector_t<T, M, S>* = nullptr>
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   std::vector<plain_type_t<decltype(
@@ -260,11 +269,9 @@ inline auto offset_multiplier_constrain(const std::vector<T>& x,
 /**
  * Overload for array of x, mu, and sigma with lp
  */
-template <typename T, typename M, typename S, typename Lp,
+template <typename T, typename M, typename S, typename Lp, require_all_std_vector_t<T, M, S>* = nullptr,
           require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr>
-inline auto offset_multiplier_constrain(const std::vector<T>& x,
-                                        const std::vector<M>& mu,
-                                        const std::vector<S>& sigma, Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
   std::vector<plain_type_t<decltype(
