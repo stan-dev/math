@@ -58,10 +58,10 @@ jobs:
     - name: Run prim and rev unit tests
       shell: pwsh
       run: |
-        python runTests.py -j4 test/unit/*_test.cpp \
-                                test/unit/math/*_test.cpp \
-                                test/unit/math/prim \
-                                test/unit/math/rev \
+        python runTests.py -j4 test/unit/*_test.cpp `
+                                test/unit/math/*_test.cpp `
+                                test/unit/math/prim `
+                                test/unit/math/rev `
                                 test/unit/math/memory
 
     - name: Upload gtest_output xml
@@ -114,11 +114,11 @@ jobs:
     - name: Run fwd unit tests and all the mix tests except those in mix/fun
       shell: pwsh
       run: |
-        python runTests.py -j4 test/unit/math/fwd \
-                                test/unit/math/mix/core \
-                                test/unit/math/mix/functor \
-                                test/unit/math/mix/meta \
-                                test/unit/math/mix/prob \
+        python runTests.py -j4 test/unit/math/fwd `
+                                test/unit/math/mix/core `
+                                test/unit/math/mix/functor `
+                                test/unit/math/mix/meta `
+                                test/unit/math/mix/prob `
                                 test/unit/math/mix/*_test.cpp
 
     - name: Upload gtest_output xml
