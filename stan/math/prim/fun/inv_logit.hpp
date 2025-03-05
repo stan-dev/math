@@ -49,15 +49,14 @@ namespace math {
  * @return Inverse logit of argument.
  */
 inline double inv_logit(double a) {
-  using std::exp;
   if (a < 0) {
-    double exp_a = exp(a);
+    double exp_a = std::exp(a);
     if (a < LOG_EPSILON) {
       return exp_a;
     }
-    return exp_a / (1 + exp_a);
+    return exp_a / (1.0 + exp_a);
   }
-  return inv(1 + exp(-a));
+  return inv(1 + std::exp(-a));
 }
 
 /**
@@ -74,22 +73,31 @@ struct inv_logit_fun {
   }
 };
 
+
 /**
- * Vectorized version of inv_logit().
+ * Vectorized version of inv_logit() for Eigen types with arithmetic value type.
  *
- * @tparam T type of container
- * @param x container
+ * @tparam T type of Eigen expression
+ * @param x Eigen expression
  * @return Inverse logit applied to each value in x.
  */
-template <
-    typename T, require_not_var_matrix_t<T>* = nullptr,
-    require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T>* = nullptr>
-inline auto inv_logit(const T& x) {
-  return apply_scalar_unary<inv_logit_fun, T>::apply(x);
+template <typename T, require_eigen_t<T>* = nullptr,
+  require_not_vt_var<T>* = nullptr>
+inline auto inv_logit(T&& x) {
+  return std::forward<T>(x).array().logistic().matrix();
 }
 
-// TODO(Tadej): Eigen is introducing their implementation logistic() of this
-// in 3.4. Use that once we switch to Eigen 3.4
+/**
+ * Vectorized version of inv_logit() for std::vector.
+ *
+ * @tparam T type of std::vector
+ * @param x std::vector
+ * @return Inverse logit applied to each value in x.
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto inv_logit(T&& x) {
+  return apply_scalar_unary<inv_logit_fun, std::decay_t<T>>::apply(std::forward<T>(x));
+}
 
 }  // namespace math
 }  // namespace stan
