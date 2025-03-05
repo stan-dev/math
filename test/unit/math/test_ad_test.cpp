@@ -274,8 +274,7 @@ struct baz_fun {
 };
 
 template <typename T>
-inline auto baz(
-    const T& x) {
+inline auto baz(const T& x) {
   return stan::math::apply_scalar_unary<baz_fun, T>::apply(x);
 }
 
