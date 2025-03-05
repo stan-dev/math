@@ -87,6 +87,8 @@ jobs:
           - { os: ubuntu-24.04-arm, group: 2 }
           - { os: windows-latest, group: 3 }
           - { os: ubuntu-24.04-arm, group: 3 }
+          - { os: windows-latest, group: 4 }
+          - { os: ubuntu-24.04-arm, group: 4 }
 
     steps:
     - uses: actions/checkout@v4
@@ -120,15 +122,15 @@ jobs:
       run: |
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
-        $ThirdNumberTests = [math]::Floor($NumberTests / 3)
-        $TwoThirdNumberTests = [math]::Floor(2 * $NumberTests / 3)
+        $QuarterNumberTests = [math]::Floor($NumberTests / 4)
 
-        $MixFunTests1 = $MixFunTests[0..($ThirdNumberTests - 1)]
-        $MixFunTests2 = $MixFunTests[$ThirdNumberTests..($TwoThirdNumberTests - 1)]
-        $MixFunTests3 = $MixFunTests[$TwoThirdNumberTests..($NumberTests - 1)]
-        $MixFunTestsArray = @($MixFunTests1, $MixFunTests2, $MixFunTests3)
+        $MixFunTests1 = $MixFunTests[0..($QuarterNumberTests - 1)]
+        $MixFunTests2 = $MixFunTests[$QuarterNumberTests..(2 * $QuarterNumberTests - 1)]
+        $MixFunTests3 = $MixFunTests[(2 * $QuarterNumberTests)..(3 * $QuarterNumberTests - 1)]
+        $MixFunTests4 = $MixFunTests[(3 * $QuarterNumberTests)..($NumberTests - 1)]
+        $MixFunTestsArray = @($MixFunTests1, $MixFunTests2, $MixFunTests3, $MixFunTests3)
 
-        python runTests.py -j2 $MixFunTestsArray[(${{ matrix.config.group }} - 1)]
+        python runTests.py $MixFunTestsArray[(${{ matrix.config.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
