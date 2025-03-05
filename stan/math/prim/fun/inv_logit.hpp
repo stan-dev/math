@@ -73,16 +73,16 @@ struct inv_logit_fun {
   }
 };
 
-
 /**
  * Vectorized version of inv_logit() for Eigen types.
  *
- * @tparam T A type inheriting from `Eigen::DenseBase` that does not have a `var` scalar type.
+ * @tparam T A type inheriting from `Eigen::DenseBase` that does not have a
+ * `var` scalar type.
  * @param x Eigen expression
  * @return Inverse logit applied to each value in x.
  */
 template <typename T, require_eigen_t<T>* = nullptr,
-  require_not_vt_var<T>* = nullptr>
+          require_not_vt_var<T>* = nullptr>
 inline auto inv_logit(T&& x) {
   return std::forward<T>(x).array().logistic().matrix();
 }
@@ -96,7 +96,8 @@ inline auto inv_logit(T&& x) {
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
 inline auto inv_logit(T&& x) {
-  return apply_scalar_unary<inv_logit_fun, std::decay_t<T>>::apply(std::forward<T>(x));
+  return apply_scalar_unary<inv_logit_fun, std::decay_t<T>>::apply(
+      std::forward<T>(x));
 }
 
 }  // namespace math
