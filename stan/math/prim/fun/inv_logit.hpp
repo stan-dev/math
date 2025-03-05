@@ -75,9 +75,9 @@ struct inv_logit_fun {
 
 
 /**
- * Vectorized version of inv_logit() for Eigen types with arithmetic value type.
+ * Vectorized version of inv_logit() for Eigen types.
  *
- * @tparam T type of Eigen expression
+ * @tparam T A type inheriting from `Eigen::DenseBase` that does not have a `var` scalar type.
  * @param x Eigen expression
  * @return Inverse logit applied to each value in x.
  */
