@@ -33,8 +33,8 @@ jobs:
           - { os: ubuntu-24.04-arm, label: rev, tests: 'test/unit/math/rev' }
           - { os: windows-latest, label: fwd, tests: 'test/unit/math/fwd' }
           - { os: ubuntu-24.04-arm, label: fwd, tests: 'test/unit/math/fwd' }
-          - { os: windows-latest, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/prob test/unit/math/mix/*_test.cpp' }
-          - { os: ubuntu-24.04-arm, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/prob test/unit/math/mix/*_test.cpp' }
+          - { os: windows-latest, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+          - { os: ubuntu-24.04-arm, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
 
     steps:
     - uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
         path: '**/*_test.xml'
 
   mix-fun:
-    name: mix/fun tests ${{ matrix.config.group }} (${{ matrix.config.os }})
+    name: mix fun and prob tests ${{ matrix.config.group }} (${{ matrix.config.os }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
@@ -120,17 +120,17 @@ jobs:
     - name: Run mix/fun unit tests
       shell: pwsh
       run: |
-        $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
-        $NumberTests = $MixFunTests.Length
+        $MixFunProbTests = Get-ChildItem -Path test\unit\math\mix\fun\*, test\unit\math\mix\prob\* -Include *.cpp | Resolve-Path -Relative
+        $NumberTests = $MixFunProbTests.Length
         $QuarterNumberTests = [math]::Floor($NumberTests / 4)
 
-        $MixFunTests1 = $MixFunTests[0..($QuarterNumberTests - 1)]
-        $MixFunTests2 = $MixFunTests[$QuarterNumberTests..(2 * $QuarterNumberTests - 1)]
-        $MixFunTests3 = $MixFunTests[(2 * $QuarterNumberTests)..(3 * $QuarterNumberTests - 1)]
-        $MixFunTests4 = $MixFunTests[(3 * $QuarterNumberTests)..($NumberTests - 1)]
-        $MixFunTestsArray = @($MixFunTests1, $MixFunTests2, $MixFunTests3, $MixFunTests3)
+        $MixFunProbTests1 = $MixFunProbTests[0..($QuarterNumberTests - 1)]
+        $MixFunProbTests2 = $MixFunProbTests[$QuarterNumberTests..(2 * $QuarterNumberTests - 1)]
+        $MixFunProbTests3 = $MixFunProbTests[(2 * $QuarterNumberTests)..(3 * $QuarterNumberTests - 1)]
+        $MixFunProbTests4 = $MixFunProbTests[(3 * $QuarterNumberTests)..($NumberTests - 1)]
+        $MixFunProbTestsArray = @($MixFunProbTests1, $MixFunProbTests2, $MixFunProbTests3, $MixFunProbTests4)
 
-        python runTests.py $MixFunTestsArray[(${{ matrix.config.group }} - 1)]
+        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.config.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
