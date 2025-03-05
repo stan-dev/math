@@ -41,8 +41,8 @@ namespace math {
  */
 template <typename T, typename M, typename S>
 inline auto offset_multiplier_free(T&& y, M&& mu, S&& sigma) {
-  auto&& mu_ref = to_ref(std::forward<T>(mu));
-  auto&& sigma_ref = to_ref(std::forward<M>(sigma));
+  auto&& mu_ref = to_ref(std::forward<M>(mu));
+  auto&& sigma_ref = to_ref(std::forward<S>(sigma));
   if constexpr (is_matrix<T>::value && is_matrix<M>::value) {
     check_matching_dims("offset_multiplier_constrain", "y", y, "mu", mu);
   }
