@@ -73,7 +73,7 @@ inline plain_type_t<Vec> simplex_constrain(Vec&& y, Lp& lp) {
   T stick_len(1.0);
   for (Eigen::Index k = 0; k < Km1; ++k) {
     double eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-    T adj_y_k = y.coeff(k) + eq_share;
+    T adj_y_k = y_ref.coeff(k) + eq_share;
     T z_k = inv_logit(adj_y_k);
     x.coeffRef(k) = stick_len * z_k;
     lp += log(stick_len) - log1p_exp(-adj_y_k) - log1p_exp(adj_y_k);
