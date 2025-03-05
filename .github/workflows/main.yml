@@ -1,10 +1,10 @@
-name: Windows Rtools44
+name: Rtools & ARM64 CI
 
 on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ arm64-test ]
+    branches: [ develop ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
@@ -20,13 +20,21 @@ concurrency:
 
 jobs:
   prim-rev:
-    name: prim and rev tests (${{ matrix.config.os }})
+    name: (${{ matrix.config.label }}) tests (${{ matrix.config.os }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
         config:
-          - { os: windows-latest }
-          - { os: ubuntu-24.04-arm }
+          - { os: windows-latest, label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' }
+          - { os: ubuntu-24.04-arm, label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' }
+          - { os: windows-latest, label: prim, tests: 'test/unit/math/prim' }
+          - { os: ubuntu-24.04-arm, label: prim, tests: 'test/unit/math/prim' }
+          - { os: windows-latest, label: rev, tests: 'test/unit/math/rev' }
+          - { os: ubuntu-24.04-arm, label: rev, tests: 'test/unit/math/rev' }
+          - { os: windows-latest, label: fwd, tests: 'test/unit/math/fwd' }
+          - { os: ubuntu-24.04-arm, label: fwd, tests: 'test/unit/math/fwd' }
+          - { os: windows-latest, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/prob test/unit/math/mix/*_test.cpp' }
+          - { os: ubuntu-24.04-arm, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/prob test/unit/math/mix/*_test.cpp' }
 
     steps:
     - uses: actions/checkout@v4
@@ -58,11 +66,7 @@ jobs:
     - name: Run prim and rev unit tests
       shell: pwsh
       run: |
-        python runTests.py -j4 test/unit/*_test.cpp `
-                                test/unit/math/*_test.cpp `
-                                test/unit/math/prim `
-                                test/unit/math/rev `
-                                test/unit/math/memory
+        python runTests.py -j4 ${{ matrix.config.tests }}
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
@@ -71,71 +75,18 @@ jobs:
         name: gtest_outputs_xml
         path: '**/*_test.xml'
 
-  fwd-non-fun-mix:
-    name: fwd tests and non-fun mix tests (${{ matrix.config.os }})
+  mix-fun:
+    name: mix/fun tests ${{ matrix.config.group }} (${{ matrix.config.os }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
         config:
-          - { os: windows-latest }
-          - { os: ubuntu-24.04-arm }
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-
-    - uses: r-lib/actions/setup-r@v2
-      if: runner.os == 'Windows'
-      with:
-        r-version: 'release'
-        rtools-version: '44'
-
-    - name: Set path for Rtools44
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-
-    - name: Build Math libs
-      shell: pwsh
-      run: |
-        Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
-        make -f make/standalone math-libs -j2
-
-    - name: Add TBB to PATH
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-
-    - name: Disable running fwd/mix tests
-      shell: pwsh
-      run: echo "CXXFLAGS+= -DSTAN_MATH_TESTS_REV_ONLY" | Out-File -Append -FilePath make/local -Encoding utf8
-
-    - name: Run fwd unit tests and all the mix tests except those in mix/fun
-      shell: pwsh
-      run: |
-        python runTests.py -j4 test/unit/math/fwd `
-                                test/unit/math/mix/core `
-                                test/unit/math/mix/functor `
-                                test/unit/math/mix/meta `
-                                test/unit/math/mix/prob `
-                                test/unit/math/mix/*_test.cpp
-
-    - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: gtest_outputs_xml
-        path: '**/*_test.xml'
-
-  mix-fun-1:
-    name: mix/fun tests 1 (${{ matrix.config.os }})
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      matrix:
-        config:
-          - { os: windows-latest }
-          - { os: ubuntu-24.04-arm }
+          - { os: windows-latest, group: 1 }
+          - { os: ubuntu-24.04-arm, group: 1 }
+          - { os: windows-latest, group: 2 }
+          - { os: ubuntu-24.04-arm, group: 2 }
+          - { os: windows-latest, group: 3 }
+          - { os: ubuntu-24.04-arm, group: 3 }
 
     steps:
     - uses: actions/checkout@v4
@@ -169,59 +120,15 @@ jobs:
       run: |
         $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
         $NumberTests = $MixFunTests.Length
-        $HalfNumberTests = [math]::Floor($NumberTests / 2)
-        python runTests.py -j2 $MixFunTests[0..$HalfNumberTests]
+        $ThirdNumberTests = [math]::Floor($NumberTests / 3)
+        $TwoThirdNumberTests = [math]::Floor(2 * $NumberTests / 3)
 
-    - name: Upload gtest_output xml
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: gtest_outputs_xml
-        path: '**/*_test.xml'
+        $MixFunTests1 = $MixFunTests[0..($ThirdNumberTests - 1)]
+        $MixFunTests2 = $MixFunTests[$ThirdNumberTests..($TwoThirdNumberTests - 1)]
+        $MixFunTests3 = $MixFunTests[$TwoThirdNumberTests..($NumberTests - 1)]
+        $MixFunTestsArray = @($MixFunTests1, $MixFunTests2, $MixFunTests3)
 
-  mix-fun-2:
-    name: mix/fun tests 2 (${{ matrix.config.os }})
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      matrix:
-        config:
-          - { os: windows-latest }
-          - { os: ubuntu-24.04-arm }
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-
-    - uses: r-lib/actions/setup-r@v2
-      if: runner.os == 'Windows'
-      with:
-        r-version: 'release'
-        rtools-version: '44'
-
-    - name: Set path for Rtools44
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools44/usr/bin;C:/rtools44/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-
-    - name: Build Math libs
-      shell: pwsh
-      run: |
-        Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
-        make -f make/standalone math-libs -j2
-
-    - name: Add TBB to PATH
-      if: runner.os == 'Windows'
-      shell: pwsh
-      run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
-
-    - name: Run mix/fun unit tests
-      shell: pwsh
-      run: |
-        $MixFunTests = Get-ChildItem -Path test\unit\math\mix\fun\* -Include *.cpp | Resolve-Path -Relative
-        $NumberTests = $MixFunTests.Length
-        $HalfNumberTests = [math]::Floor($NumberTests / 2)
-        python runTests.py -j2 $MixFunTests[($HalfNumberTests + 1)..($NumberTests - 1)]
+        python runTests.py -j2 $MixFunTestsArray[(${{ matrix.config.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
