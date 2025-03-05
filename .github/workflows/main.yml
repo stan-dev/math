@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   prim-rev:
-    name: (${{ matrix.config.label }}) tests (${{ matrix.config.os }})
+    name: ${{ matrix.config.label }} tests (${{ matrix.config.os }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       matrix:
@@ -63,7 +63,7 @@ jobs:
       shell: pwsh
       run: echo "D:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
-    - name: Run prim and rev unit tests
+    - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
       run: |
         python runTests.py -j4 ${{ matrix.config.tests }}
