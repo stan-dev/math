@@ -53,9 +53,9 @@ inline return_type_t<T1, T2> log_inv_logit_diff(const T1& x, const T2& y) {
  */
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr>
 inline auto log_inv_logit_diff(const T1& a, const T2& b) {
-  return apply_scalar_binary(a, b, [&](const auto& c, const auto& d) {
-    return log_inv_logit_diff(c, d);
-  });
+  return apply_scalar_binary(
+      [](const auto& c, const auto& d) { return log_inv_logit_diff(c, d); }, a,
+      b);
 }
 
 }  // namespace math
