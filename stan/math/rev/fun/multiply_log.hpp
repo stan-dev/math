@@ -56,7 +56,7 @@ inline auto conditional_sum(T&& x) {
     return std::forward<T>(x);
   }
 }
-}
+}  // namespace internal
 
 /**
  * Return the elementwise product `a * log(b)`.
@@ -90,8 +90,10 @@ inline auto multiply_log(T1&& a, T2&& b) {
       auto res_arr = as_array_or_scalar(res);
       auto is_zero
           = ((arena_a_arr.val() == 0.0 + arena_b_arr.val() == 0.0) > 1);
-      arena_a_arr.adj() += conditional_sum<is_a_scalar>(select(is_zero, 0.0, res_arr.adj() * log(arena_b_arr.val())));
-      arena_b_arr.adj() += conditional_sum<is_b_scalar>(select(is_zero, 0.0, res_arr.adj() * arena_a_arr.val() / arena_b_arr.val()));
+      arena_a_arr.adj() += conditional_sum<is_a_scalar>(
+          select(is_zero, 0.0, res_arr.adj() * log(arena_b_arr.val())));
+      arena_b_arr.adj() += conditional_sum<is_b_scalar>(select(
+          is_zero, 0.0, res_arr.adj() * arena_a_arr.val() / arena_b_arr.val()));
     });
   } else if constexpr (is_not_constant_v<T1>) {
     reverse_pass_callback([res, arena_a, arena_b]() mutable {
@@ -99,7 +101,8 @@ inline auto multiply_log(T1&& a, T2&& b) {
       auto arena_b_arr = as_array_or_scalar(arena_b);
       auto res_arr = as_array_or_scalar(res);
       auto is_zero = ((arena_a_arr.val() == 0.0 + arena_b_arr == 0.0) > 1);
-      arena_a_arr.adj() += conditional_sum<is_a_scalar>(select(is_zero, 0.0, res_arr.adj() * log(arena_b_arr)));
+      arena_a_arr.adj() += conditional_sum<is_a_scalar>(
+          select(is_zero, 0.0, res_arr.adj() * log(arena_b_arr)));
     });
   } else {
     reverse_pass_callback([res, arena_a, arena_b]() mutable {
@@ -107,12 +110,12 @@ inline auto multiply_log(T1&& a, T2&& b) {
       auto arena_b_arr = as_array_or_scalar(arena_b);
       auto res_arr = as_array_or_scalar(res);
       auto is_zero = ((arena_a_arr == 0.0 + arena_b_arr.val() == 0.0) > 1);
-      arena_b_arr.adj() += conditional_sum<is_b_scalar>(select(is_zero, 0.0, res_arr.adj() * arena_a_arr / arena_b_arr.val()));
+      arena_b_arr.adj() += conditional_sum<is_b_scalar>(select(
+          is_zero, 0.0, res_arr.adj() * arena_a_arr / arena_b_arr.val()));
     });
   }
   return res;
 }
-
 
 }  // namespace math
 }  // namespace stan
