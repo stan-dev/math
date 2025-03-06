@@ -116,12 +116,13 @@ jobs:
         $NumberTests = $MixFunProbTests.Length
         $FifthNumberTests = [math]::Floor($NumberTests / 5)
 
-        $MixFunProbTests1 = $MixFunProbTests[0..($FifthNumberTests - 1)]
-        $MixFunProbTests2 = $MixFunProbTests[$FifthNumberTests..(2 * $FifthNumberTests - 1)]
-        $MixFunProbTests3 = $MixFunProbTests[(2 * $FifthNumberTests)..(3 * $FifthNumberTests - 1)]
-        $MixFunProbTests4 = $MixFunProbTests[(3 * $FifthNumberTests)..(4 * $FifthNumberTests - 1)]
-        $MixFunProbTests5 = $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)]
-        $MixFunProbTestsArray = @($MixFunProbTests1, $MixFunProbTests2, $MixFunProbTests3, $MixFunProbTests4, $MixFunProbTests5)
+        $MixFunProbTestsArray = @( `
+          $MixFunProbTests[0..($FifthNumberTests - 1)], `
+          $MixFunProbTests[$FifthNumberTests..(2 * $FifthNumberTests - 1)], `
+          $MixFunProbTests[(2 * $FifthNumberTests)..(3 * $FifthNumberTests - 1)], `
+          $MixFunProbTests[(3 * $FifthNumberTests)..(4 * $FifthNumberTests - 1)], `
+          $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)] `
+        )
 
         python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
