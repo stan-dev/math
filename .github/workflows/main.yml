@@ -20,20 +20,19 @@ concurrency:
 
 jobs:
   prim-rev:
-    name: ${{ matrix.config.label }} tests (${{ matrix.config.os }})
-    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.label }} tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        config:
-          os: [windows-latest, ubuntu-24.04-arm]
-          tests: [
-            { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
-            { label: prim, tests: 'test/unit/math/prim' },
-            { label: rev, tests: 'test/unit/math/rev' },
-            { label: fwd, tests: 'test/unit/math/fwd' },
-            { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
-          ]
+        os: [windows-latest, ubuntu-24.04-arm]
+        config: [
+          { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
+          { label: prim, tests: 'test/unit/math/prim' },
+          { label: rev, tests: 'test/unit/math/rev' },
+          { label: fwd, tests: 'test/unit/math/fwd' },
+          { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+        ]
 
     steps:
     - uses: actions/checkout@v4
@@ -75,8 +74,8 @@ jobs:
         path: '**/*_test.xml'
 
   mix-fun:
-    name: mix fun and prob tests ${{ matrix.config.group }} (${{ matrix.config.os }})
-    runs-on: ${{ matrix.config.os }}
+    name: mix fun and prob tests ${{ matrix.config.group }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
