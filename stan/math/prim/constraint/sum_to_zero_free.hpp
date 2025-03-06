@@ -69,7 +69,7 @@ inline plain_type_t<Vec> sum_to_zero_free(const Vec& z) {
  * @param z The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto sum_to_zero_free(const T& z) {
+inline auto sum_to_zero_free(const T& z) {
   return apply_vector_unary<T>::apply(
       z, [](auto&& v) { return sum_to_zero_free(v); });
 }

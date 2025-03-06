@@ -399,7 +399,7 @@ inline auto lub_constrain(const std::vector<T>& x, const std::vector<L>& lb,
 template <bool Jacobian, typename T, typename L, typename U, typename Lp,
           require_convertible_t<return_type_t<T, L, U>, Lp>* = nullptr>
 inline auto lub_constrain(const T& x, const L& lb, const U& ub, Lp& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return lub_constrain(x, lb, ub, lp);
   } else {
     return lub_constrain(x, lb, ub);

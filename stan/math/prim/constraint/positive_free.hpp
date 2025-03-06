@@ -26,7 +26,7 @@ namespace math {
  * @throw std::domain_error if the variable is negative
  */
 template <typename T>
-inline T positive_free(const T& y) {
+inline plain_type_t<T> positive_free(const T& y) {
   check_positive("positive_free", "Positive variable", y);
   return log(y);
 }

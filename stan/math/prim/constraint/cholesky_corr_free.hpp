@@ -11,7 +11,7 @@ namespace stan {
 namespace math {
 
 template <typename T, require_eigen_t<T>* = nullptr>
-auto cholesky_corr_free(const T& x) {
+inline auto cholesky_corr_free(const T& x) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::sqrt;
@@ -42,7 +42,7 @@ auto cholesky_corr_free(const T& x) {
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cholesky_corr_free(const T& x) {
+inline auto cholesky_corr_free(const T& x) {
   return apply_vector_unary<T>::apply(
       x, [](auto&& v) { return cholesky_corr_free(v); });
 }

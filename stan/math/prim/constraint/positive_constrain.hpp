@@ -67,7 +67,7 @@ template <bool Jacobian, typename T, typename Lp,
           require_not_std_vector_t<T>* = nullptr,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto positive_constrain(const T& x, Lp& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return positive_constrain(x, lp);
   } else {
     return positive_constrain(x);

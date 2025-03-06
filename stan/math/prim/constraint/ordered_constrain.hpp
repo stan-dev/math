@@ -126,7 +126,7 @@ inline auto ordered_constrain(const T& x, Lp& lp) {
 template <bool Jacobian, typename T, typename Lp,
           require_convertible_t<return_type_t<T>, Lp>* = nullptr>
 inline auto ordered_constrain(const T& x, Lp& lp) {
-  if (Jacobian) {
+  if constexpr (Jacobian) {
     return ordered_constrain(x, lp);
   } else {
     return ordered_constrain(x);
