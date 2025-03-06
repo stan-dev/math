@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ develop ]
+    branches: [ arm-matrix-test ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
@@ -26,16 +26,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: windows-latest, label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' }
-          - { os: ubuntu-24.04-arm, label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' }
-          - { os: windows-latest, label: prim, tests: 'test/unit/math/prim' }
-          - { os: ubuntu-24.04-arm, label: prim, tests: 'test/unit/math/prim' }
-          - { os: windows-latest, label: rev, tests: 'test/unit/math/rev' }
-          - { os: ubuntu-24.04-arm, label: rev, tests: 'test/unit/math/rev' }
-          - { os: windows-latest, label: fwd, tests: 'test/unit/math/fwd' }
-          - { os: ubuntu-24.04-arm, label: fwd, tests: 'test/unit/math/fwd' }
-          - { os: windows-latest, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
-          - { os: ubuntu-24.04-arm, label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+          os: [windows-latest, ubuntu-24.04-arm]
+          tests: [
+            { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
+            { label: prim, tests: 'test/unit/math/prim' },
+            { label: rev, tests: 'test/unit/math/rev' },
+            { label: fwd, tests: 'test/unit/math/fwd' },
+            { label: 'non-fun mix', tests: 'test/unit/math/mix/core test/unit/math/mix/meta test/unit/math/mix/*_test.cpp' }
+          ]
 
     steps:
     - uses: actions/checkout@v4
@@ -83,16 +81,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { os: windows-latest, group: 1 }
-          - { os: ubuntu-24.04-arm, group: 1 }
-          - { os: windows-latest, group: 2 }
-          - { os: ubuntu-24.04-arm, group: 2 }
-          - { os: windows-latest, group: 3 }
-          - { os: ubuntu-24.04-arm, group: 3 }
-          - { os: windows-latest, group: 4 }
-          - { os: ubuntu-24.04-arm, group: 4 }
-          - { os: windows-latest, group: 5 }
-          - { os: ubuntu-24.04-arm, group: 5 }
+          os: [windows-latest, ubuntu-24.04-arm]
+          group: [1, 2, 3, 4, 5]
 
     steps:
     - uses: actions/checkout@v4
