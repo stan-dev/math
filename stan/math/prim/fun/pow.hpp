@@ -111,7 +111,7 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
 inline auto pow(const T1& a, const T2& b) {
   return apply_scalar_binary(
       // Qualified pow since only Arithmetic types are accepted here
-      a, b, [](const auto& c, const auto& d) { return stan::math::pow(c, d); });
+      [](const auto& c, const auto& d) { return stan::math::pow(c, d); }, a, b);
 }
 }  // namespace math
 }  // namespace stan

@@ -38,9 +38,9 @@ constexpr inline std::complex<stan::real_return_t<T, S>> to_complex(
 template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_st_stan_scalar<T1, T2>* = nullptr>
 inline auto to_complex(const T1& re, const T2& im) {
-  return apply_scalar_binary(re, im, [&](const auto& c, const auto& d) {
-    return stan::math::to_complex(c, d);
-  });
+  return apply_scalar_binary(
+      [](const auto& c, const auto& d) { return stan::math::to_complex(c, d); },
+      re, im);
 }
 
 }  // namespace math
