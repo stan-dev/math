@@ -61,8 +61,8 @@ inline auto conditional_sum(T&& x) {
 /**
  * Return the elementwise product `a * log(b)`.
  *
- * If both `T1` and `T2` are matrices, the dimensions of `a` and `b` must match.
- *
+ * For each element of `a` and `b`, when `a[i]` and `b[i]` are 0,
+ *  the value and adjoint returned are zero.
  * @tparam T1 Either a scalar or a matrix
  * @tparam T2 Either a scalar or a matrix
  * @param a First argument
