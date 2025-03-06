@@ -74,14 +74,13 @@ jobs:
         path: '**/*_test.xml'
 
   mix-fun:
-    name: mix fun and prob tests ${{ matrix.config.group }} (${{ matrix.os }})
+    name: mix fun and prob tests ${{ matrix.group }} (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        config:
-          os: [windows-latest, ubuntu-24.04-arm]
-          group: [1, 2, 3, 4, 5]
+        os: [windows-latest, ubuntu-24.04-arm]
+        group: [1, 2, 3, 4, 5]
 
     steps:
     - uses: actions/checkout@v4
@@ -124,7 +123,7 @@ jobs:
         $MixFunProbTests5 = $MixFunProbTests[(4 * $FifthNumberTests)..($NumberTests - 1)]
         $MixFunProbTestsArray = @($MixFunProbTests1, $MixFunProbTests2, $MixFunProbTests3, $MixFunProbTests4, $MixFunProbTests5)
 
-        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.config.group }} - 1)]
+        python runTests.py -j2 $MixFunProbTestsArray[(${{ matrix.group }} - 1)]
 
     - name: Upload gtest_output xml
       uses: actions/upload-artifact@v4
