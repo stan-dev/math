@@ -24,9 +24,12 @@ namespace math {
  */
 template <typename T1, typename T2>
 inline auto lmultiply(T1&& a, T2&& b) {
-  return make_holder([](auto&& a, auto&& b) {
-    return multiply_log(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
-  }, std::forward<T1>(a), std::forward<T2>(b));
+  return make_holder(
+      [](auto&& a, auto&& b) {
+        return multiply_log(std::forward<decltype(a)>(a),
+                            std::forward<decltype(b)>(b));
+      },
+      std::forward<T1>(a), std::forward<T2>(b));
 }
 }  // namespace math
 }  // namespace stan
