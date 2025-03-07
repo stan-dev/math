@@ -68,38 +68,41 @@ inline double inv_logit(double a) {
  */
 struct inv_logit_fun {
   template <typename T>
-  static inline auto fun(const T& x) {
-    return inv_logit(x);
+  static inline auto fun(T&& x) {
+    return inv_logit(std::forward<T>(x));
   }
 };
 
 /**
- * Vectorized version of inv_logit() for Eigen types.
- *
- * @tparam T A type inheriting from `Eigen::DenseBase` that does not have a
- * `var` scalar type.
- * @param x Eigen expression
- * @return Inverse logit applied to each value in x.
- */
-template <typename T, require_eigen_t<T>* = nullptr,
-          require_not_vt_var<T>* = nullptr>
-inline auto inv_logit(T&& x) {
-  return std::forward<T>(x).array().logistic().matrix();
-}
-
-/**
- * Vectorized version of inv_logit() for std::vector.
+ * Vectorized version of inv_logit() for std::vector's containing ad types.
  *
  * @tparam T type of std::vector
  * @param x std::vector
  * @return Inverse logit applied to each value in x.
  */
-template <typename T, require_std_vector_t<T>* = nullptr>
-inline auto inv_logit(T&& x) {
-  return apply_scalar_unary<inv_logit_fun, std::decay_t<T>>::apply(
-      std::forward<T>(x));
+template <typename Container, require_ad_container_t<Container>* = nullptr,
+  require_all_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr,
+  require_not_rev_matrix_t<Container>* = nullptr>
+inline auto inv_logit(Container&& x) {
+  return apply_scalar_unary<inv_logit_fun, Container>::apply(std::forward<Container>(x));
 }
 
+/**
+ * Vectorized version of inv_logit() for Eigen types.
+ *
+ * @tparam T A type of either `std::vector` whose inner type inherits from `Eigen::DenseBase` or a 
+ *  type that directly inherits from `Eigen::DenseBase`. The inner scalar type must not have a
+ * `var` scalar type.
+ * @param x Eigen expression
+ * @return Inverse logit applied to each value in x.
+ */
+template <typename Container,
+          require_container_bt<std::is_arithmetic, Container>* = nullptr,
+  require_all_not_nonscalar_prim_or_rev_kernel_expression_t<Container>* = nullptr>
+inline auto inv_logit(Container&& x) {
+  return apply_vector_unary<Container>::apply(
+      std::forward<Container>(x), [](const auto& v) { return v.array().logistic(); });
+}
 }  // namespace math
 }  // namespace stan
 
