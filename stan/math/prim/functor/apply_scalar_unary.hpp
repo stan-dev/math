@@ -83,7 +83,8 @@ struct apply_scalar_unary<F, T, require_floating_point_t<T>> {
   /**
    * The return type, double.
    */
-  using return_t = std::decay_t<decltype(F::fun(std::declval<std::decay_t<T>>()))>;
+  using return_t
+      = std::decay_t<decltype(F::fun(std::declval<std::decay_t<T>>()))>;
 
   /**
    * Apply the function specified by F to the specified argument.
@@ -118,7 +119,8 @@ struct apply_scalar_unary<F, T, require_complex_t<T>> {
   /**
    * The return type
    */
-  using return_t = std::decay_t<decltype(F::fun(std::declval<std::decay_t<T>>()))>;
+  using return_t
+      = std::decay_t<decltype(F::fun(std::declval<std::decay_t<T>>()))>;
 };
 
 /**
@@ -162,8 +164,8 @@ struct apply_scalar_unary<F, T, require_std_vector_t<T>> {
    * Return type, which is calculated recursively as a standard
    * vector of the return type of the contained type T.
    */
-  using return_t = typename std::vector<
-      plain_type_t<typename apply_scalar_unary<F, value_type_t<std::decay_t<T>>>::return_t>>;
+  using return_t = typename std::vector<plain_type_t<
+      typename apply_scalar_unary<F, value_type_t<std::decay_t<T>>>::return_t>>;
 
   /**
    * Apply the function specified by F elementwise to the
