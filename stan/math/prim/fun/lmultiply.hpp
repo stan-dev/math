@@ -22,7 +22,9 @@ namespace math {
  * @param b second argument
  * @return the first argument times the log of the second argument
  */
-template <typename T1, typename T2, require_all_not_nonscalar_prim_or_rev_kernel_expression_t<T1, T2>* = nullptr>
+template <typename T1, typename T2,
+          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
+              T1, T2>* = nullptr>
 inline auto lmultiply(T1&& a, T2&& b) {
   return make_holder(
       [](auto&& a, auto&& b) {

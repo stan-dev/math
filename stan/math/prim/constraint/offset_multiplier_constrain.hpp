@@ -58,11 +58,14 @@ inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma) {
   check_finite("offset_multiplier_constrain", "offset", value_of_rec(mu_ref));
   check_positive_finite("offset_multiplier_constrain", "multiplier",
                         value_of_rec(sigma_ref));
-  return make_holder([](auto&& sigma_ref, auto&& x, auto&& mu_ref) {
-    return fma(std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<decltype(x)>(x),
-             std::forward<decltype(mu_ref)>(mu_ref));
-  }, std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<T>(x),
-  std::forward<decltype(mu_ref)>(mu_ref));
+  return make_holder(
+      [](auto&& sigma_ref, auto&& x, auto&& mu_ref) {
+        return fma(std::forward<decltype(sigma_ref)>(sigma_ref),
+                   std::forward<decltype(x)>(x),
+                   std::forward<decltype(mu_ref)>(mu_ref));
+      },
+      std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<T>(x),
+      std::forward<decltype(mu_ref)>(mu_ref));
 }
 
 /**
@@ -96,14 +99,13 @@ template <typename T, typename M, typename S, typename Lp,
           require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
               T, M, S>* = nullptr,
           require_all_not_std_vector_t<M, S>* = nullptr>
-inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma,
-                                        Lp& lp) {
+inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma, Lp& lp) {
   if constexpr (is_matrix_v<T> && is_matrix_v<M>) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "mu", mu);
   }
   if constexpr (is_matrix_v<T> && is_matrix_v<S>) {
     check_matching_dims("offset_multiplier_constrain", "x", x, "sigma", sigma);
-  } 
+  }
   if constexpr (is_matrix_v<M> && is_matrix_v<S>) {
     check_matching_dims("offset_multiplier_constrain", "mu", mu, "sigma",
                         sigma);
@@ -118,12 +120,14 @@ inline auto offset_multiplier_constrain(T&& x, M&& mu, S&& sigma,
   } else {
     lp += sum(log(sigma_ref));
   }
-  return make_holder([](auto&& sigma_ref, auto&& x, auto&& mu_ref) {
-    return fma(std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<decltype(x)>(x),
-             std::forward<decltype(mu_ref)>(mu_ref));
-  }, std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<T>(x),
-  std::forward<decltype(mu_ref)>(mu_ref));
-
+  return make_holder(
+      [](auto&& sigma_ref, auto&& x, auto&& mu_ref) {
+        return fma(std::forward<decltype(sigma_ref)>(sigma_ref),
+                   std::forward<decltype(x)>(x),
+                   std::forward<decltype(mu_ref)>(mu_ref));
+      },
+      std::forward<decltype(sigma_ref)>(sigma_ref), std::forward<T>(x),
+      std::forward<decltype(mu_ref)>(mu_ref));
 }
 
 /**
@@ -167,7 +171,7 @@ inline auto offset_multiplier_constrain(const T& x, M&& mu, S&& sigma) {
  * Overload for when x and mu or sigma are `std::vectors`
  */
 template <typename T, typename M, typename S, typename Lp,
-require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
+          require_convertible_t<return_type_t<T, M, S>, Lp>* = nullptr,
           require_any_std_vector_t<T, M, S>* = nullptr>
 inline auto offset_multiplier_constrain(const T& x, M&& mu, S&& sigma, Lp& lp) {
   if constexpr (is_std_vector_v<T> && is_std_vector_v<S>) {
@@ -195,8 +199,8 @@ inline auto offset_multiplier_constrain(const T& x, M&& mu, S&& sigma, Lp& lp) {
   // In the language, if mu or sigma is a vector, x must also be a vector
   ret.reserve(x.size());
   for (size_t i = 0; i < x.size(); ++i) {
-    ret.emplace_back(
-        offset_multiplier_constrain(x[i], iter(mu_ref, i), iter(sigma_ref, i), lp));
+    ret.emplace_back(offset_multiplier_constrain(x[i], iter(mu_ref, i),
+                                                 iter(sigma_ref, i), lp));
   }
   return ret;
 }
