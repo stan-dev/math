@@ -76,7 +76,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   if (size_zero(y, mu, alpha, beta)) {
     return 0;
   }
-  if (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
+  if constexpr (!include_summand<propto, T_y, T_loc, T_scale, T_shape>::value) {
     return 0;
   }
 
@@ -89,37 +89,38 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
 
   T_partials_return logp = -sum(scaled_abs_diff_pow);
 
-  if (include_summand<propto>::value) {
+  if constexpr (include_summand<propto>::value) {
     logp -= LOG_TWO * N;
   }
-  if (include_summand<propto, T_scale>::value) {
+  if constexpr (include_summand<propto, T_scale>::value) {
     logp -= sum(log(alpha_val)) * (N / math::size(alpha));
   }
-  if (include_summand<propto, T_shape>::value) {
+  if constexpr (include_summand<propto, T_shape>::value) {
     logp -= sum(lgamma(inv_beta1p)) * (N / math::size(beta));
   }
 
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
 
-  if (!is_constant_all<T_y, T_loc>::value) {
-    // note: The partial derivatives for y, mu are undefined when y == mu && beta < 1.
-    // The derivative limit as mu -> y goes:
-    //   to 0 from both sides if beta > 1 (defined as 0)
-    //   to +1/alpha from right but -1/alpha from left if beta == 1 (defined as 0, consistent with double_exponential_lpdf)
-    //   to +∞ from right but -∞ from left as y -> mu if beta < 1 (undefined)
-    const auto& rep_deriv = to_ref_if<!is_constant<T_y>::value
-                    && !is_constant<T_loc>::value>(sign(diff) * beta_val * pow(scaled_abs_diff, beta_val-1) * inv_alpha);
-    if (!is_constant<T_y>::value) {
+  if constexpr (!is_constant_all<T_y, T_loc>::value) {
+    // note: The partial derivatives for y, μ are undefined when 
+    // y == μ && beta < 1. 
+    // The derivative limit as y → μ (i.e. diff → 0) has the following cases:
+    //   β > 1: 0 from both sides (defined as 0)
+    //   β == 1: +1/α from right, but -1/α from left (defined as
+    //     0, consistent with double_exponential_lpdf) 
+    //   β < 1: -∞ from left as y → μ, but +∞ from right (undefined)
+    auto rep_deriv = eval(sign(diff) * beta_val * pow(scaled_abs_diff, beta_val - 1) * inv_alpha);
+    if constexpr (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
-    if (!is_constant<T_loc>::value) {
+    if constexpr (!is_constant<T_loc>::value) {
       partials<1>(ops_partials) = std::move(rep_deriv);
     }
   }
-  if (!is_constant<T_scale>::value) {
+  if constexpr (!is_constant<T_scale>::value) {
     partials<2>(ops_partials) = (beta_val * scaled_abs_diff_pow - 1) * inv_alpha;
   }
-  if (!is_constant<T_shape>::value) {
+  if constexpr (!is_constant<T_shape>::value) {
       partials<3>(ops_partials) = digamma(inv_beta1p) * inv_square(beta_val) - multiply_log(scaled_abs_diff_pow, scaled_abs_diff);
   }
 
