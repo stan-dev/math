@@ -52,14 +52,16 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y) {
  * stick-breaking process.
  *
  * @tparam Vec type of the vector
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
+ * be convertable to this.
  * @param y Free vector input of dimensionality K - 1.
  * @param lp Log probability reference to increment.
  * @return Simplex of dimensionality K.
  */
-template <typename Vec, require_eigen_vector_t<Vec>* = nullptr,
-          require_not_st_var<Vec>* = nullptr>
-inline plain_type_t<Vec> simplex_constrain(const Vec& y,
-                                           value_type_t<Vec>& lp) {
+template <typename Vec, typename Lp, require_eigen_vector_t<Vec>* = nullptr,
+          require_not_st_var<Vec>* = nullptr,
+          require_convertible_t<value_type_t<Vec>, Lp>* = nullptr>
+inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
   using std::log;
@@ -83,29 +85,39 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y,
 }
 
 /**
- * Return the simplex corresponding to the specified free vector. If the
- * `Jacobian` parameter is `true`, the log density accumulator is incremented
- * with the log absolute Jacobian determinant of the transform.  All of the
- * transforms are specified with their Jacobians in the *Stan Reference Manual*
- * chapter Constraint Transforms.
+ * Return the simplex corresponding to the specified free vector.
+ * This overload handles looping over the elements of a standard vector.
  *
- * @tparam Jacobian if `true`, increment log density accumulator with log
- * absolute Jacobian determinant of constraining transform
- * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
- *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ * @tparam Vec A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @param[in] y free vector
+ * @return simplex of dimensionality one greater than `y`
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto simplex_constrain(const T& y) {
+  return apply_vector_unary<T>::apply(
+      y, [](auto&& v) { return simplex_constrain(v); });
+}
+
+/**
+ * Return the simplex corresponding to the specified free vector.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam Vec A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp Scalar type for the lp argument. The scalar type of T should be
+ * convertable to this.
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
-inline plain_type_t<Vec> simplex_constrain(const Vec& y,
-                                           return_type_t<Vec>& lp) {
-  if (Jacobian) {
-    return simplex_constrain(y, lp);
-  } else {
-    return simplex_constrain(y);
-  }
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto simplex_constrain(const T& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      y, [&lp](auto&& v) { return simplex_constrain(v, lp); });
 }
 
 /**
@@ -117,17 +129,23 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y,
  *
  * @tparam Jacobian if `true`, increment log density accumulator with log
  * absolute Jacobian determinant of constraining transform
- * @tparam Vec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
+ *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
+ *  and 1 column
+ * @tparam Lp A scalar type for the lp argument. The scalar type of Vec should
+ * be convertable to this.
  * @param[in] y free vector
  * @param[in, out] lp log density accumulator
  * @return simplex of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto simplex_constrain(const T& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [&lp](auto&& v) { return simplex_constrain<Jacobian>(v, lp); });
+template <bool Jacobian, typename Vec, typename Lp,
+          require_convertible_t<return_type_t<Vec>, Lp>* = nullptr>
+inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
+  if constexpr (Jacobian) {
+    return simplex_constrain(y, lp);
+  } else {
+    return simplex_constrain(y);
+  }
 }
 
 }  // namespace math
