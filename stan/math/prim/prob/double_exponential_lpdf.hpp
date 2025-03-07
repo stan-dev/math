@@ -3,9 +3,11 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err.hpp>
+#include <stan/math/prim/fun/as_column_vector_or_scalar.hpp>
+#include <stan/math/prim/fun/as_array_or_scalar.hpp>
 #include <stan/math/prim/fun/as_value_column_array_or_scalar.hpp>
 #include <stan/math/prim/fun/constants.hpp>
-#include <stan/math/prim/fun/abs.hpp>
+#include <stan/math/prim/fun/fabs.hpp>
 #include <stan/math/prim/fun/inv.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/log.hpp>
@@ -57,6 +59,7 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
     return 0.0;
   }
 
+  T_partials_return logp(0.0);
   auto ops_partials = make_partials_propagator(y_ref, mu_ref, sigma_ref);
 
   decltype(auto) y_val = to_ref(as_value_column_array_or_scalar(y_ref));
@@ -70,32 +73,33 @@ return_type_t<T_y, T_loc, T_scale> double_exponential_lpdf(
   const auto& inv_sigma = to_ref(inv(sigma_val));
   const auto& y_m_mu
       = to_ref_if<!is_constant_all<T_y, T_loc>::value>(y_val - mu_val);
-  const auto& scaled_abs_diff
-      = to_ref_if<!is_constant<T_scale>::value>(abs(y_m_mu) * inv_sigma);
+  const auto& abs_diff_y_mu = fabs(y_m_mu);
+  const auto& scaled_diff
+      = to_ref_if<!is_constant_all<T_scale>::value>(abs_diff_y_mu * inv_sigma);
 
-  T_partials_return logp = -sum(scaled_abs_diff);
-  const size_t N = max_size(y, mu, sigma);
+  size_t N = max_size(y, mu, sigma);
   if (include_summand<propto>::value) {
     logp -= N * LOG_TWO;
   }
   if (include_summand<propto, T_scale>::value) {
     logp -= sum(log(sigma_val)) * N / math::size(sigma);
   }
+  logp -= sum(scaled_diff);
 
   if (!is_constant_all<T_y, T_loc>::value) {
+    const auto& diff_sign = sign(y_m_mu);
     const auto& rep_deriv
-        = to_ref_if<(!is_constant<T_y>::value
-                     && !is_constant<T_loc>::value)>(sign(y_m_mu) * inv_sigma);
-
-    if (!is_constant<T_y>::value) {
+        = to_ref_if<(!is_constant_all<T_y>::value
+                     && !is_constant_all<T_loc>::value)>(diff_sign * inv_sigma);
+    if (!is_constant_all<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
-    if (!is_constant<T_loc>::value) {
+    if (!is_constant_all<T_loc>::value) {
       partials<1>(ops_partials) = rep_deriv;
     }
   }
-  if (!is_constant<T_scale>::value) {
-    partials<2>(ops_partials) = inv_sigma * (scaled_abs_diff - 1);
+  if (!is_constant_all<T_scale>::value) {
+    partials<2>(ops_partials) = inv_sigma * (scaled_diff - 1);
   }
 
   return ops_partials.build(logp);

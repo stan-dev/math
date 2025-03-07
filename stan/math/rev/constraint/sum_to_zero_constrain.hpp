@@ -94,8 +94,8 @@ inline auto sum_to_zero_constrain(T&& y) {
  * @param lp unused
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename T, require_rev_col_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(T&& y, scalar_type_t<T>& lp) {
+template <typename T, typename Lp, require_rev_col_vector_t<T>* = nullptr>
+inline auto sum_to_zero_constrain(T&& y, Lp& lp) {
   return sum_to_zero_constrain(std::forward<T>(y));
 }
 

@@ -39,7 +39,7 @@ class SignatureParser:
 
     def is_ignored(self):
         """Return true if this signature should be ignored by any tests (they are functions in stanc3 not defined in Math)"""
-        return self.function_name in ignored
+        return self.function_name in ignored or self.function_name.endswith("_jacobian")
 
     def has_eigen_compatible_arg(self):
         """Return true if any argument is vector-like (can be an Eigen c++ type)"""

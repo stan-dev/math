@@ -3,8 +3,10 @@
 
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
-#include <stan/math/prim/fun/constants.hpp>
+#include <stan/math/prim/fun/exp.hpp>
 #include <stan/math/prim/fun/inv_Phi.hpp>
+#include <stan/math/prim/prob/std_normal_lpdf.hpp>
+#include <stan/math/prim/functor/apply_scalar_binary.hpp>
 #include <cmath>
 
 namespace stan {
@@ -19,8 +21,9 @@ namespace math {
  * @return The unit normal inverse cdf evaluated at p
  */
 inline var inv_Phi(const var& p) {
-  return make_callback_var(inv_Phi(p.val()), [p](auto& vi) mutable {
-    p.adj() += vi.adj() * SQRT_TWO_PI / std::exp(-0.5 * vi.val() * vi.val());
+  double val = inv_Phi(p.val());
+  return make_callback_var(val, [p, val](auto& vi) mutable {
+    p.adj() += vi.adj() * exp(-std_normal_lpdf(val));
   });
 }
 
@@ -33,9 +36,11 @@ inline var inv_Phi(const var& p) {
  */
 template <typename T, require_var_matrix_t<T>* = nullptr>
 inline auto inv_Phi(const T& p) {
-  return make_callback_var(inv_Phi(p.val()), [p](auto& vi) mutable {
-    p.adj().array() += vi.adj().array() * SQRT_TWO_PI
-                       / (-0.5 * vi.val().array().square()).exp();
+  auto arena_rtn = to_arena(inv_Phi(p.val()));
+  return make_callback_var(arena_rtn, [p, arena_rtn](auto& vi) mutable {
+    auto deriv
+        = arena_rtn.unaryExpr([](auto x) { return exp(-std_normal_lpdf(x)); });
+    p.adj() += elt_multiply(vi.adj(), deriv);
   });
 }
 
