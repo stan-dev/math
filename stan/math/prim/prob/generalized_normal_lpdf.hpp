@@ -74,7 +74,7 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
   check_positive(function, "Scale parameter", alpha_val);
 
   // With β = +∞ this could be defined to be uniform, but we don't support that.
-  check_positive(function, "Shape parameter", beta_val);  
+  check_positive(function, "Shape parameter", beta_val);
 
   if (size_zero(y, mu, alpha, beta)) {
     return 0;
@@ -112,16 +112,15 @@ inline return_type_t<T_y, T_loc, T_scale, T_shape> generalized_normal_lpdf(
       = make_partials_propagator(y_ref, mu_ref, alpha_ref, beta_ref);
 
   if constexpr (!is_constant_all<T_y, T_loc>::value) {
-    // note: The partial derivatives for y, μ are undefined when 
-    // y == μ && beta < 1. 
+    // note: The partial derivatives for y, μ are undefined when
+    // y == μ && beta < 1.
     // The derivative limit as y → μ (i.e. diff → 0) has the following cases:
     //   β > 1: 0 from both sides (defined as 0)
     //   β == 1: +1/α from right, but -1/α from left (defined as
-    //     0, consistent with double_exponential_lpdf) 
+    //     0, consistent with double_exponential_lpdf)
     //   β < 1: -∞ from left as y → μ, but +∞ from right (undefined)
-    auto rep_deriv = eval(
-      sign(diff) * beta_val * pow(scaled_abs_diff, beta_val - 1) * inv_alpha
-    );
+    auto rep_deriv = eval(sign(diff) * beta_val
+                          * pow(scaled_abs_diff, beta_val - 1) * inv_alpha);
     if constexpr (!is_constant<T_y>::value) {
       partials<0>(ops_partials) = -rep_deriv;
     }
