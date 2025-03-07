@@ -81,15 +81,52 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
  * This is a linear transform, with no Jacobian.
  *
  * @tparam Vec type of the vector
+ * @tparam Lp unused
  * @param y Free vector input of dimensionality K - 1.
  * @param lp unused
  * @return Zero-sum vector of dimensionality K.
  */
-template <typename Vec, require_eigen_col_vector_t<Vec>* = nullptr,
+template <typename Vec, typename Lp, require_eigen_col_vector_t<Vec>* = nullptr,
           require_not_st_var<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
-                                               value_type_t<Vec>& lp) {
+inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
   return sum_to_zero_constrain(y);
+}
+
+/**
+ * Return a vector with sum zero corresponding to the specified
+ * free vector.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam Vec A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @param[in] y free vector
+ * @return Zero-sum vectors of dimensionality one greater than `y`
+ */
+template <typename T, require_std_vector_t<T>* = nullptr>
+inline auto sum_to_zero_constrain(const T& y) {
+  return apply_vector_unary<T>::apply(
+      y, [](auto&& v) { return sum_to_zero_constrain(v); });
+}
+
+/**
+ * Return a vector with sum zero corresponding to the specified
+ * free vector.
+ * This overload handles looping over the elements of a standard vector.
+ *
+ * @tparam Vec A standard vector with inner type inheriting from
+ * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
+ * `Eigen::DenseBase` with compile time dynamic rows and 1 column
+ * @tparam Lp unused
+ * @param[in] y free vector
+ * @param[in, out] lp unused
+ * @return Zero-sum vectors of dimensionality one greater than `y`
+ */
+template <typename T, typename Lp, require_std_vector_t<T>* = nullptr,
+          require_convertible_t<return_type_t<T>, Lp>* = nullptr>
+inline auto sum_to_zero_constrain(const T& y, Lp& lp) {
+  return apply_vector_unary<T>::apply(
+      y, [](auto&& v) { return sum_to_zero_constrain(v); });
 }
 
 /**
@@ -115,49 +152,15 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
  * @tparam Jacobian unused
  * @tparam Vec A type inheriting from `Eigen::DenseBase` or a `var_value` with
  *  inner type inheriting from `Eigen::DenseBase` with compile time dynamic rows
- *  and 1 column
+ *  and 1 column, or a standard vector thereof
+ * @tparam Lp unused
  * @param[in] y free vector
  * @param[in, out] lp unused
  * @return Zero-sum vector of dimensionality one greater than `y`
  */
-template <bool Jacobian, typename Vec, require_not_std_vector_t<Vec>* = nullptr>
-inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y,
-                                               return_type_t<Vec>& lp) {
+template <bool Jacobian, typename Vec, typename Lp>
+inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y, Lp& lp) {
   return sum_to_zero_constrain(y);
-}
-
-/**
- * Return a vector with sum zero corresponding to the specified
- * free vector.
- *
- * The sum-to-zero transform is defined using a modified version of
- * the inverse of the isometric log ratio transform (ILR).
- * See:
- * Egozcue, Juan Jose; Pawlowsky-Glahn, Vera; Mateu-Figueras, Gloria;
- * Barcelo-Vidal, Carles (2003), "Isometric logratio transformations for
- * compositional data analysis", Mathematical Geology, 35 (3): 279–300,
- * doi:10.1023/A:1023818214614, S2CID 122844634
- *
- * This implementation is closer to the description of the same using "pivot
- * coordinates" in
- * Filzmoser, P., Hron, K., Templ, M. (2018). Geometrical Properties of
- * Compositional Data. In: Applied Compositional Data Analysis. Springer Series
- * in Statistics. Springer, Cham. https://doi.org/10.1007/978-3-319-96422-5_3
- *
- * This is a linear transform, with no Jacobian.
- *
- * @tparam Jacobian unused
- * @tparam Vec A standard vector with inner type inheriting from
- * `Eigen::DenseBase` or a `var_value` with inner type inheriting from
- * `Eigen::DenseBase` with compile time dynamic rows and 1 column
- * @param[in] y free vector
- * @param[in, out] lp unused
- * @return Zero-sum vectors of dimensionality one greater than `y`
- */
-template <bool Jacobian, typename T, require_std_vector_t<T>* = nullptr>
-inline auto sum_to_zero_constrain(const T& y, return_type_t<T>& lp) {
-  return apply_vector_unary<T>::apply(
-      y, [](auto&& v) { return sum_to_zero_constrain(v); });
 }
 
 }  // namespace math

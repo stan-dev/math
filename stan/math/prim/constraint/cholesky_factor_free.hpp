@@ -56,7 +56,7 @@ Eigen::Matrix<value_type_t<T>, Eigen::Dynamic, 1> cholesky_factor_free(
  * @param x The standard vector to untransform.
  */
 template <typename T, require_std_vector_t<T>* = nullptr>
-auto cholesky_factor_free(const T& x) {
+inline auto cholesky_factor_free(const T& x) {
   return apply_vector_unary<T>::apply(
       x, [](auto&& v) { return cholesky_factor_free(v); });
 }
