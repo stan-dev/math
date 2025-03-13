@@ -90,10 +90,12 @@ inline auto inv_logit(Container&& x) {
 }
 
 /**
- * Vectorized version of inv_logit() for containers with arithmetic scalar types.
+ * Vectorized version of inv_logit() for containers with arithmetic scalar
+ * types.
  *
- * @tparam T A type of either `std::vector` or a type that directly inherits from `Eigen::DenseBase`.
- * The inner scalar type must not have an auto diff scalar type.
+ * @tparam T A type of either `std::vector` or a type that directly inherits
+ * from `Eigen::DenseBase`. The inner scalar type must not have an auto diff
+ * scalar type.
  * @param x Eigen expression
  * @return Inverse logit applied to each value in x.
  */
