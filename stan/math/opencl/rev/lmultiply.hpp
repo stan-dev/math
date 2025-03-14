@@ -33,9 +33,9 @@ inline var_value<matrix_cl<double>> lmultiply(T_a&& a, T_b&& b) {
       lmultiply(value_of(a_arena), value_of(b_arena)),
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
         adjoint_results(a_arena, b_arena) += expressions(
-            elt_multiply(res.adj(), log(value_of(b_arena))),
-            elt_multiply(res.adj(),
-                         elt_divide(value_of(a_arena), value_of(b_arena))));
+            select(value_of(a_arena) == 0.0 && value_of(b_arena) == 0.0, 0.0, elt_multiply(res.adj(), log(value_of(b_arena)))),
+            select(value_of(a_arena) == 0.0 && value_of(b_arena) == 0.0, 0.0, elt_multiply(res.adj(),
+                         elt_divide(value_of(a_arena), value_of(b_arena)))));
       });
 }
 
