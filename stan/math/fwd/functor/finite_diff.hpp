@@ -45,7 +45,7 @@ template <typename FuncTangent, typename InputArg,
           require_st_fvar<InputArg>* = nullptr>
 inline auto aggregate_tangent(const FuncTangent& tangent, const InputArg& arg) {
   return sum(apply_scalar_binary(
-      tangent, arg, [](const auto& x, const auto& y) { return x * y.d_; }));
+      [](const auto& x, const auto& y) { return x * y.d_; }, tangent, arg));
 }
 }  // namespace internal
 

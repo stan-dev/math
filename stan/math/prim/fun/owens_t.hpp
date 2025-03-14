@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
+#include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/owens_t.hpp>
 
 namespace stan {
@@ -55,7 +56,9 @@ namespace math {
  * @param a Second argument
  * @return Owen's T function applied to the arguments.
  */
-inline double owens_t(double h, double a) { return boost::math::owens_t(h, a); }
+inline double owens_t(double h, double a) {
+  return boost::math::owens_t(h, a, boost_policy_t<>());
+}
 
 /**
  * Enables the vectorized application of the owens_t
@@ -71,7 +74,7 @@ template <typename T1, typename T2, require_any_container_t<T1, T2>* = nullptr,
           require_all_not_var_and_matrix_types<T1, T2>* = nullptr>
 inline auto owens_t(const T1& a, const T2& b) {
   return apply_scalar_binary(
-      a, b, [](const auto& c, const auto& d) { return owens_t(c, d); });
+      [](const auto& c, const auto& d) { return owens_t(c, d); }, a, b);
 }
 
 }  // namespace math

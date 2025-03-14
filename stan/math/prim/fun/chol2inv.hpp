@@ -3,10 +3,9 @@
 
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/dot_self.hpp>
-#include <stan/math/prim/fun/dot_product.hpp>
 #include <stan/math/prim/fun/mdivide_left_tri.hpp>
 #include <stan/math/prim/fun/inv_square.hpp>
+#include <stan/math/prim/fun/crossprod.hpp>
 
 namespace stan {
 namespace math {
@@ -35,17 +34,7 @@ plain_type_t<T> chol2inv(const T& L) {
     X.coeffRef(0) = inv_square(L_ref.coeff(0, 0));
     return X;
   }
-  T_result L_inv = mdivide_left_tri<Eigen::Lower>(L_ref);
-  T_result X(K, K);
-  for (int k = 0; k < K; ++k) {
-    X.coeffRef(k, k) = dot_self(L_inv.col(k).tail(K - k).eval());
-    for (int j = k + 1; j < K; ++j) {
-      int Kmj = K - j;
-      X.coeffRef(k, j) = X.coeffRef(j, k) = dot_product(
-          L_inv.col(k).tail(Kmj).eval(), L_inv.col(j).tail(Kmj).eval());
-    }
-  }
-  return X;
+  return crossprod(mdivide_left_tri<Eigen::Lower>(L_ref));
 }
 
 }  // namespace math
