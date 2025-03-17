@@ -133,8 +133,9 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   // EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
   // EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 6e-4);
 }
-/*
 
+// Keep this or delete this?
+/*
 TEST(laplace, poisson_basic_rng) {
   using stan::math::algebra_solver;
   using stan::math::diag_matrix;
@@ -154,8 +155,8 @@ TEST(laplace, poisson_basic_rng) {
   sigma << 3, 2;
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
-
-  diff_poisson_log laplace_likelihood(to_vector(n_samples), to_vector(sums));
+  stan::math::poisson_log_likelihood laplace_likelihood{};
+//  diff_poisson_log laplace_likelihood(to_vector(n_samples), to_vector(sums));
   std::vector<double> d0;
   std::vector<int> di0;
 
@@ -166,7 +167,7 @@ TEST(laplace, poisson_basic_rng) {
   Eigen::VectorXd gradient;
   Eigen::SparseMatrix<double> W_sparse;
   Eigen::VectorXd eta_dummy;
-  laplace_likelihood.diff(theta_root, eta_dummy, gradient, W_sparse);
+  std::tie(gradient, eta_dummy, W_sparse) = stan::math::laplace_likelihood::internal::diff(laplace_likelihood, theta_root);
   Eigen::MatrixXd W = -W_sparse;
   diagonal_kernel_functor covariance_function;
   std::vector<Eigen::VectorXd> x_dummy;
@@ -191,8 +192,8 @@ TEST(laplace, poisson_basic_rng) {
     Eigen::VectorXd l_grad;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
     double marginal_density = laplace_marginal_density(
-        laplace_likelihood, covariance_function, sigma, eta_dummy, x_dummy, d0,
-        di0, covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root, theta0_val,
+        laplace_likelihood, std::forward_as_tuple(sums, n_samples), covariance_function, std::forward_as_tuple(sigma, d0,
+        di0), covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root, theta0_val,
         0, tolerance, max_num_steps);
 
     std::cout << "theta (mode) = " << theta.transpose() << std::endl;

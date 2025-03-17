@@ -178,9 +178,7 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
         throw std::domain_error(msg);
       }
     }
-    std::cout << "local block: \n" << local_block << std::endl;
-    // Here issue here, sqrt is done over T of the complex schur
-
+    // Issue here, sqrt is done over T of the complex schur
     local_block_sqrt = local_block.sqrt();
     for (int k = 0; k < block_size; k++) {
       for (int j = 0; j < block_size; j++) {
@@ -283,21 +281,21 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         std::string("laplace_marginal_density: max number of iterations: ")
         + std::to_string(max_num_steps) + " exceeded.");
   };
-  auto line_search = [](auto& objective_new, auto&& a, auto&& theta,
-                        const auto& a_old, const auto& covariance,
-                        const auto& ll_fun, auto&& ll_args,
+  auto ll_args_vals = value_of(ll_args);
+  auto line_search = [](auto& objective_new, auto&& a, const auto& a_prev, auto&& theta,
+                        const auto& ll_fun, auto&& ll_args, const auto& covariance,
                         const auto max_steps_line_search,
                         const auto objective_old, auto* msgs) mutable {
     Eigen::VectorXd a_tmp;
     double objective_new_tmp = 0;
     Eigen::VectorXd theta_tmp;
     for (int j = 0; j < max_steps_line_search && (objective_new < objective_old); ++j) {
-      a_tmp = (a + a_old) * 0.5;  // TODO(Charles) -- generalize for any factor
+      a_tmp = (a + a_prev) * 0.5;  // TODO(Charles) -- generalize for any factor
       theta_tmp = covariance * a_tmp;
       if (Eigen::isfinite(theta_tmp.array()).sum()) {
         objective_new_tmp = -0.5 * a.dot(theta_tmp)
                         + laplace_likelihood::log_likelihood(ll_fun, theta_tmp,
-                                                             value_of(ll_args), msgs);
+                                                             ll_args, msgs);
         if (objective_new_tmp < objective_old) {
           a = a_tmp;
           theta = theta_tmp;
@@ -316,7 +314,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   std::decay_t<Theta> theta = theta_0;
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest();
-  Eigen::VectorXd a_old;
+  Eigen::VectorXd a_prev;
   if (options.solver == 1 && options.hessian_block_size == 1) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
@@ -361,13 +359,14 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       if (!(Eigen::isinf(theta.array()).any())) {
         objective_new = -0.5 * a.dot(theta)
                         + laplace_likelihood::log_likelihood(ll_fun, theta,
-                                                             value_of(ll_args), msgs);
+                                                             ll_args_vals, msgs);
       }
       if (options.max_steps_line_search && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
-                    options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta) = line_search(objective_new,
+          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
+          covariance, options.max_steps_line_search, objective_old, msgs);
       }
-      a_old = a;
+      a_prev = a;
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
         return laplace_density_estimates{
@@ -416,13 +415,14 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       if (std::isfinite(theta.sum())) {
         objective_new = -0.5 * a.dot(value_of(theta))
                         + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
-                                                             value_of(ll_args), msgs);
+                                                             ll_args_vals, msgs);
       }
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
-                    options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta) = line_search(objective_new,
+          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
+          covariance, options.max_steps_line_search, objective_old, msgs);
       }
-      a_old = a;
+      a_prev = a;
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
         return laplace_density_estimates{
@@ -461,17 +461,19 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // Simple Newton step
       theta = covariance * a;
       objective_old = objective_new;
+      // TODO(Charles) Throw if theta is not finite?
       if (std::isfinite(theta.sum())) {
         objective_new = -0.5 * a.dot(theta)
                         + laplace_likelihood::log_likelihood(ll_fun, theta,
-                                                             value_of(ll_args), msgs);
+                                                             ll_args_vals, msgs);
       }
       // linesearch
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
-                    options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta) = line_search(objective_new,
+          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
+          covariance, options.max_steps_line_search, objective_old, msgs);
       }
-      a_old = a;
+      a_prev = a;
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
         return laplace_density_estimates{
@@ -501,15 +503,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           = Eigen::PartialPivLU<Eigen::MatrixXd>(std::move(B));
       // L on upper and U on lower triangular
       auto&& U = LU.matrixLU();
-      // Compute log-determinant (Charles: Verify this is correct)
-      double B_log_determinant = 0.0;
-      int signDet = LU.permutationP().determinant();  // +1 or -1
-      for (Eigen::Index i = 0; i < U.rows(); ++i) {
-        B_log_determinant += std::log(std::abs(U.coeff(i, i)));
-        signDet *= (U.coeff(i, i) >= 0) ? 1 : -1;
-      }
-      B_log_determinant *= signDet;
-      //      const double B_log_determinant = log(LU.determinant());
+      // TODO(Charles): There has to be a simple trick for this
+      const double B_log_determinant = log(LU.determinant());
       VectorXd b = W * theta + theta_grad;
 
       Eigen::VectorXd a = b - W * LU.solve(covariance * b);
@@ -521,7 +516,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
      // std::cout << "lmd: " << __LINE__ << std::endl;
         objective_new = -0.5 * a.dot(value_of(theta))
                         + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
-                                                             value_of(ll_args), msgs);
+                                                             ll_args_vals, msgs);
       stan::math::set_zero_all_adjoints();
      // std::cout << "lmd: " << __LINE__ << std::endl;
       }
@@ -530,10 +525,10 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_old, covariance, ll_fun, value_of(ll_args),
+        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_prev, covariance, ll_fun, ll_args_vals,
                     options.max_steps_line_search, objective_old, msgs);
       }
-      a_old = a;
+      a_prev = a;
       // Check for convergence
     //  std::cout << "objective_new: " << objective_new << std::endl;
     //  std::cout << "objective_old: " << objective_old << std::endl;
