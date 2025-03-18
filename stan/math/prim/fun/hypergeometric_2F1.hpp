@@ -151,7 +151,7 @@ template <typename Ta1, typename Ta2, typename Tb, typename Tz,
           typename ScalarT = return_type_t<Ta1, Ta1, Tb, Tz>,
           typename OptT = boost::optional<ScalarT>,
           require_all_arithmetic_t<Ta1, Ta2, Tb, Tz>* = nullptr>
-inline return_type_t<Ta1, Ta1, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
+inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
                                                           const Ta2& a2,
                                                           const Tb& b,
                                                           const Tz& z) {
