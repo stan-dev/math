@@ -82,27 +82,19 @@ inline plain_type_t<Mat> sum_to_zero_constrain(const Mat& x) {
     return Z;
   }
   auto&& x_ref = to_ref(x);
-
-  Eigen::VectorXd beta = Eigen::VectorXd::Zero(N);
-
+  Eigen::Matrix<value_type_t<Mat>, -1, 1> beta = Eigen::VectorXd::Zero(N);
   for (int j = M - 1; j >= 0; --j) {
     value_type_t<Mat> ax_previous(0);
-
     double a_j = 1.0 / std::sqrt((j + 1.0) * (j + 2.0));
     double b_j = (j + 1.0) * a_j;
-
     for (int i = N - 1; i >= 0; --i) {
       double a_i = 1.0 / std::sqrt((i + 1.0) * (i + 2.0));
       double b_i = (i + 1.0) * a_i;
-
       auto b_i_x = b_i * x_ref(i, j) - ax_previous;
-
       Z(i, j) = (b_j * b_i_x) - beta(i);
       beta(i) += a_j * b_i_x;
-
       Z(N, j) -= Z(i, j);
       Z(i, M) -= Z(i, j);
-
       ax_previous += a_i * x_ref(i, j);
     }
     Z(N, M) -= Z(N, j);

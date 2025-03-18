@@ -68,5 +68,16 @@ struct is_rev_vector<T,
                      require_any_t<is_rev_col_vector<T>, is_rev_row_vector<T>>>
     : std::true_type {};
 
+template <typename T, typename = void>
+struct is_rev_matrix_dynamic : std::false_type {};
+
+template <typename T>
+struct is_rev_matrix_dynamic<
+    T,
+    require_all_t<is_var<scalar_type_t<T>>,
+                  math::disjunction<
+                      math::conjunction<is_var<T>, is_eigen_matrix_dynamic<value_type_t<T>>>,
+                      is_eigen_matrix_dynamic<T>>>> : std::true_type {};
+    
 }  // namespace stan
 #endif
