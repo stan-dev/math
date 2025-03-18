@@ -30,7 +30,7 @@ template <typename Ta, typename Tb, typename Tz,
 inline var hypergeometric_pFq(const Ta& a, const Tb& b, const Tz& z) {
   arena_t<Ta> arena_a = a;
   arena_t<Tb> arena_b = b;
-  auto pfq_val = hypergeometric_pFq(a.val(), b.val(), value_of(z));
+  auto pfq_val = hypergeometric_pFq(arena_a.val(), arena_b.val(), value_of(z));
   return make_callback_var(
       pfq_val, [arena_a, arena_b, z, pfq_val](auto& vi) mutable {
         auto grad_tuple = grad_pFq<grad_a, grad_b, grad_z>(
