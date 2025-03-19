@@ -22,16 +22,19 @@ namespace math {
  * @param b second argument
  * @return the first argument times the log of the second argument
  */
-template <typename T1, typename T2,
-          require_all_not_nonscalar_prim_or_rev_kernel_expression_t<
-              T1, T2>* = nullptr>
+template <typename T1, typename T2>
 inline auto lmultiply(T1&& a, T2&& b) {
-  return make_holder(
-      [](auto&& a, auto&& b) {
-        return multiply_log(std::forward<decltype(a)>(a),
-                            std::forward<decltype(b)>(b));
-      },
-      std::forward<T1>(a), std::forward<T2>(b));
+  if constexpr (is_kernel_expression<T1>::value
+                || is_kernel_expression<T2>::value) {
+    return multiply_log(std::forward<T1>(a), std::forward<T2>(b));
+  } else {
+    return make_holder(
+        [](auto&& a, auto&& b) {
+          return multiply_log(std::forward<decltype(a)>(a),
+                              std::forward<decltype(b)>(b));
+        },
+        std::forward<T1>(a), std::forward<T2>(b));
+  }
 }
 }  // namespace math
 }  // namespace stan

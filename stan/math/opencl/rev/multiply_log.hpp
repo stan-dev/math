@@ -32,10 +32,22 @@ inline var_value<matrix_cl<double>> multiply_log(T_a&& a, T_b&& b) {
   return make_callback_var(
       multiply_log(value_of(a_arena), value_of(b_arena)),
       [a_arena, b_arena](const vari_value<matrix_cl<double>>& res) mutable {
-        adjoint_results(a_arena, b_arena) += expressions(
-            elt_multiply(res.adj(), log(value_of(b_arena))),
-            elt_multiply(res.adj(),
-                         elt_divide(value_of(a_arena), value_of(b_arena))));
+        auto is_zero = value_of(a_arena) == 0.0 && value_of(b_arena) == 0.0;
+        if constexpr (is_var<T_a>::value && is_var<T_b>::value) {
+          a_arena.adj() += select(is_zero, 0.0,
+                   elt_multiply(res.adj(), log(value_of(b_arena))));
+          b_arena.adj() += select(is_zero, 0.0,
+                   elt_multiply(res.adj(), elt_divide(value_of(a_arena),
+                                                      value_of(b_arena))));
+        } else if constexpr (is_var<T_a>::value) {
+          a_arena.adj() += select(is_zero, 0.0,
+                   elt_multiply(res.adj(), log(value_of(b_arena))));
+        } else if constexpr (is_var<T_b>::value) {
+          b_arena.adj() +=
+            select(is_zero, 0.0,
+                   elt_multiply(res.adj(), elt_divide(value_of(a_arena),
+                                                      value_of(b_arena))));
+        }
       });
 }
 
