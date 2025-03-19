@@ -14,8 +14,10 @@ TEST(MathFunctions, hypergeometric_pFq_values) {
   double z = 2;
 
   EXPECT_FLOAT_EQ(3.8420514314107791, hypergeometric_pFq(a, b, z));
-  EXPECT_FLOAT_EQ(3.8420514314107791, hypergeometric_pFq(to_row_vector(a), to_row_vector(b), z));
-  EXPECT_FLOAT_EQ(3.8420514314107791, hypergeometric_pFq(to_array_1d(a), to_array_1d(b), z));
+  EXPECT_FLOAT_EQ(3.8420514314107791,
+                  hypergeometric_pFq(to_row_vector(a), to_row_vector(b), z));
+  EXPECT_FLOAT_EQ(3.8420514314107791,
+                  hypergeometric_pFq(to_array_1d(a), to_array_1d(b), z));
 
   a << 6, 4;
   b << 3, 1;
