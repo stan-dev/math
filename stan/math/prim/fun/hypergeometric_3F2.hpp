@@ -118,7 +118,7 @@ inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   // Boost's pFq throws convergence errors in some cases, fallback to naive
   // infinite-sum approach (tests pass for these)
   if (z == 1.0 && (sum(b) - sum(a)) < 0.0) {
-    return internal::hypergeometric_3F2_infsum(a, b, z);
+    return internal::hypergeometric_3F2_infsum(to_vector(a), to_vector(b), z);
   }
   return hypergeometric_pFq(to_vector(a), to_vector(b), z);
 }
