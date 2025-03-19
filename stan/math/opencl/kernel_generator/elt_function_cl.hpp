@@ -365,7 +365,7 @@ ADD_BINARY_FUNCTION_WITH_INCLUDES(log_diff_exp,
                                   opencl_kernels::log_diff_exp_device_function)
 ADD_BINARY_FUNCTION_WITH_INCLUDES(
     multiply_log, stan::math::opencl_kernels::multiply_log_device_function)
-//ADD_BINARY_FUNCTION_WITH_INCLUDES(
+// ADD_BINARY_FUNCTION_WITH_INCLUDES(
 //    lmultiply, stan::math::opencl_kernels::lmultiply_device_function)
 
 #undef ADD_BINARY_FUNCTION_WITH_INCLUDES
