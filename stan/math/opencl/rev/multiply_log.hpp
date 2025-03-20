@@ -11,16 +11,15 @@
 namespace stan {
 namespace math {
 namespace internalcl {
-  template <bool Cond, typename T>
-  inline decltype(auto) conditional_sum(T&& x) {
-    if constexpr (Cond) {
-      return sum(std::forward<T>(x));
-    } else {
-      return std::forward<T>(x);
-    }
+template <bool Cond, typename T>
+inline decltype(auto) conditional_sum(T&& x) {
+  if constexpr (Cond) {
+    return sum(std::forward<T>(x));
+  } else {
+    return std::forward<T>(x);
   }
-  }  // namespace internal
-    
+}
+}  // namespace internalcl
 
 /**
  * Returns the elementwise `multiply_log()` of the input.
