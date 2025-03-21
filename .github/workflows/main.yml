@@ -42,7 +42,7 @@ jobs:
       with:
         python-version: '3.x'
 
-    - uses: r-lib/actions/setup-r@v2
+    - uses: r-lib/actions/setup-r@v2-branch
       if: runner.os == 'Windows'
       with:
         rtools-version: '${{ matrix.config.rtools }}'
@@ -90,7 +90,7 @@ jobs:
       with:
         python-version: '3.x'
 
-    - uses: r-lib/actions/setup-r@v2
+    - uses: r-lib/actions/setup-r@v2-branch
       if: runner.os == 'Windows'
       with:
         rtools-version: '${{ matrix.config.rtools }}'
