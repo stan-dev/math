@@ -61,19 +61,42 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   }
 }
 
-// TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
-//   using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
-//   using stan::math::laplace_marginal_neg_binomial_2_log_lpmf;
-//   using stan::math::to_vector;
-//   using stan::math::value_of;
-//   using stan::math::var;
-//
-//   double eta = 10000;
-//
-//   double marginal_density = laplace_marginal_neg_binomial_2_log_lpmf(
-//     y, y_index, eta, theta_0, stan::math::test::sqr_exp_kernel_functor(),
-//     std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
-//   )
-//
-//
-// }
+TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
+  using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
+  using stan::math::laplace_marginal_neg_binomial_2_log_lpmf;
+  using stan::math::to_vector;
+  using stan::math::value_of;
+  using stan::math::var;
+
+  double eta = 1;
+
+  double marginal_density = laplace_marginal_neg_binomial_2_log_lpmf(
+    y, y_index, eta, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+    std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
+
+  // std::cout << marginal_density << std::endl;
+  // ToDo (charlesm93): get benchmark from GPStuff.
+
+  // CHECK: do we need this line?
+  // stan::math::test::squared_kernel_functor sq_kernel;
+
+  constexpr double tolerance = 1e-6;
+  constexpr int max_num_steps = 100;
+  for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+    for (int hessian_block_size = 1; hessian_block_size < 4;
+         hessian_block_size++) {
+      for (int solver_num = 1; solver_num < 4; solver_num++) {
+        auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
+          return laplace_marginal_tol_neg_binomial_2_log_lpmf(
+            y, y_index, eta, theta_0,
+            stan::math::test::sqr_exp_kernel_functor(),
+            std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+            hessian_block_size, solver_num, max_steps_line_search, nullptr);
+        };
+        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1], eta);
+      }
+    }
+  }
+
+}

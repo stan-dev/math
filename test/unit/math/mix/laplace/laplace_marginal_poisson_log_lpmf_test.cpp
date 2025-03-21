@@ -95,6 +95,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   // Benchmark from GPStuff.
   EXPECT_NEAR(-2866.88, marginal_density, tol);
 
+  // CHECK: do we need this line?
   stan::math::test::squared_kernel_functor sq_kernel;
   constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 1000;
