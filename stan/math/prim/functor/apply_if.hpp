@@ -24,6 +24,7 @@ inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) {
 }  // namespace internal
 
 /*
+ * // TODO(Steve): This should be something like `map_if` or `transform_if`
  * Subset a tuple by a compile time filter on the types and return a
  * tuple with an unary functor applied to each element where the filter was
  * true:
@@ -73,7 +74,7 @@ inline constexpr auto apply_if(F&& f, Arg1&& arg1, Args&&... args) {
 
 template <template <typename...> class Filter, typename F, typename Arg,
           require_t<bool_constant<!is_tuple<Arg>::value>>* = nullptr>
-inline constexpr auto apply_if(F&& f, Arg&& arg) {
+inline constexpr decltype(auto) apply_if(F&& f, Arg&& arg) {
   return internal::filter_fun<Filter>(std::forward<F>(f),
                                       std::forward<Arg>(arg));
 }

@@ -35,7 +35,7 @@ inline auto log_likelihood(F&& f, Theta&& theta, Args&&... args) {
 
 enum class COPY_TYPE {SHALLOW = 0, DEEP = 1};
 
-template <template <typename...> class Filter, typename PromotedType = stan::math::var, 
+template <template <typename...> class Filter, typename PromotedType = stan::math::var,
 COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
 inline auto conditional_copy_and_promote(Args&&... args) {
   return apply_if<Filter>([](auto&& arg){
@@ -193,6 +193,30 @@ inline auto compute_s2(F&& f, const Theta& theta,
   return std::make_pair((0.5 * theta_var.adj()).eval(), std::move(eta_grad));
 }
 
+// TODO(Steve): Replace this with a more general implementation.
+template <typename T>
+inline auto promote_scalar_fv(T&& arg) {
+    if constexpr (is_stan_scalar_v<T>) {
+      return fvar<var>(arg, 0);
+    } else if constexpr (is_eigen<T>::value) {
+      return std::forward<T>(arg).template cast<fvar<var>>();
+    } else if constexpr (is_std_vector<T>::value) {
+      promote_scalar_t<fvar<var>, T> vec;
+      vec.reserve(arg.size());
+      for (auto&& elem : arg) {
+        if constexpr (std::is_rvalue_reference_v<T&&>) {
+          vec.emplace_back(promote_scalar_fv(std::move(elem)));
+        } else {
+          vec.emplace_back(promote_scalar_fv(elem));
+        }
+      }
+    } else if constexpr (is_tuple<T>::value) {
+      return apply_if<is_any_var_scalar>([](auto&& args) {
+        return promote_scalar_fv(std::forward<decltype(args)>(args));
+      }, std::forward<T>(arg));
+    }
+  }
+
 /**
  * @tparam F Type of log likelihood function.
  * @tparam Theta Type of latent Gaussian variable.
@@ -223,9 +247,9 @@ inline auto diff_eta_implicit(F&& f, const V_t& v,
   for (Eigen::Index i = 0; i < theta_size; i++) {
     theta_fvar(i) = fvar<var>(theta_var(i), v(i));
   }
-
-  auto hard_copy_args = stan::math::apply_if<is_any_var_scalar>([](auto&& arg){
-      return arg.template cast<fvar<var>>();
+  // TODO(Steve): This is a "shallow promote" not a hard copy...
+  auto hard_copy_args = stan::math::apply_if<is_any_var_scalar>([](auto&& arg) {
+    return promote_scalar_fv(std::forward<decltype(arg)>(arg));
   }, copy_vargs);
   fvar<var> f_fvar = stan::math::apply([](auto&& f, auto&& theta_fvar, auto&&... inner_args) {
     return f(theta_fvar, inner_args...);
