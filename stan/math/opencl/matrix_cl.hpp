@@ -191,6 +191,10 @@ class matrix_cl : public matrix_cl_base {
             matrix_cl_view partial_view = matrix_cl_view::Entire)
       : buffer_cl_(A), rows_(R), cols_(C), view_(partial_view) {}
 
+  matrix_cl(cl::Buffer&& A, const int R, const int C,
+            matrix_cl_view partial_view = matrix_cl_view::Entire)
+      : buffer_cl_(std::move(A)), rows_(R), cols_(C), view_(partial_view) {}
+
   /**
    * Copy constructor.
    * @param A matrix_cl to copy
