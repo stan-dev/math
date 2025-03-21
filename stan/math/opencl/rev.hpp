@@ -53,6 +53,7 @@
 #include <stan/math/opencl/rev/fmin.hpp>
 #include <stan/math/opencl/rev/fmod.hpp>
 #include <stan/math/opencl/rev/grad.hpp>
+#include <stan/math/opencl/rev/gradient.hpp>
 #include <stan/math/opencl/rev/hypot.hpp>
 #include <stan/math/opencl/rev/inv.hpp>
 #include <stan/math/opencl/rev/inv_cloglog.hpp>
