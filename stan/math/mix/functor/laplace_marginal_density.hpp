@@ -525,8 +525,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new, std::move(a), std::move(theta), a_prev, covariance, ll_fun, ll_args_vals,
-                    options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta) = line_search(objective_new,
+          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
+          covariance, options.max_steps_line_search, objective_old, msgs);
       }
       a_prev = a;
       // Check for convergence

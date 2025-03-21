@@ -8,25 +8,39 @@ namespace stan {
 namespace math {
 
 struct neg_binomial_2_log_likelihood {
-  template <typename T_theta, typename T_eta, typename Y_t, typename Sums_t,
-            typename NSamples>
+  template <typename T_theta, typename T_eta, typename Y_t, typename Y_index>
   inline return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const Eigen::Matrix<T_eta, Eigen::Dynamic, 1>& eta, Y_t&& y,
-      Sums_t&& sums, NSamples&& n_samples) const {
-    T_eta eta_scalar = eta(0);
+      const T_eta& eta,
+      Y_t&& y,
+      Y_index&& y_index,
+      // std::vector<int> y,
+      // std::vector<int> y_index
+      std::ostream* pstream
+    ) const {
+    // @charlesm93: do we need to template the types for Y_t and Y_index?
+    // These should always be std::vector<int>.
+
+    std::vector<int> n_per_group(theta.size(), 0);
+    std::vector<int> counts_per_group(theta.size(), 0);
+
+    for (int i = 0; i < y.size(); i++) {
+      n_per_group[y_index[i]] += 1;
+      counts_per_group[y_index[i]] += y[i];
+    }
+
     return_type_t<T_theta, T_eta> logp = 0;
     for (size_t i = 0; i < y.size(); i++) {
-      logp += binomial_coefficient_log(y(i) + eta_scalar - 1, y(i));
+      logp += binomial_coefficient_log(y[i] + eta - 1, y[i]);
     }
     // CHECK -- is it better to vectorize this loop?
     Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
     for (Eigen::Index i = 0; i < theta.size(); i++) {
       return_type_t<T_theta, T_eta> log_eta_plus_exp_theta
-          = log(eta_scalar + exp_theta(i));
-      logp += sums(i) * (theta(i) - log_eta_plus_exp_theta)
-              + n_samples(i) * eta_scalar
-                    * (log(eta_scalar) - log_eta_plus_exp_theta);
+          = log(eta + exp_theta(i));
+      logp += counts_per_group[i] * (theta(i) - log_eta_plus_exp_theta)
+              + n_per_group[i] * eta
+                    * (log(eta) - log_eta_plus_exp_theta);
     }
     return logp;
   }
@@ -68,11 +82,13 @@ struct neg_binomial_2_log_likelihood {
  *                          gives up on doing a linesearch. If 0, no linesearch.
  * @param[in] msgs message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
-template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
+ */
+template <typename CovarFun, typename Eta, typename ThetaVec,
+          typename CovarArgs,
+          require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
-    const Eta& eta, const Theta0& theta_0, CovarFun&& covariance_function,
+    const Eta& eta, const ThetaVec& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
@@ -80,11 +96,11 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
-      std::forward_as_tuple(to_vector(y), y_index, n_samples, sums), eta,
+      std::forward_as_tuple(eta, y, y_index),
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
- */
+
 
 /**
  * Wrapper function around the laplace_marginal function for
@@ -107,20 +123,19 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] msgs  message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
+ */
 template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    const Eigen::VectorXd& n_samples, const Eigen::VectorXd& sums,
     const Eta& eta, const Theta0& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood{},
-      std::forward_as_tuple(to_vector(y), y_index, n_samples, sums), eta,
+      std::forward_as_tuple(eta, y, y_index),
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
- */
 }  // namespace math
 }  // namespace stan
 

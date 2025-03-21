@@ -378,10 +378,11 @@ class laplace_disease_map_test : public ::testing::Test {
     phi_dbl << 0.3162278, 200;  // variance, length scale
 
     delta_lk.resize(2 * n_observations);
-    for (int i = 0; i < n_observations; i++)
+    for (int i = 0; i < n_observations; i++) {
       delta_lk(i) = y[i];
-    for (int i = 0; i < n_observations; i++)
       delta_lk(n_observations + i) = ye(i);
+      y_index[i] = i;
+    }
   }
 
   int dim_theta;
@@ -390,6 +391,7 @@ class laplace_disease_map_test : public ::testing::Test {
   std::vector<double> x1, x2;
   std::vector<int> y;
   Eigen::VectorXd ye;
+  std::vector<int> y_index;
   int dim_x;
   std::vector<Eigen::VectorXd> x;
   std::vector<int> n_samples;
