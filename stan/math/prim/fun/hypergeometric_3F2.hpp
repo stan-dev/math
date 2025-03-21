@@ -114,13 +114,20 @@ template <typename Ta, typename Tb, typename Tz,
           require_all_vector_t<Ta, Tb>* = nullptr,
           require_stan_scalar_t<Tz>* = nullptr>
 inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
-  check_3F2_converges("hypergeometric_3F2", a[0], a[1], a[2], b[0], b[1], z);
+  check_size_match("hypergeometric_3F2", "a", a.size(), "3", 3);
+  check_size_match("hypergeometric_3F2", "b", b.size(), "2", 2);
+
+  auto a_ref = to_vector(a);
+  auto b_ref = to_vector(b);
+
+  check_3F2_converges("hypergeometric_3F2", a_ref[0], a_ref[1], a_ref[2],
+                      b_ref[0], b_ref[1], z);
   // Boost's pFq throws convergence errors in some cases, fallback to naive
   // infinite-sum approach (tests pass for these)
-  if (z == 1.0 && (sum(b) - sum(a)) < 0.0) {
-    return internal::hypergeometric_3F2_infsum(a, b, z);
+  if (z == 1.0 && (sum(b_ref) - sum(a_ref)) < 0.0) {
+    return internal::hypergeometric_3F2_infsum(a_ref, b_ref, z);
   }
-  return hypergeometric_pFq(to_vector(a), to_vector(b), z);
+  return hypergeometric_pFq(a_ref, b_ref, z);
 }
 
 /**
