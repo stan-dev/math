@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rtools: '45'
+        rtools: ['45']
         os: [windows-latest, ubuntu-24.04-arm]
         config: [
           { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
@@ -80,7 +80,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rtools: '45'
+        rtools: ['45']
         os: [windows-latest, ubuntu-24.04-arm]
         group: [1, 2, 3, 4, 5]
 
