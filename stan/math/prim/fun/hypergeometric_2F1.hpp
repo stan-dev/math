@@ -201,7 +201,7 @@ inline return_type_t<Ta1, Ta2, Tb, Tz> hypergeometric_2F1(const Ta1& a1,
     a_args << a1_t, a2_t;
     b_args << b_t;
     return internal::hypergeometric_pFq_helper(a_args, b_args, z_t)
-      / pow(1 - z, a2);
+           / pow(1 - z, a2);
   }
 }
 }  // namespace math

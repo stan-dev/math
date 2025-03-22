@@ -11,7 +11,7 @@ namespace internal {
 /**
  * Implementation for calculating the generalized hypergeometric function
  * \f$_pF_q(a_1,...,a_p;b_1,...,b_q;z)\f$.
- * 
+ *
  * This is declared separatel to avoid circular dependencies between the
  * various hypergeometric functions.
  *
@@ -26,7 +26,7 @@ template <typename Ta, typename Tb, typename Tz,
 inline double hypergeometric_pFq_helper(const Ta& a, const Tb& b, const Tz& z) {
   return boost::math::hypergeometric_pFq(to_array_1d(a), to_array_1d(b), z);
 }
-}
+}  // namespace internal
 }  // namespace math
 }  // namespace stan
 #endif
