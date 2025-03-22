@@ -8,7 +8,7 @@
 #include <stan/math/prim/fun/to_vector.hpp>
 #include <stan/math/prim/fun/constants.hpp>
 #include <stan/math/prim/fun/fabs.hpp>
-#include <stan/math/prim/fun/hypergeometric_pFq_helper.hpp>
+#include <stan/math/prim/fun/hypergeometric_pFq.hpp>
 #include <stan/math/prim/fun/sum.hpp>
 #include <stan/math/prim/fun/sign.hpp>
 #include <stan/math/prim/fun/value_of_rec.hpp>
@@ -127,7 +127,7 @@ inline auto hypergeometric_3F2(const Ta& a, const Tb& b, const Tz& z) {
   if (z == 1.0 && (sum(b_ref) - sum(a_ref)) < 0.0) {
     return internal::hypergeometric_3F2_infsum(a_ref, b_ref, z);
   }
-  return internal::hypergeometric_pFq_helper(a_ref, b_ref, z);
+  return hypergeometric_pFq(a_ref, b_ref, z);
 }
 
 /**

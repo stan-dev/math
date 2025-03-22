@@ -8,7 +8,6 @@
 #include <stan/math/prim/fun/to_row_vector.hpp>
 #include <stan/math/prim/fun/hypergeometric_1F0.hpp>
 #include <stan/math/prim/fun/hypergeometric_2F1.hpp>
-#include <stan/math/prim/fun/hypergeometric_3F2.hpp>
 #include <stan/math/prim/fun/hypergeometric_pFq_helper.hpp>
 
 namespace stan {
@@ -37,8 +36,6 @@ return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
     return hypergeometric_1F0(a_ref[0], z);
   } else if (a_ref.size() == 2 && b_ref.size() == 1) {
     return hypergeometric_2F1(a_ref[0], a_ref[1], b_ref[0], z);
-  } else if (a_ref.size() == 3 && b_ref.size() == 2) {
-    return hypergeometric_3F2(a_ref, b_ref, z);
   }
 
   check_finite("hypergeometric_pFq", "a", a_ref);
