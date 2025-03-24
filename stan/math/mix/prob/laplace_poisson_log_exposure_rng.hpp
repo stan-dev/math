@@ -29,7 +29,7 @@ namespace math {
  * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
  * @tparam RNG A valid boost rng type
  * @param y
- * @param n_samples
+ * @param y_index
  * @param ye
  * @param theta_0
  * @param covariance_function
@@ -51,7 +51,7 @@ template <typename ThetaMatrix, typename CovarFun,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // CHECK -- right return type
 laplace_marginal_tol_poisson_2_log_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, const double tolerance,
@@ -60,7 +60,7 @@ laplace_marginal_tol_poisson_2_log_rng(
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
-                          std::forward_as_tuple(y, ye, n_samples),
+                          std::forward_as_tuple(y, y_index, ye),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
@@ -107,14 +107,14 @@ template <typename ThetaMatrix, typename CovarFun,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // TODO(Steve): Allow scalar or std vector return
 laplace_marginal_poisson_2_log_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, RNG& rng,
     std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
-                          std::forward_as_tuple(to_vector(y), ye, n_samples),
+                          std::forward_as_tuple(y, y_index, ye),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),

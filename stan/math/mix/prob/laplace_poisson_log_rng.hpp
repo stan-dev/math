@@ -32,7 +32,7 @@ namespace math {
  * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
  * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
  * @param y
- * @param n_samples
+ * @param y_index
  * @param theta_0
  * @param covariance_function
  * @param train_tuple
@@ -51,7 +51,7 @@ template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     const double tolerance, const int64_t max_num_steps,
@@ -60,7 +60,7 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(to_vector(y), n_samples),
+                          std::forward_as_tuple(y, y_index),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
@@ -92,7 +92,7 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
  * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
  * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
  * @param y
- * @param n_samples
+ * @param y_index
  * @param theta_0
  * @param covariance_function
  * @param train_tuple
@@ -106,13 +106,13 @@ template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(to_vector(y), n_samples),
+                          std::forward_as_tuple(y, y_index),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
