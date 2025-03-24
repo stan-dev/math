@@ -131,17 +131,6 @@ TEST(OpenCLDeserializer, json_parse) {
 }
 
 TEST(OpenCLDeserializer, deserializer) {
-  // matrix[2, 4], array[2] matrix[2, 4], vector[32], vector[63], array[8, 4] vector[2], var, array[8, 4, 2] matrix[2, 2]
-  std::vector<std::vector<size_t>> dims = {{2, 4}, {2, 2, 4}, {32}, {63}, {8, 4, 2}, {1}, {8, 4, 2, 2}};
-  std::size_t total_size = 0;
-  for (auto& dim_i : dims) {
-    std::size_t dim_size = 1;
-    for (auto dim_j : dim_i) {
-      dim_size *= dim_j;
-    }
-    total_size += dim_size;
-  }
-  Eigen::VectorXd values = Eigen::VectorXd::LinSpaced(total_size, 1, 10);
   const auto alignment_in_doubles = (stan::math::opencl_context.device()[0].getInfo<CL_DEVICE_MEM_BASE_ADDR_ALIGN>() / 8)/sizeof(double);
   std::cout << "Alignment in doubles: " << alignment_in_doubles << std::endl;
   using stan::math::var_value;
@@ -150,10 +139,27 @@ TEST(OpenCLDeserializer, deserializer) {
   using varmat_cl = var_value<matrix_cl<double>>;
   using std_vec_varmat_cl = std::vector<varmat_cl>;
   auto param_info = stan::math::internal::extract_parameter_types(test_json);
+  std::size_t total_size = 0;
+  for (auto& dim_i : param_info) {
+    std::size_t dim_size = 1;
+    for (auto dim_j : dim_i.second) {
+      dim_size *= dim_j;
+    }
+    total_size += dim_size;
+  }
+  Eigen::VectorXd values = Eigen::VectorXd::LinSpaced(total_size, 1, 10);
+  for (auto& x : param_info) {
+    std::cout << x.first << ": [";
+    for (auto& y : x.second) {
+      std::cout << y << ", ";
+    }
+    std::cout << "]" << std::endl;
+  }
+  std::cout << std::endl;
   varmat_cl deserialize_data = stan::math::make_deserializer_data(param_info, values);
   stan::math::deserializer_cl<varmat_cl> des_test(deserialize_data);
   std::cout << "Line: " << __LINE__ << std::endl;
-  auto mat_11 = des_test.template read<var>();
+  auto mat_11 = des_test.template read<var>(1);
   std::cout << "Line: " << __LINE__ << std::endl;
   auto std_vec_mat_1 = des_test.template read<varmat_cl>(2);
   std::cout << "Line: " << __LINE__ << std::endl;

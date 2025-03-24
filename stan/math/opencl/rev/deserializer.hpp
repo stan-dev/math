@@ -231,7 +231,8 @@ aam: [7, 4, 7, 4, ]
  * for the values of the `var_value<matrix_cl<double>>`
  * @return a var_value<matrix_cl<double>> whose buffer is allocated with proper padding.
  */
-inline auto make_deserializer_data(const std::vector<std::pair<std::string, std::vector<size_t>>>& dims, const Eigen::VectorXd& values) {
+template <typename Dims>
+inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& values) {
 
   /*
    * `CL_DEVICE_MEM_BASE_ADDR_ALIGN` is the alignment requirement (in bits) for
@@ -248,30 +249,60 @@ inline auto make_deserializer_data(const std::vector<std::pair<std::string, std:
   std::vector<size_t> offsets;  // will hold the starting offset (in doubles) for each parameter
   for (const auto& dim : dims) {
     // Compute the number of elements for this parameter.
-    size_t param_size = 1;
-    for (size_t d : dim) {
-      param_size *= d;
+    Eigen::Index param_size = 1;
+    std::cout << "dim.first: " << dim.first << ":\n";
+    Eigen::Index i = dim.second.size() - 1;
+    for (; i >= 0; --i) {
+      if (dim.first[i] == 'a') {
+        break;
+      }
+      param_size *= dim.second[i];
     }
-    // Ensure the starting offset is aligned.
-    total_doubles = compute_padded_offset(total_doubles, alignment_in_doubles);
-    offsets.push_back(total_doubles);
-    total_doubles += param_size;
+    // Will only happen if the dims contain 'a'.
+    std::cout << "LINE: " << __LINE__ << std::endl;
+    Eigen::Index num_arrays = 1;
+    for (; i >= 0; --i) {
+      num_arrays *= dim.second[i];
+    }
+    std::cout << "LINE: " << __LINE__ << std::endl;
+    for (; num_arrays > 0; num_arrays--) {
+      // Ensure the starting offset is aligned.
+      total_doubles = compute_padded_offset(total_doubles, alignment_in_doubles);
+      offsets.push_back(total_doubles);
+      total_doubles += param_size;
+    }
   }
+  std::cout << "Offsets: [";
+  for (auto offset : offsets) {
+    std::cout << offset << ", ";
+  }
+  std::cout << "]\n";
+  std::cout << "total_doubles: " << total_doubles << std::endl;
   // Now total_doubles is the size of our padded global buffer.
 
   // STEP 4. Allocate a padded host vector and copy in the values.
   Eigen::VectorXd padded_data(total_doubles);
   padded_data.setZero();  // initialize to zero so padding regions are defined
-  size_t input_pos = 0;
+  Eigen::Index input_pos = 0;
+  std::cout << "===========\n";
   for (size_t i = 0; i < dims.size(); ++i) {
+    std::cout << "iter: " << i << std::endl;
+    std::cout << "input_pos: " << input_pos << std::endl;
     size_t param_size = 1;
-    for (size_t d : dims[i])
+    std::cout << "dim(" << i << "): " << dims[i].first << ": [";
+    for (size_t d : dims[i].second) {
+      std::cout << d << ", ";
       param_size *= d;
+    }
+    std::cout << "]" << std::endl;
+    std::cout << "param_size: " << param_size << std::endl;
     // Ensure we have enough input values.
+    std::cout << "input_pos + param_size: " << (input_pos + param_size) << std::endl;
     assert(input_pos + param_size <= static_cast<size_t>(values.size()));
     // Copy the parameter's data from the input vector into the correct subregion.
     padded_data.segment(offsets[i], param_size) = values.segment(input_pos, param_size);
     input_pos += param_size;
+    std::cout << "===============\n";
   }
   // Optionally, you might also want to check that input_pos == values.size()
 
@@ -376,7 +407,10 @@ struct deserializer_cl {
   }
 
 template <typename T, require_var_t<T>* = nullptr, require_arithmetic_t<value_type_t<T>>* = nullptr>
-inline auto read() {
+inline auto read(Eigen::Index amt) {
+  if (amt != 1) {
+    throw std::domain_error("INTERNAL ERROR: Scalar read must have amount of 1");
+  }
   align_offset();
   // 1. Create a sub-buffer for a single double from the value buffer.
   auto& val_buffer = mat_.get().vi_->val_.buffer();
