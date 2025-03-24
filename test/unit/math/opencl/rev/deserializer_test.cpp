@@ -154,7 +154,7 @@ TEST(OpenCLDeserializer, deserializer) {
     }
     total_size += dim_size;
   }
-  Eigen::VectorXd values = Eigen::VectorXd::LinSpaced(total_size, 1, 10);
+  Eigen::VectorXd values = Eigen::VectorXd::LinSpaced(total_size, 1, total_size);
   for (auto& x : param_info) {
     std::cout << x.first << ": [";
     for (auto& y : x.second) {
@@ -168,9 +168,11 @@ TEST(OpenCLDeserializer, deserializer) {
   std::cout << "Line: " << __LINE__ << std::endl;
   auto mat_11 = des_test.template read<var>(1);
   std::cout << "Line: " << __LINE__ << std::endl;
-  auto std_vec_mat_1 = des_test.template read<varmat_cl>(2);
+  auto vec_1 = des_test.template read<varmat_cl>(2);
   std::cout << "Line: " << __LINE__ << std::endl;
-  auto vec_1 = des_test.template read<varmat_cl>(7, 4);
+  Eigen::MatrixXd from_vec_1 = stan::math::from_matrix_cl(vec_1.val());
+  std::cout << "vec_1: \n" << from_vec_1 << std::endl;
+  auto mat_1 = des_test.template read<varmat_cl>(7, 4);
   std::cout << "Line: " << __LINE__ << std::endl;
   auto std_vec_to_vec = des_test.template read<varmat_cl>(2);
   std::cout << "Line: " << __LINE__ << std::endl;
