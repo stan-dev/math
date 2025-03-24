@@ -87,13 +87,20 @@ namespace {
   "{\"name\":\"vector_p\",\"type\":{\"name\":\"vector\",\"length\": 2 },\"block\":\"parameters\"},"
   "{\"name\":\"matrix_p\",\"type\":{\"name\":\"matrix\",\"rows\": 7 ,\"cols\": 4 },\"block\":\"parameters\"},"
   "{\"name\":\"arr_real_p\",\"type\":{\"name\":\"array\",\"length\": 2 ,\"element_type\":"
-    "{\"name\":\"real\"}},\"block\":\"parameters\"},"
+      "{\"name\":\"real\"}},\"block\":\"parameters\"},"
   "{\"name\":\"arr_vec_p\",\"type\":{\"name\":\"array\",\"length\": 2 ,\"element_type\":"
     "{\"name\":\"array\",\"length\": 7 ,\"element_type\":"
       "{\"name\":\"vector\",\"length\": 7 }}},\"block\":\"parameters\"},"
   "{\"name\":\"arr_arr_mat_p\",\"type\":{\"name\":\"array\",\"length\": 7 ,\"element_type\":"
     "{\"name\":\"array\",\"length\": 4 ,\"element_type\":"
       "{\"name\":\"matrix\",\"rows\": 7 ,\"cols\": 4 }}},\"block\":\"parameters\"},"
+  "{\"name\":\"arr_arr_real_p\",\"type\":{\"name\":\"array\",\"length\": 7 ,\"element_type\":"
+    "{\"name\":\"array\",\"length\": 4 ,\"element_type\":"
+      "{\"name\":\"real\"}}},\"block\":\"parameters\"}]"
+  "{\"name\":\"arr_arr_arr_real_p\",\"type\":{\"name\":\"array\",\"length\": 7 ,\"element_type\":"
+    "{\"name\":\"array\",\"length\": 4 ,\"element_type\":"
+      "{\"name\":\"array\",\"length\": 4 ,\"element_type\":"
+       "{\"name\":\"real\"}}}},\"block\":\"parameters\"}]"
   "{\"name\":\"real_tp\",\"type\":{\"name\":\"real\"},\"block\":\"transformed_parameters\"},"
   "{\"name\":\"vector_tp\",\"type\":{\"name\":\"vector\",\"length\": 2 },\"block\":\"transformed_parameters\"},"
   "{\"name\":\"matrix_tp\",\"type\":{\"name\":\"matrix\",\"rows\": 7 ,\"cols\": 4 },\"block\":\"transformed_parameters\"},"
@@ -165,11 +172,15 @@ TEST(OpenCLDeserializer, deserializer) {
   std::cout << "Line: " << __LINE__ << std::endl;
   auto vec_1 = des_test.template read<varmat_cl>(7, 4);
   std::cout << "Line: " << __LINE__ << std::endl;
-  auto vec_2 = des_test.template read<std::vector<var>>(2, 1);
+  auto std_vec_to_vec = des_test.template read<varmat_cl>(2);
   std::cout << "Line: " << __LINE__ << std::endl;
   auto std_vec_std_vec_vec_1 = des_test.template read<std::vector<std_vec_varmat_cl>>(2, 7, 7);
   std::cout << "Line: " << __LINE__ << std::endl;
   auto std_vec_std_vec_mat_2 = des_test.template read<std::vector<std_vec_varmat_cl>>(7, 4, 7, 4);
+  std::cout << "Line: " << __LINE__ << std::endl;
+  auto std_vec_std_vec_to_mat = des_test.template read<varmat_cl>(7, 4);
+  std::cout << "Line: " << __LINE__ << std::endl;
+  auto std_vec_std_vec_stdvec_to_mat = des_test.template read<std::vector<varmat_cl>>(7, 4, 4);
   std::cout << "Line: " << __LINE__ << std::endl;
 /*
 */

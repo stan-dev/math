@@ -264,18 +264,34 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
     for (; i >= 0; --i) {
       num_arrays *= dim.second[i];
     }
+    std::cout << "LINE: " << __LINE__ << std::endl;
+    std::cout << "num_arrays: " << num_arrays << std::endl;
+    std::cout << "param_size: " << param_size << std::endl;
     // for array[N] real we treat it as one array of size N. Otherwise we need to pad each one which can get expensive.
+    // We can do at most 2 of these to make array[N] real and array[N, M] real into a vector or matrix
     if (num_arrays > 1 && dim.first.back() == 'r') {
-      param_size *= num_arrays;
-      num_arrays = 1;
+      Eigen::Index max_arr_conv = 2;
+      for (Eigen::Index j = dim.second.size() - 2; j >= 0; j--) {
+        param_size *= dim.second[j];
+        num_arrays /= dim.second[j];
+        max_arr_conv--;
+        if (max_arr_conv == 0) {
+          break;
+        }
+      }
     }
     std::cout << "LINE: " << __LINE__ << std::endl;
+    std::cout << "num_arrays: " << num_arrays << std::endl;
+    std::cout << "param_size: " << param_size << std::endl;
+    std::cout << "[";
     for (; num_arrays > 0; num_arrays--) {
       // Ensure the starting offset is aligned.
       total_doubles = compute_padded_offset(total_doubles, alignment_in_doubles);
+      std::cout << total_doubles << ", ";
       offsets.push_back(total_doubles);
       total_doubles += param_size;
     }
+    std::cout << "]" << std::endl;
   }
   std::cout << "Offsets: [";
   for (auto offset : offsets) {
@@ -412,7 +428,7 @@ struct deserializer_cl {
   }
 
 template <typename T, require_var_t<T>* = nullptr, require_arithmetic_t<value_type_t<T>>* = nullptr>
-inline auto read(Eigen::Index amt) {
+inline auto read(Eigen::Index amt = 1) {
   if (amt != 1) {
     throw std::domain_error("INTERNAL ERROR: Scalar read must have amount of 1");
   }
@@ -476,16 +492,15 @@ inline auto read(Eigen::Index amt) {
 }
   template <typename T, typename... Idxs, require_std_vector_t<T>* = nullptr>
   inline auto read(Eigen::Index idx_1, Idxs... idxs) {
-  align_offset();
+    align_offset();
     std::decay_t<T> vec;
     vec.reserve(idx_1);
     for (Eigen::Index i = 0; i < idx_1; ++i) {
       vec.emplace_back(this->read<value_type_t<std::decay_t<T>>>(idxs...));
     }
-  align_offset();
+    align_offset();
     return vec;
   }
-
 };
 
 }
