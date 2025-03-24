@@ -264,6 +264,11 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
     for (; i >= 0; --i) {
       num_arrays *= dim.second[i];
     }
+    // for array[N] real we treat it as one array of size N. Otherwise we need to pad each one which can get expensive.
+    if (num_arrays > 1 && dim.first.back() == 'r') {
+      param_size *= num_arrays;
+      num_arrays = 1;
+    }
     std::cout << "LINE: " << __LINE__ << std::endl;
     for (; num_arrays > 0; num_arrays--) {
       // Ensure the starting offset is aligned.
