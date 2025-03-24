@@ -8,19 +8,14 @@ namespace stan {
 namespace math {
 
 struct neg_binomial_2_log_likelihood {
-  template <typename T_theta, typename T_eta, typename Y_t, typename Y_index>
+  template <typename T_theta, typename T_eta>
   inline return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
       const T_eta& eta,
-      Y_t&& y,
-      Y_index&& y_index,
-      // std::vector<int> y,
-      // std::vector<int> y_index
+      const std::vector<int>& y,
+      const std::vector<int>& y_index,
       std::ostream* pstream
     ) const {
-    // @charlesm93: do we need to template the types for Y_t and Y_index?
-    // These should always be std::vector<int>.
-
     std::vector<int> n_per_group(theta.size(), 0);
     std::vector<int> counts_per_group(theta.size(), 0);
 
@@ -87,9 +82,13 @@ template <typename CovarFun, typename Eta, typename ThetaVec,
           typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
-    const std::vector<int>& y, const std::vector<int>& y_index,
-    const Eta& eta, const ThetaVec& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
+    const std::vector<int>& y,
+    const std::vector<int>& y_index,
+    const Eta& eta,
+    const ThetaVec& theta_0,
+    CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
+    double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,

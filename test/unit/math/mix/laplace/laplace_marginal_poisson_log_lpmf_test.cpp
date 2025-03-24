@@ -97,8 +97,8 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
 
   // CHECK: do we need this line?
   stan::math::test::squared_kernel_functor sq_kernel;
-  constexpr double tolerance = 1e-8;
-  constexpr int max_num_steps = 1000;
+  constexpr double tolerance = 1e-6;
+  constexpr int max_num_steps = 100;
   for (int max_steps_line_search = 0; max_steps_line_search < 4;
        ++max_steps_line_search) {
     for (int hessian_block_size = 1; hessian_block_size < 4;

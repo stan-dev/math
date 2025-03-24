@@ -75,10 +75,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
     std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   // std::cout << marginal_density << std::endl;
-  // ToDo (charlesm93): get benchmark from GPStuff.
-
-  // CHECK: do we need this line?
-  // stan::math::test::squared_kernel_functor sq_kernel;
+  // ToDo (charlesm93): get benchmark from GPStuff or another software.
 
   constexpr double tolerance = 1e-6;
   constexpr int max_num_steps = 100;
@@ -98,5 +95,4 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
       }
     }
   }
-
 }

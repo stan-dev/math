@@ -16,20 +16,29 @@ struct poisson_log_likelihood {
    * @tparam T_theta Type of the log Poisson rate.
    * @tparam T_eta Type of the auxiliary parameter (not used here).
    * @param[in] theta log Poisson rate for each group.
-   * @param[in] y sum of counts in each group.
-   * @param[in] delta_int number of observations in each group.
+   * @param[in] y observed counts
+   * @param[in] y_index group to which each observation belongs
    * return lpmf for a Poisson with a log link.
    * @param[in] pstream
    */
   template <typename Theta,
             require_eigen_vector_t<Theta>* = nullptr>
   inline auto operator()(const Theta& theta,
-                         const Eigen::VectorXd& y,
-                         const std::vector<int>& delta_int,
+                         const std::vector<int>& y,
+                         const std::vector<int>& y_index
                          std::ostream* pstream) const {
-    auto n_samples = to_vector(delta_int);
-    return -sum(lgamma(add(y, 1))) + dot_product(theta, y)
-           - dot_product(n_samples, exp(theta));
+    // auto n_samples = to_vector(delta_int);
+    Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
+    Eigen::VectorXd n_per_group = Eigen::VectorXd::Zero(theta.size());
+
+    for (int i = 0; i < theta.size(); i++) {
+      counts_per_group(y_index[i]) += y[i];
+      n_per_group(y_index[i]) += 1;
+    }
+
+    return - sum(lgamma(add(counts_per_group, 1)))
+           + dot_product(theta, counts_per_group)
+           - dot_product(n_per_group, exp(theta));
   }
 };
 
@@ -42,9 +51,8 @@ struct poisson_log_likelihood {
  *
  * @tparam T0 The type of the initial guess, theta_0.
  * @tparam T1 The type for the global parameter, phi.
- * @param[in] y total counts per group. Second sufficient statistics.
- * @param[in] n_samples number of samples per group. First sufficient
- *            statistics.
+ * @param[in] y observed counts
+ * @param[in] y_index group to which each observation belongs
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] tolerance controls the convergence criterion when finding
@@ -63,7 +71,8 @@ struct poisson_log_likelihood {
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
-    const std::vector<int>& y, const std::vector<int>& n_samples,
+    const std::vector<int>& y, // const std::vector<int>& n_samples,
+    const std::vector<int>& y_index,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
@@ -79,7 +88,7 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
           require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
-                                              const std::vector<int>& n_samples,
+                                              const std::vector<int>& y_index,
                                               const ThetaVec& theta_0,
                                               CovarFun&& covariance_function,
                                               CovarArgs&& covar_args,
