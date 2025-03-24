@@ -11,69 +11,18 @@
 #include <fstream>
 #include <vector>
 
-struct stationary_point {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
-                       1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parms,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
-             std::ostream* pstream__ = 0) const {
-    Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic, 1>
-        z(2);
-    z(0) = 1 - exp(theta(0)) - theta(0) / (parms(0) * parms(0));
-    z(1) = 0 - exp(theta(1)) - theta(1) / (parms(1) * parms(1));
-    return z;
-  }
-};
-
-struct diagonal_kernel_functor {
-  template <typename T1, typename T2>
-  auto operator()(const T1& alpha, const T2& rho,
-                  std::ostream* msgs = nullptr) const {
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-    K(0, 0) = alpha * alpha;
-    K(1, 1) = rho * rho;
-    K(0, 1) = 0;
-    K(1, 0) = 0;
-    return K;
-  }
-};
-
-template <typename T1, typename T2>
-Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-  K(0, 0) = 1 / (stan::math::exp(theta_root(0)) + 1 / (phi(0) * phi(0)));
-  K(1, 1) = 1 / (stan::math::exp(theta_root(1)) + 1 / (phi(1) * phi(1)));
-  K(0, 1) = 0;
-  K(1, 0) = 0;
-  return K;
-}
-
-TEST(laplace_poisson_log_rng, two_dim_diag) {
-  using stan::math::algebra_solver;
-  using stan::math::laplace_marginal_poisson_2_log_rng;
+TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
   using stan::math::laplace_marginal_poisson_log_rng;
   using stan::math::laplace_marginal_tol_poisson_log_rng;
   using stan::math::multi_normal_rng;
   using stan::math::sqrt;
   using stan::math::square;
 
-  Eigen::VectorXd theta_0(2);
-  theta_0 << 0, 0;
-  Eigen::VectorXd phi(2);
-  phi << 3, 2;
-  std::vector<int> y = {1, 0};
-  std::vector<int> y_index = {0, 1};
-  Eigen::VectorXd ye(2);
-  ye << 1, 1;
-  std::vector<double> d0;
-  std::vector<int> di0;
-  // std::vector<Eigen::VectorXd> x_dummy;
+  // Compute exact mean and covariance.
+  Eigen::VectorXd theta_root
+      = stan::math::algebra_solver(stationary_point(), theta_0, phi, d0, di0);
+  Eigen::MatrixXd K_laplace = laplace_covariance(theta_root, phi);
 
-  // compute sample mean and covariance.
   boost::random::mt19937 rng;
   rng.seed(1954);
   Eigen::MatrixXd theta_pred = laplace_marginal_poisson_log_rng(
@@ -81,29 +30,11 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
       std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
       std::make_tuple(), rng, nullptr);
 
-  rng.seed(1954);
-  Eigen::MatrixXd theta_pred_exp = laplace_marginal_poisson_2_log_rng(
-      y, y_index, ye, theta_0, diagonal_kernel_functor{},
-      std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
-      std::make_tuple(), rng, nullptr);
-
-  // Compute exact mean and covariance.
-  Eigen::VectorXd theta_root
-      = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
-  Eigen::MatrixXd K_laplace = laplace_covariance(theta_root, phi);
-
-  rng.seed(1954);
-  Eigen::MatrixXd theta_benchmark
-      = multi_normal_rng(theta_root, K_laplace, rng);
-
-  double tol = 1e-3;
+  // double tol = 1e-3;
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
   EXPECT_NEAR(theta_benchmark(1), theta_pred(1), tol);
 
-  EXPECT_NEAR(theta_benchmark(0), theta_pred_exp(0), tol);
-  EXPECT_NEAR(theta_benchmark(1), theta_pred_exp(1), tol);
-
-  int n_sim = 5e5;
+  // int n_sim = 5e5;
   Eigen::VectorXd theta_dim0(n_sim);
   Eigen::VectorXd theta_dim1(n_sim);
   for (int i = 0; i < n_sim; i++) {
@@ -140,7 +71,62 @@ TEST(laplace_poisson_log_rng, two_dim_diag) {
   EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 1e-3);
 }
 
+
+TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
+  using stan::math::laplace_marginal_poisson_2_log_rng;
+  using stan::math::multi_normal_rng;
+  using stan::math::sqrt;
+  using stan::math::square;
+
+  rng.seed(1954);
+  Eigen::MatrixXd theta_pred_exp = laplace_marginal_poisson_2_log_rng(
+      y, y_index, ye, theta_0, diagonal_kernel_functor{},
+      std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
+      std::make_tuple(), rng, nullptr);
+
+  EXPECT_NEAR(theta_benchmark(0), theta_pred_exp(0), tol);
+  EXPECT_NEAR(theta_benchmark(1), theta_pred_exp(1), tol);
+
+  Eigen::VectorXd theta_dim0(n_sim);
+  Eigen::VectorXd theta_dim1(n_sim);
+  for (int i = 0; i < n_sim; i++) {
+    rng.seed(2025 + i);
+    Eigen::MatrixXd theta_pred
+      = laplace_marginal_poisson_2_log_rng(y, y_index, ye, theta_0,
+          diagonal_kernel_functor{},
+          std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
+          std::make_tuple(),
+          rng, nullptr);
+
+    theta_dim0(i) = theta_pred(0);
+    theta_dim1(i) = theta_pred(1);
+  }
+
+  Eigen::MatrixXd K_sample(2, 2);
+  K_sample(0, 0) = theta_dim0.array().square().mean() -
+  square(theta_dim0.mean());
+  K_sample(1, 1) = theta_dim1.array().square().mean()
+    - square(theta_dim1.mean());
+  K_sample(0, 1) = theta_dim0.cwiseProduct(theta_dim1).mean()
+                     - theta_dim0.mean() * theta_dim1.mean();
+  K_sample(1, 0) = K_sample(0, 1);
+
+  // Check answers are within three std of the true answer.
+  EXPECT_NEAR(theta_root(0), theta_dim0.mean(), 3 * sqrt(K_laplace(0, 0) /
+  n_sim));
+  EXPECT_NEAR(theta_root(1), theta_dim1.mean(), 3 *
+  sqrt(K_laplace(1, 1) / n_sim));
+
+  // Check sample covariance
+  EXPECT_NEAR(K_laplace(0, 0), K_sample(0, 0), 5e-3);
+  EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
+  EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 1e-3);  
+}
+
+
 // Keep this or delete this?
+// @charlesm93: no need to include this for now but there are some
+// interesting ideas here.
 /*
 TEST(laplace, poisson_basic_rng) {
   using stan::math::algebra_solver;

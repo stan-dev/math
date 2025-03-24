@@ -408,4 +408,90 @@ class laplace_disease_map_test : public ::testing::Test {
   // stan::math::poisson_log_likelihood f;
 };
 
+struct stationary_point {
+  template <typename T0, typename T1>
+  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
+                       1>
+  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parms,
+             const std::vector<double>& dat, const std::vector<int>& dat_int,
+             std::ostream* pstream__ = 0) const {
+    Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic, 1>
+        z(2);
+    z(0) = 1 - exp(theta(0)) - theta(0) / (parms(0) * parms(0));
+    z(1) = 0 - exp(theta(1)) - theta(1) / (parms(1) * parms(1));
+    return z;
+  }
+};
+
+struct diagonal_kernel_functor {
+  template <typename T1, typename T2>
+  auto operator()(const T1& alpha, const T2& rho,
+                  std::ostream* msgs = nullptr) const {
+    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+    K(0, 0) = alpha * alpha;
+    K(1, 1) = rho * rho;
+    K(0, 1) = 0;
+    K(1, 0) = 0;
+    return K;
+  }
+};
+
+template <typename T1, typename T2>
+Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
+  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+  K(0, 0) = 1 / (stan::math::exp(theta_root(0)) + 1 / (phi(0) * phi(0)));
+  K(1, 1) = 1 / (stan::math::exp(theta_root(1)) + 1 / (phi(1) * phi(1)));
+  K(0, 1) = 0;
+  K(1, 0) = 0;
+  return K;
+}
+
+class laplace_count_two_dim_diag_test : public ::testing::Test {
+protected:
+  void SetUp() override {
+    using stan::math::algebra_solver;
+    dim_theta = 2;
+    // theta_0.resize(dim_theta);
+    // theta_0 << 1, 1;
+    phi.resize(2);
+    phi << 3, 2;
+
+    y.resize(2);
+    y = {1, 0};
+    y_index.resize(2);
+    y_index = {0, 1};
+    ye.resize(2);
+    ye << 1, 1;
+
+    theta_root = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
+    K_laplace = laplace_covariance(theta_root, phi);
+
+    rng.seed(1954);
+    theta_benchmark
+        = stan::math::multi_normal_rng(theta_root, K_laplace, rng);
+
+    tol = 1e-3;
+    n_sim = 5e5;
+  }
+
+  int dim_theta;
+  Eigen::VectorXd theta_0{{1, 1}};
+  Eigen::VectorXd theta_root;
+  Eigen::VectorXd phi;
+  std::vector<int> y;
+  std::vector<int> y_index;
+  Eigen::VectorXd ye;
+  std::vector<double> d0;
+  std::vector<int> di0;
+  Eigen::MatrixXd K_laplace;
+  Eigen::MatrixXd theta_benchmark;
+  boost::random::mt19937 rng;
+  double tol;
+  int n_sim;
+};
+
+
 #endif
