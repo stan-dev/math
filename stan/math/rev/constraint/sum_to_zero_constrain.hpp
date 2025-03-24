@@ -70,6 +70,34 @@ inline auto sum_to_zero_constrain(T&& y) {
 }
 
 /**
+ * Return a matrix that sums to zero over both the rows
+ * and columns corresponding to the free matrix x.
+ *
+ * This is a linear transform, with no Jacobian.
+ *
+ * @tparam Mat type of the matrix
+ * @param x Free matrix input of dimensionality (N - 1, M - 1).
+ * @return Zero-sum matrix of dimensionality (N, M).
+ */
+template <typename T, require_rev_matrix_t<T>* = nullptr,
+          require_not_t<is_rev_vector<T>>* = nullptr>
+inline auto sum_to_zero_constrain(T&& x) {
+  using ret_type = plain_type_t<T>;
+  if (unlikely(x.size() == 0)) {
+    return arena_t<ret_type>(Eigen::MatrixXd{{0}});
+  }
+  auto arena_x = to_arena(std::forward<T>(x));
+  arena_t<ret_type> arena_z = sum_to_zero_constrain(arena_x.val());
+
+  reverse_pass_callback([arena_x, arena_z]() mutable {
+    const auto N = arena_x.rows();
+    const auto M = arena_x.cols();
+  });
+
+  return arena_z;
+}
+
+/**
  * Return a vector with sum zero corresponding to the specified
  * free vector.
  *
@@ -89,12 +117,12 @@ inline auto sum_to_zero_constrain(T&& y) {
  *
  * This is a linear transform, with no Jacobian.
  *
- * @tparam Vec type of the vector
- * @param y Free vector input of dimensionality K - 1.
+ * @tparam T type of the vector or matrix
+ * @param y Free vector or matrix.
  * @param lp unused
- * @return Zero-sum vector of dimensionality K.
+ * @return Zero-sum vector or matrix which is one larger in each dimension
  */
-template <typename T, typename Lp, require_rev_col_vector_t<T>* = nullptr>
+template <typename T, typename Lp, is_rev_matrix<T>* = nullptr>
 inline auto sum_to_zero_constrain(T&& y, Lp& lp) {
   return sum_to_zero_constrain(std::forward<T>(y));
 }

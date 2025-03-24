@@ -83,7 +83,7 @@ inline plain_type_t<Mat> sum_to_zero_constrain(const Mat& x) {
   }
   auto&& x_ref = to_ref(x);
 
-  Eigen::VectorXd beta = Eigen::VectorXd::Zero(N);
+  Eigen::Matrix<value_type_t<Mat>, -1, 1> beta = Eigen::VectorXd::Zero(N);
 
   for (int j = M - 1; j >= 0; --j) {
     value_type_t<Mat> ax_previous(0);
