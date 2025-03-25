@@ -86,37 +86,36 @@ inline plain_type_t<T> stochastic_row_constrain(const T& y,
     return ret_type(x_val);
   }
   arena_t<T> arena_y = y;
-  arena_t<Eigen::MatrixXd> arena_z(N, M);
   Eigen::Array<double, -1, 1> stick_len = Eigen::Array<double, -1, 1>::Ones(N);
   for (Eigen::Index j = 0; j < M; ++j) {
     double log_N_minus_k = std::log(M - j);
     auto adj_y_k = arena_y.col(j).val_op().array() - log_N_minus_k;
-    arena_z.col(j).array() = inv_logit(adj_y_k);
-    x_val.col(j).array() = stick_len * arena_z.col(j).array();
+    x_val.col(j).array() = stick_len * inv_logit(adj_y_k).array();
     lp += sum(log(stick_len)) - sum(log1p_exp(-adj_y_k))
           - sum(log1p_exp(adj_y_k));
     stick_len -= x_val.col(j).array();
   }
   x_val.col(M).array() = stick_len;
   arena_t<ret_type> arena_x = x_val;
-  reverse_pass_callback([arena_y, arena_x, arena_z, lp]() mutable {
+  reverse_pass_callback([arena_y, arena_x, lp]() mutable {
     const Eigen::Index M = arena_y.cols();
     auto arena_y_arr = arena_y.array();
     auto arena_x_arr = arena_x.array();
-    auto arena_z_arr = arena_z.array();
     auto stick_len_val = arena_x_arr.col(M).val_op().eval();
     auto stick_len_adj = arena_x_arr.col(M).adj_op().eval();
     for (Eigen::Index k = M; k-- > 0;) {
       const double log_N_minus_k = std::log(M - k);
+      auto adj_y_k = arena_y_arr.col(k).val_op() - log_N_minus_k;
+      auto z_k = inv_logit(adj_y_k).eval();
+
       arena_x_arr.col(k).adj() -= stick_len_adj;
       stick_len_val += arena_x_arr.col(k).val_op();
       stick_len_adj += lp.adj() / stick_len_val
-                       + arena_x_arr.adj_op().col(k) * arena_z_arr.col(k);
-      auto adj_y_k = arena_y_arr.col(k).val_op() - log_N_minus_k;
+                       + arena_x_arr.adj_op().col(k) * z_k;
       arena_y_arr.col(k).adj()
-          += -(lp.adj() * inv_logit(adj_y_k)) + lp.adj() * inv_logit(-adj_y_k)
-             + arena_x_arr.col(k).adj_op() * stick_len_val * arena_z_arr.col(k)
-                   * (1.0 - arena_z_arr.col(k));
+          += -(lp.adj() * z_k) + lp.adj() * inv_logit(-adj_y_k)
+             + arena_x_arr.col(k).adj_op() * stick_len_val * z_k
+                   * (1.0 - z_k);
     }
   });
   return ret_type(arena_x);
