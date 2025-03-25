@@ -31,10 +31,10 @@ namespace math {
 template <typename Ta, typename Tz, typename FvarT = return_type_t<Ta, Tz>,
           require_all_stan_scalar_t<Ta, Tz>* = nullptr,
           require_any_fvar_t<Ta, Tz>* = nullptr>
-FvarT hypergeometric_1f0(const Ta& a, const Tz& z) {
+FvarT hypergeometric_1F0(const Ta& a, const Tz& z) {
   partials_type_t<Ta> a_val = value_of(a);
   partials_type_t<Tz> z_val = value_of(z);
-  FvarT rtn = FvarT(hypergeometric_1f0(a_val, z_val), 0.0);
+  FvarT rtn = FvarT(hypergeometric_1F0(a_val, z_val), 0.0);
   if (!is_constant_all<Ta>::value) {
     rtn.d_ += forward_as<FvarT>(a).d() * -rtn.val() * log1m(z_val);
   }

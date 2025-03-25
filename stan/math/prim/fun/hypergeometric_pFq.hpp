@@ -4,6 +4,7 @@
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/err/check_not_nan.hpp>
 #include <stan/math/prim/err/check_finite.hpp>
+#include <stan/math/prim/fun/to_row_vector.hpp>
 #include <boost/math/special_functions/hypergeometric_pFq.hpp>
 
 namespace stan {
@@ -14,10 +15,6 @@ namespace math {
  * input arguments:
  * \f$_pF_q(a_1,...,a_p;b_1,...,b_q;z)\f$
  *
- * This function is not intended to be exposed to end users, only
- * used for p & q values that are stable with the grad_pFq
- * implementation.
- *
  * See 'grad_pFq.hpp' for the derivatives wrt each parameter
  *
  * @param[in] a Vector of 'a' arguments to function
@@ -26,7 +23,7 @@ namespace math {
  * @return Generalized hypergeometric function
  */
 template <typename Ta, typename Tb, typename Tz,
-          require_all_eigen_st<std::is_arithmetic, Ta, Tb>* = nullptr,
+          require_all_vector_st<std::is_arithmetic, Ta, Tb>* = nullptr,
           require_arithmetic_t<Tz>* = nullptr>
 return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
                                              const Tz& z) {
@@ -47,8 +44,9 @@ return_type_t<Ta, Tb, Tz> hypergeometric_pFq(const Ta& a, const Tb& b,
     std::stringstream msg;
     msg << "hypergeometric function pFq does not meet convergence "
         << "conditions with given arguments. "
-        << "a: " << a_ref << ", b: " << b_ref << ", "
-        << ", z: " << z;
+        << "a: " << to_row_vector(a_ref) << ", "
+        << "b: " << to_row_vector(b_ref) << ", "
+        << "z: " << z;
     throw std::domain_error(msg.str());
   }
 
