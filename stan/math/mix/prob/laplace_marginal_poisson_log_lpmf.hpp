@@ -21,10 +21,10 @@ struct poisson_log_likelihood {
    * return lpmf for a Poisson with a log link.
    * @param[in] pstream
    */
-  template <typename Theta,
+  template <typename Theta, typename YVec,
             require_eigen_vector_t<Theta>* = nullptr>
   inline auto operator()(const Theta& theta,
-                         const std::vector<int>& y,
+                         const YVec& y,
                          const std::vector<int>& y_index,
                          std::ostream* pstream) const {
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
@@ -94,7 +94,7 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      poisson_log_likelihood{}, y, y_index,
+      poisson_log_likelihood{}, std::forward_as_tuple(y, y_index),
       theta_0, covariance_function,
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }

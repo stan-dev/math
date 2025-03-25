@@ -25,16 +25,15 @@ struct poisson_log_exposure_likelihood {
    * return lpmf for a Poisson with a log link.
    * @param pstream
    */
-  template <typename Theta>
+  template <typename Theta, typename YVec, typename YIndexVec, typename YeVec>
   inline auto operator()(const Theta& theta,
-                         const std::vector<int>& y,
-                         const std::vector<int>& y_index,
-                         Eigen::VectorXd ye,
+                         const YVec& y,
+                         const YIndexVec& y_index,
+                         const YeVec& ye,
                          std::ostream* pstream) const {
     Eigen::VectorXd y_vec = to_vector(y);
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
     Eigen::VectorXd n_per_group = Eigen::VectorXd::Zero(theta.size());
-
     for (int i = 0; i < theta.size(); i++) {
       counts_per_group(y_index[i]) += y[i];
       n_per_group(y_index[i]) += 1;

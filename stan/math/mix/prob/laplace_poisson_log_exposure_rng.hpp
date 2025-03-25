@@ -60,7 +60,7 @@ laplace_marginal_tol_poisson_2_log_rng(
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
-                          std::forward_as_tuple(y, ye, n_samples),
+                          std::forward_as_tuple(y, n_samples, ye),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
@@ -114,7 +114,7 @@ laplace_marginal_poisson_2_log_rng(
     std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
-                          std::forward_as_tuple(to_vector(y), ye, n_samples),
+                          std::forward_as_tuple(to_vector(y), n_samples, ye),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
