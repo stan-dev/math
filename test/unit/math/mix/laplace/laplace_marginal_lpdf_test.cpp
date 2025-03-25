@@ -80,6 +80,8 @@ public:
 
 class laplace_test_listen : public ::testing::Test {
   public:
+  virtual void AllowSetup() {}
+  /*
   bool setup_once{true};
   LoggingTestListener* logger{new LoggingTestListener{}};
   protected:
@@ -98,6 +100,7 @@ class laplace_test_listen : public ::testing::Test {
     listeners.Release(logger);
     delete logger;
   }
+  */
 };
 
 
@@ -107,7 +110,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
-  logger->current_test_name_ = "poisson_log_phi_dim_2";
+  // logger->current_test_name_ = "poisson_log_phi_dim_2";
   int dim_phi = 2;
   Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
   phi_dbl << 1.6, 0.45;
@@ -168,9 +171,9 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
         std::cout << "max_steps_line_search: " << max_steps_line_search << std::endl;
         std::cout << "hessian_block_size: " << hessian_block_size << std::endl;
         std::cout << "solver_num: " << solver_num << std::endl;
-        logger->solver_num = solver_num;
-        logger->hessian_block_size = hessian_block_size;
-        logger->max_steps_line_search = max_steps_line_search;
+        // logger->solver_num = solver_num;
+        // logger->hessian_block_size = hessian_block_size;
+        // logger->max_steps_line_search = max_steps_line_search;
         // Skipping this case for now
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
@@ -263,7 +266,7 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
   using stan::math::laplace_marginal_lpmf;
   using stan::math::laplace_marginal_tol_lpmf;
   using stan::math::to_vector;
-  logger->current_test_name_ = "bernoulli_logit_phi_dim500";
+  // logger->current_test_name_ = "bernoulli_logit_phi_dim500";
   int dim_theta = 500;
   int n_observations = 500;
   auto x1 = stan::test::laplace::x1;
@@ -307,9 +310,9 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
          hessian_block_size++) {
       for (int max_steps_line_search = 0; max_steps_line_search < 4;
           ++max_steps_line_search) {
-        logger->solver_num = solver_num;
-        logger->hessian_block_size = hessian_block_size;
-        logger->max_steps_line_search = max_steps_line_search;
+        // logger->solver_num = solver_num;
+        // logger->hessian_block_size = hessian_block_size;
+        // logger->max_steps_line_search = max_steps_line_search;
 
         std::cout << "----------" << std::endl;
         std::cout << "max_steps_line_search: " << max_steps_line_search << std::endl;
@@ -422,7 +425,7 @@ class laplace_motorcyle_gp_test : public laplace_test_listen {
 };
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
-  logger->current_test_name_ = "gp_motorcycle";
+  // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal_lpdf;
   using stan::math::laplace_marginal_tol_lpdf;
   using stan::math::value_of;
@@ -466,9 +469,9 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         if (max_steps_line_search == 3 && hessian_block_size == 3 && solver_num == 3) {
           continue;
         }
-        logger->solver_num = solver_num;
-        logger->hessian_block_size = hessian_block_size;
-        logger->max_steps_line_search = max_steps_line_search;
+        // logger->solver_num = solver_num;
+        // logger->hessian_block_size = hessian_block_size;
+        // logger->max_steps_line_search = max_steps_line_search;
 
         if (in_throw_list(known_failures,
           std::array{max_steps_line_search, hessian_block_size, solver_num})) {
@@ -517,7 +520,7 @@ struct normal_likelihood2 {
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
       // Register the custom listener
-  logger->current_test_name_ = "gp_motorcycle2";
+  // logger->current_test_name_ = "gp_motorcycle2";
 
   using stan::math::laplace_marginal_lpdf;
   using stan::math::laplace_marginal_tol_lpdf;
@@ -547,9 +550,9 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
         std::cout << "max_steps_line_search: " << max_steps_line_search << std::endl;
         std::cout << "hessian_block_size: " << hessian_block_size << std::endl;
         std::cout << "solver_num: " << solver_num << std::endl;
-        logger->solver_num = solver_num;
-        logger->hessian_block_size = hessian_block_size;
-        logger->max_steps_line_search = max_steps_line_search;
+        // logger->solver_num = solver_num;
+        // logger->hessian_block_size = hessian_block_size;
+        // logger->max_steps_line_search = max_steps_line_search;
         try {
           auto f = [&](auto&& eta_v, auto&& phi_0, auto&& phi) {
             return laplace_marginal_tol_lpdf<false>(
