@@ -42,7 +42,7 @@ inline auto get_json_string_field(T1&& json, T2&& field) {
 
 // Helper: Given a JSON string and a field name, extract the field’s integer value.
 template <typename T1, typename T2>
-inline int get_json_int_field(T1&& json, T2&& field) {
+inline Eigen::Index get_json_int_field(T1&& json, T2&& field) {
   std::string key = "\"" + std::string(field) + "\"";
   size_t pos = json.find(key);
   if (pos == std::string::npos)
@@ -69,7 +69,7 @@ template <typename T>
 inline auto extract_json_object(T&& s, size_t pos) {
   if (s[pos] != '{')
     throw std::runtime_error("Expected '{' at position " + std::to_string(pos));
-  int count = 0;
+  Eigen::Index count = 0;
   size_t start = pos;
   size_t i = pos;
   for (; i < s.size(); ++i) {
@@ -89,24 +89,24 @@ inline auto extract_json_object(T&& s, size_t pos) {
 //   first: a short string key (r, v, m, a...)
 //   second: a vector of ints representing the dimensions.
 template <typename T>
-std::pair<std::string, std::vector<int>> parse_type_string(T&& s) {
-  std::pair<std::string, std::vector<int>> result;
+inline std::pair<std::string, std::vector<Eigen::Index>> parse_type_string(T&& s) {
+  std::pair<std::string, std::vector<Eigen::Index>> result;
   auto name = get_json_string_field(s, "name");
   if (name == "real") {
     result.first = "r";
     result.second = {1};
   } else if (name == "vector") {
     result.first = "v";
-    int len = get_json_int_field(s, "length");
+    Eigen::Index len = get_json_int_field(s, "length");
     result.second = {len};
   } else if (name == "matrix") {
     result.first = "m";
-    int rows = get_json_int_field(s, "rows");
-    int cols = get_json_int_field(s, "cols");
+    Eigen::Index rows = get_json_int_field(s, "rows");
+    Eigen::Index cols = get_json_int_field(s, "cols");
     result.second = {rows, cols};
   } else if (name == "array") {
     // For an array, get its "length" and then recursively parse its element_type.
-    int len = get_json_int_field(s, "length");
+    Eigen::Index len = get_json_int_field(s, "length");
     size_t pos = s.find("\"element_type\"");
     if (pos == std::string::npos)
       throw std::runtime_error("array missing element_type");
@@ -134,12 +134,12 @@ std::pair<std::string, std::vector<int>> parse_type_string(T&& s) {
 // and extracts the "type" field from those objects if their "block" field is "parameters"
 // or "transformed_parameters". It returns a vector of the raw JSON for the type field.
 template <typename T>
-std::vector<std::string> parse_parameter_types(T&& json) {
+inline std::vector<std::string> parse_parameter_types(T&& json) {
   std::vector<std::string> raw_types;
   size_t pos = 0;
   while ((pos = json.find("{", pos)) != std::string::npos) {
     size_t start = pos;
-    int braceCount = 0;
+    Eigen::Index braceCount = 0;
     size_t end = pos;
     for (; end < json.size(); ++end) {
       if (json[end] == '{') ++braceCount;
@@ -191,8 +191,8 @@ std::vector<std::string> parse_parameter_types(T&& json) {
  * @return A vector of pairs of type (short type code, dimensions vector).
  */
 template <typename T>
-std::vector<std::pair<std::string, std::vector<int>>> extract_parameter_types(T&& json) {
-  std::vector<std::pair<std::string, std::vector<int>>> ret;
+inline std::vector<std::pair<std::string, std::vector<Eigen::Index>>> extract_parameter_types(T&& json) {
+  std::vector<std::pair<std::string, std::vector<Eigen::Index>>> ret;
   auto raw_types = parse_parameter_types(json);
   for (const auto & s : raw_types) {
     ret.push_back(parse_type_string(s));
@@ -250,7 +250,6 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
   for (const auto& dim : dims) {
     // Compute the number of elements for this parameter.
     Eigen::Index param_size = 1;
-    std::cout << "dim.first: " << dim.first << ":\n";
     Eigen::Index i = dim.second.size() - 1;
     for (; i >= 0; --i) {
       if (dim.first[i] == 'a') {
@@ -259,14 +258,10 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
       param_size *= dim.second[i];
     }
     // Will only happen if the dims contain 'a'.
-    std::cout << "LINE: " << __LINE__ << std::endl;
     Eigen::Index num_arrays = 1;
     for (; i >= 0; --i) {
       num_arrays *= dim.second[i];
     }
-    std::cout << "LINE: " << __LINE__ << std::endl;
-    std::cout << "num_arrays: " << num_arrays << std::endl;
-    std::cout << "param_size: " << param_size << std::endl;
     // for array[N] real we treat it as one array of size N. Otherwise we need to pad each one which can get expensive.
     // We can do at most 2 of these to make array[N] real and array[N, M] real into a vector or matrix
     if (num_arrays > 1 && dim.first.back() == 'r') {
@@ -280,50 +275,64 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
         }
       }
     }
-    std::cout << "LINE: " << __LINE__ << std::endl;
-    std::cout << "num_arrays: " << num_arrays << std::endl;
-    std::cout << "param_size: " << param_size << std::endl;
-    std::cout << "[";
     for (; num_arrays > 0; num_arrays--) {
       // Ensure the starting offset is aligned.
       total_doubles = compute_padded_offset(total_doubles, alignment_in_doubles);
-      std::cout << total_doubles << ", ";
       offsets.push_back(total_doubles);
       total_doubles += param_size;
     }
-    std::cout << "]" << std::endl;
   }
-  std::cout << "Offsets: [";
-  for (auto offset : offsets) {
-    std::cout << offset << ", ";
-  }
-  std::cout << "]\n";
-  std::cout << "total_doubles: " << total_doubles << std::endl;
   // Now total_doubles is the size of our padded global buffer.
 
   // STEP 4. Allocate a padded host vector and copy in the values.
+  /**
+   * We do the padding on the CPU currently, but there are two other options
+   * 1. Transfer over the values to the GPU and do the padding there.
+   * 2. Make a GPU buffer and copy the values over to the buffer directly
+   *  through several smaller transactions.
+   * Before merge we will do 1
+   */
   Eigen::VectorXd padded_data(total_doubles);
   padded_data.setZero();  // initialize to zero so padding regions are defined
   Eigen::Index input_pos = 0;
-  std::cout << "===========\n";
+  Eigen::Index jj = 0;
   for (size_t i = 0; i < dims.size(); ++i) {
-    std::cout << "iter: " << i << std::endl;
-    std::cout << "input_pos: " << input_pos << std::endl;
     size_t param_size = 1;
-    std::cout << "dim(" << i << "): " << dims[i].first << ": [";
-    for (size_t d : dims[i].second) {
-      std::cout << d << ", ";
-      param_size *= d;
+    auto&& dim = dims[i];
+    Eigen::Index j = dim.second.size() - 1;
+    for (; j >= 0; --j) {
+      if (dim.first[j] == 'a') {
+        break;
+      }
+      param_size *= dim.second[j];
     }
-    std::cout << "]" << std::endl;
-    std::cout << "param_size: " << param_size << std::endl;
-    // Ensure we have enough input values.
-    std::cout << "input_pos + param_size: " << (input_pos + param_size) << std::endl;
-    assert(input_pos + param_size <= static_cast<size_t>(values.size()));
-    // Copy the parameter's data from the input vector into the correct subregion.
-    padded_data.segment(offsets[i], param_size) = values.segment(input_pos, param_size);
-    input_pos += param_size;
-    std::cout << "===============\n";
+
+    Eigen::Index num_arrays = 1;
+    for (; j >= 0; --j) {
+      num_arrays *= dim.second[j];
+    }
+    // for array[N] real we treat it as one array of size N. Otherwise we need to pad each one which can get expensive.
+    // We can do at most 2 of these to make array[N] real and array[N, M] real into a vector or matrix
+    if (num_arrays > 1 && dim.first.back() == 'r') {
+      Eigen::Index max_arr_conv = 2;
+      for (Eigen::Index k = dim.second.size() - 2; k >= 0; k--) {
+        param_size *= dim.second[k];
+        num_arrays /= dim.second[k];
+        max_arr_conv--;
+        if (max_arr_conv == 0) {
+          break;
+        }
+      }
+    }
+    for (; num_arrays > 0; num_arrays--) {
+      // Ensure the starting offset is aligned.
+      // Ensure we have enough input values.
+      assert(input_pos + param_size <= static_cast<size_t>(values.size()));
+      // Copy the parameter's data from the input vector into the correct subregion.
+      padded_data.segment(offsets[jj], param_size) = values.segment(input_pos, param_size);
+      jj++;
+      input_pos += param_size;
+    }
   }
   // Optionally, you might also want to check that input_pos == values.size()
 
@@ -335,6 +344,121 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
   // STEP 6. Wrap the matrix_cl in a var_value and return it.
   return stan::math::var_value<stan::math::matrix_cl<double>>(std::move(gpu_buffer));
 }
+
+
+/**
+ * Given a var_value<matrix_cl<double>> (the result of make_deserializer_data)
+ * and the parameter information (dims) that was used to create it,
+ * transfer the GPU’s adjoint values back to the CPU and unpad them.
+ *
+ * @param data A var_value<matrix_cl<double>> that contains a padded buffer for adjoints.
+ * @param dims A vector of pairs describing the parameters. Each pair is
+ *             (short type code, vector of dimensions). For example:
+ *             { {"r", {1}}, {"v", {2}}, {"m", {7,4}}, {"ar", {2}}, {"aav", {2,7,7}}, {"aam", {7,4,7,4}} }.
+ * @return An Eigen::VectorXd containing the unpadded adjoint values.
+ */
+template <typename Dims>
+inline auto extract_deserializer_data(Eigen::VectorXd& adjs, const Dims& dims, const stan::math::var_value<stan::math::matrix_cl<double>>& data) {
+  /*
+   * `CL_DEVICE_MEM_BASE_ADDR_ALIGN` is the alignment requirement (in bits) for
+   * sub-buffer offsets. The minimum value
+   * is the size (in bits) of the largest OpenCL built-in data type supported
+   * by the device (long16 in FULL profile, long16 or int16 in EMBEDDED profile)
+   * for devices that are not of type CL_DEVICE_TYPE_CUSTOM.
+   * The standard range for this is from 128 to 4096 bits (16 to 512 bytes).
+   */
+  const size_t alignment_in_doubles = (opencl_context.device()[0].getInfo<CL_DEVICE_MEM_BASE_ADDR_ALIGN>() / 8)/sizeof(double);
+  // TODO(Steve): Return offsets etc in the make_deserializer_data function
+  // STEP 3. Compute padded offsets for each parameter.
+  size_t total_doubles = 0;
+  std::vector<size_t> offsets;  // will hold the starting offset (in doubles) for each parameter
+  for (const auto& dim : dims) {
+    // Compute the number of elements for this parameter.
+    Eigen::Index param_size = 1;
+    Eigen::Index i = dim.second.size() - 1;
+    for (; i >= 0; --i) {
+      if (dim.first[i] == 'a') {
+        break;
+      }
+      param_size *= dim.second[i];
+    }
+    // Will only happen if the dims contain 'a'.
+    Eigen::Index num_arrays = 1;
+    for (; i >= 0; --i) {
+      num_arrays *= dim.second[i];
+    }
+    // for array[N] real we treat it as one array of size N. Otherwise we need to pad each one which can get expensive.
+    // We can do at most 2 of these to make array[N] real and array[N, M] real into a vector or matrix
+    if (num_arrays > 1 && dim.first.back() == 'r') {
+      Eigen::Index max_arr_conv = 2;
+      for (Eigen::Index j = dim.second.size() - 2; j >= 0; j--) {
+        param_size *= dim.second[j];
+        num_arrays /= dim.second[j];
+        max_arr_conv--;
+        if (max_arr_conv == 0) {
+          break;
+        }
+      }
+    }
+    for (; num_arrays > 0; num_arrays--) {
+      // Ensure the starting offset is aligned.
+      total_doubles = compute_padded_offset(total_doubles, alignment_in_doubles);
+      offsets.push_back(total_doubles);
+      total_doubles += param_size;
+    }
+  }
+  // Now total_doubles is the size of our padded global buffer.
+
+  // STEP 4. Allocate a padded host vector and copy in the values.
+  /**
+   * We do the padding on the CPU currently, but there are two other options
+   * 1. Transfer over the values to the GPU and do the padding there.
+   * 2. Make a GPU buffer and copy the values over to the buffer directly
+   *  through several smaller transactions.
+   * Before merge we will do 1
+   */
+  Eigen::VectorXd padded_data = stan::math::from_matrix_cl(data.adj());
+  Eigen::Index input_pos = 0;
+  Eigen::Index jj = 0;
+  for (size_t i = 0; i < dims.size(); ++i) {
+    size_t param_size = 1;
+    auto&& dim = dims[i];
+    Eigen::Index j = dim.second.size() - 1;
+    for (; j >= 0; --j) {
+      if (dim.first[j] == 'a') {
+        break;
+      }
+      param_size *= dim.second[j];
+    }
+    Eigen::Index num_arrays = 1;
+    for (; j >= 0; --j) {
+      num_arrays *= dim.second[j];
+    }
+    // for array[N] real we treat it as one array of size N. Otherwise we need to pad each one which can get expensive.
+    // We can do at most 2 of these to make array[N] real and array[N, M] real into a vector or matrix
+    if (num_arrays > 1 && dim.first.back() == 'r') {
+      Eigen::Index max_arr_conv = 2;
+      for (Eigen::Index k = dim.second.size() - 2; k >= 0; k--) {
+        param_size *= dim.second[k];
+        num_arrays /= dim.second[k];
+        max_arr_conv--;
+        if (max_arr_conv == 0) {
+          break;
+        }
+      }
+    }
+    for (; num_arrays > 0; num_arrays--) {
+      // Ensure the starting offset is aligned.
+      // Ensure we have enough input values.
+      assert(input_pos + param_size <= static_cast<size_t>(adjs.size()));
+      // Copy the parameter's data from the input vector into the correct subregion.
+      adjs.segment(input_pos, param_size) = padded_data.segment(offsets[jj], param_size);
+      jj++;
+      input_pos += param_size;
+    }
+  }
+}
+
 
 template <typename Mat>
 struct deserializer_cl {
@@ -435,54 +559,23 @@ inline auto read(Eigen::Index amt = 1) {
   align_offset();
   // 1. Create a sub-buffer for a single double from the value buffer.
   auto& val_buffer = mat_.get().vi_->val_.buffer();
-  cl_buffer_region region;
-  region.origin = current_offset_ * sizeof(double);
-  region.size   = sizeof(double);
-  cl_int err = CL_SUCCESS;
-  cl::Buffer val_sub_buf = val_buffer.createSubBuffer(
-    CL_MEM_READ_WRITE,
-    CL_BUFFER_CREATE_TYPE_REGION,
-    &region,
-    &err
-  );
-  if (err != CL_SUCCESS)
-    throw std::domain_error("Failed to create sub-buffer for scalar value");
-
   // Read the single double from the device.
   double scalar_val = 0.0;
-  stan::math::opencl_context.queue().enqueueReadBuffer(val_sub_buf, CL_TRUE, 0, sizeof(double), &scalar_val);
+  stan::math::opencl_context.queue().enqueueReadBuffer(val_buffer, CL_TRUE, current_offset_ * sizeof(double), sizeof(double), &scalar_val);
 
   // 2. Create a new vari object on the CPU using the scalar value.
   // Here we use Stan's standard vari (which holds a double value).
   // (If you need a GPU-friendly type, you may need to define your own vari_cl_scalar.)
   auto* var_ptr = new vari(scalar_val);
   var ret(var_ptr);
-
-  // Capture the current offset before incrementing.
-  size_t scalar_offset = current_offset_;
-
   // 3. Schedule a reverse pass callback that writes the CPU-computed adjoint
   // back to the corresponding position in the GPU's adjoint buffer.
-  reverse_pass_callback([serial_mat = this->mat_,
-                         scalar_offset,
+  reverse_pass_callback([serial_mat = this->mat_.get(),
+                         offset = this->current_offset_,
                          var_ptr]() mutable {
     double grad = var_ptr->adj();
-    auto& adj_buffer = serial_mat.get().vi_->adj_.buffer();
-    cl_buffer_region region;
-    region.origin = scalar_offset * sizeof(double);
-    region.size   = sizeof(double);
-    cl_int err = CL_SUCCESS;
-    cl::Buffer adj_sub_buf = adj_buffer.createSubBuffer(
-      CL_MEM_READ_WRITE,
-      CL_BUFFER_CREATE_TYPE_REGION,
-      &region,
-      &err
-    );
-    if (err != CL_SUCCESS)
-      throw std::domain_error("Failed to create sub-buffer for scalar adjoint");
-
-    // Write the computed gradient back into the GPU adjoint memory.
-    stan::math::opencl_context.queue().enqueueWriteBuffer(adj_sub_buf, CL_TRUE, 0, sizeof(double), &grad);
+    stan::math::opencl_context.queue().enqueueWriteBuffer(serial_mat.vi_->adj_.buffer(),
+      CL_TRUE, offset * sizeof(double), sizeof(double), &grad);
   });
 
   // 4. Advance the current offset and re-align.

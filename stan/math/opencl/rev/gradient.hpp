@@ -46,7 +46,6 @@ template <typename F>
 inline void gradient(F&& f, const matrix_cl<double>& x,
               double& fx, matrix_cl<double>& grad_fx) {
   nested_rev_autodiff nested;
-
   var_value<matrix_cl<double>> x_var(x);
   var fx_var = f(x_var);
   fx = fx_var.val();
