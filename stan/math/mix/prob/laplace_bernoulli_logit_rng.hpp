@@ -11,8 +11,8 @@ namespace math {
 /**
  * In a latent gaussian model,
  *
- *   theta ~ Normal(theta | 0, Sigma(phi))
- *   y ~ pi(y | theta)
+ *   theta ~ Normal(theta|0, Sigma(phi))
+ *   y ~ pi(y|theta)
  *
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
@@ -50,8 +50,6 @@ namespace math {
  *                              up on doing a linesearch. If 0, no linesearch.
  * @param rng Rng number.
  * @param msgs Streaming message for covariance functions.
- * @param args Arguments for log likelihood function.
- *
  */
 template <typename ThetaMatrix, typename CovarFun,
           typename CovarArgs, typename TrainTuple, typename PredTuple,
@@ -80,8 +78,8 @@ laplace_marginal_tol_bernoulli_logit_rng(
 /**
  * In a latent gaussian model,
  *
- *   theta ~ Normal(theta | 0, Sigma(phi))
- *   y ~ pi(y | theta)
+ *   theta ~ Normal(theta|0, Sigma(phi))
+ *   y ~ pi(y|theta)
  *
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi),
@@ -119,8 +117,6 @@ laplace_marginal_tol_bernoulli_logit_rng(
  *                              up on doing a linesearch. If 0, no linesearch.
  * @param rng Rng number.
  * @param msgs Streaming message for covariance and likelihood functions.
- * @param args Arguments for log likelihood function.
- *
  */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,

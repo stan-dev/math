@@ -44,7 +44,7 @@ struct neg_binomial_2_log_likelihood {
 /**
  * Wrapper function around the laplace_marginal function for
  * a negative binomial likelihood. Uses the 2nd parameterization.
- * Returns the marginal density p(y | phi) by marginalizing
+ * Returns the marginal density p(y|phi) by marginalizing
  * out the latent gaussian variable, with a Laplace approximation.
  * See the laplace_marginal function for more details.
  *
@@ -55,8 +55,8 @@ struct neg_binomial_2_log_likelihood {
  * @param[in] y observations.
  * @param[in] y_index group to which each observation belongs. Each group
  *            is parameterized by one element of theta.
- * @param[in] n_samples
- * @param[in] sums
+ * @param[in] y observed counts.
+ * @param[in] y_index Index indicating to which group each observation belongs.
  * @param[in] eta non-marginalized model parameters for the likelihood.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param[in] covariance_function a function which returns the prior covariance.
@@ -112,7 +112,7 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @tparam Theta0 The type of the initial guess, theta_0.
  * @tparam Eta The type of parameter arguments for the likelihood function.
  * @tparam Args Type of variadic arguments for covariance function.
- * @param[in] y observations.
+ * @param[in] y observed counts.
  * @param[in] y_index group to which each observation belongs. Each group
  *            is parameterized by one element of theta.
  * @param[in] n_samples Number of count observations per group.

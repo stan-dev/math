@@ -9,6 +9,7 @@
 #include <stan/math/mix/prob/laplace_bernoulli_logit_rng.hpp>
 #include <stan/math/mix/prob/laplace_poisson_log_rng.hpp>
 #include <stan/math/mix/prob/laplace_poisson_log_exposure_rng.hpp>
+#include <stan/math/mix/prob/laplace_neg_binomial_2_log_rng.hpp>
 #include <stan/math/mix/prob/laplace_rng.hpp>
 
 #endif
