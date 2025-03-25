@@ -110,12 +110,11 @@ inline plain_type_t<T> stochastic_row_constrain(const T& y,
 
       arena_x_arr.col(k).adj() -= stick_len_adj;
       stick_len_val += arena_x_arr.col(k).val_op();
-      stick_len_adj += lp.adj() / stick_len_val
-                       + arena_x_arr.adj_op().col(k) * z_k;
+      stick_len_adj
+          += lp.adj() / stick_len_val + arena_x_arr.adj_op().col(k) * z_k;
       arena_y_arr.col(k).adj()
           += -(lp.adj() * z_k) + lp.adj() * inv_logit(-adj_y_k)
-             + arena_x_arr.col(k).adj_op() * stick_len_val * z_k
-                   * (1.0 - z_k);
+             + arena_x_arr.col(k).adj_op() * stick_len_val * z_k * (1.0 - z_k);
     }
   });
   return ret_type(arena_x);
