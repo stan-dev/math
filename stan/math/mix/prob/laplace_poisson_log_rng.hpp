@@ -18,7 +18,8 @@ namespace math {
  * In this specialized function, the likelihood p(y|theta) is a
  * Poisson with a log link.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...|
+ PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
  *  inner elements of `CovarArgs`, followed by either the inner elements of
  *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
@@ -27,9 +28,12 @@ namespace math {
  * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam RNG A valid boost rng type
- * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
- * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of
+ `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of
+ `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ `CovarFun::operator()`
  * @param y Observed counts.
  * @param y_index Index indicating which group each observation belongs to.
  * @param theta_0 Initial guess for the Newton solver.
@@ -69,50 +73,51 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index),
-                          theta_0,
+                          std::forward_as_tuple(y, y_index), theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
                           std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple),
-                          ops, rng, msgs);
+                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
 }
 
 /**
-* In a latent gaussian model,
-*
-*   theta ~ Normal(0, Sigma(phi))
-*   y ~ p(y|theta,phi)
-*
-* return a sample from the Laplace approximation to p(theta|y,phi).
-* The Laplace approximation is computed using a Newton solver.
-* In this specialized function, the likelihood p(y|theta) is a
-* Poisson with a log link.
-* @tparam CovarFun A functor with an
-*  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
-*  method. The `operator()` method should accept as arguments the
-*  inner elements of `CovarArgs`, followed by either the inner elements of
-*  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
-*  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
-*  rows and columns.
-* @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
-* sized rows and 1 column.
-* @tparam RNG A valid boost rng type
-* @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
-* @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
-* @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
-* @param y Observed counts.
-* @param y_index Index indicating which group each observation belongs to.
-* @param theta_0 Initial guess for the Newton solver.
-* @param covariance_function Function that returns prior covariance matrix.
-* @param covar_args arguments for the covariance function.
-* @param train_tuple additional arguments for the covariance function,
-*                    e.g. covariates which correspond to observed data.
-* @param pred_tuple additional arguments for the covariance function,
-*                   e.g. covariates for out-of-sample data.
-* @param rng seed for rng.
-* @param msgs message stream for the covariance and likelihood function.
-*/
+ * In a latent gaussian model,
+ *
+ *   theta ~ Normal(0, Sigma(phi))
+ *   y ~ p(y|theta,phi)
+ *
+ * return a sample from the Laplace approximation to p(theta|y,phi).
+ * The Laplace approximation is computed using a Newton solver.
+ * In this specialized function, the likelihood p(y|theta) is a
+ * Poisson with a log link.
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...|
+ * PredTupleElements...})` method. The `operator()` method should accept as
+ * arguments the inner elements of `CovarArgs`, followed by either the inner
+ * elements of `TrainTuple` or `PredTuple`. The return type of the `operator()`
+ * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  rows and columns.
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
+ * @tparam RNG A valid boost rng type
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of
+ * `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of
+ * `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ * `CovarFun::operator()`
+ * @param y Observed counts.
+ * @param y_index Index indicating which group each observation belongs to.
+ * @param theta_0 Initial guess for the Newton solver.
+ * @param covariance_function Function that returns prior covariance matrix.
+ * @param covar_args arguments for the covariance function.
+ * @param train_tuple additional arguments for the covariance function,
+ *                    e.g. covariates which correspond to observed data.
+ * @param pred_tuple additional arguments for the covariance function,
+ *                   e.g. covariates for out-of-sample data.
+ * @param rng seed for rng.
+ * @param msgs message stream for the covariance and likelihood function.
+ */
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
@@ -123,13 +128,11 @@ inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index),
-                          theta_0,
+                          std::forward_as_tuple(y, y_index), theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
                           std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple),
-                          ops,rng, msgs);
+                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
 }
 
 }  // namespace math

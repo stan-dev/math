@@ -55,7 +55,6 @@ inline std::complex<double> value_of_rec(const std::complex<T>& x) {
   return {value_of_rec(x.real()), value_of_rec(x.imag())};
 }
 
-
 /**
  * Return the specified argument.
  *
@@ -84,7 +83,7 @@ inline T value_of_rec(T&& x) {
  * @return Matrix of values
  **/
 template <typename T, require_not_st_same<T, double>* = nullptr,
-        require_eigen_t<T>* = nullptr>
+          require_eigen_t<T>* = nullptr>
 inline auto value_of_rec(T&& M) {
   return make_holder(
       [](auto& m) {
@@ -122,7 +121,8 @@ inline T value_of_rec(T&& x) {
  * @return std::vector of values
  **/
 template <typename T, require_not_same_t<double, T>* = nullptr>
-inline std::vector<promote_scalar_t<double, T>> value_of_rec(const std::vector<T>& x) {
+inline std::vector<promote_scalar_t<double, T>> value_of_rec(
+    const std::vector<T>& x) {
   size_t x_size = x.size();
   std::vector<promote_scalar_t<double, T>> result(x_size);
   for (size_t i = 0; i < x_size; i++) {

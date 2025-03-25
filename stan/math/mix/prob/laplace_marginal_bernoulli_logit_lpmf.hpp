@@ -10,9 +10,9 @@ namespace math {
 
 struct bernoulli_logit_likelihood {
   template <typename T_theta>
-  inline auto operator()(
-      const T_theta& theta, const Eigen::VectorXd& y,
-      const std::vector<int>& delta_int, std::ostream* pstream) const {
+  inline auto operator()(const T_theta& theta, const Eigen::VectorXd& y,
+                         const std::vector<int>& delta_int,
+                         std::ostream* pstream) const {
     return sum(elt_multiply(theta, y)
                - elt_multiply(to_vector(delta_int), log(add(1.0, exp(theta)))));
   }

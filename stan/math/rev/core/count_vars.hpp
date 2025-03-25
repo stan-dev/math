@@ -130,20 +130,25 @@ inline size_t count_vars_impl(size_t count, Arith& x, Pargs&&... args) {
   return count_vars_impl(count, std::forward<Pargs>(args)...);
 }
 
-inline size_t count_vars_impl(size_t count, std::basic_ostream<char>*&) { return count;}
+inline size_t count_vars_impl(size_t count, std::basic_ostream<char>*&) {
+  return count;
+}
 /**
  * End count_vars_impl recursion and return total number of counted vars
  */
 inline size_t count_vars_impl(size_t count) { return count; }
 
 template <typename... Pargs, typename... Args>
-inline size_t count_vars_impl(std::size_t count, const std::tuple<Pargs...>& arg, Args&&... args) {
+inline size_t count_vars_impl(std::size_t count,
+                              const std::tuple<Pargs...>& arg, Args&&... args) {
   return count_vars_impl(
-    stan::math::apply([count](auto&&... inner_args) {
-    return  (count_vars_impl(0, inner_args) + ... + count);
-  }, arg), std::forward<Args>(args)...);
+      stan::math::apply(
+          [count](auto&&... inner_args) {
+            return (count_vars_impl(0, inner_args) + ... + count);
+          },
+          arg),
+      std::forward<Args>(args)...);
 }
-
 
 }  // namespace internal
 

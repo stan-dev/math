@@ -222,7 +222,8 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
  * @tparam CovarFun Type with a valid `operator(InnerCovarArgs)` where
- * `InnerCovarArgs` are a parameter pack of the element types of `CovarTupleArgs`
+ * `InnerCovarArgs` are a parameter pack of the element types of
+ * `CovarTupleArgs`
  * @tparam Theta Type derived from `Eigen::EigenBase` with dynamic rows and a
  * single column
  * @tparam CovarTupleArgs A tuple whose elements follow the types required for
@@ -282,20 +283,22 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         + std::to_string(max_num_steps) + " exceeded.");
   };
   auto ll_args_vals = value_of(ll_args);
-  auto line_search = [](auto& objective_new, auto&& a, const auto& a_prev, auto&& theta,
-                        const auto& ll_fun, auto&& ll_args, const auto& covariance,
+  auto line_search = [](auto& objective_new, auto&& a, const auto& a_prev,
+                        auto&& theta, const auto& ll_fun, auto&& ll_args,
+                        const auto& covariance,
                         const auto max_steps_line_search,
                         const auto objective_old, auto* msgs) mutable {
     Eigen::VectorXd a_tmp;
     double objective_new_tmp = 0;
     Eigen::VectorXd theta_tmp;
-    for (int j = 0; j < max_steps_line_search && (objective_new < objective_old); ++j) {
+    for (int j = 0;
+         j < max_steps_line_search && (objective_new < objective_old); ++j) {
       a_tmp = (a + a_prev) * 0.5;  // TODO(Charles) -- generalize for any factor
       theta_tmp = covariance * a_tmp;
       if (Eigen::isfinite(theta_tmp.array()).sum()) {
         objective_new_tmp = -0.5 * a.dot(theta_tmp)
-                        + laplace_likelihood::log_likelihood(ll_fun, theta_tmp,
-                                                             ll_args, msgs);
+                            + laplace_likelihood::log_likelihood(
+                                ll_fun, theta_tmp, ll_args, msgs);
         if (objective_new_tmp < objective_old) {
           a = a_tmp;
           theta = theta_tmp;
@@ -308,7 +311,6 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       }
     }
     return std::make_tuple(objective_new, std::move(a), std::move(theta));
-
   };
   const Eigen::Index theta_size = theta_0.size();
   std::decay_t<Theta> theta = theta_0;
@@ -325,8 +327,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       bool W_is_spd = true;
       for (Eigen::Index i = 0; i < W.rows(); i++) {
         if (W.coeff(i, i) < 0) {
-        throw std::domain_error(
-            "laplace_marginal_density: Hessian matrix is not positive definite");
+          throw std::domain_error(
+              "laplace_marginal_density: Hessian matrix is not positive "
+              "definite");
         }
       }
       Eigen::SparseMatrix<double> W_r;
@@ -358,13 +361,14 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       objective_old = objective_new;
       if (!(Eigen::isinf(theta.array()).any())) {
         objective_new = -0.5 * a.dot(theta)
-                        + laplace_likelihood::log_likelihood(ll_fun, theta,
-                                                             ll_args_vals, msgs);
+                        + laplace_likelihood::log_likelihood(
+                            ll_fun, theta, ll_args_vals, msgs);
       }
       if (options.max_steps_line_search && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new,
-          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
-          covariance, options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta)
+            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+                          ll_fun, ll_args_vals, covariance,
+                          options.max_steps_line_search, objective_old, msgs);
       }
       a_prev = a;
       // Check for convergence
@@ -389,8 +393,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
       for (Eigen::Index i = 0; i < W.rows(); i++) {
         if (W.coeff(i, i) <= 0) {
-        throw std::domain_error(
-            "laplace_marginal_density: Hessian matrix is not positive definite");
+          throw std::domain_error(
+              "laplace_marginal_density: Hessian matrix is not positive "
+              "definite");
         }
       }
       Eigen::SparseMatrix<double> W_r
@@ -414,13 +419,14 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       objective_old = objective_new;
       if (std::isfinite(theta.sum())) {
         objective_new = -0.5 * a.dot(value_of(theta))
-                        + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
-                                                             ll_args_vals, msgs);
+                        + laplace_likelihood::log_likelihood(
+                            ll_fun, value_of(theta), ll_args_vals, msgs);
       }
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new,
-          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
-          covariance, options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta)
+            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+                          ll_fun, ll_args_vals, covariance,
+                          options.max_steps_line_search, objective_old, msgs);
       }
       a_prev = a;
       // Check for convergence
@@ -464,14 +470,15 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // TODO(Charles) Throw if theta is not finite?
       if (std::isfinite(theta.sum())) {
         objective_new = -0.5 * a.dot(theta)
-                        + laplace_likelihood::log_likelihood(ll_fun, theta,
-                                                             ll_args_vals, msgs);
+                        + laplace_likelihood::log_likelihood(
+                            ll_fun, theta, ll_args_vals, msgs);
       }
       // linesearch
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new,
-          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
-          covariance, options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta)
+            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+                          ll_fun, ll_args_vals, covariance,
+                          options.max_steps_line_search, objective_old, msgs);
       }
       a_prev = a;
       // Check for convergence
@@ -492,11 +499,11 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 3) {
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
-    //  std::cout << "-------------\ni: " << i << "\n";
-    //  std::cout << "lmd: " << __LINE__ << std::endl;
+      //  std::cout << "-------------\ni: " << i << "\n";
+      //  std::cout << "lmd: " << __LINE__ << std::endl;
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
-    //  std::cout << "lmd: " << __LINE__ << std::endl;
+      //  std::cout << "lmd: " << __LINE__ << std::endl;
       stan::math::set_zero_all_adjoints();
       auto B = MatrixXd::Identity(theta_size, theta_size) + covariance * W;
       Eigen::PartialPivLU<Eigen::MatrixXd> LU
@@ -513,27 +520,28 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       objective_old = objective_new;
 
       if (std::isfinite(theta.sum())) {
-     // std::cout << "lmd: " << __LINE__ << std::endl;
+        // std::cout << "lmd: " << __LINE__ << std::endl;
         objective_new = -0.5 * a.dot(value_of(theta))
-                        + laplace_likelihood::log_likelihood(ll_fun, value_of(theta),
-                                                             ll_args_vals, msgs);
-      stan::math::set_zero_all_adjoints();
-     // std::cout << "lmd: " << __LINE__ << std::endl;
+                        + laplace_likelihood::log_likelihood(
+                            ll_fun, value_of(theta), ll_args_vals, msgs);
+        stan::math::set_zero_all_adjoints();
+        // std::cout << "lmd: " << __LINE__ << std::endl;
       }
       // TODO(Charles): How do we handle NA values in theta?
 
       // linesearch
       // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0 && i != 0) {
-        std::tie(objective_new, a, theta) = line_search(objective_new,
-          std::move(a), a_prev, std::move(theta), ll_fun, ll_args_vals,
-          covariance, options.max_steps_line_search, objective_old, msgs);
+        std::tie(objective_new, a, theta)
+            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+                          ll_fun, ll_args_vals, covariance,
+                          options.max_steps_line_search, objective_old, msgs);
       }
       a_prev = a;
       // Check for convergence
-    //  std::cout << "objective_new: " << objective_new << std::endl;
-    //  std::cout << "objective_old: " << objective_old << std::endl;
-    //  std::cout << "options.tolerance: " << options.tolerance << std::endl;
+      //  std::cout << "objective_new: " << objective_new << std::endl;
+      //  std::cout << "objective_old: " << objective_old << std::endl;
+      //  std::cout << "options.tolerance: " << options.tolerance << std::endl;
       if (abs(objective_new - objective_old) < options.tolerance) {
         return laplace_density_estimates{
             objective_new - 0.5 * B_log_determinant,
@@ -575,7 +583,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
  * @tparam CovarFun Type with a valid `operator(InnerCovarTupleArgs)` where
- * `InnerCovarTupleArgs` are a parameter pack of the element types of `CovarTupleArgs`
+ * `InnerCovarTupleArgs` are a parameter pack of the element types of
+ * `CovarTupleArgs`
  * @tparam Theta Type derived from `Eigen::EigenBase` with dynamic rows and a
  * single column
  * @tparam CovarTupleArgs A tuple whose elements follow the types required for
@@ -592,7 +601,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
  */
 template <typename LLFun, typename LLTupleArgs, typename CovarFun,
           typename Theta, typename CovarTupleArgs,
-          require_t<is_all_arithmetic_scalar<Theta, CovarTupleArgs, LLTupleArgs>>* = nullptr,
+          require_t<is_all_arithmetic_scalar<Theta, CovarTupleArgs,
+                                             LLTupleArgs>>* = nullptr,
           require_eigen_vector_t<Theta>* = nullptr>
 inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                        Theta&& theta_0,
@@ -611,9 +621,11 @@ inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
 template <typename Output, typename Input, typename Var>
 inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
   if constexpr (is_tuple<Output>::value) {
-    for_each([ret](auto&& input_i, auto&& output_i) {
-      accumulate_adjoints(output_i, input_i, ret);
-    }, adjoints, precalc);
+    for_each(
+        [ret](auto&& input_i, auto&& output_i) {
+          accumulate_adjoints(output_i, input_i, ret);
+        },
+        adjoints, precalc);
   } else {
     update_adjoints(adjoints, precalc, ret);
   }
@@ -639,7 +651,8 @@ inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
  * @tparam LLTupleArgs A tuple whose elements follow the types required for
  * `LLFun`
  * @tparam CovarFun Type with a valid `operator(InnerCovarTupleArgs)` where
- * `InnerCovarTupleArgs` are a parameter pack of the element types of `CovarTupleArgs`
+ * `InnerCovarTupleArgs` are a parameter pack of the element types of
+ * `CovarTupleArgs`
  * @tparam Theta Type derived from `Eigen::EigenBase` with dynamic rows and a
  * single column
  * @tparam CovarTupleArgs A tuple whose elements follow the types required for
@@ -654,10 +667,11 @@ inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
  * functor
  * @return the log maginal density, p(y | phi)
  */
-template <typename LLFun, typename LLTupleArgs, typename CovarFun,
-          typename Theta, typename CovarTupleArgs,
-          require_t<is_any_var_scalar<Theta, LLTupleArgs, CovarTupleArgs>>* = nullptr,
-          require_eigen_vector_t<Theta>* = nullptr>
+template <
+    typename LLFun, typename LLTupleArgs, typename CovarFun, typename Theta,
+    typename CovarTupleArgs,
+    require_t<is_any_var_scalar<Theta, LLTupleArgs, CovarTupleArgs>>* = nullptr,
+    require_eigen_vector_t<Theta>* = nullptr>
 inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      Theta&& theta_0,
                                      CovarFun&& covariance_function,
@@ -666,8 +680,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      std::ostream* msgs) {
   auto covar_args_refs = to_ref(std::forward<CovarTupleArgs>(covar_args));
   auto md_est = laplace_marginal_density_est(
-      ll_fun, ll_args, value_of(theta_0),
-      covariance_function, value_of(covar_args_refs), options, msgs);
+      ll_fun, ll_args, value_of(theta_0), covariance_function,
+      value_of(covar_args_refs), options, msgs);
   const Eigen::Index theta_size = md_est.theta.size();
   // Solver 1, 2
   arena_t<Eigen::MatrixXd> R;
@@ -695,8 +709,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     } else {
       arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
       std::tie(s2, partial_parm) = laplace_likelihood::compute_s2(
-          ll_fun, md_est.theta, A,
-          options.hessian_block_size, ll_args, msgs);
+          ll_fun, md_est.theta, A, options.hessian_block_size, ll_args, msgs);
     }
   } else if (options.solver == 2) {
     // TODO(Charles) -- use triangularView for K_root
@@ -712,8 +725,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         = md_est.L.template triangularView<Eigen::Lower>().solve(
             md_est.K_root.transpose());
     std::tie(s2, partial_parm) = laplace_likelihood::compute_s2(
-        ll_fun, md_est.theta, C.transpose() * C,
-        options.hessian_block_size, ll_args, msgs);
+        ll_fun, md_est.theta, C.transpose() * C, options.hessian_block_size,
+        ll_args, msgs);
   } else {  // options.solver with LU decomposition
     LU_solve_covariance = md_est.LU.solve(md_est.covariance);
     R = md_est.W_r - md_est.W_r * LU_solve_covariance * md_est.W_r;
@@ -722,14 +735,16 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         = md_est.covariance
           - md_est.covariance * md_est.W_r * LU_solve_covariance;
     std::tie(s2, partial_parm) = laplace_likelihood::compute_s2(
-        ll_fun, md_est.theta, A,
-        options.hessian_block_size, ll_args, msgs);
+        ll_fun, md_est.theta, A, options.hessian_block_size, ll_args, msgs);
   }
   var ret(md_est.lmd);
   if constexpr (is_any_var_scalar_v<scalar_type_t<CovarTupleArgs>>) {
-    auto covar_arg_adj_arena = [&covar_args_refs, &md_est, &R, &s2,&covariance_function, &msgs]() {
+    auto covar_arg_adj_arena = [&covar_args_refs, &md_est, &R, &s2,
+                                &covariance_function, &msgs]() {
       const nested_rev_autodiff nested;
-      auto copy_covar_args = laplace_likelihood::internal::conditional_copy_and_promote<is_any_var_scalar, var>(covar_args_refs);
+      auto copy_covar_args
+          = laplace_likelihood::internal::conditional_copy_and_promote<
+              is_any_var_scalar, var>(covar_args_refs);
       arena_t<Eigen::Matrix<var, Eigen::Dynamic, Eigen::Dynamic>> K_var
           = stan::math::apply(
               [&covariance_function, &msgs](auto&&... args) {
@@ -741,7 +756,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       set_zero_all_adjoints_nested();
       grad(Z.vi_);
       return stan::math::apply_if<has_var_scalar_type>(
-          [](auto&& arg) { return stan::math::eval(get_adj(arg)); }, copy_covar_args);
+          [](auto&& arg) { return stan::math::eval(get_adj(arg)); },
+          copy_covar_args);
     }();
     auto covar_args_arena = to_arena(covar_args_refs);
     stan::math::for_each(
@@ -763,31 +779,29 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       } else {
         v = LU_solve_covariance * s2;
       }
-      auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>([](auto&& arg) {
-        return std::forward<decltype(arg)>(arg);
-      }, ll_args);
+      auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>(
+          [](auto&& arg) { return std::forward<decltype(arg)>(arg); }, ll_args);
       int i = 0;
-      // This needs to be recursive so if any are tuples it just goes recursively
-      stan::math::for_each([ret, &i](auto&& ll_arg, auto&& eta_grad_arg,
-                                auto&& partial_parm_arg, auto&& diff_eta_arg) {
-          reverse_pass_callback([ll_arg_arena = to_arena(ll_arg),
-            eta_grad_arg_arena = to_arena(eta_grad_arg),
-            partial_parm_arg_arena = to_arena(partial_parm_arg),
-            diff_eta_arg_arena = to_arena(diff_eta_arg),
-            vi = ret.vi_]() mutable {
-            internal::update_adjoints(ll_arg_arena,
-              eta_grad_arg_arena,
-              vi);
-            internal::update_adjoints(ll_arg_arena,
-              partial_parm_arg_arena,
-              vi);
-            internal::update_adjoints(ll_arg_arena,
-              diff_eta_arg_arena,
-              vi);
-          });
-      }, ll_args_filter, md_est.eta_grad, partial_parm,
-        laplace_likelihood::diff_eta_implicit(
-                ll_fun, v, md_est.theta, ll_args, msgs));
+      // This needs to be recursive so if any are tuples it just goes
+      // recursively
+      stan::math::for_each(
+          [ret, &i](auto&& ll_arg, auto&& eta_grad_arg, auto&& partial_parm_arg,
+                    auto&& diff_eta_arg) {
+            reverse_pass_callback([ll_arg_arena = to_arena(ll_arg),
+                                   eta_grad_arg_arena = to_arena(eta_grad_arg),
+                                   partial_parm_arg_arena
+                                   = to_arena(partial_parm_arg),
+                                   diff_eta_arg_arena = to_arena(diff_eta_arg),
+                                   vi = ret.vi_]() mutable {
+              internal::update_adjoints(ll_arg_arena, eta_grad_arg_arena, vi);
+              internal::update_adjoints(ll_arg_arena, partial_parm_arg_arena,
+                                        vi);
+              internal::update_adjoints(ll_arg_arena, diff_eta_arg_arena, vi);
+            });
+          },
+          ll_args_filter, md_est.eta_grad, partial_parm,
+          laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
+                                                ll_args, msgs));
     }
   }
   return ret;

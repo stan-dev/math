@@ -23,8 +23,7 @@ struct poisson_log_likelihood {
    */
   template <typename Theta, typename YVec,
             require_eigen_vector_t<Theta>* = nullptr>
-  inline auto operator()(const Theta& theta,
-                         const YVec& y,
+  inline auto operator()(const Theta& theta, const YVec& y,
                          const std::vector<int>& y_index,
                          std::ostream* pstream) const {
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
@@ -35,7 +34,7 @@ struct poisson_log_likelihood {
       n_per_group(y_index[i]) += 1;
     }
 
-    return - sum(lgamma(add(counts_per_group, 1)))
+    return -sum(lgamma(add(counts_per_group, 1)))
            + dot_product(theta, counts_per_group)
            - dot_product(n_per_group, exp(theta));
   }
@@ -70,8 +69,7 @@ struct poisson_log_likelihood {
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
-    const std::vector<int>& y,
-    const std::vector<int>& y_index,
+    const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
@@ -79,9 +77,8 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
-      poisson_log_likelihood{}, std::forward_as_tuple(y, y_index),
-      theta_0, covariance_function,
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      poisson_log_likelihood{}, std::forward_as_tuple(y, y_index), theta_0,
+      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 template <typename CovarFun, typename ThetaVec, typename CovarArgs,
@@ -94,9 +91,8 @@ inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      poisson_log_likelihood{}, std::forward_as_tuple(y, y_index),
-      theta_0, covariance_function,
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      poisson_log_likelihood{}, std::forward_as_tuple(y, y_index), theta_0,
+      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 }  // namespace math

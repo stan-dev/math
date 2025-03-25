@@ -39,38 +39,35 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
   Eigen::VectorXd theta_dim1(n_sim);
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
-    Eigen::MatrixXd theta_pred
-      = laplace_marginal_poisson_log_rng(y, y_index, theta_0,
-          diagonal_kernel_functor{},
-          std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
-          std::make_tuple(),
-          rng, nullptr);
+    Eigen::MatrixXd theta_pred = laplace_marginal_poisson_log_rng(
+        y, y_index, theta_0, diagonal_kernel_functor{},
+        std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
+        std::make_tuple(), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);
     theta_dim1(i) = theta_pred(1);
   }
 
   Eigen::MatrixXd K_sample(2, 2);
-  K_sample(0, 0) = theta_dim0.array().square().mean() -
-  square(theta_dim0.mean());
-  K_sample(1, 1) = theta_dim1.array().square().mean()
-    - square(theta_dim1.mean());
+  K_sample(0, 0)
+      = theta_dim0.array().square().mean() - square(theta_dim0.mean());
+  K_sample(1, 1)
+      = theta_dim1.array().square().mean() - square(theta_dim1.mean());
   K_sample(0, 1) = theta_dim0.cwiseProduct(theta_dim1).mean()
-                     - theta_dim0.mean() * theta_dim1.mean();
+                   - theta_dim0.mean() * theta_dim1.mean();
   K_sample(1, 0) = K_sample(0, 1);
 
   // Check answers are within three std of the true answer.
-  EXPECT_NEAR(theta_root(0), theta_dim0.mean(), 3 * sqrt(K_laplace(0, 0) /
-  n_sim));
-  EXPECT_NEAR(theta_root(1), theta_dim1.mean(), 3 *
-  sqrt(K_laplace(1, 1) / n_sim));
+  EXPECT_NEAR(theta_root(0), theta_dim0.mean(),
+              3 * sqrt(K_laplace(0, 0) / n_sim));
+  EXPECT_NEAR(theta_root(1), theta_dim1.mean(),
+              3 * sqrt(K_laplace(1, 1) / n_sim));
 
   // Check sample covariance
   EXPECT_NEAR(K_laplace(0, 0), K_sample(0, 0), 5e-3);
   EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
   EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 1e-3);
 }
-
 
 TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
   using stan::math::laplace_marginal_poisson_2_log_rng;
@@ -91,38 +88,35 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
   Eigen::VectorXd theta_dim1(n_sim);
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
-    Eigen::MatrixXd theta_pred
-      = laplace_marginal_poisson_2_log_rng(y, y_index, ye, theta_0,
-          diagonal_kernel_functor{},
-          std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
-          std::make_tuple(),
-          rng, nullptr);
+    Eigen::MatrixXd theta_pred = laplace_marginal_poisson_2_log_rng(
+        y, y_index, ye, theta_0, diagonal_kernel_functor{},
+        std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
+        std::make_tuple(), rng, nullptr);
 
     theta_dim0(i) = theta_pred(0);
     theta_dim1(i) = theta_pred(1);
   }
 
   Eigen::MatrixXd K_sample(2, 2);
-  K_sample(0, 0) = theta_dim0.array().square().mean() -
-  square(theta_dim0.mean());
-  K_sample(1, 1) = theta_dim1.array().square().mean()
-    - square(theta_dim1.mean());
+  K_sample(0, 0)
+      = theta_dim0.array().square().mean() - square(theta_dim0.mean());
+  K_sample(1, 1)
+      = theta_dim1.array().square().mean() - square(theta_dim1.mean());
   K_sample(0, 1) = theta_dim0.cwiseProduct(theta_dim1).mean()
-                     - theta_dim0.mean() * theta_dim1.mean();
+                   - theta_dim0.mean() * theta_dim1.mean();
   K_sample(1, 0) = K_sample(0, 1);
 
   // Check answers are within three std of the true answer.
-  EXPECT_NEAR(theta_root(0), theta_dim0.mean(), 3 * sqrt(K_laplace(0, 0) /
-  n_sim));
-  EXPECT_NEAR(theta_root(1), theta_dim1.mean(), 3 *
-  sqrt(K_laplace(1, 1) / n_sim));
+  EXPECT_NEAR(theta_root(0), theta_dim0.mean(),
+              3 * sqrt(K_laplace(0, 0) / n_sim));
+  EXPECT_NEAR(theta_root(1), theta_dim1.mean(),
+              3 * sqrt(K_laplace(1, 1) / n_sim));
 
   // Check sample covariance
   EXPECT_NEAR(K_laplace(0, 0), K_sample(0, 0), 5e-3);
   EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
-  EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 1e-3);  
+  EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 1e-3);
 }
-
 
 // Keep this or delete this?
 // @charlesm93: no need to include this for now but there are some
@@ -159,7 +153,8 @@ TEST(laplace, poisson_basic_rng) {
   Eigen::VectorXd gradient;
   Eigen::SparseMatrix<double> W_sparse;
   Eigen::VectorXd eta_dummy;
-  std::tie(gradient, eta_dummy, W_sparse) = stan::math::laplace_likelihood::internal::diff(laplace_likelihood, theta_root);
+  std::tie(gradient, eta_dummy, W_sparse) =
+stan::math::laplace_likelihood::internal::diff(laplace_likelihood, theta_root);
   Eigen::MatrixXd W = -W_sparse;
   diagonal_kernel_functor covariance_function;
   std::vector<Eigen::VectorXd> x_dummy;
@@ -184,9 +179,9 @@ TEST(laplace, poisson_basic_rng) {
     Eigen::VectorXd l_grad;
     Eigen::PartialPivLU<Eigen::MatrixXd> LU_dummy;
     double marginal_density = laplace_marginal_density(
-        laplace_likelihood, std::forward_as_tuple(sums, n_samples), covariance_function, std::forward_as_tuple(sigma, d0,
-        di0), covariance, theta, W_r, L, a, l_grad, LU_dummy, K_root, theta0_val,
-        0, tolerance, max_num_steps);
+        laplace_likelihood, std::forward_as_tuple(sums, n_samples),
+covariance_function, std::forward_as_tuple(sigma, d0, di0), covariance, theta,
+W_r, L, a, l_grad, LU_dummy, K_root, theta0_val, 0, tolerance, max_num_steps);
 
     std::cout << "theta (mode) = " << theta.transpose() << std::endl;
   }

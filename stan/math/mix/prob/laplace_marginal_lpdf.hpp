@@ -46,13 +46,13 @@ namespace math {
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
-template <bool propto = false, typename LFun, typename LArgs,
-          typename CovarFun, typename Theta0, typename CovarArgs,
+template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
+          typename Theta0, typename CovarArgs,
           require_all_eigen_vector_t<Theta0>* = nullptr>
 inline auto laplace_marginal_tol_lpdf(
-    LFun&& L_f, LArgs&& l_args, const Theta0& theta_0,
-    CovarFun&& K_f, CovarArgs&& covar_args, double tolerance,
-    int64_t max_num_steps, const int hessian_block_size, const int solver,
+    LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
+    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
+    const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   // TEST: provisional signature to agree with parser.
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
@@ -102,12 +102,12 @@ inline auto laplace_marginal_tol_lpdf(
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
-template <bool propto = false, typename LFun, typename LArgs,
-          typename CovarFun, typename Theta0, typename CovarArgs>
+template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
+          typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_tol_lpmf(
-    LFun&& L_f, LArgs&& l_args, const Theta0& theta_0,
-    CovarFun&& K_f, CovarArgs&& covar_args, const double tolerance,
-    const int64_t max_num_steps, const int hessian_block_size, const int solver,
+    LFun&& L_f, LArgs&& l_args, const Theta0& theta_0, CovarFun&& K_f,
+    CovarArgs&& covar_args, const double tolerance, const int64_t max_num_steps,
+    const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   return laplace_marginal_tol_lpdf<propto>(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
@@ -115,7 +115,6 @@ inline auto laplace_marginal_tol_lpmf(
       tolerance, max_num_steps, hessian_block_size, solver,
       max_steps_line_search, msgs);
 }
-
 
 /**
  * Wrapper function around the laplace_marginal function.
@@ -141,8 +140,8 @@ inline auto laplace_marginal_tol_lpmf(
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
-template <bool propto = false, typename LFun, typename LArgs,
-          typename CovarFun, typename Theta0, typename CovarArgs,
+template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
+          typename Theta0, typename CovarArgs,
           require_all_eigen_vector_t<Theta0>* = nullptr>
 inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args,
                                   const Theta0& theta_0, CovarFun&& K_f,
@@ -178,8 +177,8 @@ inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args,
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
-template <bool propto = false, typename LFun, typename LArgs,
-          typename CovarFun, typename Theta0, typename CovarArgs,
+template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
+          typename Theta0, typename CovarArgs,
           require_all_eigen_vector_t<Theta0>* = nullptr>
 inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args,
                                   const Theta0& theta_0, CovarFun&& K_f,

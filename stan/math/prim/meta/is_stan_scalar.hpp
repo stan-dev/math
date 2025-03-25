@@ -31,7 +31,6 @@ struct is_stan_scalar
 template <typename T>
 inline constexpr bool is_stan_scalar_v = is_stan_scalar<T>::value;
 
-
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup stan_scalar_types stan_scalar  */
 /*! \addtogroup stan_scalar_types */

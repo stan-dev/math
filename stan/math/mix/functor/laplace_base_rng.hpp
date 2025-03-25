@@ -26,16 +26,20 @@ namespace math {
  * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...|
+ PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
  *  inner elements of `CovarArgs`, followed by either the inner elements of
  *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
  *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
  * @tparam RNG A valid boost rng type
- * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
- * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of
+ `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of
+ `CovarFun::operator()`
  * @param ll_fun Likelihood function.
  * @param ll_args Arguments for likelihood function.
  * @param covariance_function Covariance function.
@@ -50,19 +54,17 @@ namespace math {
  * @param args Variadic arguments for likelihood function.
  */
 template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
-          typename CovarFun, typename CovarArgs,
-          class RNG, typename TrainTuple, typename PredTuple,
-          require_all_eigen_t<ThetaMatrix>* = nullptr>
+          typename CovarFun, typename CovarArgs, class RNG, typename TrainTuple,
+          typename PredTuple, require_all_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
     LLFunc&& ll_fun, LLArgs&& ll_args, const ThetaMatrix& theta_0,
-    CovarFun&& covariance_function,
-    CovarArgs&& covar_args,
-    TrainTuple&& train_tuple,
-    PredTuple&& pred_tuple,
+    CovarFun&& covariance_function, CovarArgs&& covar_args,
+    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     const laplace_options& options, RNG& rng, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  auto covar_args_val = stan::math::to_ref(value_of(std::forward<CovarArgs>(covar_args)));
+  auto covar_args_val
+      = stan::math::to_ref(value_of(std::forward<CovarArgs>(covar_args)));
   auto md_est = laplace_marginal_density_est(
       ll_fun, ll_args, value_of(theta_0), covariance_function,
       std::tuple_cat(covar_args_val, std::forward<TrainTuple>(train_tuple)),

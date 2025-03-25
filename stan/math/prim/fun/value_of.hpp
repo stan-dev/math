@@ -105,7 +105,8 @@ template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto value_of(Tuple&& tup) {
   return stan::math::apply(
       [](auto&&... args) {
-        return partially_forward_as_tuple(value_of(std::forward<decltype(args)>(args))...);
+        return partially_forward_as_tuple(
+            value_of(std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(tup));
 }

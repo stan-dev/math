@@ -450,7 +450,7 @@ Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
 }
 
 class laplace_count_two_dim_diag_test : public ::testing::Test {
-protected:
+ protected:
   void SetUp() override {
     using stan::math::algebra_solver;
     dim_theta = 2;
@@ -463,8 +463,7 @@ protected:
     K_laplace = laplace_covariance(theta_root, phi);
 
     rng.seed(1954);
-    theta_benchmark
-        = stan::math::multi_normal_rng(theta_root, K_laplace, rng);
+    theta_benchmark = stan::math::multi_normal_rng(theta_root, K_laplace, rng);
 
     tol = 1e-3;
     n_sim = 5e5;
@@ -485,6 +484,5 @@ protected:
   double tol;
   int n_sim;
 };
-
 
 #endif

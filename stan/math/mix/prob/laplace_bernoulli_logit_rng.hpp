@@ -20,16 +20,19 @@ namespace math {
  * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
- *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`, followed by either the inner elements of
- *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
- *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...|
+ * PredTupleElements...})` method. The `operator()` method should accept as
+ * arguments the inner elements of `CovarArgs`, followed by either the inner
+ * elements of `TrainTuple` or `PredTuple`. The return type of the `operator()`
+ * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
  * @tparam RNG A valid boost rng type
- * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
- * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ * `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of
+ * `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of
+ * `CovarFun::operator()`
  * @param y Vector Vector of total number of trials with a positive outcome.
  * @param n_samples Vector of number of trials.
  * @param theta_0 Initial guess for mode of Laplace approximation.
@@ -51,9 +54,8 @@ namespace math {
  * @param rng Rng number.
  * @param msgs Streaming message for covariance functions.
  */
-template <typename ThetaMatrix, typename CovarFun,
-          typename CovarArgs, typename TrainTuple, typename PredTuple,
-          class RNG,
+template <typename ThetaMatrix, typename CovarFun, typename CovarArgs,
+          typename TrainTuple, typename PredTuple, class RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_marginal_tol_bernoulli_logit_rng(
@@ -65,14 +67,12 @@ laplace_marginal_tol_bernoulli_logit_rng(
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_base_rng(
-      bernoulli_logit_likelihood{},
-      std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args),
-      std::forward<TrainTuple>(train_tuple),
-      std::forward<PredTuple>(pred_tuple),
-      ops, rng, msgs);
+  return laplace_base_rng(bernoulli_logit_likelihood{},
+                          std::forward_as_tuple(to_vector(y), n_samples),
+                          theta_0, std::forward<CovarFun>(covariance_function),
+                          std::forward<CovarArgs>(covar_args),
+                          std::forward<TrainTuple>(train_tuple),
+                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
 }
 
 /**
@@ -87,16 +87,20 @@ laplace_marginal_tol_bernoulli_logit_rng(
  * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
+ *  `operator()(CovarArgsElements..., {TrainTupleElements...|
+ PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
  *  inner elements of `CovarArgs`, followed by either the inner elements of
  *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
  *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
  * @tparam RNG A valid boost rng type
- * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
- * @tparam TrainTuple A tuple of types to passed as the end arguments of `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ `CovarFun::operator()`
+ * @tparam TrainTuple A tuple of types to passed as the end arguments of
+ `CovarFun::operator()`
+ * @tparam PredTuple  A tuple of types to passed as the end arguments of
+ `CovarFun::operator()`
  * @param y Vector Vector of total number of trials with a positive outcome.
  * @param n_samples Vector of number of trials.
  * @param theta_0 Initial guess for mode of Laplace approximation.
@@ -129,12 +133,11 @@ laplace_marginal_bernoulli_logit_rng(
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(bernoulli_logit_likelihood{},
-                          std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-                          covariance_function,
+                          std::forward_as_tuple(to_vector(y), n_samples),
+                          theta_0, covariance_function,
                           std::forward<CovarArgs>(covar_args),
                           std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple),
-                          ops, rng, msgs);
+                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
 }
 
 }  // namespace math

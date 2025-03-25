@@ -10,12 +10,9 @@ namespace math {
 struct neg_binomial_2_log_likelihood {
   template <typename T_theta, typename T_eta>
   inline return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta,
-      const T_eta& eta,
-      const std::vector<int>& y,
-      const std::vector<int>& y_index,
-      std::ostream* pstream
-    ) const {
+      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, const T_eta& eta,
+      const std::vector<int>& y, const std::vector<int>& y_index,
+      std::ostream* pstream) const {
     std::vector<int> n_per_group(theta.size(), 0);
     std::vector<int> counts_per_group(theta.size(), 0);
 
@@ -34,8 +31,7 @@ struct neg_binomial_2_log_likelihood {
       return_type_t<T_theta, T_eta> log_eta_plus_exp_theta
           = log(eta + exp_theta(i));
       logp += counts_per_group[i] * (theta(i) - log_eta_plus_exp_theta)
-              + n_per_group[i] * eta
-                    * (log(eta) - log_eta_plus_exp_theta);
+              + n_per_group[i] * eta * (log(eta) - log_eta_plus_exp_theta);
     }
     return logp;
   }
@@ -79,27 +75,20 @@ struct neg_binomial_2_log_likelihood {
  * @param[in] args model parameters and data for the covariance functor.
  */
 template <typename CovarFun, typename Eta, typename ThetaVec,
-          typename CovarArgs,
-          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+          typename CovarArgs, require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
-    const std::vector<int>& y,
-    const std::vector<int>& y_index,
-    const Eta& eta,
-    const ThetaVec& theta_0,
-    CovarFun&& covariance_function,
-    CovarArgs&& covar_args,
-    double tolerance, int64_t max_num_steps,
+    const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
+    const ThetaVec& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
-      neg_binomial_2_log_likelihood{},
-      std::forward_as_tuple(eta, y, y_index),
+      neg_binomial_2_log_likelihood{}, std::forward_as_tuple(eta, y, y_index),
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
-
 
 /**
  * Wrapper function around the laplace_marginal function for
@@ -125,13 +114,12 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  */
 template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
-    const std::vector<int>& y, const std::vector<int>& y_index,
-    const Eta& eta, const Theta0& theta_0, CovarFun&& covariance_function,
+    const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
+    const Theta0& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
-      neg_binomial_2_log_likelihood{},
-      std::forward_as_tuple(eta, y, y_index),
+      neg_binomial_2_log_likelihood{}, std::forward_as_tuple(eta, y, y_index),
       theta_0, std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }

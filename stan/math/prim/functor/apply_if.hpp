@@ -8,7 +8,6 @@
 #include <tuple>
 #include <utility>
 
-
 namespace stan {
 namespace math {
 namespace internal {
@@ -67,9 +66,9 @@ template <template <typename...> class Filter, typename F, typename Arg1,
           typename... Args,
           require_t<bool_constant<!is_tuple<Arg1>::value>>* = nullptr>
 inline constexpr auto apply_if(F&& f, Arg1&& arg1, Args&&... args) {
-  return partially_forward_as_tuple(internal::filter_fun<Filter>(
-            f, std::forward<Arg1>(arg1)),
-            internal::filter_fun<Filter>(f, std::forward<Args>(args))...);
+  return partially_forward_as_tuple(
+      internal::filter_fun<Filter>(f, std::forward<Arg1>(arg1)),
+      internal::filter_fun<Filter>(f, std::forward<Args>(args))...);
 }
 
 template <template <typename...> class Filter, typename F, typename Arg,

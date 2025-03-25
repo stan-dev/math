@@ -12,19 +12,22 @@
 namespace stan {
 namespace math {
 
-template <template <typename...> class Filter, std::size_t Index = 0,typename F, typename Tuple>
+template <template <typename...> class Filter, std::size_t Index = 0,
+          typename F, typename Tuple>
 inline constexpr auto filter_map(F&& f, Tuple&& tup) {
   if constexpr (Index == (std::tuple_size<std::decay_t<Tuple>>::value)) {
     return std::make_tuple();
-  } else if constexpr (Filter<std::tuple_element_t<Index, std::decay_t<Tuple>>>::value) {
-    return tuple_concat(
-      partially_forward_as_tuple(f(std::get<Index>(std::forward<Tuple>(tup)))),
-      filter_map<Filter, Index + 1>(std::forward<F>(f), std::forward<Tuple>(tup)));
+  } else if constexpr (Filter<std::tuple_element_t<
+                           Index, std::decay_t<Tuple>>>::value) {
+    return tuple_concat(partially_forward_as_tuple(
+                            f(std::get<Index>(std::forward<Tuple>(tup)))),
+                        filter_map<Filter, Index + 1>(
+                            std::forward<F>(f), std::forward<Tuple>(tup)));
   } else {
-    return filter_map<Filter, Index + 1>(std::forward<F>(f), std::forward<Tuple>(tup));
+    return filter_map<Filter, Index + 1>(std::forward<F>(f),
+                                         std::forward<Tuple>(tup));
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

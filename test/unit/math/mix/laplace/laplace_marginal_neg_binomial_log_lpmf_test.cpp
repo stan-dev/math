@@ -11,8 +11,8 @@
 #include <vector>
 
 TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
-  using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
   using stan::math::laplace_marginal_neg_binomial_2_log_lpmf;
+  using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
@@ -50,10 +50,9 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
           return laplace_marginal_tol_neg_binomial_2_log_lpmf(
-            y, y_index, eta, theta_0, sq_kernel,
-            std::forward_as_tuple(x, alpha,rho),
-            tolerance, max_num_steps, hessian_block_size,
-            solver_num, max_steps_line_search, nullptr);
+              y, y_index, eta, theta_0, sq_kernel,
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, alpha_dbl, rho_dbl, eta_dbl);
       }
@@ -62,8 +61,8 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
 }
 
 TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
-  using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
   using stan::math::laplace_marginal_neg_binomial_2_log_lpmf;
+  using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
@@ -71,8 +70,8 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
   double eta = 1;
 
   double marginal_density = laplace_marginal_neg_binomial_2_log_lpmf(
-    y, y_index, eta, theta_0, stan::math::test::sqr_exp_kernel_functor(),
-    std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
+      y, y_index, eta, theta_0, stan::math::test::sqr_exp_kernel_functor(),
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
 
   // std::cout << marginal_density << std::endl;
   // ToDo (charlesm93): get benchmark from GPStuff or another software.
@@ -86,10 +85,10 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
           return laplace_marginal_tol_neg_binomial_2_log_lpmf(
-            y, y_index, eta, theta_0,
-            stan::math::test::sqr_exp_kernel_functor(),
-            std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-            hessian_block_size, solver_num, max_steps_line_search, nullptr);
+              y, y_index, eta, theta_0,
+              stan::math::test::sqr_exp_kernel_functor(),
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1], eta);
       }

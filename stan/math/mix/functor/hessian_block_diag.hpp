@@ -23,8 +23,8 @@ namespace math {
  */
 template <typename F, typename... Args>
 inline Eigen::SparseMatrix<double> hessian_block_diag(
-    F&& f, const Eigen::VectorXd& x,
-    const Eigen::Index hessian_block_size, Args&&... args) {
+    F&& f, const Eigen::VectorXd& x, const Eigen::Index hessian_block_size,
+    Args&&... args) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 

@@ -62,7 +62,6 @@ inline constexpr auto apply(F&& /* f */) {
   return std::make_tuple();
 }
 
-
 }  // namespace math
 }  // namespace stan
 

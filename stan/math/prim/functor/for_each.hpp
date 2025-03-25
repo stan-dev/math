@@ -55,7 +55,8 @@ constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3,
 }
 
 // TODO(Steve) This should be variadic
-template <typename F, typename T1, typename T2, typename T3, typename T4, size_t... Is>
+template <typename F, typename T1, typename T2, typename T3, typename T4,
+          size_t... Is>
 constexpr inline auto for_each(F&& f, T1&& t1, T2&& t2, T3&& t3, T4&& t4,
                                std::index_sequence<Is...>) {
   using Swallow = int[];
