@@ -153,6 +153,7 @@ special_arg_values = {
 ignored = [
     "std_normal_qf", # synonym for inv_Phi
     "if_else",
+    "hypergeometric_3F2", # requires arguments of specific lengths
 ]
 
 # these are all slight renames compared to stan math
