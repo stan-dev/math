@@ -50,7 +50,7 @@ inline plain_type_t<Vec> sum_to_zero_constrain(const Vec& y) {
   value_type_t<Vec> sum_w(0);
   for (int i = N; i > 0; --i) {
     double n = static_cast<double>(i);
-    auto w = y_ref(i - 1) * inv_sqrt(n * (n + 1));
+    auto w = y_ref.coeff(i - 1) * inv_sqrt(n * (n + 1));
     sum_w += w;
 
     z.coeffRef(i - 1) += sum_w;
@@ -88,24 +88,24 @@ inline plain_type_t<Mat> sum_to_zero_constrain(const Mat& x) {
   for (int j = M - 1; j >= 0; --j) {
     value_type_t<Mat> ax_previous(0);
 
-    double a_j = 1.0 / std::sqrt((j + 1.0) * (j + 2.0));
+    double a_j = inv_sqrt((j + 1.0) * (j + 2.0));
     double b_j = (j + 1.0) * a_j;
 
     for (int i = N - 1; i >= 0; --i) {
-      double a_i = 1.0 / std::sqrt((i + 1.0) * (i + 2.0));
+      double a_i = inv_sqrt((i + 1.0) * (i + 2.0));
       double b_i = (i + 1.0) * a_i;
 
-      auto b_i_x = b_i * x_ref(i, j) - ax_previous;
+      auto b_i_x = b_i * x_ref.coeff(i, j) - ax_previous;
 
-      Z(i, j) = (b_j * b_i_x) - beta(i);
-      beta(i) += a_j * b_i_x;
+      Z.coeffRef(i, j) = (b_j * b_i_x) - beta.coeff(i);
+      beta.coeffRef(i) += a_j * b_i_x;
 
-      Z(N, j) -= Z(i, j);
-      Z(i, M) -= Z(i, j);
+      Z.coeffRef(N, j) -= Z.coeff(i, j);
+      Z.coeffRef(i, M) -= Z.coeff(i, j);
 
-      ax_previous += a_i * x_ref(i, j);
+      ax_previous += a_i * x_ref.coeff(i, j);
     }
-    Z(N, M) -= Z(N, j);
+    Z.coeffRef(N, M) -= Z.coeff(N, j);
   }
 
   return Z;

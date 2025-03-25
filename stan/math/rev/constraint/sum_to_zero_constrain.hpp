@@ -5,6 +5,7 @@
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
 #include <cmath>
@@ -55,14 +56,14 @@ inline auto sum_to_zero_constrain(T&& y) {
       double n = static_cast<double>(i + 1);
 
       // adjoint of the reverse cumulative sum computed in the forward mode
-      sum_u_adj += arena_z.adj()(i);
+      sum_u_adj += arena_z.adj().coeff(i);
 
       // adjoint of the offset subtraction
-      double v_adj = -arena_z.adj()(i + 1) * n;
+      double v_adj = -arena_z.adj().coeff(i + 1) * n;
 
       double w_adj = v_adj + sum_u_adj;
 
-      arena_y.adj()(i) += w_adj / sqrt(n * (n + 1));
+      arena_y.adj().coeffRef(i) += w_adj / sqrt(n * (n + 1));
     }
   });
 
@@ -90,8 +91,35 @@ inline auto sum_to_zero_constrain(T&& x) {
   arena_t<ret_type> arena_z = sum_to_zero_constrain(arena_x.val());
 
   reverse_pass_callback([arena_x, arena_z]() mutable {
-    const auto N = arena_x.rows();
-    const auto M = arena_x.cols();
+    const auto Nf = arena_x.val().rows();
+    const auto Mf = arena_x.val().cols();
+    const auto N = Nf + 1;
+    const auto M = Mf + 1;
+    const auto s = std::max(Nf, Mf);
+
+    Eigen::VectorXd d_beta = Eigen::VectorXd::Zero(Nf);
+
+    for (int j = 0; j < Mf; ++j) {
+      double a_j = inv_sqrt((j + 1.0) * (j + 2.0));
+      double b_j = (j + 1.0) * a_j;
+
+      double d_ax = 0.0;
+
+      for (int i = 0; i < Nf; ++i) {
+        double a_i = inv_sqrt((i + 1.0) * (i + 2.0));
+        double b_i = (i + 1.0) * a_i;
+
+        double dY = arena_z.adj().coeff(i, j) - arena_z.adj().coeff(Nf, j)
+                    + arena_z.adj().coeff(Nf, Mf) - arena_z.adj().coeff(i, Mf);
+        double dI_from_beta = a_j * d_beta.coeff(i);
+        d_beta.coeffRef(i) += -dY;
+
+        double dI_from_alpha = b_j * dY;
+        double dI = dI_from_alpha + dI_from_beta;
+        arena_x.adj().coeffRef(i, j) += b_i * dI + a_i * d_ax;
+        d_ax -= dI;
+      }
+    }
   });
 
   return arena_z;
