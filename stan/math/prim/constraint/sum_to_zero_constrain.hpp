@@ -75,7 +75,6 @@ template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
 inline plain_type_t<Mat> sum_to_zero_constrain(const Mat& x) {
   const auto N = x.rows();
   const auto M = x.cols();
-  const auto s = std::max(N, M);
 
   plain_type_t<Mat> Z = Eigen::MatrixXd::Zero(N + 1, M + 1);
   if (unlikely(N == 0 || M == 0)) {

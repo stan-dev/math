@@ -93,9 +93,6 @@ inline auto sum_to_zero_constrain(T&& x) {
   reverse_pass_callback([arena_x, arena_z]() mutable {
     const auto Nf = arena_x.val().rows();
     const auto Mf = arena_x.val().cols();
-    const auto N = Nf + 1;
-    const auto M = Mf + 1;
-    const auto s = std::max(Nf, Mf);
 
     Eigen::VectorXd d_beta = Eigen::VectorXd::Zero(Nf);
 

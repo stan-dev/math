@@ -77,7 +77,6 @@ inline plain_type_t<Mat> sum_to_zero_free(const Mat& z) {
 
   const auto N = z_ref.rows() - 1;
   const auto M = z_ref.cols() - 1;
-  const auto s = std::max(N, M);
 
   plain_type_t<Mat> x = Eigen::MatrixXd::Zero(N, M);
   if (unlikely(N == 0 || M == 0)) {
