@@ -7,9 +7,9 @@
 namespace stan {
 namespace math {
 /**
- * Wrapper function around the laplace_marginal function.
- * Returns the marginal density p(y | phi) by marginalizing out
- * the latent gaussian variable, with a Laplace approximation.
+ * Wrapper function around the laplace_marginal_density function.
+ * Returns the marginal density p(y|phi) by marginalizing out
+ * the latent gaussian variable theta, with a Laplace approximation.
  * See the laplace_marginal function for more details.
  * The data y is assumed to be real.
  * The function is "overloaded" below for the int y and lpmf case.
@@ -190,9 +190,6 @@ inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args,
       std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
       msgs);
 }
-
-
-
 
 }  // namespace math
 }  // namespace stan
