@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_POISSON_LOG_RNG_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_POISSON_LOG_RNG_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_NEG_BINOMIAL_2_LOG_RNG_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_NEG_BINOMIAL_2_LOG_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
@@ -15,7 +15,7 @@ namespace math {
  *
  * return a multivariate normal random variate sampled
  * from the gaussian approximation of p(theta | y, phi)
- * where the likelihood is a Poisson with a log link.
+ * where the likelihood is a Negative Binomial with a log link.
  * @tparam CovarFun A functor with an
  *  `operator()(CovarArgsElements..., {TrainTupleElements...| PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
@@ -45,20 +45,23 @@ namespace math {
  * @param args
  *
  */
-template <typename CovarFun, typename ThetaMatrix, class RNG,
+template <typename CovarFun, typename Eta, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
-inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index,
+inline Eigen::VectorXd laplace_marginal_tol_neg_binomial_2_log_rng(
+    const std::vector<int>& y,
+    const std::vector<int>& y_index,
+    const Eta& eta,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    CovarArgs&& covar_args, TrainTuple&& train_tuple,
+    PredTuple&& pred_tuple,
     const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index),
+  return laplace_base_rng(neg_binomial_2_log_likelihood{},
+                          std::forward_as_tuple(eta, y, y_index),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
@@ -100,17 +103,19 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
  * @param args
  *
  */
-template <typename CovarFun, typename ThetaMatrix, class RNG,
+template <typename CovarFun, typename Eta, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
-inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index,
+inline Eigen::VectorXd laplace_marginal_neg_binomial_2_log_rng(
+    const std::vector<int>& y,
+    const std::vector<int>& y_index,
+    const Eta& eta,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_base_rng(poisson_log_likelihood{},
-                          std::forward_as_tuple(y, y_index),
+  return laplace_base_rng(neg_binomial_2_log_likelihood{},
+                          std::forward_as_tuple(eta, y, y_index),
                           theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),

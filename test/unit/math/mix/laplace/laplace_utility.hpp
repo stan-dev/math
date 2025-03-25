@@ -454,17 +454,10 @@ protected:
   void SetUp() override {
     using stan::math::algebra_solver;
     dim_theta = 2;
-    // theta_0.resize(dim_theta);
-    // theta_0 << 1, 1;
-    phi.resize(2);
-    phi << 3, 2;
-
     y.resize(2);
     y = {1, 0};
     y_index.resize(2);
     y_index = {0, 1};
-    ye.resize(2);
-    ye << 1, 1;
 
     theta_root = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
     K_laplace = laplace_covariance(theta_root, phi);
@@ -480,10 +473,10 @@ protected:
   int dim_theta;
   Eigen::VectorXd theta_0{{1, 1}};
   Eigen::VectorXd theta_root;
-  Eigen::VectorXd phi;
+  Eigen::VectorXd phi{{3, 2}};
   std::vector<int> y;
   std::vector<int> y_index;
-  Eigen::VectorXd ye;
+  Eigen::VectorXd ye{{1, 1}};
   std::vector<double> d0;
   std::vector<int> di0;
   Eigen::MatrixXd K_laplace;
