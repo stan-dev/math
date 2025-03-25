@@ -278,5 +278,71 @@ TEST(OpenCLDeserializer, grad_test) {
     EXPECT_EQ(host_adj(i), unpadded_host_adj(i));
   }
 }
+
+TEST(OpenCLDeserializer, gradient_fun_test) {
+  const auto alignment_in_doubles = (stan::math::opencl_context.device()[0].getInfo<CL_DEVICE_MEM_BASE_ADDR_ALIGN>() / 8)/sizeof(double);
+  using stan::math::var_value;
+  using stan::math::matrix_cl;
+  using stan::math::var;
+  using varmat_cl = var_value<matrix_cl<double>>;
+  using std_vec_varmat_cl = std::vector<varmat_cl>;
+  auto param_info = stan::math::internal::extract_parameter_types(test_json);
+  std::size_t total_size = 0;
+  for (auto& dim_i : param_info) {
+    std::size_t dim_size = 1;
+    for (auto dim_j : dim_i.second) {
+      dim_size *= dim_j;
+    }
+    total_size += dim_size;
+  }
+  Eigen::VectorXd values = Eigen::VectorXd::LinSpaced(total_size, 1, total_size);
+  matrix_cl<double> deserialize_data = stan::math::make_deserializer_data(param_info, values);
+  using stan::math::sum;
+  using stan::math::add;
+  using stan::math::sin;
+  using stan::math::multiply;
+  auto grad_f = [&](auto&& x) {
+    constexpr bool is_var_cl = std::is_same<std::decay_t<decltype(x)>, varmat_cl>::value;
+    using matrix_t = std::conditional_t<is_var_cl, var_value<stan::math::matrix_cl<double>>, Eigen::Matrix<var, -1, -1>>;
+    using vector_t = std::conditional_t<is_var_cl, var_value<stan::math::matrix_cl<double>>, Eigen::Matrix<var, -1, 1>>;
+    using deserializer_t = std::conditional_t<is_var_cl, stan::math::deserializer_cl<varmat_cl>, deserializer<Eigen::Matrix<var, -1, 1>>>;
+    using std_vec_matrix_t = std::vector<matrix_t>;
+    using std_vec_vec_t = std::vector<vector_t>;
+    deserializer_t des_test(x);
+    auto scalar_1 = des_test.template read<var>();
+    auto vec_1 = des_test.template read<vector_t>(2);
+    auto mat_1 = des_test.template read<matrix_t>(7, 4);
+    auto std_vec_to_vec = des_test.template read<vector_t>(2);
+    auto std_vec_std_vec_vec_1 = des_test.template read<std::vector<std_vec_vec_t>>(2, 7, 7);
+    auto std_vec_std_vec_mat_2 = des_test.template read<std::vector<std_vec_matrix_t>>(7, 4, 7, 4);
+    auto std_vec_std_vec_to_mat = des_test.template read<matrix_t>(7, 4);
+    auto std_vec_std_vec_stdvec_to_mat = des_test.template read<std_vec_matrix_t>(7, 4, 4);
+    auto res = scalar_1 + sum(add(vec_1, std_vec_to_vec));
+    for (int i = 0; i < 7; i++) {
+      res += sum(
+        add(
+          add(
+            add(multiply(std_vec_std_vec_mat_2[i][0], std_vec_std_vec_stdvec_to_mat[i]),
+              multiply(std_vec_std_vec_mat_2[i][1], std_vec_std_vec_stdvec_to_mat[i])),
+            multiply(std_vec_std_vec_mat_2[i][2], std_vec_std_vec_stdvec_to_mat[i])),
+          multiply(std_vec_std_vec_mat_2[i][3], std_vec_std_vec_stdvec_to_mat[i])));
+    }
+    return res;
+  };
+  double res_val{0};
+  matrix_cl<double> grad_val(deserialize_data.rows(), deserialize_data.cols());
+  stan::math::gradient(grad_f, deserialize_data, res_val, grad_val);
+  Eigen::VectorXd unpadded_host_adj = Eigen::VectorXd::Zero(values.size());
+  extract_deserializer_data(unpadded_host_adj, param_info, grad_val);
+  stan::math::recover_memory();
+  Eigen::Matrix<var, -1, 1> host_matrix = values;
+  Eigen::VectorXd host_adj = Eigen::VectorXd::Zero(values.size());
+  res_val = 0;
+  stan::math::gradient(grad_f, values, res_val, host_adj);
+  stan::math::recover_memory();
+  for (Eigen::Index i = 0; i < host_adj.size(); i++) {
+    EXPECT_EQ(host_adj(i), unpadded_host_adj(i));
+  }
+}
 }
 #endif

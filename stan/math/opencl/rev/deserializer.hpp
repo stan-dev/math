@@ -336,13 +336,8 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
   }
   // Optionally, you might also want to check that input_pos == values.size()
 
-  // STEP 5. Create a matrix_cl from the padded_data.
-  // We assume that the matrix_cl constructor can accept an Eigen vector
-  // and will allocate a buffer on the GPU (with SVM or via OpenCL buffers).
-  stan::math::matrix_cl<double> gpu_buffer(padded_data);
-
   // STEP 6. Wrap the matrix_cl in a var_value and return it.
-  return stan::math::var_value<stan::math::matrix_cl<double>>(std::move(gpu_buffer));
+  return stan::math::matrix_cl<double>(std::move(padded_data));
 }
 
 
@@ -357,8 +352,8 @@ inline auto make_deserializer_data(const Dims& dims, const Eigen::VectorXd& valu
  *             { {"r", {1}}, {"v", {2}}, {"m", {7,4}}, {"ar", {2}}, {"aav", {2,7,7}}, {"aam", {7,4,7,4}} }.
  * @return An Eigen::VectorXd containing the unpadded adjoint values.
  */
-template <typename Dims>
-inline auto extract_deserializer_data(Eigen::VectorXd& adjs, const Dims& dims, const stan::math::var_value<stan::math::matrix_cl<double>>& data) {
+template <typename Dims, typename Data>
+inline auto extract_deserializer_data(Eigen::VectorXd& adjs, const Dims& dims, const Data& data) {
   /*
    * `CL_DEVICE_MEM_BASE_ADDR_ALIGN` is the alignment requirement (in bits) for
    * sub-buffer offsets. The minimum value
@@ -417,7 +412,12 @@ inline auto extract_deserializer_data(Eigen::VectorXd& adjs, const Dims& dims, c
    *  through several smaller transactions.
    * Before merge we will do 1
    */
-  Eigen::VectorXd padded_data = stan::math::from_matrix_cl(data.adj());
+  Eigen::VectorXd padded_data;
+  if constexpr (is_var<Data>::value) {
+    padded_data = stan::math::from_matrix_cl(data.adj());
+  } else {
+    padded_data = stan::math::from_matrix_cl(data);
+  }
   Eigen::Index input_pos = 0;
   Eigen::Index jj = 0;
   for (size_t i = 0; i < dims.size(); ++i) {
