@@ -32,8 +32,7 @@ class LoggingTestListener : public ::testing::EmptyTestEventListener {
   int max_steps_line_search{0};
 
   // Called after an assertion results in a failure.
-  void OnTestPartResult(
-      const ::testing::TestPartResult& result) override {
+  void OnTestPartResult(const ::testing::TestPartResult& result) override {
     if (result.failed()) {
       std::ofstream ofs;
       // On first failure, open file in truncation mode and write header
@@ -73,8 +72,7 @@ class LoggingTestListener : public ::testing::EmptyTestEventListener {
   }
 
   // Called after all tests have ended.
-  void OnTestProgramEnd(
-      const ::testing::UnitTest& /*unit_test*/) override {
+  void OnTestProgramEnd(const ::testing::UnitTest& /*unit_test*/) override {
     if (!write_init_json) {  // Only if at least one failure was logged
       std::ofstream ofs("failure_log.json", std::ios::app);
       ofs << "}}";  // Close the JSON object
