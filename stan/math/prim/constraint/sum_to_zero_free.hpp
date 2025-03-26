@@ -5,6 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
+#include <stan/math/prim/fun/inv_sqrt.hpp>
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/functor/apply_vector_unary.hpp>
 #include <cmath>
@@ -47,15 +48,15 @@ inline plain_type_t<Vec> sum_to_zero_free(const Vec& z) {
     return y;
   }
 
-  y.coeffRef(N - 1) = -z_ref(N) * sqrt(N * (N + 1)) / N;
+  y.coeffRef(N - 1) = -z_ref.coeff(N) * sqrt(N * (N + 1)) / N;
 
   value_type_t<Vec> sum_w(0);
 
   for (int i = N - 2; i >= 0; --i) {
     double n = static_cast<double>(i + 1);
-    auto w = y(i + 1) / sqrt((n + 1) * (n + 2));
+    auto w = y.coeff(i + 1) / sqrt((n + 1) * (n + 2));
     sum_w += w;
-    y.coeffRef(i) = (sum_w - z_ref(i + 1)) * sqrt(n * (n + 1)) / n;
+    y.coeffRef(i) = (sum_w - z_ref.coeff(i + 1)) * sqrt(n * (n + 1)) / n;
   }
 
   return y;
@@ -88,18 +89,18 @@ inline plain_type_t<Mat> sum_to_zero_free(const Mat& z) {
   for (int j = M - 1; j >= 0; --j) {
     value_type_t<Mat> ax_previous(0);
 
-    double a_j = 1.0 / std::sqrt((j + 1.0) * (j + 2.0));
+    double a_j = inv_sqrt((j + 1.0) * (j + 2.0));
     double b_j = (j + 1.0) * a_j;
 
     for (int i = N - 1; i >= 0; --i) {
-      double a_i = 1.0 / std::sqrt((i + 1.0) * (i + 2.0));
+      double a_i = inv_sqrt((i + 1.0) * (i + 2.0));
       double b_i = (i + 1.0) * a_i;
 
-      auto alpha_plus_beta = z_ref(i, j) + beta(i);
+      auto alpha_plus_beta = z_ref.coeff(i, j) + beta.coeff(i);
 
-      x(i, j) = (alpha_plus_beta + b_j * ax_previous) / (b_j * b_i);
-      beta(i) += a_j * (b_i * x(i, j) - ax_previous);
-      ax_previous += a_i * x(i, j);
+      x.coeffRef(i, j) = (alpha_plus_beta + b_j * ax_previous) / (b_j * b_i);
+      beta.coeffRef(i) += a_j * (b_i * x.coeff(i, j) - ax_previous);
+      ax_previous += a_i * x.coeff(i, j);
     }
   }
 
