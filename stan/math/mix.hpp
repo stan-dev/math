@@ -26,9 +26,6 @@
 
 #include <stan/math/prim.hpp>
 
-#include <stan/math/mix/meta.hpp>
-#include <stan/math/mix/fun.hpp>
-#include <stan/math/mix/functor.hpp>
 #include <stan/math/mix/prob.hpp>
 
 #endif
