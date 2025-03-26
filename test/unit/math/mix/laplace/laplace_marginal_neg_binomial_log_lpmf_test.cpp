@@ -49,7 +49,8 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
           return laplace_marginal_tol_neg_binomial_2_log_lpmf(
-              y, y_index, eta, theta_0, stan::math::test::squared_kernel_functor{},
+              y, y_index, eta, theta_0,
+              stan::math::test::squared_kernel_functor{},
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };

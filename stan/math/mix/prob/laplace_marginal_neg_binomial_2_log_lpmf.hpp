@@ -22,7 +22,11 @@ struct neg_binomial_2_log_likelihood {
     }
     Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
     auto log_eta_plus_exp_theta = eval(log(add(eta, exp(theta))));
-    return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1), y_map)) + sum(add(elt_multiply(counts_per_group, subtract(theta, log_eta_plus_exp_theta)),  elt_multiply(multiply(n_per_group, eta), subtract(log(eta), log_eta_plus_exp_theta))));
+    return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1), y_map))
+           + sum(add(elt_multiply(counts_per_group,
+                                  subtract(theta, log_eta_plus_exp_theta)),
+                     elt_multiply(multiply(n_per_group, eta),
+                                  subtract(log(eta), log_eta_plus_exp_theta))));
   }
 };
 
