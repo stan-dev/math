@@ -27,7 +27,8 @@ struct is_all_arithmetic_scalar
           internal::is_all_arithmetic_scalar_impl<std::decay_t<Types>>...> {};
 
 template <typename... Types>
-inline constexpr bool is_all_arithmetic_scalar_v = is_all_arithmetic_scalar<Types...>::value;
+inline constexpr bool is_all_arithmetic_scalar_v
+    = is_all_arithmetic_scalar<Types...>::value;
 
 }  // namespace stan
 

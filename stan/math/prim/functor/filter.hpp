@@ -15,7 +15,8 @@ namespace math {
 template <template <typename...> class Filter, std::size_t Index = 0,
           typename F, typename Tuple>
 inline constexpr auto filter_map(F&& f, Tuple&& tup) {
-  constexpr bool apply_filter_b = Filter<std::decay_t<decltype(std::get<Index>(tup))>>::value;
+  constexpr bool apply_filter_b
+      = Filter<std::decay_t<decltype(std::get<Index>(tup))>>::value;
   if constexpr (Index == (std::tuple_size<std::decay_t<Tuple>>::value)) {
     return std::make_tuple();
   } else if constexpr (apply_filter_b) {
