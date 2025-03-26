@@ -32,7 +32,7 @@ class LoggingTestListener : public ::testing::EmptyTestEventListener {
   int max_steps_line_search{0};
 
   // Called after an assertion results in a failure.
-  virtual void OnTestPartResult(
+  void OnTestPartResult(
       const ::testing::TestPartResult& result) override {
     if (result.failed()) {
       std::ofstream ofs;
@@ -73,7 +73,7 @@ class LoggingTestListener : public ::testing::EmptyTestEventListener {
   }
 
   // Called after all tests have ended.
-  virtual void OnTestProgramEnd(
+  void OnTestProgramEnd(
       const ::testing::UnitTest& /*unit_test*/) override {
     if (!write_init_json) {  // Only if at least one failure was logged
       std::ofstream ofs("failure_log.json", std::ios::app);
