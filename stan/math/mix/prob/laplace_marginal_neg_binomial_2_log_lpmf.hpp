@@ -13,27 +13,16 @@ struct neg_binomial_2_log_likelihood {
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, const T_eta& eta,
       const std::vector<int>& y, const std::vector<int>& y_index,
       std::ostream* pstream) const {
-    std::vector<int> n_per_group(theta.size(), 0);
-    std::vector<int> counts_per_group(theta.size(), 0);
+    Eigen::VectorXi n_per_group = Eigen::VectorXi::Zero(theta.size());
+    Eigen::VectorXi counts_per_group = Eigen::VectorXi::Zero(theta.size());
 
     for (int i = 0; i < y.size(); i++) {
       n_per_group[y_index[i]] += 1;
       counts_per_group[y_index[i]] += y[i];
     }
-
-    return_type_t<T_theta, T_eta> logp = 0;
-    for (size_t i = 0; i < y.size(); i++) {
-      logp += binomial_coefficient_log(y[i] + eta - 1, y[i]);
-    }
-    // CHECK -- is it better to vectorize this loop?
-    Eigen::Matrix<T_theta, Eigen::Dynamic, 1> exp_theta = exp(theta);
-    for (Eigen::Index i = 0; i < theta.size(); i++) {
-      return_type_t<T_theta, T_eta> log_eta_plus_exp_theta
-          = log(eta + exp_theta(i));
-      logp += counts_per_group[i] * (theta(i) - log_eta_plus_exp_theta)
-              + n_per_group[i] * eta * (log(eta) - log_eta_plus_exp_theta);
-    }
-    return logp;
+    Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
+    auto log_eta_plus_exp_theta = eval(log(add(eta, exp(theta))));
+    return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1), y_map)) + sum(add(elt_multiply(counts_per_group, subtract(theta, log_eta_plus_exp_theta)),  elt_multiply(multiply(n_per_group, eta), subtract(log(eta), log_eta_plus_exp_theta))));
   }
 };
 

@@ -19,6 +19,9 @@ struct is_tuple_impl<std::tuple<Types...>> : std::true_type {};
 template <typename T>
 struct is_tuple : internal::is_tuple_impl<std::decay_t<T>> {};
 
+template <typename T>
+constexpr bool is_tuple_v = is_tuple<T>::value;
+
 /*! \ingroup require_std */
 /*! \defgroup tuple_types tuple  */
 /*! \addtogroup tuple_types */
