@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_FUN_TO_REF_HPP
 
 #include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
 
 namespace stan {
 namespace math {
@@ -13,7 +14,7 @@ namespace math {
  * @param a argument
  * @return optionally evaluated argument
  */
-template <typename T>
+template <typename T, require_not_tuple_t<T>* = nullptr>
 inline ref_type_t<T&&> to_ref(T&& a) {
   return std::forward<T>(a);
 }
@@ -43,6 +44,14 @@ template <bool Cond, typename T, std::enable_if_t<Cond>* = nullptr>
 inline ref_type_t<T&&> to_ref_if(T&& a) {
   return std::forward<T>(a);
 }
+
+template <typename T, require_tuple_t<T>* = nullptr>
+inline auto to_ref(T&& a) {
+  return stan::math::apply([](auto&&... args) {
+    return partially_forward_as_tuple(to_ref(std::forward<decltype(args)>(args))...);
+  }, std::forward<T>(a));
+}
+
 
 }  // namespace math
 }  // namespace stan

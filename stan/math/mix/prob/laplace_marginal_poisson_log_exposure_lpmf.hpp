@@ -33,8 +33,8 @@ struct poisson_log_exposure_likelihood {
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
     Eigen::VectorXd n_per_group = Eigen::VectorXd::Zero(theta.size());
     for (int i = 0; i < theta.size(); i++) {
-      counts_per_group(y_index[i]) += y[i];
-      n_per_group(y_index[i]) += 1;
+      counts_per_group.coeffRef(y_index[i]) += y[i];
+      n_per_group.coeffRef(y_index[i])++;
     }
 
     // auto n_samples = to_vector(delta_int);
@@ -86,7 +86,7 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
   Eigen::VectorXd y_vec = to_vector(y);
   Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
   y_and_ye << y_vec, ye;
-  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+  const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       poisson_log_exposure_likelihood{}, std::forward_as_tuple(y, y_index, ye),
@@ -121,11 +121,10 @@ inline auto laplace_marginal_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       poisson_log_exposure_likelihood{}, std::forward_as_tuple(y, y_index, ye),
       theta_0, std::forward<CovarFun>(covariance_function),
-      std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarArgs>(covar_args), laplace_default_ops, msgs);
 }
 
 }  // namespace math

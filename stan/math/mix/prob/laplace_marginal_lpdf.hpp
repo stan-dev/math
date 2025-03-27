@@ -54,8 +54,7 @@ inline auto laplace_marginal_tol_lpdf(
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  // TEST: provisional signature to agree with parser.
-  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+  const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
@@ -146,10 +145,9 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
 inline auto laplace_marginal_lpdf(LFun&& L_f, LArgs&& l_args,
                                   const Theta0& theta_0, CovarFun&& K_f,
                                   CovarArgs&& covar_args, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
-      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), laplace_default_ops,
       msgs);
 }
 
@@ -183,10 +181,9 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
 inline auto laplace_marginal_lpmf(LFun&& L_f, LArgs&& l_args,
                                   const Theta0& theta_0, CovarFun&& K_f,
                                   CovarArgs&& covar_args, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
-      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
+      std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), laplace_default_ops,
       msgs);
 }
 

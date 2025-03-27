@@ -81,7 +81,7 @@ inline auto diff(F&& f, const Theta& theta,
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
   auto [theta_gradient, eta_gradient] = [&theta, &f](auto&&... args) {
-    nested_rev_autodiff nested;
+    nested_rev_autodiff<true> nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
     auto hard_copy_args
         = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
@@ -137,7 +137,7 @@ inline auto diff(F&& f, const Theta& theta,
 template <typename F, typename Theta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr>
 inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Args&&... args) {
-  nested_rev_autodiff nested;
+  nested_rev_autodiff<true> nested;
   const Eigen::Index theta_size = theta.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = theta;
   Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
@@ -170,7 +170,7 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
-  nested_rev_autodiff nested;
+  nested_rev_autodiff<true> nested;
   const Eigen::Index theta_size = theta.size();
   Matrix<var, Dynamic, 1> theta_var = theta;
   int n_blocks = theta_size / hessian_block_size;
@@ -261,7 +261,7 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
   if constexpr (!contains_var) {
     return std::make_tuple();
   }
-  nested_rev_autodiff nested;
+  nested_rev_autodiff<true> nested;
   auto copy_vargs
       = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
           args...);

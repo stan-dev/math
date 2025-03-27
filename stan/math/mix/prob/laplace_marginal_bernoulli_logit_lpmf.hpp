@@ -57,12 +57,12 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  laplace_options ops{hessian_block_size, solver, max_steps_line_search,
+  const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarF>(covariance_function), std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -89,11 +89,10 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarF&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarF>(covariance_function), std::forward<CovarArgs>(covar_args), laplace_default_ops, msgs);
 }
 
 }  // namespace math

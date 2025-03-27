@@ -126,13 +126,12 @@ inline Eigen::VectorXd laplace_marginal_rng(LLFunc&& L_f, LLArgs&& l_args,
                                             TrainTuple&& train_tuple,
                                             PredTuple&& pred_tuple, RNG& rng,
                                             std::ostream* msgs) {
-  constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(l_args), theta_0,
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args),
                           std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
+                          std::forward<PredTuple>(pred_tuple), laplace_default_ops, rng, msgs);
 }
 
 }  // namespace math

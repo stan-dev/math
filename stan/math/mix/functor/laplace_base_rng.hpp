@@ -55,7 +55,8 @@ namespace math {
  */
 template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
           typename CovarFun, typename CovarArgs, class RNG, typename TrainTuple,
-          typename PredTuple, require_all_eigen_t<ThetaMatrix>* = nullptr>
+          typename PredTuple, require_all_eigen_t<ThetaMatrix>* = nullptr,
+          require_t<is_all_arithmetic_scalar<LLArgs, CovarArgs, TrainTuple, PredTuple>>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
     LLFunc&& ll_fun, LLArgs&& ll_args, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
@@ -63,33 +64,31 @@ inline Eigen::VectorXd laplace_base_rng(
     const laplace_options& options, RNG& rng, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  auto covar_args_val
-      = stan::math::to_ref(value_of(std::forward<CovarArgs>(covar_args)));
+  auto covar_args_ref
+      = stan::math::to_ref(std::forward<CovarArgs>(covar_args));
   auto md_est = laplace_marginal_density_est(
-      ll_fun, ll_args, value_of(theta_0), covariance_function,
-      std::tuple_cat(covar_args_val, std::forward<TrainTuple>(train_tuple)),
+      ll_fun, ll_args, theta_0, covariance_function,
+      std::tuple_cat(covar_args_ref, std::forward<TrainTuple>(train_tuple)),
       options, msgs);
   // Modified R&W method
   MatrixXd covariance_pred = apply(
       [&covariance_function, &msgs](auto&&... args_val) {
         return covariance_function(args_val..., msgs);
       },
-      std::tuple_cat(covar_args_val, std::forward<PredTuple>(pred_tuple)));
+      std::tuple_cat(covar_args_ref, std::forward<PredTuple>(pred_tuple)));
   VectorXd pred_mean = covariance_pred * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
-    Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(
-        md_est.L, md_est.W_r * covariance_pred);
-    Eigen::MatrixXd Sigma = covariance_pred - V_dec.transpose() * V_dec;
-    return multi_normal_rng(pred_mean, Sigma, rng);
+    Eigen::MatrixXd V_dec = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r * covariance_pred);
+    covariance_pred.noalias() -= V_dec.adjoint() * V_dec;
+    return multi_normal_rng(std::move(pred_mean), std::move(covariance_pred), rng);
   } else {
-    Eigen::MatrixXd Sigma
-        = covariance_pred
-          - covariance_pred
+    covariance_pred
+          -= covariance_pred
                 * (md_est.W_r
                    - md_est.W_r
                          * md_est.LU.solve(md_est.covariance * md_est.W_r))
                 * covariance_pred;
-    return multi_normal_rng(pred_mean, Sigma, rng);
+    return multi_normal_rng(std::move(pred_mean), std::move(covariance_pred), rng);
   }
 }
 
