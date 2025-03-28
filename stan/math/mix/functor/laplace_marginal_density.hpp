@@ -193,22 +193,23 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
 template <typename AVec, typename APrev, typename ThetaVec, typename LLFun,
           typename LLArgs, typename Covar, typename Msgs>
 inline auto line_search(double& objective_new, AVec&& a, const APrev& a_prev,
-  ThetaVec&& theta, LLFun&& ll_fun, LLArgs&& ll_args,
-  Covar&& covariance,
-  const int max_steps_line_search,
-  const double objective_old, Msgs* msgs) {
+                        ThetaVec&& theta, LLFun&& ll_fun, LLArgs&& ll_args,
+                        Covar&& covariance, const int max_steps_line_search,
+                        const double objective_old, Msgs* msgs) {
   Eigen::VectorXd a_tmp(a.size());
   double objective_new_tmp = 0;
   double objective_old_tmp = objective_old;
   Eigen::VectorXd theta_tmp(covariance.rows(), a_tmp.cols());
   int j = 0;
-  for (; j < max_steps_line_search && (objective_new < objective_old_tmp); ++j) {
-    a_tmp.noalias() = (a + a_prev) * 0.5;  // TODO(Charles) -- generalize for any factor
+  for (; j < max_steps_line_search && (objective_new < objective_old_tmp);
+       ++j) {
+    a_tmp.noalias()
+        = (a + a_prev) * 0.5;  // TODO(Charles) -- generalize for any factor
     theta_tmp.noalias() = covariance * a_tmp;
     if (theta_tmp.allFinite()) {
       objective_new_tmp = -0.5 * a.dot(theta_tmp)
-            + laplace_likelihood::log_likelihood(
-                ll_fun, theta_tmp, ll_args, msgs);
+                          + laplace_likelihood::log_likelihood(
+                              ll_fun, theta_tmp, ll_args, msgs);
       if (objective_new_tmp < objective_new) {
         a = a_tmp;
         theta = theta_tmp;
@@ -415,8 +416,10 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       VectorXd b = W * theta + theta_grad;
       Eigen::VectorXd a
           = b
-            - W_r * L.transpose().template triangularView<Eigen::Upper>().solve(
-                      L.template triangularView<Eigen::Lower>().solve(W_r * (covariance * b)));
+            - W_r
+                  * L.transpose().template triangularView<Eigen::Upper>().solve(
+                      L.template triangularView<Eigen::Lower>().solve(
+                          W_r * (covariance * b)));
       // Simple Newton step
       theta = covariance * a;
       objective_old = objective_new;
@@ -460,15 +463,14 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           = covariance.template selfadjointView<Eigen::Lower>().llt().matrixL();
       auto B = MatrixXd::Identity(theta_size, theta_size)
                + K_root.transpose() * W * K_root;
-      L = std::move(B).template selfadjointView<Eigen::Lower>()
-                              .llt()
-                              .matrixL();
+      L = std::move(B).template selfadjointView<Eigen::Lower>().llt().matrixL();
       const double B_log_determinant = 2.0 * L.diagonal().array().log().sum();
       auto b = W * theta + theta_grad;
-      a.noalias() = 
-          K_root.transpose().template triangularView<Eigen::Upper>().solve(
-            L.transpose().template triangularView<Eigen::Upper>().solve(
-              L.template triangularView<Eigen::Lower>().solve(K_root.transpose() * b)));
+      a.noalias()
+          = K_root.transpose().template triangularView<Eigen::Upper>().solve(
+              L.transpose().template triangularView<Eigen::Upper>().solve(
+                  L.template triangularView<Eigen::Lower>().solve(
+                      K_root.transpose() * b)));
       // Simple Newton step
       theta.noalias() = covariance * a;
       objective_old = objective_new;
@@ -684,10 +686,11 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                      std::ostream* msgs) {
   auto covar_args_refs = to_ref(std::forward<CovarTupleArgs>(covar_args));
   /*
-   * NOTE: ll_args are passed directly to marginal_density_est even if they are var types.
-   * These are used to tell the program which values need their adjoints taken for higher 
-   * order autodiff. But these adjoints are not put on the final ad tape.
-   */ 
+   * NOTE: ll_args are passed directly to marginal_density_est even if they are
+   * var types. These are used to tell the program which values need their
+   * adjoints taken for higher order autodiff. But these adjoints are not put on
+   * the final ad tape.
+   */
   auto md_est = laplace_marginal_density_est(
       ll_fun, ll_args, value_of(theta_0), covariance_function,
       value_of(covar_args_refs), options, msgs);
@@ -733,8 +736,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         = md_est.L.template triangularView<Eigen::Lower>().solve(
             md_est.K_root.transpose());
     std::tie(s2, partial_parm) = laplace_likelihood::compute_s2(
-        ll_fun, md_est.theta, (C.transpose() * C).eval(), options.hessian_block_size,
-        ll_args, msgs);
+        ll_fun, md_est.theta, (C.transpose() * C).eval(),
+        options.hessian_block_size, ll_args, msgs);
   } else {  // options.solver with LU decomposition
     LU_solve_covariance = md_est.LU.solve(md_est.covariance);
     R = md_est.W_r - md_est.W_r * LU_solve_covariance * md_est.W_r;
@@ -787,7 +790,10 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         v = LU_solve_covariance * s2;
       }
       auto ll_args_filter = stan::math::filter_map<is_any_var_scalar>(
-          [](auto&& arg) -> decltype(auto) { return std::forward<decltype(arg)>(arg); }, ll_args);
+          [](auto&& arg) -> decltype(auto) {
+            return std::forward<decltype(arg)>(arg);
+          },
+          ll_args);
       int i = 0;
       // This needs to be recursive so if any are tuples it just goes
       // recursively

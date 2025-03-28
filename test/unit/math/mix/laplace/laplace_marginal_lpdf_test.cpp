@@ -115,7 +115,6 @@ auto in_throw_list(T1&& test_values, T2&& test_arr) {
   return false;
 }
 
-
 TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::math::laplace_marginal_lpmf;
   using stan::math::laplace_marginal_tol_lpmf;
@@ -265,8 +264,6 @@ struct bernoulli_logit_likelihood {
   }
 };
 
-
-
 TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
   using stan::math::laplace_marginal_lpmf;
   using stan::math::laplace_marginal_tol_lpmf;
@@ -334,7 +331,7 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::ad_tolerances tols;
-                tols.gradient_grad_ = 1e-3;
+        tols.gradient_grad_ = 1e-3;
         stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
       }
     }
@@ -379,8 +376,7 @@ struct covariance_motorcycle_functor {
 
 struct normal_likelihood {
   template <typename Theta, typename YVec>
-  auto operator()(const Theta& theta, const YVec& y,
-                  const int delta_int,
+  auto operator()(const Theta& theta, const YVec& y, const int delta_int,
                   std::ostream* pstream) const {
     int n_obs = delta_int;
     Eigen::Matrix<stan::return_type_t<Theta>, -1, 1> mu(n_obs);
@@ -495,12 +491,12 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
             return laplace_marginal_tol_lpdf<false>(
                 normal_likelihood{}, std::forward_as_tuple(y_v, delta_int[0]),
                 theta0, covariance_motorcycle_functor{},
-                std::forward_as_tuple(x, phi_01_v(0), phi_01_v(0), phi_rest_v(0),
-                                      phi_rest_v(1), n_obs),
+                std::forward_as_tuple(x, phi_01_v(0), phi_01_v(0),
+                                      phi_rest_v(0), phi_rest_v(1), n_obs),
                 tolerance, max_num_steps, hessian_block_size, solver_num,
                 max_steps_line_search, nullptr);
           };
-          stan::test::ad_tolerances tols; 
+          stan::test::ad_tolerances tols;
           tols.gradient_grad_ = 1e-3;
           stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
         }

@@ -29,11 +29,11 @@ class nested_rev_autodiff {
  public:
   nested_rev_autodiff() { start_nested(); }
 
-  ~nested_rev_autodiff() { 
+  ~nested_rev_autodiff() {
     if constexpr (ClearAdjoints) {
       set_zero_all_adjoints_nested();
     }
-    recover_memory_nested(); 
+    recover_memory_nested();
   }
 
   // Prevent undesirable operations
