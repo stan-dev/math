@@ -10,7 +10,7 @@
 #include <fstream>
 #include <vector>
 
-TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
+TEST(laplace_marginal_beg_binomial_log_lpmf, phi_dim_2) {
   using stan::math::laplace_marginal_neg_binomial_2_log_lpmf;
   using stan::math::laplace_marginal_tol_neg_binomial_2_log_lpmf;
   using stan::math::to_vector;
