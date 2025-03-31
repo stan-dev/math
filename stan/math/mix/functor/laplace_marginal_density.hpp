@@ -637,6 +637,8 @@ inline void accumulate_adjoints(Output&& adjoints, Var&& ret, Input&& precalc) {
   }
 }
 
+
+
 /**
  * For a latent Gaussian model with global parameters phi, latent
  * variables theta, and observations y, this function computes
@@ -707,9 +709,8 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   arena_t<std::decay_t<Theta>> s2;
   if (options.solver == 1) {
     // TODO(Steve): Solve without casting from sparse to dense
-    Eigen::MatrixXd tmp
-        = md_est.L.template triangularView<Eigen::Lower>().solve(
-            md_est.W_r.toDense());
+    Eigen::MatrixXd tmp = 
+            md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r.toDense());
     R = tmp.transpose() * tmp;
     arena_t<Eigen::MatrixXd> C = mdivide_left_tri<Eigen::Lower>(
         md_est.L, md_est.W_r * md_est.covariance);

@@ -311,9 +311,6 @@ void read_data(int dim_observations, std::string data_directory,
   std::string file_y = data_directory + "y_vec.csv";
   std::string file_x = data_directory + "x_vec.csv";
 
-  // std::cout << "file_y: " << file_y << std::cout;
-  // printf(file_y.c_str());
-
   input_data.open(file_y);
   double buffer = 0.0;
   y.resize(dim_observations);
@@ -351,13 +348,6 @@ class laplace_disease_map_test : public ::testing::Test {
     y = stan::test::laplace::disease::y;
     ye = stan::test::laplace::disease::ye;
 
-    if (false) {
-      // look at some of the data
-      std::cout << "x_1: " << x1[0] << " " << x2[0] << std::endl
-                << "x_2: " << x1[1] << " " << x2[1] << std::endl
-                << "y_1: " << y[0] << " y_2: " << y[1] << std::endl
-                << "ye_1: " << ye[0] << " ye_2: " << ye[1] << std::endl;
-    }
 
     dim_x = 2;
     x.resize(dim_theta);
