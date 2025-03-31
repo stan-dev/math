@@ -348,7 +348,6 @@ class laplace_disease_map_test : public ::testing::Test {
     y = stan::test::laplace::disease::y;
     ye = stan::test::laplace::disease::ye;
 
-
     dim_x = 2;
     x.resize(dim_theta);
     for (int i = 0; i < dim_theta; i++) {
