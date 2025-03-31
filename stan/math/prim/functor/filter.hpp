@@ -22,7 +22,8 @@ namespace math {
  * @tparam Tuple A tuple
  * @param f functor callable
  * @param tup tuple of arguments
- * @return a tuple with the functor applied to each element which passed the filter.
+ * @return a tuple with the functor applied to each element which passed the
+ * filter.
  */
 template <template <typename...> class Filter, std::size_t Index = 0,
           typename F, typename Tuple>
@@ -37,10 +38,9 @@ inline constexpr auto filter_map(F&& f, Tuple&& tup) {
                         std::tuple_element_t<Index, std::decay_t<Tuple>>>) {
         // This will look like tuple(tuple(tuple(1, 2)), tuple(3, 4)) ->
         // tuple(tuple(1, 2), 3, 4)
-        return tuple_concat(
-          std::make_tuple(filter_map<Filter>(
+        return tuple_concat(std::make_tuple(filter_map<Filter>(
                                 f, std::get<Index>(std::forward<Tuple>(tup)))),
-                          filter_map<Filter, Index + 1>(
+                            filter_map<Filter, Index + 1>(
                                 std::forward<F>(f), std::forward<Tuple>(tup)));
       } else {
         return tuple_concat(partially_forward_as_tuple(

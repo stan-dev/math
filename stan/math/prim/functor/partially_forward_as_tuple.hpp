@@ -13,12 +13,14 @@ namespace math {
 /**
  * @brief Helper template to deduce the correct type for tuple elements.
  *
- * This template determines the type to store in a tuple when forwarding arguments.
- * - If the argument type T is an rvalue reference, the resulting type is the decayed
- *   type (i.e. cv-qualified types and references are removed) so that the tuple element
- *   becomes a value.
- * - If the argument type T is not an rvalue reference (typically deduced as an lvalue reference),
- *   then T&& will collapse to an lvalue reference, preserving the reference.
+ * This template determines the type to store in a tuple when forwarding
+ * arguments.
+ * - If the argument type T is an rvalue reference, the resulting type is the
+ * decayed type (i.e. cv-qualified types and references are removed) so that the
+ * tuple element becomes a value.
+ * - If the argument type T is not an rvalue reference (typically deduced as an
+ * lvalue reference), then T&& will collapse to an lvalue reference, preserving
+ * the reference.
  *
  * @tparam T The type to deduce.
  */
@@ -34,24 +36,30 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * @brief Partially forwards arguments into a tuple.
  *
  * Constructs a tuple from the provided arguments such that:
- * - If an argument is an xvalue (an rvalue), the tuple element will be a decayed value.
- * - If an argument is an lvalue (or const lvalue), the tuple element will maintain its reference type.
+ * - If an argument is an xvalue (an rvalue), the tuple element will be a
+ * decayed value.
+ * - If an argument is an lvalue (or const lvalue), the tuple element will
+ * maintain its reference type.
  *
- * This behavior ensures that temporaries are stored by value in the tuple while lvalues are preserved
- * as references. It is similar in intent to `std::forward_as_tuple`, with the difference in handling rvalues.
- * `std::forward_as_tuple` does not extend object lifetimes, so when an rvalue is passed to `std::forward_as_tuple`,
- * the resulting tuple element will be a reference to a temporary that is destroyed at the end of the statement.
- * This function ensures that rvalues are stored by value in the tuple, extending their lifetimes.
+ * This behavior ensures that temporaries are stored by value in the tuple while
+ * lvalues are preserved as references. It is similar in intent to
+ * `std::forward_as_tuple`, with the difference in handling rvalues.
+ * `std::forward_as_tuple` does not extend object lifetimes, so when an rvalue
+ * is passed to `std::forward_as_tuple`, the resulting tuple element will be a
+ * reference to a temporary that is destroyed at the end of the statement. This
+ * function ensures that rvalues are stored by value in the tuple, extending
+ * their lifetimes.
  *
  * @tparam Types Parameter pack representing the types of the arguments.
  * @param args The arguments to forward into the tuple.
- * @return A tuple containing the forwarded arguments with types deduced via deduce_cvr_t.
+ * @return A tuple containing the forwarded arguments with types deduced via
+ * deduce_cvr_t.
  *
  * @note The function is declared constexpr and noexcept.
  */
 template <typename... Types>
-inline constexpr std::tuple<deduce_cvr_t<Types&&>...> partially_forward_as_tuple(
-    Types&&... args) noexcept {
+inline constexpr std::tuple<deduce_cvr_t<Types&&>...>
+partially_forward_as_tuple(Types&&... args) noexcept {
   return {std::forward<Types>(args)...};
 }
 }  // namespace math

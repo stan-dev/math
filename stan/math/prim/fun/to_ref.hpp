@@ -26,9 +26,12 @@ inline ref_type_t<T&&> to_ref(T&& a) {
  */
 template <typename T, require_tuple_t<T>* = nullptr>
 inline auto to_ref(T&& a) {
-  return apply([](auto&&... args) { 
-    return partially_forward_as_tuple(to_ref(std::forward<decltype(args)>(args))...); 
-  }, std::forward<T>(a));
+  return apply(
+      [](auto&&... args) {
+        return partially_forward_as_tuple(
+            to_ref(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<T>(a));
 }
 
 /**

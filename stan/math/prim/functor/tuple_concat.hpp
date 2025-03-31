@@ -9,7 +9,8 @@
 
 /**
  * `tuple_concat` only exists because of a bug in clang-7's `std::tuple_cat`
- * If we move up to clang-8+, we can remove these functions and use `std::tuple_cat`
+ * If we move up to clang-8+, we can remove these functions and use
+ * `std::tuple_cat`
  */
 
 namespace stan {
@@ -80,7 +81,8 @@ inline auto tuple_concat(Tuple1&& x, Tuple2&& y) {
  * @param x First tuple
  * @param y Second tuple
  * @param z Third tuple
- * @return A tuple containing the elements of x followed by the elements of y and z
+ * @return A tuple containing the elements of x followed by the elements of y
+ * and z
  */
 template <typename Tuple1, typename Tuple2, typename Tuple3>
 inline auto tuple_concat(Tuple1&& x, Tuple2&& y, Tuple3&& z) {
@@ -102,7 +104,8 @@ inline auto tuple_concat(Tuple1&& x, Tuple2&& y, Tuple3&& z) {
  * @param x First tuple
  * @param y Second tuple
  * @param args Remaining tuples
- * @return A tuple containing the elements of x followed by the elements of y and the remaining tuples
+ * @return A tuple containing the elements of x followed by the elements of y
+ * and the remaining tuples
  */
 template <typename Tuple1, typename Tuple2, typename... OtherTuples>
 inline auto tuple_concat(Tuple1&& x, Tuple2&& y, OtherTuples&&... args) {
@@ -121,7 +124,8 @@ inline auto tuple_concat(Tuple1&& x, Tuple2&& y, OtherTuples&&... args) {
  * @param y Second tuple
  * @param z Third tuple
  * @param args Remaining tuples
- * @return A tuple containing the elements of x followed by the elements of y, z, and the remaining tuples
+ * @return A tuple containing the elements of x followed by the elements of y,
+ * z, and the remaining tuples
  */
 template <typename Tuple1, typename Tuple2, typename Tuple3,
           typename... OtherTuples>

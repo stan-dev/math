@@ -41,7 +41,7 @@ enum class COPY_TYPE { SHALLOW = 0, DEEP = 1 };
  * Conditional copy and promote a type's scalar type to a `PromotedType`.
  * @tparam Filter type trait with a static constexpr bool member `value`
  *  that is true if the type should be promoted. Otherwise, the type is
- *  left unchanged. 
+ *  left unchanged.
  * @tparam PromotedType type to promote the scalar to.
  * @tparam CopyType type of copy to perform.
  * @tparam Args variadic arguments.
@@ -311,7 +311,9 @@ inline auto log_likelihood(F&& f, const Theta& theta, TupleArgs&& ll_tup,
                            std::ostream* msgs) {
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
-        return internal::log_likelihood(std::forward<decltype(f)>(f), theta, std::forward<decltype(args)>(args)..., msgs);
+        return internal::log_likelihood(std::forward<decltype(f)>(f), theta,
+                                        std::forward<decltype(args)>(args)...,
+                                        msgs);
       },
       std::forward<TupleArgs>(ll_tup), std::forward<F>(f), theta, msgs);
 }
@@ -337,9 +339,12 @@ inline auto diff(F&& f, const Theta& theta,
   return apply(
       [](auto&& f, auto&& theta, auto hessian_block_size, auto* msgs,
          auto&&... args) {
-        return internal::diff(std::forward<decltype(f)>(f), theta, hessian_block_size, std::forward<decltype(args)>(args)..., msgs);
+        return internal::diff(std::forward<decltype(f)>(f), theta,
+                              hessian_block_size,
+                              std::forward<decltype(args)>(args)..., msgs);
       },
-      std::forward<TupleArgs>(ll_tuple), std::forward<F>(f), theta, hessian_block_size, msgs);
+      std::forward<TupleArgs>(ll_tuple), std::forward<F>(f), theta,
+      hessian_block_size, msgs);
 }
 
 /**
@@ -358,7 +363,9 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta,
                                   TupleArgs&& ll_args, std::ostream* msgs) {
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
-        return internal::third_diff(std::forward<decltype(f)>(f), theta, std::forward<decltype(args)>(args)..., msgs);
+        return internal::third_diff(std::forward<decltype(f)>(f), theta,
+                                    std::forward<decltype(args)>(args)...,
+                                    msgs);
       },
       std::forward<TupleArgs>(ll_args), std::forward<F>(f), theta, msgs);
 }
@@ -385,10 +392,12 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
   return apply(
       [](auto&& f, auto&& theta, auto&& A, auto hessian_block_size, auto* msgs,
          auto&&... args) {
-        return internal::compute_s2(std::forward<decltype(f)>(f), theta, A, hessian_block_size, std::forward<decltype(args)>(args)...,
-                                    msgs);
+        return internal::compute_s2(
+            std::forward<decltype(f)>(f), theta, A, hessian_block_size,
+            std::forward<decltype(args)>(args)..., msgs);
       },
-      std::forward<TupleArgs>(ll_args), std::forward<F>(f), theta, A, hessian_block_size, msgs);
+      std::forward<TupleArgs>(ll_args), std::forward<F>(f), theta, A,
+      hessian_block_size, msgs);
 }
 
 /**
@@ -409,7 +418,9 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
                               TupleArgs&& ll_args, std::ostream* msgs) {
   return apply(
       [](auto&& f, auto&& v, auto&& theta, auto&& msgs, auto&&... args) {
-        return internal::diff_eta_implicit(std::forward<decltype(f)>(f), v, theta, std::forward<decltype(args)>(args)..., msgs);
+        return internal::diff_eta_implicit(
+            std::forward<decltype(f)>(f), v, theta,
+            std::forward<decltype(args)>(args)..., msgs);
       },
       std::forward<TupleArgs>(ll_args), std::forward<F>(f), v, theta, msgs);
 }

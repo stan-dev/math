@@ -43,7 +43,8 @@ inline constexpr auto apply_if(F&& f, Tuple&& arg) {
   return stan::math::apply(
       [](auto&& f, auto&&... args) {
         return partially_forward_as_tuple(internal::filter_fun<Filter>(
-            std::forward<decltype(f)>(f), std::forward<decltype(args)>(args))...);
+            std::forward<decltype(f)>(f),
+            std::forward<decltype(args)>(args))...);
       },
       std::forward<Tuple>(arg), std::forward<F>(f));
 }
