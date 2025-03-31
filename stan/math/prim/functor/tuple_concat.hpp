@@ -7,6 +7,11 @@
 #include <tuple>
 #include <utility>
 
+/**
+ * `tuple_concat` only exists because of a bug in clang-7's `std::tuple_cat`
+ * If we move up to clang-8+, we can remove these functions and use `std::tuple_cat`
+ */
+
 namespace stan {
 namespace math {
 namespace internal {
@@ -39,11 +44,24 @@ inline auto constexpr tuple_concat_impl(Tuple1&& x, Tuple2&& y, Tuple3&& z,
 }
 }  // namespace internal
 
+/**
+ * Base case to pass a tupel forward.
+ * @tparam Tuple Tuple type.
+ * @param x Tuple.
+ */
 template <typename Tuple>
 inline auto tuple_concat(Tuple&& x) {
   return std::forward<Tuple>(x);
 }
 
+/**
+ * Concatenates two tuples
+ * @tparam Tuple1 First tuple type
+ * @tparam Tuple2 Second tuple type
+ * @param x First tuple
+ * @param y Second tuple
+ * @return A tuple containing the elements of x followed by the elements of y
+ */
 template <typename Tuple1, typename Tuple2>
 inline auto tuple_concat(Tuple1&& x, Tuple2&& y) {
   return internal::tuple_concat_impl(
@@ -54,6 +72,16 @@ inline auto tuple_concat(Tuple1&& x, Tuple2&& y) {
           std::tuple_size<std::remove_reference_t<Tuple2>>{}>{});
 }
 
+/**
+ * Concatenates three tuples.
+ * @tparam Tuple1 First tuple type
+ * @tparam Tuple2 Second tuple type
+ * @tparam Tuple3 Third tuple type
+ * @param x First tuple
+ * @param y Second tuple
+ * @param z Third tuple
+ * @return A tuple containing the elements of x followed by the elements of y and z
+ */
 template <typename Tuple1, typename Tuple2, typename Tuple3>
 inline auto tuple_concat(Tuple1&& x, Tuple2&& y, Tuple3&& z) {
   return internal::tuple_concat_impl(
@@ -66,6 +94,16 @@ inline auto tuple_concat(Tuple1&& x, Tuple2&& y, Tuple3&& z) {
           std::tuple_size<std::remove_reference_t<Tuple2>>{}>{});
 }
 
+/**
+ * Concatenates multiple tuples.
+ * @tparam Tuple1 First tuple type
+ * @tparam Tuple2 Second tuple type
+ * @tparam OtherTuples Remaining tuple types
+ * @param x First tuple
+ * @param y Second tuple
+ * @param args Remaining tuples
+ * @return A tuple containing the elements of x followed by the elements of y and the remaining tuples
+ */
 template <typename Tuple1, typename Tuple2, typename... OtherTuples>
 inline auto tuple_concat(Tuple1&& x, Tuple2&& y, OtherTuples&&... args) {
   return tuple_concat(
@@ -73,6 +111,18 @@ inline auto tuple_concat(Tuple1&& x, Tuple2&& y, OtherTuples&&... args) {
       std::forward<OtherTuples>(args)...);
 }
 
+/**
+ * Concatenates multiple tuples.
+ * @tparam Tuple1 First tuple type
+ * @tparam Tuple2 Second tuple type
+ * @tparam Tuple3 Third tuple type
+ * @tparam OtherTuples Remaining tuple types
+ * @param x First tuple
+ * @param y Second tuple
+ * @param z Third tuple
+ * @param args Remaining tuples
+ * @return A tuple containing the elements of x followed by the elements of y, z, and the remaining tuples
+ */
 template <typename Tuple1, typename Tuple2, typename Tuple3,
           typename... OtherTuples>
 inline auto tuple_concat(Tuple1&& x, Tuple2&& y, Tuple3&& z,

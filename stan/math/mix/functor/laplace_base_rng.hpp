@@ -77,8 +77,7 @@ inline Eigen::VectorXd laplace_base_rng(
       std::tuple_cat(covar_args_val, std::forward<PredTuple>(pred_tuple)));
   VectorXd pred_mean = covariance_pred * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
-    Eigen::MatrixXd V_dec = mdivide_left_tri<Eigen::Lower>(
-        md_est.L, md_est.W_r * covariance_pred);
+    Eigen::MatrixXd V_dec = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r * covariance_pred);
     Eigen::MatrixXd Sigma = covariance_pred - V_dec.transpose() * V_dec;
     return multi_normal_rng(pred_mean, Sigma, rng);
   } else {
