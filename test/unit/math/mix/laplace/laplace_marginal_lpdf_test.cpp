@@ -178,8 +178,8 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
          hessian_block_size++) {
       for (int max_steps_line_search = 0; max_steps_line_search < 4;
            ++max_steps_line_search) {
-        // logger->update_laplace_info(solver_num, hessian_block_size, max_steps_line_search);
-        auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
+        // logger->update_laplace_info(solver_num, hessian_block_size,
+max_steps_line_search); auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
@@ -306,7 +306,8 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
           std::cout << "----------" << std::endl;
           std::cout << "max_steps_line_search: " << max_steps_line_search
                     << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size << std::endl;
+          std::cout << "hessian_block_size: " << hessian_block_size
+                    << std::endl;
           std::cout << "solver_num: " << solver_num << std::endl;
         }
       }
@@ -439,19 +440,20 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
          hessian_block_size++) {
       for (int max_steps_line_search = 100; max_steps_line_search <= 500;
            max_steps_line_search += 100) {
-        // logger->update_laplace_info(solver_num, hessian_block_size, max_steps_line_search);
-          auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
-            return laplace_marginal_tol_lpdf<false>(
-                normal_likelihood{}, std::forward_as_tuple(y_v, delta_int[0]),
-                theta0, covariance_motorcycle_functor{},
-                std::forward_as_tuple(x, phi_01_v(0), phi_01_v(0),
-                                      phi_rest_v(0), phi_rest_v(1), n_obs),
-                tolerance, max_num_steps, hessian_block_size, solver_num,
-                max_steps_line_search, nullptr);
-          };
-          stan::test::ad_tolerances tols;
-          tols.gradient_grad_ = 1e-3;
-          stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
+        // logger->update_laplace_info(solver_num, hessian_block_size,
+        // max_steps_line_search);
+        auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
+          return laplace_marginal_tol_lpdf<false>(
+              normal_likelihood{}, std::forward_as_tuple(y_v, delta_int[0]),
+              theta0, covariance_motorcycle_functor{},
+              std::forward_as_tuple(x, phi_01_v(0), phi_01_v(0), phi_rest_v(0),
+                                    phi_rest_v(1), n_obs),
+              tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
+        };
+        stan::test::ad_tolerances tols;
+        tols.gradient_grad_ = 1e-3;
+        stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
       }
     }
   }
@@ -507,7 +509,8 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
          hessian_block_size++) {
       for (int max_steps_line_search = 0; max_steps_line_search < 5;
            ++max_steps_line_search) {
-        // logger->update_laplace_info(solver_num, hessian_block_size, max_steps_line_search);
+        // logger->update_laplace_info(solver_num, hessian_block_size,
+        // max_steps_line_search);
         try {
           auto f = [&](auto&& eta_v, auto&& phi_0, auto&& phi) {
             return laplace_marginal_tol_lpdf<false>(

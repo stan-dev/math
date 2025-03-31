@@ -784,8 +784,9 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   arena_t<std::decay_t<Theta>> s2;
   if (options.solver == 1) {
     // TODO(Steve): Solve without casting from sparse to dense
-    Eigen::MatrixXd tmp = 
-            md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r.toDense());
+    Eigen::MatrixXd tmp
+        = md_est.L.template triangularView<Eigen::Lower>().solve(
+            md_est.W_r.toDense());
     R = tmp.transpose() * tmp;
     arena_t<Eigen::MatrixXd> C = md_est.L.template triangularView<Eigen::Lower>().solve(md_est.W_r * md_est.covariance);
     if (!ll_args_contain_var && options.hessian_block_size == 1) {
