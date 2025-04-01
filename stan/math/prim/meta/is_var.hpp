@@ -16,6 +16,10 @@ struct is_var : std::false_type {};
 template <typename T>
 using has_var_scalar_type = is_var<scalar_type_t<T>>;
 
+template <typename T>
+inline constexpr bool is_var_v = is_var<T>::value;
+
+
 namespace internal {
 
 template <typename... Types>

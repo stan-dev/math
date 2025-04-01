@@ -2,6 +2,7 @@
 #define STAN_MATH_PRIM_META_PLAIN_TYPE_HPP
 
 #include <stan/math/prim/meta/is_eigen.hpp>
+#include <stan/math/prim/meta/is_tuple.hpp>
 #include <stan/math/prim/meta/is_detected.hpp>
 #include <stan/math/prim/meta/is_var_matrix.hpp>
 #include <type_traits>
@@ -19,7 +20,7 @@ struct plain_type {
 };
 
 template <typename T>
-using plain_type_t = typename plain_type<T>::type;
+using plain_type_t = typename plain_type<std::decay_t<T>>::type;
 
 /**
  * Determines return type of calling \c .eval() on Eigen expression.
@@ -79,6 +80,11 @@ struct plain_type<
                                && internal::has_plain_object<T>::value
                                && is_eigen<T>::value>>> {
   using type = typename std::decay_t<T>::PlainObject;
+};
+
+template <typename... Types>
+struct plain_type<std::tuple<Types...>> {
+  using type = std::tuple<typename plain_type<std::decay_t<Types>>::type...>;
 };
 
 }  // namespace stan

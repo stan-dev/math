@@ -24,6 +24,9 @@ template <typename Container>
 using is_container = bool_constant<
     math::disjunction<is_eigen<Container>, is_std_vector<Container>>::value>;
 
+template <typename T>
+inline constexpr bool is_container_v = is_container<std::decay_t<T>>::value;
+
 /*! \ingroup general_types */
 /*! \defgroup container_types container  */
 /*! \addtogroup container_types */

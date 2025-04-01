@@ -20,6 +20,9 @@ template <typename T>
 struct is_eigen
     : bool_constant<is_base_pointer_convertible<Eigen::EigenBase, T>::value> {};
 
+template <typename T>
+inline constexpr bool is_eigen_v = is_eigen<T>::value;
+
 namespace internal {
 // primary template handles types that have no nested ::type member:
 template <class, class = void>
