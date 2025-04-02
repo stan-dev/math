@@ -5,7 +5,7 @@
 #include <stan/math/prim/err.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/logit.hpp>
+#include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <cmath>
 
@@ -28,20 +28,20 @@ namespace math {
  */
 template <typename Vec, require_eigen_vector_t<Vec>* = nullptr>
 inline plain_type_t<Vec> simplex_free(const Vec& x) {
-  using std::log;
   using T = value_type_t<Vec>;
 
   const auto& x_ref = to_ref(x);
   check_simplex("stan::math::simplex_free", "Simplex variable", x_ref);
   Eigen::Index Km1 = x_ref.size() - 1;
   plain_type_t<Vec> y(Km1);
-  T stick_len = x_ref.coeff(Km1);
-  for (Eigen::Index k = Km1; --k >= 0;) {
-    stick_len += x_ref.coeff(k);
-    T z_k = x_ref.coeff(k) / stick_len;
-    y.coeffRef(k) = logit(z_k) + log(Km1 - k);
-    // note: log(Km1 - k) = logit(1.0 / (Km1 + 1 - k));
+
+  T cumsum = 0.0;
+  for (int i = 0; i < Km1; ++i) {
+    cumsum += log(x_ref.coeff(i));
+    double n = static_cast<double>(i + 1);
+    y.coeffRef(i) = (cumsum - n * log(x_ref.coeff(i + 1))) / sqrt(n * (n + 1));
   }
+
   return y;
 }
 
