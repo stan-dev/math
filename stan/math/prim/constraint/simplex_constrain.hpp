@@ -132,6 +132,7 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
     z.coeffRef(i) = exp(z.coeff(i) - max_val) / d;
   }
 
+  // equivalent to z.log().sum() + 0.5 * log(N + 1)
   lp += -(N + 1) * (max_val + log(d)) + 0.5 * log(N + 1);
 
   return z;
