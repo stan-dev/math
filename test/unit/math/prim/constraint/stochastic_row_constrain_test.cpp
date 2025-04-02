@@ -40,7 +40,8 @@
 //       stan::math::stochastic_row_constrain<false>(x, lp));
 //   EXPECT_MATRIX_NEAR(x, x_test, 1e-9);
 
-//   Matrix<double, Dynamic, Dynamic> x_lp_test = stan::math::stochastic_row_free(
+//   Matrix<double, Dynamic, Dynamic> x_lp_test =
+//   stan::math::stochastic_row_free(
 //       stan::math::stochastic_row_constrain<true>(x, lp));
 //   EXPECT_MATRIX_NEAR(x, x_lp_test, 1e-9);
 // }

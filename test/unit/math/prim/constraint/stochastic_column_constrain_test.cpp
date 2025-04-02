@@ -36,7 +36,8 @@
 //     x(i) = static_cast<double>(i);
 //   }
 //   double lp = 0;
-//   Matrix<double, Dynamic, Dynamic> x_test = stan::math::stochastic_column_free(
+//   Matrix<double, Dynamic, Dynamic> x_test =
+//   stan::math::stochastic_column_free(
 //       stan::math::stochastic_column_constrain<false>(x, lp));
 //   EXPECT_MATRIX_NEAR(x, x_test, 1e-9);
 
