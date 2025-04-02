@@ -1,13 +1,14 @@
 #ifndef STAN_MATH_REV_CONSTRAINT_SIMPLEX_CONSTRAIN_HPP
 #define STAN_MATH_REV_CONSTRAINT_SIMPLEX_CONSTRAIN_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
 #include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/log1p_exp.hpp>
+#include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
+#include <stan/math/prim/fun/softmax.hpp>
+#include <stan/math/prim/fun/log_softmax.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
