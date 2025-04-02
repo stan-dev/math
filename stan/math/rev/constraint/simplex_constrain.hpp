@@ -21,8 +21,8 @@ namespace math {
  * to 0 that sum to 1.  A vector with (K-1) unconstrained values
  * will produce a simplex of size K.
  *
- * The simplex transform is defined using the Isometric Log Ratio
- * transform (ILR). This is equilvalent to
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform. This is equivalent to
  * `softmax(sum_to_zero_constrain(y))`.
  *
  * @tparam T Type of vector to constrain
@@ -39,8 +39,8 @@ inline auto simplex_constrain(const T& y) {
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
- * The simplex transform is defined using the Isometric Log Ratio
- * transform (ILR). This is equilvalent to
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform. This is equivalent to
  * `softmax(sum_to_zero_constrain(y))`.
  *
  * @tparam T type of the vector to constrain

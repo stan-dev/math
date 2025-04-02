@@ -17,8 +17,8 @@ namespace math {
  * the specified simplex.  It applies to a simplex of dimensionality
  * K and produces an unconstrained vector of dimensionality (K-1).
  *
- * <p>The simplex transform is defined through a centered
- * stick-breaking process.
+ * The simplex transform is defined using isometric log ratio (ILR)
+ * transform
  *
  * @tparam ColVec type of the simplex (must be a column vector)
  * @param x Simplex of dimensionality K.
