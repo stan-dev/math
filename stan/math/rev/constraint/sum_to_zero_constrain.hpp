@@ -23,8 +23,8 @@ namespace internal {
  * simplex_constrain.
  */
 template <typename T>
-void sum_to_zero_vector_backprop(T&& arena_y, Eigen::VectorXd z_adj) {
-  const auto N = arena_y.size();
+void sum_to_zero_vector_backprop(T&& y_adj, const Eigen::VectorXd& z_adj) {
+  const auto N = y_adj.size();
 
   double sum_u_adj = 0;
   for (int i = 0; i < N; ++i) {
@@ -38,7 +38,7 @@ void sum_to_zero_vector_backprop(T&& arena_y, Eigen::VectorXd z_adj) {
 
     double w_adj = v_adj + sum_u_adj;
 
-    arena_y.adj().coeffRef(i) += w_adj / sqrt(n * (n + 1));
+    y_adj.coeffRef(i) += w_adj / sqrt(n * (n + 1));
   }
 }
 
@@ -78,7 +78,7 @@ inline auto sum_to_zero_constrain(T&& y) {
   arena_t<ret_type> arena_z = sum_to_zero_constrain(arena_y.val());
 
   reverse_pass_callback([arena_y, arena_z]() mutable {
-    internal::sum_to_zero_vector_backprop(arena_y, arena_z.adj());
+    internal::sum_to_zero_vector_backprop(arena_y.adj(), arena_z.adj());
   });
 
   return arena_z;

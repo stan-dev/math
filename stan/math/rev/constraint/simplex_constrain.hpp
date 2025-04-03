@@ -44,13 +44,12 @@ inline auto simplex_constrain(const T& y) {
   reverse_pass_callback([arena_y, arena_x]() mutable {
     const auto& res_val = to_ref(arena_x.val());
 
-    Eigen::VectorXd x_pre_softmax_adj = Eigen::VectorXd::Zero(res_val.size());
     // backprop for softmax
-    x_pre_softmax_adj += -res_val * arena_x.adj().dot(res_val)
-                         + res_val.cwiseProduct(arena_x.adj());
+    Eigen::VectorXd x_pre_softmax_adj = -res_val * arena_x.adj().dot(res_val)
+                                        + res_val.cwiseProduct(arena_x.adj());
 
     // backprop for sum_to_zero_constrain
-    internal::sum_to_zero_vector_backprop(arena_y, x_pre_softmax_adj);
+    internal::sum_to_zero_vector_backprop(arena_y.adj(), x_pre_softmax_adj);
   });
 
   return ret_type(arena_x);
@@ -91,13 +90,12 @@ inline auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
     // backprop for log jacobian contribution to log density
     arena_x.adj().array() += lp.adj() / res_val.array();
 
-    Eigen::VectorXd x_pre_softmax_adj = Eigen::VectorXd::Zero(res_val.size());
     // backprop for softmax
-    x_pre_softmax_adj += -res_val * arena_x.adj().dot(res_val)
-                         + res_val.cwiseProduct(arena_x.adj());
+    Eigen::VectorXd x_pre_softmax_adj = -res_val * arena_x.adj().dot(res_val)
+                                        + res_val.cwiseProduct(arena_x.adj());
 
     // backprop for sum_to_zero_constrain
-    internal::sum_to_zero_vector_backprop(arena_y, x_pre_softmax_adj);
+    internal::sum_to_zero_vector_backprop(arena_y.adj(), x_pre_softmax_adj);
   });
 
   return ret_type(arena_x);
