@@ -5,10 +5,8 @@
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core/reverse_pass_callback.hpp>
 #include <stan/math/rev/core/arena_matrix.hpp>
-#include <stan/math/rev/fun/value_of.hpp>
-#include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
-#include <stan/math/prim/fun/softmax.hpp>
-#include <stan/math/prim/fun/log_softmax.hpp>
+#include <stan/math/rev/constraint/sum_to_zero_constrain.hpp>
+#include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>
 #include <tuple>
 #include <vector>
@@ -32,7 +30,30 @@ namespace math {
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
 inline auto simplex_constrain(const T& y) {
-  return softmax(sum_to_zero_constrain(y));
+  using ret_type = plain_type_t<T>;
+
+  const auto N = y.size();
+  arena_t<T> arena_y = y;
+
+  arena_t<ret_type> arena_x = simplex_constrain(arena_y.val());
+
+  if (unlikely(N == 0)) {
+    return ret_type(arena_x);
+  }
+
+  reverse_pass_callback([arena_y, arena_x]() mutable {
+    const auto& res_val = to_ref(arena_x.val());
+
+    Eigen::VectorXd x_pre_softmax_adj = Eigen::VectorXd::Zero(res_val.size());
+    // backprop for softmax
+    x_pre_softmax_adj += -res_val * arena_x.adj().dot(res_val)
+                         + res_val.cwiseProduct(arena_x.adj());
+
+    // backprop for sum_to_zero_constrain
+    internal::sum_to_zero_vector_backprop(arena_y, x_pre_softmax_adj);
+  });
+
+  return ret_type(arena_x);
 }
 
 /**
@@ -50,16 +71,36 @@ inline auto simplex_constrain(const T& y) {
  * @return Simplex of dimensionality N + 1.
  */
 template <typename T, require_rev_col_vector_t<T>* = nullptr>
-auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
+inline auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
   using ret_type = plain_type_t<T>;
 
-  arena_t<ret_type> log_x = log_softmax(sum_to_zero_constrain(y));
+  const auto N = y.size();
+  arena_t<T> arena_y = y;
 
-  const auto N = y.size() + 1;
+  double lp_val = 0.0;
+  arena_t<ret_type> arena_x = simplex_constrain(arena_y.val(), lp_val);
+  lp += lp_val;
 
-  lp += sum(log_x) + 0.5 * log(N);
+  if (unlikely(N == 0)) {
+    return ret_type(arena_x);
+  }
 
-  return ret_type(exp(log_x));
+  reverse_pass_callback([arena_y, arena_x, lp]() mutable {
+    const auto& res_val = to_ref(arena_x.val());
+
+    // backprop for log jacobian contribution to log density
+    arena_x.adj().array() += lp.adj() / res_val.array();
+
+    Eigen::VectorXd x_pre_softmax_adj = Eigen::VectorXd::Zero(res_val.size());
+    // backprop for softmax
+    x_pre_softmax_adj += -res_val * arena_x.adj().dot(res_val)
+                         + res_val.cwiseProduct(arena_x.adj());
+
+    // backprop for sum_to_zero_constrain
+    internal::sum_to_zero_vector_backprop(arena_y, x_pre_softmax_adj);
+  });
+
+  return ret_type(arena_x);
 }
 
 }  // namespace math
