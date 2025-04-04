@@ -67,8 +67,8 @@ inline plain_type_t<T> stochastic_row_constrain(const T& y) {
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
- * The simplex transform is defined through a centered
- * stick-breaking process.
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam T type of the matrix to constrain
  * @param y Free matrix input of dimensionality (N, K).

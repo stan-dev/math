@@ -17,7 +17,8 @@ namespace math {
 
 /**
  * Return a column stochastic matrix.
- * The transform is based on a centered stick-breaking process.
+ * The transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam T Type of matrix to constrain
  * @param y Free matrix input of dimensionality (K - 1, M)
@@ -71,8 +72,8 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y) {
  * and increment the specified log probability reference with
  * the log absolute Jacobian determinant of the transform.
  *
- * The simplex transform is defined through a centered
- * stick-breaking process.
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam T type of the matrix to constrain
  * @param y Free matrix input of dimensionality N, K.
