@@ -53,7 +53,7 @@ template <template <typename...> class Filter,
           typename PromotedType = stan::math::var,
           COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
 inline auto conditional_copy_and_promote(Args&&... args) {
-  return apply_if<Filter>(
+  return map_if<Filter>(
       [](auto&& arg) {
         if constexpr (is_tuple<std::decay_t<decltype(arg)>>::value) {
           return conditional_copy_and_promote<Filter, PromotedType, CopyType>(
@@ -91,7 +91,7 @@ inline auto diff(F&& f, const Theta& theta,
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
   auto [theta_gradient, eta_gradient] = [&theta, &f](auto&&... args) {
-    nested_rev_autodiff<true> nested;
+    nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
     // TODO(Steve): Is it better to deep copy or reset all adjoints to zero?
     auto hard_copy_args
@@ -140,15 +140,18 @@ inline auto diff(F&& f, const Theta& theta,
  */
 template <typename F, typename Theta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr>
+          // TODO(Steve): Thiis has a std::basic_ostream at the end...
+//          require_all_t<is_all_arithmetic_scalar<Args>...>* = nullptr>
+// Do this for the tuple version...
 inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Args&&... args) {
-  nested_rev_autodiff<true> nested;
+  nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = theta;
   Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
   for (Eigen::Index i = 0; i < theta_size; ++i) {
     theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
   }
-  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, value_of(args)...);
+  fvar<fvar<var>> ftheta_ffvar = f(theta_ffvar, args...);
   grad(ftheta_ffvar.d_.d_.vi_);
   return theta_var.adj().eval();
 }
@@ -174,7 +177,7 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
 
-  nested_rev_autodiff<true> nested;
+  nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
   Matrix<var, Dynamic, 1> theta_var = theta;
   int n_blocks = theta_size / hessian_block_size;
@@ -237,7 +240,7 @@ inline auto promote_scalar_fv(T&& arg) {
       }
     }
   } else if constexpr (is_tuple<T>::value) {
-    return apply_if<is_any_var_scalar>(
+    return map_if<is_any_var_scalar>(
         [](auto&& args) {
           return promote_scalar_fv(std::forward<decltype(args)>(args));
         },
@@ -265,7 +268,7 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
   if constexpr (!contains_var) {
     return std::make_tuple();
   }
-  nested_rev_autodiff<true> nested;
+  nested_rev_autodiff nested;
   auto copy_vargs
       = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
           args...);

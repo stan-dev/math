@@ -3,6 +3,7 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
+
 namespace stan {
 namespace math {
 
