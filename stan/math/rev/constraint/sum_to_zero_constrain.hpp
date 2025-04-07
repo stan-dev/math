@@ -21,6 +21,10 @@ namespace internal {
  * The reverse pass backprop for the sum_to_zero_constrain on
  * vectors. This is separated out so it can also be called by
  * simplex_constrain.
+ *
+ * @tparam T type of the adjoint vector
+ * @param y_adj The adjoint of the free vector (size N)
+ * @param z_adj The adjoint of the zero-sum vector (size N + 1)
  */
 template <typename T>
 void sum_to_zero_vector_backprop(T&& y_adj, const Eigen::VectorXd& z_adj) {

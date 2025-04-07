@@ -65,9 +65,7 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y) {
   max_val = fmax(max_val_old, z.coeff(0));
   d = d * exp(max_val_old - max_val) + exp(z.coeff(0) - max_val);
 
-  for (int i = 0; i <= N; ++i) {
-    z.coeffRef(i) = exp(z.coeff(i) - max_val) / d;
-  }
+  z.array() = (z.array() - max_val).exp() / d;
 
   return z;
 }
@@ -128,9 +126,7 @@ inline plain_type_t<Vec> simplex_constrain(const Vec& y, Lp& lp) {
   max_val = fmax(max_val_old, z.coeff(0));
   d = d * exp(max_val_old - max_val) + exp(z.coeff(0) - max_val);
 
-  for (int i = 0; i <= N; ++i) {
-    z.coeffRef(i) = exp(z.coeff(i) - max_val) / d;
-  }
+  z.array() = (z.array() - max_val).exp() / d;
 
   // equivalent to z.log().sum() + 0.5 * log(N + 1)
   lp += -(N + 1) * (max_val + log(d)) + 0.5 * log(N + 1);

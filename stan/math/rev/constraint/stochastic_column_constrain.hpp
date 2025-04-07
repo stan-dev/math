@@ -41,12 +41,13 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y) {
   reverse_pass_callback([arena_y, arena_x]() mutable {
     const auto M = arena_y.cols();
 
-    const auto& x_val = to_ref(arena_x.val_op());
-    const auto& x_adj = to_ref(arena_x.adj_op());
+    auto&& x_val = arena_x.val_op();
+    auto&& x_adj = arena_x.adj_op();
 
+    Eigen::VectorXd x_pre_softmax_adj(x_val.rows());
     for (Eigen::Index i = 0; i < M; ++i) {
       // backprop for softmax
-      Eigen::VectorXd x_pre_softmax_adj
+      x_pre_softmax_adj.noalias()
           = -x_val.col(i) * x_adj.col(i).dot(x_val.col(i))
             + x_val.col(i).cwiseProduct(x_adj.col(i));
 
@@ -93,16 +94,17 @@ inline plain_type_t<T> stochastic_column_constrain(const T& y,
   reverse_pass_callback([arena_y, arena_x, lp]() mutable {
     const auto M = arena_y.cols();
 
-    const auto& x_val = to_ref(arena_x.val_op());
+    auto&& x_val = arena_x.val_op();
 
     // backprop for log jacobian contribution to log density
     arena_x.adj().array() += lp.adj() / x_val.array();
 
-    const auto& x_adj = to_ref(arena_x.adj_op());
+    auto&& x_adj = arena_x.adj_op();
 
+    Eigen::VectorXd x_pre_softmax_adj(x_val.rows());
     for (Eigen::Index i = 0; i < M; ++i) {
       // backprop for softmax
-      Eigen::VectorXd x_pre_softmax_adj
+      x_pre_softmax_adj.noalias()
           = -x_val.col(i) * x_adj.col(i).dot(x_val.col(i))
             + x_val.col(i).cwiseProduct(x_adj.col(i));
 
