@@ -60,6 +60,14 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
+        if (::testing::Test::HasFailure()) {
+          std::cout << "----------" << std::endl;
+          std::cout << "max_steps_line_search: " << max_steps_line_search
+                    << std::endl;
+          std::cout << "hessian_block_size: " << hessian_block_size
+                    << std::endl;
+          std::cout << "solver_num: " << solver_num << std::endl;
+        }
       }
     }
   }

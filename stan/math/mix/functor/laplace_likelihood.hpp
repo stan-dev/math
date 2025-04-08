@@ -56,13 +56,16 @@ inline auto conditional_copy_and_promote(Args&&... args) {
   return map_if<Filter>(
       [](auto&& arg) {
         if constexpr (is_tuple<std::decay_t<decltype(arg)>>::value) {
-          return conditional_copy_and_promote<Filter, PromotedType, CopyType>(
-              std::forward<decltype(arg)>(arg));
+          return stan::math::apply([](auto&&... args){
+            return partially_forward_as_tuple(
+              conditional_copy_and_promote<Filter, PromotedType, CopyType>(
+                std::forward<decltype(args)>(args))...);
+          }, std::forward<decltype(arg)>(arg));
         } else {
           if constexpr (CopyType == COPY_TYPE::DEEP) {
             return stan::math::eval(promote_scalar<PromotedType>(
                 value_of_rec(std::forward<decltype(arg)>(arg))));
-          } else {
+          } else if (CopyType == COPY_TYPE::SHALLOW) {
             return stan::math::eval(
                 promote_scalar<PromotedType>(std::forward<decltype(arg)>(arg)));
           }
@@ -90,26 +93,12 @@ inline auto diff(F&& f, const Theta& theta,
   using Eigen::Dynamic;
   using Eigen::Matrix;
   const Eigen::Index theta_size = theta.size();
-  auto [theta_gradient, eta_gradient] = [&theta, &f](auto&&... args) {
+  auto theta_gradient = [&theta, &f](auto&&... args) {
     nested_rev_autodiff nested;
     Matrix<var, Dynamic, 1> theta_var = theta;
-    // TODO(Steve): Is it better to deep copy or reset all adjoints to zero?
-    auto hard_copy_args
-        = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
-            args...);
-    var f_var = stan::math::apply(
-        [](auto&& f, auto&& theta_var, auto&&... inner_args) {
-          return f(theta_var, inner_args...);
-        },
-        hard_copy_args, f, theta_var);
+    var f_var = f(theta_var, args...);
     grad(f_var.vi_);
-    return std::make_pair(theta_var.adj().eval(),
-                          stan::math::filter_map<is_any_var_scalar>(
-                              [](auto&& arg) {
-                                return stan::math::eval(
-                                    get_adj(std::forward<decltype(arg)>(arg)));
-                              },
-                              hard_copy_args));
+    return theta_var.adj().eval();
   }(args...);
   if (hessian_block_size == 1) {
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
@@ -120,11 +109,11 @@ inline auto diff(F&& f, const Theta& theta,
     for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian_theta.insert(i, i) = hessian_v(i);
     }
-    return std::make_tuple(std::move(theta_gradient), std::move(eta_gradient),
+    return std::make_pair(std::move(theta_gradient),
                            (-hessian_theta).eval());
   } else {
-    return std::make_tuple(
-        std::move(theta_gradient), std::move(eta_gradient),
+    return std::make_pair(
+        std::move(theta_gradient),
         (-hessian_block_diag(f, theta, hessian_block_size, value_of(args)...))
             .eval());
   }
@@ -168,9 +157,9 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Args&&... args) {
  *                           is block diagonal, size of each block.
  * @param args Variational arguments for likelihood function.
  */
-template <typename F, typename Theta, typename... Args,
+template <typename F, typename Theta, typename AMat, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr>
-inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
+inline auto compute_s2(F&& f, const Theta& theta, AMat&& A,
                        const int hessian_block_size, Args&&... args) {
   using Eigen::Dynamic;
   using Eigen::Matrix;
@@ -183,10 +172,10 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
   int n_blocks = theta_size / hessian_block_size;
   VectorXd v(theta_size);
   VectorXd w(theta_size);
-  auto copy_vargs
-      = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
-          args...);
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
+    auto shallow_copy_args
+        = conditional_copy_and_promote<is_any_var_scalar, fvar<fvar<var>>,
+                                       COPY_TYPE::SHALLOW>(std::forward_as_tuple(args...));
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
     v.setZero();
@@ -203,23 +192,14 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
     for (int j = 0; j < theta_size; ++j) {
       theta_ffvar(j) = fvar<fvar<var>>(fvar<var>(theta_var(j), v(j)), w(j));
     }
-    auto hard_copy_args
-        = conditional_copy_and_promote<is_any_var_scalar, fvar<fvar<var>>,
-                                       COPY_TYPE::SHALLOW>(copy_vargs);
     fvar<fvar<var>> target_ffvar = stan::math::apply(
         [](auto&& f, auto&& theta_ffvar, auto&&... inner_args) {
           return f(theta_ffvar, inner_args...);
         },
-        hard_copy_args, f, theta_ffvar);
+        shallow_copy_args, f, theta_ffvar);
     grad(target_ffvar.d_.d_.vi_);
   }
-  auto eta_grad = stan::math::filter_map<is_any_var_scalar>(
-      [](auto&& arg) {
-        return stan::math::eval(0.5
-                                * get_adj(std::forward<decltype(arg)>(arg)));
-      },
-      copy_vargs);
-  return std::make_pair((0.5 * theta_var.adj()).eval(), std::move(eta_grad));
+  return (0.5 * theta_var.adj()).eval();
 }
 
 // TODO(Steve): Replace this with a more general implementation.
@@ -248,6 +228,36 @@ inline auto promote_scalar_fv(T&& arg) {
   }
 }
 
+template <typename Output>
+inline void set_zero_adjoint(Output&& output) {
+  if constexpr (is_all_arithmetic_scalar_v<Output>) {
+    return;
+  } else {
+  if constexpr (is_tuple<Output>::value) {
+    stan::math::for_each([](auto&& output_i) {
+         set_zero_adjoint(output_i);
+    }, output);
+  } else if constexpr (is_std_vector<Output>::value) {
+    if constexpr (is_var<value_type_t<Output>>::value) {
+      Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
+                                                            output.size());
+      map_x.adj().setZero();
+    } else {
+      for (auto& elem : output) {
+        set_zero_adjoint(elem);
+      }
+    }
+  } else if constexpr (is_eigen<Output>::value) {
+    output.adj().setZero();
+  } else if constexpr (is_stan_scalar_v<Output>) {
+    output.adj() = 0;
+  } else {
+    static_assert(1, "print missed!!!");
+  }
+
+  }
+}
+
 /**
  * @tparam F Type of log likelihood function.
  * @tparam Theta Type of latent Gaussian variable.
@@ -266,12 +276,9 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
   using Eigen::VectorXd;
   constexpr bool contains_var = is_any_var_scalar<Args...>::value;
   if constexpr (!contains_var) {
-    return std::make_tuple();
+    return ;
   }
   nested_rev_autodiff nested;
-  auto copy_vargs
-      = conditional_copy_and_promote<is_any_var_scalar, var, COPY_TYPE::DEEP>(
-          args...);
   // CHECK -- can we avoid declaring theta as fvar<var>?
   const Eigen::Index theta_size = theta.size();
   Matrix<var, Dynamic, 1> theta_var = theta;
@@ -280,20 +287,16 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
     theta_fvar(i) = fvar<var>(theta_var(i), v(i));
   }
   // TODO(Steve): This is a "shallow promote" not a hard copy...
-  auto hard_copy_args
+  auto shallow_copy_args
       = conditional_copy_and_promote<is_any_var_scalar, fvar<var>,
-                                     COPY_TYPE::SHALLOW>(copy_vargs);
+                                     COPY_TYPE::SHALLOW>(std::forward_as_tuple(args...));
   fvar<var> f_fvar = stan::math::apply(
       [](auto&& f, auto&& theta_fvar, auto&&... inner_args) {
         return f(theta_fvar, inner_args...);
       },
-      hard_copy_args, f, theta_fvar);
+      shallow_copy_args, f, theta_fvar);
   grad(f_fvar.d_.vi_);
-  return stan::math::filter_map<is_any_var_scalar>(
-      [](auto&& arg) {
-        return stan::math::eval(get_adj(std::forward<decltype(arg)>(arg)));
-      },
-      copy_vargs);
+  // ll_args has adjoints
 }
 
 }  // namespace internal

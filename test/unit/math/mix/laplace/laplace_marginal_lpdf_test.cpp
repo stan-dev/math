@@ -114,7 +114,7 @@ auto in_throw_list(T1&& test_values, T2&& test_arr) {
   }
   return false;
 }
-/*
+
 TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::math::laplace_marginal_lpmf;
   using stan::math::laplace_marginal_tol_lpmf;
@@ -178,8 +178,8 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
          hessian_block_size++) {
       for (int max_steps_line_search = 0; max_steps_line_search < 4;
            ++max_steps_line_search) {
-        // logger->update_laplace_info(solver_num, hessian_block_size,
-max_steps_line_search); auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
+        // logger->update_laplace_info(solver_num, hessian_block_size, max_steps_line_search);
+        auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
@@ -193,7 +193,7 @@ max_steps_line_search); auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
     }
   }
 }
-*/
+
 struct poisson_log_exposure_likelihood {
   template <typename Theta, typename YEVec>
   auto operator()(const Theta& theta, YEVec&& ye,

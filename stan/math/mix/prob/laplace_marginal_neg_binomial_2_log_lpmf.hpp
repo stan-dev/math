@@ -17,7 +17,7 @@ struct neg_binomial_2_log_likelihood {
     Eigen::VectorXi counts_per_group = Eigen::VectorXi::Zero(theta.size());
 
     for (int i = 0; i < y.size(); i++) {
-      n_per_group[y_index[i]] += 1;
+      n_per_group[y_index[i]]++;
       counts_per_group[y_index[i]] += y[i];
     }
     Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
@@ -26,6 +26,25 @@ struct neg_binomial_2_log_likelihood {
            + sum(add(elt_multiply(counts_per_group,
                                   subtract(theta, log_eta_plus_exp_theta)),
                      elt_multiply(multiply(n_per_group, eta),
+                                  subtract(log(eta), log_eta_plus_exp_theta))));
+  }
+};
+
+
+struct neg_binomial_2_log_likelihood_summary {
+  template <typename T_theta, typename T_eta>
+  inline return_type_t<T_theta, T_eta> operator()(
+      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, const T_eta& eta,
+      const std::vector<int>& y, const std::vector<int>& n_per_group, const std::vector<int>& counts_per_group,
+      std::ostream* pstream) const {
+    Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
+    Eigen::Map<const Eigen::VectorXi> n_per_group_map(n_per_group.data(), n_per_group.size());
+    Eigen::Map<const Eigen::VectorXi> counts_per_group_map(counts_per_group.data(), counts_per_group.size());
+    auto log_eta_plus_exp_theta = eval(log(add(eta, exp(theta))));
+    return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0), y_map))
+           + sum(add(elt_multiply(counts_per_group_map,
+                                  subtract(theta, log_eta_plus_exp_theta)),
+                     elt_multiply(multiply(n_per_group_map, eta),
                                   subtract(log(eta), log_eta_plus_exp_theta))));
   }
 };

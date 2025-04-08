@@ -1,3 +1,4 @@
+#include <test/unit/pretty_print_types.hpp>
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
@@ -66,7 +67,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
-
+  using stan::is_var_v;
   double eta = 1;
 
   double marginal_density = laplace_marginal_neg_binomial_2_log_lpmf(
@@ -81,12 +82,47 @@ TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_lpmf) {
     for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
+        std::cout << "__________\nmax_steps_line_search: " << max_steps_line_search
+                  << "\nhessian_block_size: " << hessian_block_size
+                  << "\nsolver_num: " << solver_num << std::endl;
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
+          if (is_var_v<std::decay_t<decltype(alpha)>> ||
+              is_var_v<std::decay_t<decltype(rho)>> ||
+              is_var_v<std::decay_t<decltype(eta)>>) {
+                    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::milliseconds;
+            std::cout << "=====\nvar: ";
+            if constexpr (is_var_v<std::decay_t<decltype(alpha)>>) {
+              std::cout << "alpha ";
+            }
+            if constexpr (is_var_v<std::decay_t<decltype(rho)>>) {
+              std::cout << "rho ";
+            }
+            if constexpr (is_var_v<std::decay_t<decltype(eta)>>) {
+              std::cout << "eta ";
+            }
+            std::cout << "\n";
+                auto t1 = high_resolution_clock::now();
+    /* Getting number of milliseconds as a double. */
+          auto ret = laplace_marginal_tol_neg_binomial_2_log_lpmf(
+              y, y_index, eta, theta_0,
+              stan::math::test::sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+    auto t2 = high_resolution_clock::now();
+    duration<double, std::milli> ms_double = t2 - t1;
+    std::cout << "time: " << ms_double.count() << "ms\n";
+    return ret;
+          } else {
           return laplace_marginal_tol_neg_binomial_2_log_lpmf(
               y, y_index, eta, theta_0,
               stan::math::test::sqr_exp_kernel_functor{},
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
+
+          }
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1], eta);
       }
