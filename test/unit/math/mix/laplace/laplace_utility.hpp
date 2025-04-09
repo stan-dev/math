@@ -11,6 +11,31 @@ namespace stan {
 namespace math {
 namespace test {
 
+struct laplace_issue {
+  int solver_num;
+  int max_steps_line_search;
+  int hessian_block_size;
+  constexpr laplace_issue(int solv, int max_steps, int hess_block)
+      : solver_num(solv),
+        max_steps_line_search(max_steps),
+        hessian_block_size(hess_block) {}
+  constexpr bool operator==(const laplace_issue& other) const {
+    return solver_num == other.solver_num
+           && max_steps_line_search == other.max_steps_line_search
+           && hessian_block_size == other.hessian_block_size;
+  }
+};
+
+template <typename T1, typename T2>
+inline constexpr bool flag_test(T1&& known_issues, T2&& test_params) {
+  for (auto&& issue : known_issues) {
+    if (issue == test_params) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /* Functions and functors used in several lgp tests. */
 
 /////////////////////////////////////////////////////////////////////
