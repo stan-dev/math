@@ -42,7 +42,7 @@ inline auto simplex_constrain(const T& y) {
   }
 
   reverse_pass_callback([arena_y, arena_x]() mutable {
-    const auto& res_val = to_ref(arena_x.val());
+    auto&& res_val = arena_x.val();
 
     // backprop for softmax
     Eigen::VectorXd x_pre_softmax_adj = -res_val * arena_x.adj().dot(res_val)
@@ -85,7 +85,7 @@ inline auto simplex_constrain(const T& y, scalar_type_t<T>& lp) {
   }
 
   reverse_pass_callback([arena_y, arena_x, lp]() mutable {
-    const auto& res_val = to_ref(arena_x.val());
+    auto&& res_val = arena_x.val();
 
     // backprop for log jacobian contribution to log density
     arena_x.adj().array() += lp.adj() / res_val.array();
