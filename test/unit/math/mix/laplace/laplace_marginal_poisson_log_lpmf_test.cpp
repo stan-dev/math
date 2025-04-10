@@ -55,13 +55,13 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
     for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int solver_num = 1; solver_num < 4; solver_num++) {
-        auto f = [&](auto&& alpha, auto&& rho) {
+        auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_log_lpmf(
               y, y_index, theta_0, sq_kernel,
-              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              std::forward_as_tuple(x_v, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(tols, f, alpha_dbl, rho_dbl);
+        stan::test::expect_ad<true>(tols, f, x, alpha_dbl, rho_dbl);
       }
     }
   }

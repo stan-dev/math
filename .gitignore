@@ -30,6 +30,9 @@ results.json
 !/benchmarks/*.*
 benchmarks/*.cpp
 benchmarks/*.csv
+
+# clang mac debug folder
+*.dSYM/
 # other binary
 *.o
 *.o-*

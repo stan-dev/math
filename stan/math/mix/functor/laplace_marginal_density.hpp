@@ -397,7 +397,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       auto [theta_grad, eta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
       for (Eigen::Index i = 0; i < W.rows(); i++) {
-        if (W.coeff(i, i) <= 0) {
+        if (W.coeff(i, i) < 0) {
           throw std::domain_error(
               "laplace_marginal_density: Hessian matrix is not positive "
               "definite");

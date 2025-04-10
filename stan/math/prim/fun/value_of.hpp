@@ -95,12 +95,28 @@ inline auto value_of(EigMat&& M) {
   ret.makeCompressed();
   return ret;
 }
+
+/*
+ * For Sparse Eigen matrices and expressions of non-arithmetic types, return an
+ *expression that represents the Eigen::Matrix resulting from applying value_of
+ *elementwise
+ *
+ * @tparam EigMat type of the matrix
+ *
+ * @param[in] M Matrix to be converted
+ * @return Matrix of values
+ */
 template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
           require_st_arithmetic<EigMat>* = nullptr>
 inline auto value_of(EigMat&& M) {
   return std::forward<EigMat>(M);
 }
 
+/**
+ * Converts a tuples elements scalar types from ad to their child type.
+ * @tparam Tuple type of tuple
+ * @param[in] tup tuple to be converted
+ */
 template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
 inline auto value_of(Tuple&& tup) {
   return stan::math::apply(

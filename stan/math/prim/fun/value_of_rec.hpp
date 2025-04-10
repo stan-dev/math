@@ -1,14 +1,23 @@
 #ifndef STAN_MATH_PRIM_FUN_VALUE_OF_REC_HPP
 #define STAN_MATH_PRIM_FUN_VALUE_OF_REC_HPP
 
-#include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
+#include <stan/math/prim/meta.hpp>
+#include <stan/math/prim/functor/apply.hpp>
+#include <stan/math/prim/functor/partially_forward_as_tuple.hpp>
 #include <complex>
 #include <cstddef>
 #include <vector>
 
 namespace stan {
 namespace math {
+
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline auto value_of_rec(Tuple&& tup);
+
+template <typename T, require_not_same_t<double, T>* = nullptr>
+inline std::vector<promote_scalar_t<double, T>> value_of_rec(
+    const std::vector<T>& x);
 
 /**
  * Return the value of the specified scalar argument
@@ -25,7 +34,7 @@ namespace math {
  * @param x Scalar to convert to double.
  * @return Value of scalar cast to a double.
  */
-template <typename T, typename = require_stan_scalar_t<T>>
+template <typename T, require_stan_scalar_t<T> = nullptr>
 inline double value_of_rec(const T x) {
   return static_cast<double>(x);
 }
@@ -106,8 +115,10 @@ inline auto value_of_rec(T&& M) {
  */
 template <typename T, require_st_same<T, double>* = nullptr,
           require_eigen_t<T>* = nullptr>
-inline T value_of_rec(T&& x) {
-  return std::forward<T>(x);
+inline auto value_of_rec(T&& x) {
+  return make_holder([](auto&& m) {
+    return std::forward<decltype(m)>(m);
+  }, std::forward<T>(x));
 }
 
 /**
@@ -120,16 +131,32 @@ inline T value_of_rec(T&& x) {
  * @param[in] x std::vector to be converted
  * @return std::vector of values
  **/
-template <typename T, require_not_same_t<double, T>* = nullptr>
+template <typename T, require_not_same_t<double, T>*>
 inline std::vector<promote_scalar_t<double, T>> value_of_rec(
     const std::vector<T>& x) {
   size_t x_size = x.size();
-  std::vector<promote_scalar_t<double, T>> result(x_size);
+  std::vector<promote_scalar_t<double, plain_type_t<T>>> result(x_size);
   for (size_t i = 0; i < x_size; i++) {
     result[i] = value_of_rec(x[i]);
   }
   return result;
 }
+
+/**
+ * Converts a tuples elements scalar types from ad to double types
+ * @tparam Tuple type of tuple
+ * @param[in] tup tuple to be converted
+ */
+template <typename Tuple, require_tuple_t<Tuple>*>
+inline auto value_of_rec(Tuple&& tup) {
+  return stan::math::apply(
+      [](auto&&... args) {
+        return partially_forward_as_tuple(
+            value_of_rec(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<Tuple>(tup));
+}
+
 
 }  // namespace math
 }  // namespace stan

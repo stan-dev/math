@@ -1,9 +1,10 @@
-#include <stan/math/mix.hpp>
+#include <test/unit/math/test_ad.hpp>
+#include <test/unit/math/mix/util.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 #include <gtest/gtest.h>
 #include <vector>
 
-TEST(MathMatrixMixArr, value_of) {
+TEST(AgradMix, array_value_of) {
   using stan::math::fvar;
   using stan::math::value_of;
   using stan::math::var;
@@ -26,7 +27,7 @@ TEST(MathMatrixMixArr, value_of) {
     EXPECT_FLOAT_EQ(a[i].val_.val_.val(), d_a[i].val_.val());
 }
 
-TEST(AgradMixMatrix, value_of) {
+TEST(AgradMix, matrix_value_of) {
   using stan::math::fvar;
   using stan::math::value_of;
   using stan::math::var;
@@ -85,4 +86,73 @@ TEST(AgradMixMatrix, value_of) {
       EXPECT_FLOAT_EQ(a(i, j), d_fv_a(i, j).val());
       EXPECT_FLOAT_EQ(a(i, j), d_ffv_a(i, j).val_.val());
     }
+}
+
+TEST(AgradMix, tuple_value_of) {
+  using stan::math::fvar;
+  using stan::math::value_of;
+  using stan::math::var;
+  using std::vector;
+
+  vector<double> a_vals;
+
+  for (size_t i = 0; i < 10; ++i)
+    a_vals.push_back(i + 1);
+
+  vector<double> b_vals;
+
+  for (size_t i = 10; i < 15; ++i)
+    b_vals.push_back(i + 1);
+
+  Eigen::Matrix<double, 2, 5> a;
+  ::fill(a_vals, a);
+  Eigen::Matrix<var, 2, 5> v_a;
+  ::fill(a_vals, v_a);
+  Eigen::Matrix<fvar<var>, 2, 5> fv_a;
+  ::fill(a_vals, fv_a);
+  Eigen::Matrix<fvar<fvar<var> >, 2, 5> ffv_a;
+  ::fill(a_vals, ffv_a);
+
+  Eigen::Matrix<double, 5, 1> b;
+  ::fill(b_vals, b);
+  Eigen::Matrix<var, 5, 1> v_b;
+  ::fill(b_vals, v_b);
+  Eigen::Matrix<fvar<var>, 5, 1> fv_b;
+  ::fill(b_vals, fv_b);
+  Eigen::Matrix<fvar<fvar<var> >, 5, 1> ffv_b;
+  ::fill(b_vals, ffv_b);
+
+
+  std::vector<fvar<fvar<var> > > ffv_a_std_vec(10);
+  std::vector<double> a_std_vec(10);
+  for (size_t i = 0; i < 10; ++i) {
+    a_std_vec[i] = i;
+    ffv_a_std_vec[i] = fvar<fvar<var> >(i);
+  }
+  std::vector<fvar<fvar<var> > > ffv_b_std_vec(5);
+  std::vector<double> b_std_vec(5);
+  for (size_t i = 0; i < 5; ++i) {
+    b_std_vec[i] = 10 + i;
+    ffv_b_std_vec[i] = fvar<fvar<var> >(10 + i);
+  }
+  auto b_tuple_dbl = std::make_tuple(b,    b,      b,      b_std_vec);
+  auto a_b_tuple_dbl = std::make_tuple(a,  a,    a,      a_std_vec, b_tuple_dbl);
+  std::vector a_b_tuple_vec_dbl{a_b_tuple_dbl, a_b_tuple_dbl, a_b_tuple_dbl};
+  auto a_b_tuple_vec_tuple_dbl = std::make_tuple(a, a_b_tuple_vec_dbl, b);
+  auto b_tuple_ad = std::make_tuple(   v_b,  fv_b,   ffv_b,  ffv_b_std_vec);
+  auto a_b_tuple_ad = std::make_tuple( v_a,fv_a, ffv_a,  ffv_a_std_vec, b_tuple_ad);
+  std::vector a_b_tuple_vec_ad{a_b_tuple_ad, a_b_tuple_ad, a_b_tuple_ad};
+  // tuple(vector, array[tuple(vec, vec, vec, array[], tuple(mat, mat, mat, array[]))])
+  auto a_b_tuple_vec_tuple_ad = std::make_tuple(v_a, a_b_tuple_vec_ad, ffv_b);
+  using ffv = fvar<fvar<var>>;
+  using fv = fvar<var>;
+  using v = var;
+  stan::math::test::recursive_for_each([](auto&& x_ad, auto&& x_dbl) {
+      EXPECT_FLOAT_EQ(stan::math::test::get_val(x_ad), x_dbl);
+  }, value_of(a_b_tuple_vec_tuple_ad), a_b_tuple_vec_tuple_dbl);
+  stan::math::test::recursive_for_each([](auto&& x_value_of, auto&& x_ad) {
+      using value_of_t = std::decay_t<decltype(x_value_of)>;
+      using ad_t = std::decay_t<decltype(x_ad)>;
+      static_assert(std::is_same_v<value_of_t, stan::partials_type_t<ad_t>>, "value_of() type and partials type should be the same!!");
+  }, value_of(a_b_tuple_vec_tuple_ad), a_b_tuple_vec_tuple_ad);
 }

@@ -53,18 +53,22 @@ template <template <typename...> class Filter,
           typename PromotedType = stan::math::var,
           COPY_TYPE CopyType = COPY_TYPE::DEEP, typename... Args>
 inline auto conditional_copy_and_promote(Args&&... args) {
-  return apply_if<Filter>(
+  return map_if<Filter>(
       [](auto&& arg) {
         if constexpr (is_tuple<std::decay_t<decltype(arg)>>::value) {
-          return conditional_copy_and_promote<Filter, PromotedType, CopyType>(
-              std::forward<decltype(arg)>(arg));
+          stan::math::apply([](auto&&... args) {
+            return conditional_copy_and_promote<Filter, PromotedType, CopyType>(
+              std::forward<decltype(args)>(args)...);
+          }, std::forward<decltype(arg)>(arg));
         } else {
           if constexpr (CopyType == COPY_TYPE::DEEP) {
             return stan::math::eval(promote_scalar<PromotedType>(
                 value_of_rec(std::forward<decltype(arg)>(arg))));
-          } else {
+          } else if constexpr (CopyType == COPY_TYPE::SHALLOW) {
             return stan::math::eval(
                 promote_scalar<PromotedType>(std::forward<decltype(arg)>(arg)));
+          } else {
+            static_assert(1, "New CopyType added but not caught here! ");
           }
         }
       },
@@ -237,7 +241,7 @@ inline auto promote_scalar_fv(T&& arg) {
       }
     }
   } else if constexpr (is_tuple<T>::value) {
-    return apply_if<is_any_var_scalar>(
+    return map_if<is_any_var_scalar>(
         [](auto&& args) {
           return promote_scalar_fv(std::forward<decltype(args)>(args));
         },

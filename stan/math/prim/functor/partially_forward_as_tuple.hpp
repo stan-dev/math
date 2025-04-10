@@ -55,12 +55,15 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * @return A tuple containing the forwarded arguments with types deduced via
  * deduce_cvr_t.
  *
- * @note The function is declared constexpr and noexcept.
+ * @note The function is declared constexpr. It is noexcept when, for each input type, the type value coming in is either an lvalue reference or an rvalue type whose move constructor is nothrow
  */
 template <typename... Types>
-inline constexpr std::tuple<deduce_cvr_t<Types&&>...>
-partially_forward_as_tuple(Types&&... args) noexcept {
-  return {std::forward<Types>(args)...};
+inline constexpr auto partially_forward_as_tuple(Types&&... args) noexcept(((std::is_rvalue_reference_v<Types&&> || (std::is_rvalue_reference_v<Types&&> && std::is_nothrow_constructible_v<std::decay_t<Types>, Types&&>)) && ...)) {
+  if constexpr (sizeof...(Types) == 0) {
+    return std::tuple<>{};
+  } else {
+    return std::tuple<deduce_cvr_t<Types&&>...>{std::forward<Types>(args)...};
+  }
 }
 }  // namespace math
 }  // namespace stan
