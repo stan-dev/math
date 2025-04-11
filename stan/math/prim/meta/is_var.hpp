@@ -33,6 +33,20 @@ struct is_any_var_scalar_impl<std::tuple<Types...>> {
       = (is_any_var_scalar_impl<scalar_type_t<std::decay_t<Types>>>::value
          || ...);
 };
+
+template <typename... Types>
+struct is_all_var_scalar_impl {
+  static constexpr bool value
+      = (has_var_scalar_type<std::decay_t<Types>>::value || ...);
+};
+
+template <typename... Types>
+struct is_all_var_scalar_impl<std::tuple<Types...>> {
+  static constexpr bool value
+      = (is_all_var_scalar_impl<scalar_type_t<std::decay_t<Types>>>::value
+         && ...);
+};
+
 }  // namespace internal
 
 template <typename... Types>
@@ -43,6 +57,16 @@ struct is_any_var_scalar
 template <typename... Types>
 constexpr bool is_any_var_scalar_v
     = is_any_var_scalar<std::decay_t<Types>...>::value;
+
+template <typename... Types>
+struct is_all_var_scalar
+    : std::conjunction<
+          internal::is_all_var_scalar_impl<std::decay_t<Types>>...> {};
+
+template <typename... Types>
+constexpr bool is_all_var_scalar_v
+    = is_all_var_scalar<std::decay_t<Types>...>::value;
+    
 
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup var_types var  */
