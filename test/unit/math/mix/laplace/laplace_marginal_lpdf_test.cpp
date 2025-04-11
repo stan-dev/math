@@ -13,13 +13,6 @@
 #include <fstream>
 #include <vector>
 
-struct poisson_log_likelihood2 {
-  template <typename Theta>
-  auto operator()(const Theta& theta, const std::vector<int>& delta_int,
-                  std::ostream* pstream) const {
-    return stan::math::poisson_log_lpmf(delta_int, theta);
-  }
-};
 static bool write_init_json = true;
 static int err_iter = 0;
 
@@ -114,7 +107,16 @@ auto in_throw_list(T1&& test_values, T2&& test_arr) {
   }
   return false;
 }
-/*
+
+struct poisson_log_likelihood2 {
+  template <typename Theta>
+  auto operator()(const Theta& theta, const std::vector<int>& delta_int,
+                  std::ostream* pstream) const {
+    return stan::math::poisson_log_lpmf(delta_int, theta);
+  }
+};
+
+
 TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::math::laplace_marginal_lpmf;
   using stan::math::laplace_marginal_tol_lpmf;
@@ -123,12 +125,10 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::math::var;
   // logger->current_test_name_ = "poisson_log_phi_dim_2";
   int dim_phi = 2;
-  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl(dim_phi);
-  phi_dbl << 1.6, 0.45;
+  Eigen::Matrix<double, Eigen::Dynamic, 1> phi_dbl{{1.6, 0.45}};
 
   int dim_theta = 2;
-  Eigen::VectorXd theta_0(dim_theta);
-  theta_0 << 0, 0;
+  Eigen::VectorXd theta_0{{0, 0}};
 
   int dim_x = 2;
   std::vector<Eigen::VectorXd> x(dim_theta);
@@ -139,8 +139,8 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
 
   Eigen::VectorXd y_dummy;
 
-  std::vector<int> n_samples = {1, 1};
-  std::vector<int> sums = {1, 0};
+  std::vector<int> n_samples{1, 1};
+  std::vector<int> sums{1, 0};
 
   double target = laplace_marginal_lpmf<false>(
       poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
@@ -149,17 +149,17 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
 
   // TODO(Charles): benchmark target against gpstuff.
   // Expected: -2.53056
-  double tol = 1e-4;
+  constexpr double tol = 1e-4;
   EXPECT_NEAR(-2.53056, value_of(target), tol);
 
   // Test with optional arguments
   {
     constexpr double tolerance = 1e-8;
     constexpr int max_num_steps = 100;
-    int hessian_block_size = 1;
-    int solver = 1;
-    int do_line_search = 1;
-    int max_steps_line_search = 10;
+    constexpr int hessian_block_size = 1;
+    constexpr int solver = 1;
+    constexpr int do_line_search = 1;
+    constexpr int max_steps_line_search = 10;
 
     target = laplace_marginal_tol_lpmf<false>(
         poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
@@ -176,10 +176,11 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 4;
-           ++max_steps_line_search) {
+      for (int max_steps_line_search = 0; max_steps_line_search < 40;
+           max_steps_line_search += 10) {
         // logger->update_laplace_info(solver_num, hessian_block_size,
-max_steps_line_search); auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
+        // max_steps_line_search);
+        auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
@@ -193,7 +194,7 @@ max_steps_line_search); auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
     }
   }
 }
-*/
+
 struct poisson_log_exposure_likelihood {
   template <typename Theta, typename YEVec>
   auto operator()(const Theta& theta, YEVec&& ye,
@@ -226,8 +227,8 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
   for (int solver_num = 1; solver_num < 2; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 5;
          hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 5;
-           ++max_steps_line_search) {
+      for (int max_steps_line_search = 0; max_steps_line_search < 40;
+           max_steps_line_search += 10) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
@@ -290,8 +291,8 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
   for (int solver_num = 1; solver_num < 2; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 5;
          hessian_block_size++) {
-      for (int max_steps_line_search = 100; max_steps_line_search < 500;
-           max_steps_line_search += 100) {
+      for (int max_steps_line_search = 0; max_steps_line_search < 40;
+           max_steps_line_search += 10) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_lpmf<false>(
               bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0,
@@ -438,8 +439,8 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 5;
          hessian_block_size++) {
-      for (int max_steps_line_search = 100; max_steps_line_search <= 500;
-           max_steps_line_search += 100) {
+      for (int max_steps_line_search = 0; max_steps_line_search < 40;
+           max_steps_line_search += 10) {
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
         auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
@@ -507,8 +508,8 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 5;
          hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 5;
-           ++max_steps_line_search) {
+      for (int max_steps_line_search = 0; max_steps_line_search < 40;
+           max_steps_line_search += 10) {
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
         try {

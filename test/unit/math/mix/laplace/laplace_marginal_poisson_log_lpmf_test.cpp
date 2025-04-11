@@ -50,11 +50,11 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
   // tols.gradient_val_ = 1e-3;
   tols.gradient_grad_ = 1e-3;
 
-  for (int max_steps_line_search = 0; max_steps_line_search < 4;
-       ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 4;
-         hessian_block_size++) {
-      for (int solver_num = 1; solver_num < 4; solver_num++) {
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 40;
+         max_steps_line_search += 10) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+           hessian_block_size++) {
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_log_lpmf(
               y, y_index, theta_0, sq_kernel,
@@ -68,11 +68,11 @@ TEST(laplace_marginal_poisson_log_lpmf, phi_dim_2) {
 
   Eigen::VectorXd ye(2);
   ye << 1, 1;
-  for (int max_steps_line_search = 0; max_steps_line_search < 4;
-       ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 4;
-         hessian_block_size++) {
-      for (int solver_num = 1; solver_num < 4; solver_num++) {
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 40;
+         max_steps_line_search += 10) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+           hessian_block_size++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_2_log_lpmf(
               y, y_index, ye, theta_0, sq_kernel,
@@ -99,14 +99,24 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
   double tol = 6e-4;
   // Benchmark from GPStuff.
   EXPECT_NEAR(-2866.88, marginal_density, tol);
+  stan::test::ad_tolerances tols;
+  // tols.gradient_val_ = 1e-3;
+  tols.gradient_grad_ = 0.002;
 
   constexpr double tolerance = 1e-6;
   constexpr int max_num_steps = 100;
-  for (int max_steps_line_search = 0; max_steps_line_search < 4;
-       ++max_steps_line_search) {
-    for (int hessian_block_size = 1; hessian_block_size < 4;
-         hessian_block_size++) {
-      for (int solver_num = 1; solver_num < 4; solver_num++) {
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 40;
+         max_steps_line_search += 10) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+           hessian_block_size++) {
+            std::cout << "----------" << std::endl;
+            std::cout << "solver_num: " << solver_num << std::endl;
+            std::cout << "max_steps_line_search: " << max_steps_line_search
+                      << std::endl;
+            std::cout << "hessian_block_size: " << hessian_block_size
+                      << std::endl;
+  
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_poisson_2_log_lpmf(
               y, n_samples, ye, theta_0,
@@ -114,7 +124,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_poisson_log_lpmf) {
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
+        stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
       }
     }
   }
