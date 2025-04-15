@@ -148,6 +148,33 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
 }
 
 /**
+ * 
+ * We need to override this inside of Eigen to use the Schur and then use matrix_sqrt_quasi_triangular
+template <typename MatrixType>
+struct matrix_sqrt_compute<MatrixType, 0>
+{
+  typedef typename MatrixType::PlainObject PlainType;
+  template <typename ResultType>
+  static void run(const MatrixType &arg, ResultType &result)
+  {
+    eigen_assert(arg.rows() == arg.cols());
+
+    // Compute Schur decomposition of arg
+    const RealSchur<PlainType> schurOfA(arg);
+    const PlainType& T = schurOfA.matrixT();
+    const PlainType& U = schurOfA.matrixU();
+    
+    // Compute square root of T
+    PlainType sqrtT = PlainType::Zero(arg.rows(), arg.cols());
+    matrix_sqrt_quasi_triangular(T, sqrtT);
+    
+    // Compute square root of arg
+    result = U * sqrtT * U.adjoint();
+  }
+};
+ */
+
+/**
  * Return the matrix square-root for a block diagonal matrix
  * @param W Block-diagonal matrix
  * @param block_size Size of blocks in W
@@ -159,7 +186,6 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
   Eigen::MatrixXd local_block_sqrt(block_size, block_size);
   Eigen::SparseMatrix<double> W_root(W.rows(), W.cols());
   W_root.reserve(Eigen::VectorXi::Constant(W_root.cols(), block_size));
-
   // No block operation available for sparse matrices, so we have to loop
   // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
   for (int i = 0; i < n_block; i++) {
@@ -176,6 +202,11 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
         std::string msg("T(" + pos + std::string(", ") + pos + ") is negative");
         throw std::domain_error(msg);
       }
+    }
+    //std::cout << "i: " << i << "\n";
+    //std::cout << "Mat: " << local_block << "\n";
+    if (Eigen::isnan(local_block.array()).any()) {
+      throw std::domain_error(std::string("Local block at (") + std::to_string(i) + ", " + std::to_string(i) + ") contains nans");
     }
     // Issue here, sqrt is done over T of the complex schur
     local_block_sqrt = local_block.sqrt();
