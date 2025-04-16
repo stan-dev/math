@@ -77,6 +77,16 @@ inline auto conditional_copy_and_promote(Args&&... args) {
       std::forward<Args>(args)...);
 }
 
+template <typename PromotedType, typename... Args>
+inline auto deep_copy_vargs(Args&&... args) {
+  return conditional_copy_and_promote<is_any_var_scalar, PromotedType, COPY_TYPE::DEEP>(std::forward<Args>(args)...);
+}
+
+template <typename PromotedType, typename... Args>
+inline auto shallow_copy_vargs(Args&&... args) {
+  return conditional_copy_and_promote<is_any_var_scalar, PromotedType, COPY_TYPE::SHALLOW>(std::forward<Args>(args)...);
+}
+
 /**
  * @tparam F Type of log likelihood function.
  * @tparam Theta Type of latent Gaussian variable.
@@ -175,10 +185,7 @@ inline auto compute_s2(F&& f, const Theta& theta, AMat&& A,
   VectorXd v(theta_size);
   VectorXd w(theta_size);
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
-  auto shallow_copy_args
-      = conditional_copy_and_promote<is_any_var_scalar, fvar<fvar<var>>,
-                                     COPY_TYPE::SHALLOW>(
-          std::forward_as_tuple(args...));
+  auto shallow_copy_args = shallow_copy_vargs<fvar<fvar<var>>>(std::forward_as_tuple(args...));
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
     v.setZero();
@@ -262,10 +269,7 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
     theta_fvar(i) = fvar<var>(theta_var(i), v(i));
   }
   // TODO(Steve): This is a "shallow promote" not a hard copy...
-  auto shallow_copy_args
-      = conditional_copy_and_promote<is_any_var_scalar, fvar<var>,
-                                     COPY_TYPE::SHALLOW>(
-          std::forward_as_tuple(args...));
+  auto shallow_copy_args = shallow_copy_vargs<fvar<var>>(std::forward_as_tuple(args...));
   fvar<var> f_fvar = stan::math::apply(
       [](auto&& f, auto&& theta_fvar, auto&&... inner_args) {
         return f(theta_fvar, inner_args...);
