@@ -55,11 +55,9 @@ void hessian_times_vector(const F& f,
  * and pstream.
  */
 template <typename F, typename... Args>
-inline void hessian_times_vector(const F& f,
-                                            Eigen::VectorXd& x_adj,
-                                            const Eigen::VectorXd& x,
-                                            const Eigen::VectorXd& v,
-                                            Args&&... args) {
+inline void hessian_times_vector(const F& f, Eigen::VectorXd& x_adj,
+                                 const Eigen::VectorXd& x,
+                                 const Eigen::VectorXd& v, Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index x_size = x.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var = x;

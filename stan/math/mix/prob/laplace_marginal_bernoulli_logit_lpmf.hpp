@@ -50,8 +50,8 @@ struct bernoulli_logit_likelihood {
  * @param msgs Rng number.
  * @param[in] args data for the covariance function.
  */
-template <bool propto = false, typename CovarF, typename ThetaMatrix, typename CovarArgs,
-          require_eigen_t<ThetaMatrix>* = nullptr>
+template <bool propto = false, typename CovarF, typename ThetaMatrix,
+          typename CovarArgs, require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarF&& covariance_function,
@@ -85,8 +85,8 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * @param msgs Streaming message for covariance functions.
  * @param[in] args data for the covariance function.
  */
-template <bool propto = false, typename CovarF, typename ThetaMatrix, typename CovarArgs,
-          require_eigen_t<ThetaMatrix>* = nullptr>
+template <bool propto = false, typename CovarF, typename ThetaMatrix,
+          typename CovarArgs, require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarF&& covariance_function,

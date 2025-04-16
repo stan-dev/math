@@ -19,7 +19,6 @@ using has_var_scalar_type = is_var<scalar_type_t<T>>;
 template <typename T>
 inline constexpr bool is_var_v = is_var<T>::value;
 
-
 namespace internal {
 
 template <typename... Types>

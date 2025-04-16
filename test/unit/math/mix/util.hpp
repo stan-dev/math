@@ -30,31 +30,31 @@ inline double get_val(T&& x) {
  */
 template <typename F, typename... Types>
 inline void recursive_for_each(F&& f, Types&&... args) {
-    if constexpr (std::conjunction_v<stan::math::is_tuple<Types>...>) {
-      stan::math::for_each([&f](auto&&... args_i) {
-        recursive_for_each(f, args_i...);
-      }, args...);
-    } else {
-      if constexpr (std::conjunction_v<stan::is_std_vector<Types>...>) {
-        const auto max_size = stan::math::max_size(args...);
-          for (Eigen::Index i = 0; i < max_size; ++i) {
-            if constexpr (std::conjunction_v<stan::is_stan_scalar<value_type_t<Types>>...>) {
-              f(args[i]...);
-            } else {
-              recursive_for_each(f, args[i]...);
-            }
-          }
-      } else if constexpr (std::conjunction_v<stan::is_eigen<Types>...>) {
-        const auto max_size = stan::math::max_size(args...);
-        for (Eigen::Index i = 0; i < max_size; ++i) {
-                f(args(i)...);
+  if constexpr (std::conjunction_v<stan::math::is_tuple<Types>...>) {
+    stan::math::for_each(
+        [&f](auto&&... args_i) { recursive_for_each(f, args_i...); }, args...);
+  } else {
+    if constexpr (std::conjunction_v<stan::is_std_vector<Types>...>) {
+      const auto max_size = stan::math::max_size(args...);
+      for (Eigen::Index i = 0; i < max_size; ++i) {
+        if constexpr (std::conjunction_v<
+                          stan::is_stan_scalar<value_type_t<Types>>...>) {
+          f(args[i]...);
+        } else {
+          recursive_for_each(f, args[i]...);
         }
-      } else if constexpr (std::conjunction_v<stan::is_stan_scalar<Types>...>) {
-        f(args...);
       }
+    } else if constexpr (std::conjunction_v<stan::is_eigen<Types>...>) {
+      const auto max_size = stan::math::max_size(args...);
+      for (Eigen::Index i = 0; i < max_size; ++i) {
+        f(args(i)...);
+      }
+    } else if constexpr (std::conjunction_v<stan::is_stan_scalar<Types>...>) {
+      f(args...);
     }
+  }
 }
 
-}
+}  // namespace stan::math::test
 
 #endif

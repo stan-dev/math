@@ -56,11 +56,14 @@ inline auto conditional_copy_and_promote(Args&&... args) {
   return map_if<Filter>(
       [](auto&& arg) {
         if constexpr (is_tuple<std::decay_t<decltype(arg)>>::value) {
-          return stan::math::apply([](auto&&... args){
-            return partially_forward_as_tuple(
-              conditional_copy_and_promote<Filter, PromotedType, CopyType>(
-                std::forward<decltype(args)>(args))...);
-          }, std::forward<decltype(arg)>(arg));
+          return stan::math::apply(
+              [](auto&&... args) {
+                return partially_forward_as_tuple(
+                    conditional_copy_and_promote<Filter, PromotedType,
+                                                 CopyType>(
+                        std::forward<decltype(args)>(args))...);
+              },
+              std::forward<decltype(arg)>(arg));
         } else {
           if constexpr (CopyType == COPY_TYPE::DEEP) {
             return stan::math::eval(promote_scalar<PromotedType>(
@@ -109,8 +112,7 @@ inline auto diff(F&& f, const Theta& theta,
     for (Eigen::Index i = 0; i < theta_size; i++) {
       hessian_theta.insert(i, i) = hessian_v(i);
     }
-    return std::make_pair(std::move(theta_gradient),
-                           (-hessian_theta).eval());
+    return std::make_pair(std::move(theta_gradient), (-hessian_theta).eval());
   } else {
     return std::make_pair(
         std::move(theta_gradient),
@@ -129,7 +131,7 @@ inline auto diff(F&& f, const Theta& theta,
  */
 template <typename F, typename Theta, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr>
-          // TODO(Steve): Thiis has a std::basic_ostream at the end...
+// TODO(Steve): Thiis has a std::basic_ostream at the end...
 //          require_all_t<is_all_arithmetic_scalar<Args>...>* = nullptr>
 // Do this for the tuple version...
 inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Args&&... args) {
@@ -173,9 +175,10 @@ inline auto compute_s2(F&& f, const Theta& theta, AMat&& A,
   VectorXd v(theta_size);
   VectorXd w(theta_size);
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
-    auto shallow_copy_args
-        = conditional_copy_and_promote<is_any_var_scalar, fvar<fvar<var>>,
-                                       COPY_TYPE::SHALLOW>(std::forward_as_tuple(args...));
+  auto shallow_copy_args
+      = conditional_copy_and_promote<is_any_var_scalar, fvar<fvar<var>>,
+                                     COPY_TYPE::SHALLOW>(
+          std::forward_as_tuple(args...));
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
     v.setZero();
@@ -207,28 +210,26 @@ inline void set_zero_adjoint(Output&& output) {
   if constexpr (is_all_arithmetic_scalar_v<Output>) {
     return;
   } else {
-  if constexpr (is_tuple<Output>::value) {
-    stan::math::for_each([](auto&& output_i) {
-         set_zero_adjoint(output_i);
-    }, output);
-  } else if constexpr (is_std_vector<Output>::value) {
-    if constexpr (is_var<value_type_t<Output>>::value) {
-      Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
-                                                            output.size());
-      map_x.adj().setZero();
-    } else {
-      for (auto& elem : output) {
-        set_zero_adjoint(elem);
+    if constexpr (is_tuple<Output>::value) {
+      stan::math::for_each([](auto&& output_i) { set_zero_adjoint(output_i); },
+                           output);
+    } else if constexpr (is_std_vector<Output>::value) {
+      if constexpr (is_var<value_type_t<Output>>::value) {
+        Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
+                                                           output.size());
+        map_x.adj().setZero();
+      } else {
+        for (auto& elem : output) {
+          set_zero_adjoint(elem);
+        }
       }
+    } else if constexpr (is_eigen<Output>::value) {
+      output.adj().setZero();
+    } else if constexpr (is_stan_scalar_v<Output>) {
+      output.adj() = 0;
+    } else {
+      static_assert(1, "print missed!!!");
     }
-  } else if constexpr (is_eigen<Output>::value) {
-    output.adj().setZero();
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    output.adj() = 0;
-  } else {
-    static_assert(1, "print missed!!!");
-  }
-
   }
 }
 
@@ -250,7 +251,7 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
   using Eigen::VectorXd;
   constexpr bool contains_var = is_any_var_scalar<Args...>::value;
   if constexpr (!contains_var) {
-    return ;
+    return;
   }
   nested_rev_autodiff nested;
   // CHECK -- can we avoid declaring theta as fvar<var>?
@@ -263,7 +264,8 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
   // TODO(Steve): This is a "shallow promote" not a hard copy...
   auto shallow_copy_args
       = conditional_copy_and_promote<is_any_var_scalar, fvar<var>,
-                                     COPY_TYPE::SHALLOW>(std::forward_as_tuple(args...));
+                                     COPY_TYPE::SHALLOW>(
+          std::forward_as_tuple(args...));
   fvar<var> f_fvar = stan::math::apply(
       [](auto&& f, auto&& theta_fvar, auto&&... inner_args) {
         return f(theta_fvar, inner_args...);

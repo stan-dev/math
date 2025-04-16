@@ -78,14 +78,16 @@ TEST(TupleConcat, RvalueAndLvalueForwarding) {
   // The first element should be an lvalue reference.
   static_assert(std::is_same_v<std::tuple_element_t<0, decltype(result)>, int&>,
                 "First element should be int&");
-  static_assert(std::is_same_v<std::tuple_element_t<1, decltype(result)>, double&>,
-                "Second element should be double");
+  static_assert(
+      std::is_same_v<std::tuple_element_t<1, decltype(result)>, double&>,
+      "Second element should be double");
   a = 100;
   EXPECT_EQ(std::get<0>(result), 100);
 }
 
 // Test three tuples of differing sizes to ensure that all elements are included
-// (this test may expose issues if the wrong tuple size is used for one of the inputs).
+// (this test may expose issues if the wrong tuple size is used for one of the
+// inputs).
 TEST(TupleConcat, ThreeTuplesDifferentSizes) {
   auto t1 = std::make_tuple(1, 2, 3);
   auto t2 = std::make_tuple(4);

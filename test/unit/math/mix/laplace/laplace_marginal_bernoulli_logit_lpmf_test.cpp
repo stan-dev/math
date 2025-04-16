@@ -49,11 +49,14 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   constexpr int max_num_steps = 1000;
   // solver_num, max_steps_line_search, hessian_block_size
   using stan::math::test::laplace_issue;
-  constexpr std::array known_issues{laplace_issue{1, 1, 1}, laplace_issue{1, 2, 1}, laplace_issue{1, 2, 3}};
+  constexpr std::array known_issues{
+      laplace_issue{1, 1, 1}, laplace_issue{1, 2, 1}, laplace_issue{1, 2, 3}};
 
   for (int solver_num = 1; solver_num < 4; solver_num++) {
-    for (int max_steps_line_search = 0; max_steps_line_search < 4; ++max_steps_line_search) {
-      for (int hessian_block_size = 1; hessian_block_size < 4; hessian_block_size++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 4;
+         ++max_steps_line_search) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+           hessian_block_size++) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_bernoulli_logit_lpmf(
               y, n_samples, theta_0, sqr_exp_kernel_functor{},
@@ -61,7 +64,8 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::ad_tolerances tols;
-        if (flag_test(known_issues, solver_num, max_steps_line_search, hessian_block_size)) {
+        if (flag_test(known_issues, solver_num, max_steps_line_search,
+                      hessian_block_size)) {
           tols.gradient_grad_ = 0.005;
         }
         stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);

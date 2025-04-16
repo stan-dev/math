@@ -116,9 +116,8 @@ inline auto value_of_rec(T&& M) {
 template <typename T, require_st_same<T, double>* = nullptr,
           require_eigen_t<T>* = nullptr>
 inline auto value_of_rec(T&& x) {
-  return make_holder([](auto&& m) {
-    return std::forward<decltype(m)>(m);
-  }, std::forward<T>(x));
+  return make_holder([](auto&& m) { return std::forward<decltype(m)>(m); },
+                     std::forward<T>(x));
 }
 
 /**
@@ -156,7 +155,6 @@ inline auto value_of_rec(Tuple&& tup) {
       },
       std::forward<Tuple>(tup));
 }
-
 
 }  // namespace math
 }  // namespace stan

@@ -112,8 +112,7 @@ struct promote_scalar_type<std::tuple<PromotionScalars...>,
       std::decay_t<PromotionScalars>, std::decay_t<UnPromotedTypes>>::type...>;
 };
 template <typename PromotionScalar, typename... UnPromotedTypes>
-struct promote_scalar_type<PromotionScalar,
-                           std::tuple<UnPromotedTypes...>> {
+struct promote_scalar_type<PromotionScalar, std::tuple<UnPromotedTypes...>> {
   using type = std::tuple<typename promote_scalar_type<
       std::decay_t<PromotionScalar>, std::decay_t<UnPromotedTypes>>::type...>;
 };

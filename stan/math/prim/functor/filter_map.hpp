@@ -12,8 +12,7 @@
 namespace stan {
 namespace math {
 
-template <template <typename...> class Filter,
-          typename F>
+template <template <typename...> class Filter, typename F>
 inline constexpr auto filter_map(F&& f) noexcept {
   return std::tuple<>{};
 }
@@ -60,30 +59,30 @@ inline constexpr auto filter_map(F&& f, Tuple&& tup) {
   }
 }
 
-template <template <typename...> class Filter,
-          typename F, typename T1, typename... Types, require_not_tuple_t<T1>* = nullptr>
+template <template <typename...> class Filter, typename F, typename T1,
+          typename... Types, require_not_tuple_t<T1>* = nullptr>
 inline constexpr auto filter_map(F&& f, T1&& x, Types&&... xs) {
   constexpr bool apply_filter_b = Filter<std::decay_t<T1>>::value;
   if constexpr (apply_filter_b) {
     if (sizeof...(Types) == 0) {
-      return partially_forward_as_tuple(std::forward<F>(f)(std::forward<T1>(x)));
+      return partially_forward_as_tuple(
+          std::forward<F>(f)(std::forward<T1>(x)));
     }
     if constexpr (stan::math::is_tuple_v<T1>) {
       // This will look like tuple(tuple(tuple(1, 2)), tuple(3, 4)) ->
       // tuple(tuple(1, 2), 3, 4)
-      return tuple_concat(std::make_tuple(filter_map<Filter>(f, std::forward<T1>(x))),
-                          filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...));
+      return tuple_concat(
+          std::make_tuple(filter_map<Filter>(f, std::forward<T1>(x))),
+          filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...));
     } else {
-      return tuple_concat(partially_forward_as_tuple(
-                              f(std::forward<T1>(x))),
-                          filter_map<Filter>(
-                              std::forward<F>(f), std::forward<Types>(xs)...));
+      return tuple_concat(
+          partially_forward_as_tuple(f(std::forward<T1>(x))),
+          filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...));
     }
   } else {
     return filter_map<Filter>(std::forward<F>(f), std::forward<Types>(xs)...);
   }
 }
-
 
 }  // namespace math
 }  // namespace stan

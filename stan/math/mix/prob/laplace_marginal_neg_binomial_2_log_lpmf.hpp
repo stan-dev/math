@@ -30,16 +30,17 @@ struct neg_binomial_2_log_likelihood {
   }
 };
 
-
 struct neg_binomial_2_log_likelihood_summary {
   template <typename T_theta, typename T_eta>
   inline return_type_t<T_theta, T_eta> operator()(
       const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, const T_eta& eta,
-      const std::vector<int>& y, const std::vector<int>& n_per_group, const std::vector<int>& counts_per_group,
-      std::ostream* pstream) const {
+      const std::vector<int>& y, const std::vector<int>& n_per_group,
+      const std::vector<int>& counts_per_group, std::ostream* pstream) const {
     Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());
-    Eigen::Map<const Eigen::VectorXi> n_per_group_map(n_per_group.data(), n_per_group.size());
-    Eigen::Map<const Eigen::VectorXi> counts_per_group_map(counts_per_group.data(), counts_per_group.size());
+    Eigen::Map<const Eigen::VectorXi> n_per_group_map(n_per_group.data(),
+                                                      n_per_group.size());
+    Eigen::Map<const Eigen::VectorXi> counts_per_group_map(
+        counts_per_group.data(), counts_per_group.size());
     auto log_eta_plus_exp_theta = eval(log(add(eta, exp(theta))));
     return sum(binomial_coefficient_log(subtract(add(y_map, eta), 1.0), y_map))
            + sum(add(elt_multiply(counts_per_group_map,
@@ -99,8 +100,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
                       tolerance, max_num_steps};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
-      std::forward_as_tuple(eta, y, n_per_group, counts_per_group),
-      theta_0, std::forward<CovarFun>(covariance_function),
+      std::forward_as_tuple(eta, y, n_per_group, counts_per_group), theta_0,
+      std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
@@ -128,14 +129,15 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
  */
 template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
-    const std::vector<int>& y, const std::vector<int>& n_per_group, const std::vector<int>& counts_per_group, const Eta& eta,
+    const std::vector<int>& y, const std::vector<int>& n_per_group,
+    const std::vector<int>& counts_per_group, const Eta& eta,
     const Theta0& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       neg_binomial_2_log_likelihood_summary{},
-      std::forward_as_tuple(eta, y, n_per_group, counts_per_group),
-      theta_0, std::forward<CovarFun>(covariance_function),
+      std::forward_as_tuple(eta, y, n_per_group, counts_per_group), theta_0,
+      std::forward<CovarFun>(covariance_function),
       std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 

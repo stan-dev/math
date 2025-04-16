@@ -118,7 +118,6 @@ TEST(AgradMix, tuple_value_of_rec) {
   Eigen::Matrix<fvar<fvar<var> >, 5, 1> ffv_b;
   ::fill(b_vals, ffv_b);
 
-
   std::vector<fvar<fvar<var> > > ffv_a_std_vec(10);
   std::vector<double> a_std_vec(10);
   for (size_t i = 0; i < 10; ++i) {
@@ -131,18 +130,23 @@ TEST(AgradMix, tuple_value_of_rec) {
     b_std_vec[i] = 10 + i;
     ffv_b_std_vec[i] = fvar<fvar<var> >(10 + i);
   }
-  auto b_tuple_dbl = std::make_tuple(b,    b,      b,      b_std_vec);
-  auto a_b_tuple_dbl = std::make_tuple(a,  a,    a,      a_std_vec, b_tuple_dbl);
+  auto b_tuple_dbl = std::make_tuple(b, b, b, b_std_vec);
+  auto a_b_tuple_dbl = std::make_tuple(a, a, a, a_std_vec, b_tuple_dbl);
   std::vector a_b_tuple_vec_dbl{a_b_tuple_dbl, a_b_tuple_dbl, a_b_tuple_dbl};
   auto a_b_tuple_vec_tuple_dbl = std::make_tuple(a, a_b_tuple_vec_dbl, b);
-  auto b_tuple_ad = std::make_tuple(   v_b,  fv_b,   ffv_b,  ffv_b_std_vec);
-  auto a_b_tuple_ad = std::make_tuple( v_a,fv_a, ffv_a,  ffv_a_std_vec, b_tuple_ad);
+  auto b_tuple_ad = std::make_tuple(v_b, fv_b, ffv_b, ffv_b_std_vec);
+  auto a_b_tuple_ad
+      = std::make_tuple(v_a, fv_a, ffv_a, ffv_a_std_vec, b_tuple_ad);
   std::vector a_b_tuple_vec_ad{a_b_tuple_ad, a_b_tuple_ad, a_b_tuple_ad};
-  // tuple(vector, array[tuple(vec, vec, vec, array[], tuple(mat, mat, mat, array[]))])
+  // tuple(vector, array[tuple(vec, vec, vec, array[], tuple(mat, mat, mat,
+  // array[]))])
   auto a_b_tuple_vec_tuple_ad = std::make_tuple(v_a, a_b_tuple_vec_ad, ffv_b);
-  stan::math::test::recursive_for_each([](auto&& x_ad, auto&& x_dbl) {
-      static_assert(std::is_same_v<std::decay_t<decltype(x_ad)>, double>, "value_of_rec() type should be double!!");
-      EXPECT_FLOAT_EQ(x_ad, x_dbl);
-  }, stan::math::value_of_rec(a_b_tuple_vec_tuple_ad), a_b_tuple_vec_tuple_dbl);
+  stan::math::test::recursive_for_each(
+      [](auto&& x_ad, auto&& x_dbl) {
+        static_assert(std::is_same_v<std::decay_t<decltype(x_ad)>, double>,
+                      "value_of_rec() type should be double!!");
+        EXPECT_FLOAT_EQ(x_ad, x_dbl);
+      },
+      stan::math::value_of_rec(a_b_tuple_vec_tuple_ad),
+      a_b_tuple_vec_tuple_dbl);
 }
-

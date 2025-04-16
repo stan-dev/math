@@ -4,8 +4,10 @@
 #ifdef eigen_assert
 #undef eigen_assert
 #endif
-#define eigen_assert(x) \
-  if (!(x)) { throw (std::domain_error("Internal Eigen Error")); }
+#define eigen_assert(x)                               \
+  if (!(x)) {                                         \
+    throw(std::domain_error("Internal Eigen Error")); \
+  }
 #ifdef EIGEN_MATRIXBASE_PLUGIN
 #ifndef EIGEN_STAN_MATRIXBASE_PLUGIN
 #error "Stan uses Eigen's EIGEN_MATRIXBASE_PLUGIN macro. To use your own "

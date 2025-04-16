@@ -171,25 +171,27 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
 
   constexpr double tolerance = 1e-12;
   constexpr int max_num_steps = 100;
-  using stan::math::test::laplace_issue;
   using stan::is_var_v;
   using stan::scalar_type_t;
+  using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 4;
          hessian_block_size++) {
       for (int max_steps_line_search = 0; max_steps_line_search < 4;
            ++max_steps_line_search) {
-         std::cout << "__________\nsolver_num: " << solver_num
+        std::cout << "__________\nsolver_num: " << solver_num
                   << "\nmax_steps_line_search: " << max_steps_line_search
-                  << "\nhessian_block_size: " << hessian_block_size << std::endl;
-                         // logger->update_laplace_info(solver_num, hessian_block_size, max_steps_line_search);
+                  << "\nhessian_block_size: " << hessian_block_size
+                  << std::endl;
+        // logger->update_laplace_info(solver_num, hessian_block_size,
+        // max_steps_line_search);
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
-            if (is_var_v<std::decay_t<stan::scalar_type_t<decltype(x_v)>>> ||
-              is_var_v<std::decay_t<decltype(alpha)>> ||
-              is_var_v<std::decay_t<decltype(rho)>>) {
+          if (is_var_v<std::decay_t<stan::scalar_type_t<decltype(
+                  x_v)>>> || is_var_v<std::decay_t<decltype(alpha)>> || is_var_v<std::decay_t<decltype(rho)>>) {
             std::cout << "=====\nvar: ";
-            if constexpr (is_var_v<std::decay_t<stan::scalar_type_t<decltype(x_v)>>>) {
+            if constexpr (is_var_v<std::decay_t<
+                              stan::scalar_type_t<decltype(x_v)>>>) {
               std::cout << "x ";
             }
             if constexpr (is_var_v<std::decay_t<decltype(alpha)>>) {
@@ -199,8 +201,8 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
               std::cout << "rho ";
             }
             std::cout << "\n";
-        }
-        return laplace_marginal_tol_lpmf<false>(
+          }
+          return laplace_marginal_tol_lpmf<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
               std::forward_as_tuple(x_v, alpha, rho), tolerance, max_num_steps,
@@ -209,11 +211,10 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
         stan::test::ad_tolerances tols;
         tols.gradient_grad_ = 1e-1;
         stan::test::expect_ad<true>(tols, f, x, phi_dbl[0], phi_dbl[1]);
-        }
       }
     }
+  }
 }
-
 
 struct poisson_log_exposure_likelihood {
   template <typename Theta, typename YEVec>
@@ -560,13 +561,13 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
                 max_steps_line_search, nullptr);
           };
           if (::testing::Test::HasFailure()) {
-          std::cout << "----------" << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-        }
+            std::cout << "----------" << std::endl;
+            std::cout << "solver_num: " << solver_num << std::endl;
+            std::cout << "hessian_block_size: " << hessian_block_size
+                      << std::endl;
+            std::cout << "max_steps_line_search: " << max_steps_line_search
+                      << std::endl;
+          }
 
           stan::test::ad_tolerances tols;
           tols.gradient_grad_ = 1e-3;
@@ -578,4 +579,3 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
     }
   }
 }
-
