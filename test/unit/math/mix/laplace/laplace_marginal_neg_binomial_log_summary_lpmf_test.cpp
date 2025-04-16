@@ -1,0 +1,162 @@
+#include <test/unit/pretty_print_types.hpp>
+#include <test/unit/math/test_ad.hpp>
+#include <stan/math.hpp>
+#include <stan/math/mix.hpp>
+#include <test/unit/math/mix/laplace/laplace_utility.hpp>
+#include <test/unit/math/rev/fun/util.hpp>
+
+#include <gtest/gtest.h>
+#include <iostream>
+#include <istream>
+#include <fstream>
+#include <vector>
+
+TEST(laplace_marginal_beg_binomial_log_summary_lpmf, phi_dim_2) {
+  using stan::math::laplace_marginal_neg_binomial_2_log_summary_lpmf;
+  using stan::math::laplace_marginal_tol_neg_binomial_2_log_summary_lpmf;
+  using stan::math::to_vector;
+  using stan::math::value_of;
+  using stan::math::var;
+
+  int dim_phi = 2;
+  double alpha_dbl = 1.6;
+  double rho_dbl = 0.45;
+  int dim_theta = 2;
+  Eigen::VectorXd theta_0(dim_theta);
+  theta_0 << 0, 0;
+
+  int dim_x = 2;
+  std::vector<Eigen::VectorXd> x(dim_theta);
+  Eigen::VectorXd x_0(2);
+  x_0 << 0.05100797, 0.16086164;
+  Eigen::VectorXd x_1(2);
+  x_1 << -0.59823393, 0.98701425;
+  x[0] = x_0;
+  x[1] = x_1;
+
+  std::vector<double> delta;
+  std::vector<int> delta_int;
+
+  std::vector<int> y = {1, 0};
+  std::vector<int> y_index = {0, 1};
+  double eta_dbl = 10000;
+  std::vector<int> n_per_group(theta_0.size(), 0);
+  std::vector<int> counts_per_group(theta_0.size(), 0);
+  for (int i = 0; i < y.size(); i++) {
+    n_per_group[y_index[i]]++;
+    counts_per_group[y_index[i]] += y[i];
+  }
+  constexpr double tolerance = 1e-12;
+  constexpr int max_num_steps = 1000;
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+         hessian_block_size++) {
+        auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
+          return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
+              y, n_per_group, counts_per_group, eta, theta_0,
+              stan::math::test::squared_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+        };
+        stan::test::expect_ad<true>(f, alpha_dbl, rho_dbl, eta_dbl);
+      }
+    }
+  }
+}
+
+TEST_F(laplace_disease_map_test, laplace_marginal_neg_binomial_2_log_summary_lpmf) {
+  using stan::math::laplace_marginal_neg_binomial_2_log_summary_lpmf;
+  using stan::math::laplace_marginal_tol_neg_binomial_2_log_summary_lpmf;
+  using stan::math::to_vector;
+  using stan::math::value_of;
+  using stan::math::var;
+  using stan::is_var_v;
+  double eta = 1;
+  std::vector<int> n_per_group(theta_0.size(), 0);
+  std::vector<int> counts_per_group(theta_0.size(), 0);
+  for (int i = 0; i < y.size(); i++) {
+    n_per_group[y_index[i]]++;
+    counts_per_group[y_index[i]] += y[i];
+  }
+
+  double marginal_density = laplace_marginal_neg_binomial_2_log_summary_lpmf(
+      y, n_per_group, counts_per_group, eta, theta_0, stan::math::test::sqr_exp_kernel_functor{},
+      std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
+
+  // ToDo (charlesm93): get benchmark from GPStuff or another software.
+  constexpr double tolerance = 1e-6;
+  constexpr int max_num_steps = 100;
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+         hessian_block_size++) {
+        std::cout << "__________\nsolver_num: " << solver_num
+                  << "\nmax_steps_line_search: " << max_steps_line_search
+                  << "\nhessian_block_size: " << hessian_block_size << std::endl;
+        auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
+          return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
+              y, n_per_group, counts_per_group, eta, theta_0,
+              stan::math::test::sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+
+        };
+        auto ret = f(phi_dbl[0], phi_dbl[1], eta);
+      }
+    }
+  }
+  for (int solver_num = 1; solver_num < 4; solver_num++) {
+    for (int max_steps_line_search = 0; max_steps_line_search < 4;
+       ++max_steps_line_search) {
+      for (int hessian_block_size = 1; hessian_block_size < 4;
+         hessian_block_size++) {
+        std::cout << "__________\nsolver_num: " << solver_num
+                  << "\nmax_steps_line_search: " << max_steps_line_search
+                  << "\nhessian_block_size: " << hessian_block_size << std::endl;
+        auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
+          if (is_var_v<std::decay_t<decltype(alpha)>> ||
+              is_var_v<std::decay_t<decltype(rho)>> ||
+              is_var_v<std::decay_t<decltype(eta)>>) {
+                    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::duration;
+    using std::chrono::milliseconds;
+            std::cout << "=====\nvar: ";
+            if constexpr (is_var_v<std::decay_t<decltype(alpha)>>) {
+              std::cout << "alpha ";
+            }
+            if constexpr (is_var_v<std::decay_t<decltype(rho)>>) {
+              std::cout << "rho ";
+            }
+            if constexpr (is_var_v<std::decay_t<decltype(eta)>>) {
+              std::cout << "eta ";
+            }
+            std::cout << "\n";
+                auto t1 = high_resolution_clock::now();
+    /* Getting number of milliseconds as a double. */
+          auto ret = laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
+              y, n_per_group, counts_per_group, eta, theta_0,
+              stan::math::test::sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+    auto t2 = high_resolution_clock::now();
+    duration<double, std::milli> ms_double = t2 - t1;
+    std::cout << "time: " << ms_double.count() << "ms\n";
+    return ret;
+          } else {
+          return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
+              y, n_per_group, counts_per_group, eta, theta_0,
+              stan::math::test::sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
+
+          }
+        };
+        stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1], eta);
+      }
+    }
+  }
+}

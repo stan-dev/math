@@ -102,8 +102,8 @@ inline auto diff(F&& f, const Theta& theta,
   }(args...);
   if (hessian_block_size == 1) {
     Eigen::VectorXd v = Eigen::VectorXd::Ones(theta_size);
-    Eigen::VectorXd hessian_v
-        = hessian_times_vector(f, theta, v, value_of(args)...);
+    Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
+    hessian_times_vector(f, hessian_v, theta, v, value_of(args)...);
     Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
     hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
     for (Eigen::Index i = 0; i < theta_size; i++) {
@@ -200,32 +200,6 @@ inline auto compute_s2(F&& f, const Theta& theta, AMat&& A,
     grad(target_ffvar.d_.d_.vi_);
   }
   return (0.5 * theta_var.adj()).eval();
-}
-
-// TODO(Steve): Replace this with a more general implementation.
-template <typename T>
-inline auto promote_scalar_fv(T&& arg) {
-  if constexpr (is_stan_scalar_v<T>) {
-    return fvar<var>(arg, 0);
-  } else if constexpr (is_eigen<T>::value) {
-    return std::forward<T>(arg).template cast<fvar<var>>();
-  } else if constexpr (is_std_vector<T>::value) {
-    promote_scalar_t<fvar<var>, T> vec;
-    vec.reserve(arg.size());
-    for (auto&& elem : arg) {
-      if constexpr (std::is_rvalue_reference_v<T&&>) {
-        vec.emplace_back(promote_scalar_fv(std::move(elem)));
-      } else {
-        vec.emplace_back(promote_scalar_fv(elem));
-      }
-    }
-  } else if constexpr (is_tuple<T>::value) {
-    return map_if<is_any_var_scalar>(
-        [](auto&& args) {
-          return promote_scalar_fv(std::forward<decltype(args)>(args));
-        },
-        std::forward<T>(arg));
-  }
 }
 
 template <typename Output>

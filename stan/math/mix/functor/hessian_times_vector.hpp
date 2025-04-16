@@ -55,7 +55,8 @@ void hessian_times_vector(const F& f,
  * and pstream.
  */
 template <typename F, typename... Args>
-inline Eigen::VectorXd hessian_times_vector(const F& f,
+inline void hessian_times_vector(const F& f,
+                                            Eigen::VectorXd& x_adj,
                                             const Eigen::VectorXd& x,
                                             const Eigen::VectorXd& v,
                                             Args&&... args) {
@@ -68,7 +69,7 @@ inline Eigen::VectorXd hessian_times_vector(const F& f,
   }
   fvar<var> fx_fvar = f(x_fvar, args...);
   grad(fx_fvar.d_.vi_);
-  return x_var.adj();
+  x_adj = x_var.adj();
 }
 
 }  // namespace math

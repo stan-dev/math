@@ -25,6 +25,7 @@ struct bernoulli_logit_likelihood {
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
+ * @tparam propto boolean ignored
  * @tparam CovarF Type of structure for covariance function.
  * @tparam ThetaMatrix The type of the initial guess, theta_0.
  * @tparam Args Type of variadic arguments for likelihood function.
@@ -49,7 +50,7 @@ struct bernoulli_logit_likelihood {
  * @param msgs Rng number.
  * @param[in] args data for the covariance function.
  */
-template <typename CovarF, typename ThetaMatrix, typename CovarArgs,
+template <bool propto = false, typename CovarF, typename ThetaMatrix, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
@@ -72,6 +73,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * with a Laplace approximation. See the laplace_marginal function
  * for more details.
  *
+ * @tparam propto boolean ignored
  * @tparam CovarF Type of structure for covariance function.
  * @tparam ThetaMatrix The type of the initial guess, theta_0.
  * @tparam Args Arguments for likelihood function.
@@ -83,7 +85,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * @param msgs Streaming message for covariance functions.
  * @param[in] args data for the covariance function.
  */
-template <typename CovarF, typename ThetaMatrix, typename CovarArgs,
+template <bool propto = false, typename CovarF, typename ThetaMatrix, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,

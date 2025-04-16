@@ -214,7 +214,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
     }
 }
 
-/*
+
 struct poisson_log_exposure_likelihood {
   template <typename Theta, typename YEVec>
   auto operator()(const Theta& theta, YEVec&& ye,
@@ -316,7 +316,7 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
   constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 100;
   // FIXME(Steve): hessian_block_size of 3 fails approx test
-  for (int solver_num = 1; solver_num < 2; solver_num++) {
+  for (int solver_num = 1; solver_num < 3; solver_num++) {
     for (int hessian_block_size = 1; hessian_block_size < 5;
          hessian_block_size++) {
       for (int max_steps_line_search = 100; max_steps_line_search < 500;
@@ -578,4 +578,4 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
     }
   }
 }
-*/
+

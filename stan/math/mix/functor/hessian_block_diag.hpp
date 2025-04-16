@@ -33,12 +33,13 @@ inline Eigen::SparseMatrix<double> hessian_block_diag(
   H.reserve(Eigen::VectorXi::Constant(x_size, hessian_block_size));
   VectorXd v(x_size);
   Eigen::Index n_blocks = x_size / hessian_block_size;
+  Eigen::VectorXd Hv = Eigen::VectorXd::Zero(x_size);
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     v.setZero();
     for (Eigen::Index j = i; j < x_size; j += hessian_block_size) {
       v.coeffRef(j) = 1;
     }
-    VectorXd Hv = hessian_times_vector(f, x, v, args...);
+    hessian_times_vector(f, Hv, x, v, args...);
     for (int j = 0; j < n_blocks; ++j) {
       for (int k = 0; k < hessian_block_size; ++k) {
         H.insert(k + j * hessian_block_size, i + j * hessian_block_size)

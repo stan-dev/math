@@ -36,6 +36,16 @@ inline constexpr bool flag_test(T1&& known_issues, T2&& test_params) {
   return false;
 }
 
+template <typename T1>
+inline constexpr bool flag_test(T1&& known_issues, int solver_num, int max_steps_line_search, int hessian_block_size) {
+  for (auto&& issue : known_issues) {
+    if (issue.solver_num == solver_num && issue.max_steps_line_search == max_steps_line_search && issue.hessian_block_size == hessian_block_size) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /* Functions and functors used in several lgp tests. */
 
 /////////////////////////////////////////////////////////////////////
