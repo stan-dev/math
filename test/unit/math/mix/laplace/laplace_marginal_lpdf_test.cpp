@@ -116,8 +116,8 @@ auto in_throw_list(T1&& test_values, T2&& test_arr) {
 }
 
 TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
-  using stan::math::laplace_marginal_lpmf;
-  using stan::math::laplace_marginal_tol_lpmf;
+  using stan::math::laplace_marginal;
+  using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
   using stan::math::value_of;
   using stan::math::var;
@@ -142,7 +142,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   std::vector<int> n_samples = {1, 1};
   std::vector<int> sums = {1, 0};
 
-  double target = laplace_marginal_lpmf<false>(
+  double target = laplace_marginal<false>(
       poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
       stan::math::test::squared_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
@@ -160,7 +160,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
     constexpr int solver = 1;
     constexpr int max_steps_line_search = 10;
 
-    target = laplace_marginal_tol_lpmf<false>(
+    target = laplace_marginal_tol<false>(
         poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
         stan::math::test::squared_kernel_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), tolerance,
@@ -181,7 +181,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
       for (int max_steps_line_search = 0; max_steps_line_search < 4;
            ++max_steps_line_search) {
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol_lpmf<false>(
+          return laplace_marginal_tol<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
               std::forward_as_tuple(x_v, alpha, rho), tolerance, max_num_steps,
@@ -205,15 +205,15 @@ struct poisson_log_exposure_likelihood {
   }
 };
 
-TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
-  using stan::math::laplace_marginal_lpmf;
+TEST_F(laplace_disease_map_test, laplace_marginal) {
+  using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_poisson_log_lpmf;
-  using stan::math::laplace_marginal_tol_lpmf;
+  using stan::math::laplace_marginal_tol;
   using stan::math::value_of;
   using stan::math::var;
 
   {
-    double marginal_density = laplace_marginal_lpmf<false>(
+    double marginal_density = laplace_marginal<false>(
         poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
         theta_0, stan::math::test::sqr_exp_kernel_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
@@ -230,7 +230,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal_lpmf) {
       for (int max_steps_line_search = 0; max_steps_line_search < 5;
            ++max_steps_line_search) {
         auto f = [&](auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol_lpmf<false>(
+          return laplace_marginal_tol<false>(
               poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
               theta_0, stan::math::test::sqr_exp_kernel_functor{},
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
@@ -259,8 +259,8 @@ struct bernoulli_logit_likelihood {
 };
 
 TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
-  using stan::math::laplace_marginal_lpmf;
-  using stan::math::laplace_marginal_tol_lpmf;
+  using stan::math::laplace_marginal;
+  using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
   // logger->current_test_name_ = "bernoulli_logit_phi_dim500";
   int dim_theta = 500;
@@ -284,7 +284,7 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
   phi_dbl << 1.6, 1;
 
   stan::math::test::sqr_exp_kernel_functor K;
-  double target = laplace_marginal_lpmf<false>(
+  double target = laplace_marginal<false>(
       bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0,
       stan::math::test::sqr_exp_kernel_functor{},
       std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1)), nullptr);
@@ -302,7 +302,7 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
       for (int max_steps_line_search = 100; max_steps_line_search < 500;
            max_steps_line_search += 100) {
         auto f = [&](auto&& alpha, auto&& rho) {
-          return laplace_marginal_tol_lpmf<false>(
+          return laplace_marginal_tol<false>(
               bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0,
               stan::math::test::sqr_exp_kernel_functor{},
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
@@ -424,8 +424,8 @@ class laplace_motorcyle_gp_test : public laplace_test_listen {
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
   // logger->current_test_name_ = "gp_motorcycle";
-  using stan::math::laplace_marginal_lpdf;
-  using stan::math::laplace_marginal_tol_lpdf;
+  using stan::math::laplace_marginal;
+  using stan::math::laplace_marginal_tol;
   using stan::math::value_of;
 
   {
@@ -436,7 +436,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
     constexpr int do_line_search = 1;
     constexpr int max_steps_line_search = 10;
 
-    double target = laplace_marginal_tol_lpdf<false>(
+    double target = laplace_marginal_tol<false>(
         normal_likelihood{}, std::forward_as_tuple(y, delta_int[0]), theta0,
         covariance_motorcycle_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
@@ -519,7 +519,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
   /**
    * Note: This test is designed to check the error behavior
-   *  of the laplace_marginal_tol_lpdf function. We do not force
+   *  of the laplace_marginal_tol function. We do not force
    *  a function to fail because some of these errors can be machine
    *  specific. So for cases we know there can be a test failure for a
    *  machine we call the function in a try block. if it *does* fail,
@@ -535,7 +535,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
         auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
-          return laplace_marginal_tol_lpdf<false>(
+          return laplace_marginal_tol<false>(
               normal_likelihood{}, std::forward_as_tuple(y_v, delta_int[0]),
               theta0, covariance_motorcycle_functor{},
               std::forward_as_tuple(x, phi_01_v(0), phi_01_v(0), phi_rest_v(0),
@@ -597,8 +597,8 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
   // Register the custom listener
   // logger->current_test_name_ = "gp_motorcycle2";
 
-  using stan::math::laplace_marginal_lpdf;
-  using stan::math::laplace_marginal_tol_lpdf;
+  using stan::math::laplace_marginal;
+  using stan::math::laplace_marginal_tol;
   using stan::math::value_of;
   {
     double tolerance = 1e-12;
@@ -607,7 +607,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
     solver = 3;
     int do_line_search = 1;
     int max_steps_line_search = 10;
-    double target = laplace_marginal_tol_lpdf<false>(
+    double target = laplace_marginal_tol<false>(
         normal_likelihood2{}, std::forward_as_tuple(y, delta_int, eta), theta0,
         covariance_motorcycle_functor{},
         std::forward_as_tuple(x, phi_dbl(0), phi_dbl(1), phi_dbl(2), phi_dbl(3),
@@ -627,7 +627,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
         // max_steps_line_search);
         try {
           auto f = [&](auto&& eta_v, auto&& phi_0, auto&& phi) {
-            return laplace_marginal_tol_lpdf<false>(
+            return laplace_marginal_tol<false>(
                 normal_likelihood2{},
                 std::forward_as_tuple(y, delta_int, eta_v), theta0,
                 covariance_motorcycle_functor{},
