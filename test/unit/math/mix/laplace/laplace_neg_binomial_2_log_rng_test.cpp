@@ -76,10 +76,10 @@ Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance_nb(
   return K;
 }
 
-TEST(laplace_marginal_neg_binomial_2_log_rng, count_two_dim_diag) {
+TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
   using stan::math::algebra_solver;
-  using stan::math::laplace_marginal_neg_binomial_2_log_rng;
-  using stan::math::laplace_marginal_tol_neg_binomial_2_log_rng;
+  using stan::math::laplace_latent_neg_binomial_2_log_rng;
+  using stan::math::laplace_latent_tol_neg_binomial_2_log_rng;
   using stan::math::multi_normal_rng;
   using stan::math::sqrt;
   using stan::math::square;
@@ -103,7 +103,7 @@ TEST(laplace_marginal_neg_binomial_2_log_rng, count_two_dim_diag) {
       = stan::math::multi_normal_rng(theta_root, K_laplace, rng);
 
   rng.seed(1954);
-  Eigen::MatrixXd theta_pred = laplace_marginal_neg_binomial_2_log_rng(
+  Eigen::MatrixXd theta_pred = laplace_latent_neg_binomial_2_log_rng(
       y, y_index, eta, theta_0, diagonal_kernel_nb_functor{},
       std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
       std::make_tuple(), rng, nullptr);
@@ -117,7 +117,7 @@ TEST(laplace_marginal_neg_binomial_2_log_rng, count_two_dim_diag) {
   Eigen::VectorXd theta_dim1(n_sim);
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
-    Eigen::MatrixXd theta_pred = laplace_marginal_neg_binomial_2_log_rng(
+    Eigen::MatrixXd theta_pred = laplace_latent_neg_binomial_2_log_rng(
         y, y_index, eta, theta_0, diagonal_kernel_nb_functor{},
         std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
         std::make_tuple(), rng, nullptr);

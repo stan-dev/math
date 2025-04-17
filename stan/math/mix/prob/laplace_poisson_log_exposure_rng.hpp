@@ -52,7 +52,7 @@ template <typename ThetaMatrix, typename CovarFun, typename CovarArgs,
           typename TrainTuple, typename PredTuple, class RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // CHECK -- right return type
-laplace_marginal_tol_poisson_2_log_rng(
+laplace_latent_tol_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
@@ -108,7 +108,7 @@ template <typename ThetaMatrix, typename CovarFun, typename CovarArgs,
           typename TrainTuple, typename PredTuple, class RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline auto  // TODO(Steve): Allow scalar or std vector return
-laplace_marginal_poisson_2_log_rng(
+laplace_latent_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& ye, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,

@@ -58,7 +58,7 @@ template <typename ThetaMatrix, typename CovarFun, typename CovarArgs,
           typename TrainTuple, typename PredTuple, class RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
-laplace_marginal_tol_bernoulli_logit_rng(
+laplace_latent_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
@@ -126,7 +126,7 @@ template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
-laplace_marginal_bernoulli_logit_rng(
+laplace_latent_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,

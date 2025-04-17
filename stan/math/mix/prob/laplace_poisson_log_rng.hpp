@@ -63,7 +63,7 @@ namespace math {
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
-inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
+inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
@@ -121,7 +121,7 @@ inline Eigen::VectorXd laplace_marginal_tol_poisson_log_rng(
 template <typename CovarFun, typename ThetaMatrix, class RNG,
           typename TrainTuple, typename PredTuple, typename CovarArgs,
           require_eigen_t<ThetaMatrix>* = nullptr>
-inline Eigen::VectorXd laplace_marginal_poisson_log_rng(
+inline Eigen::VectorXd laplace_latent_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaMatrix& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,

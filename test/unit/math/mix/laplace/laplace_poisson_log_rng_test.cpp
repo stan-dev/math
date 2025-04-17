@@ -12,8 +12,8 @@
 #include <vector>
 
 TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
-  using stan::math::laplace_marginal_poisson_log_rng;
-  using stan::math::laplace_marginal_tol_poisson_log_rng;
+  using stan::math::laplace_latent_poisson_log_rng;
+  using stan::math::laplace_latent_tol_poisson_log_rng;
   using stan::math::multi_normal_rng;
   using stan::math::sqrt;
   using stan::math::square;
@@ -25,7 +25,7 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
 
   boost::random::mt19937 rng;
   rng.seed(1954);
-  Eigen::MatrixXd theta_pred = laplace_marginal_poisson_log_rng(
+  Eigen::MatrixXd theta_pred = laplace_latent_poisson_log_rng(
       y, y_index, theta_0, diagonal_kernel_functor{},
       std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
       std::make_tuple(), rng, nullptr);
@@ -39,7 +39,7 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
   Eigen::VectorXd theta_dim1(n_sim);
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
-    Eigen::MatrixXd theta_pred = laplace_marginal_poisson_log_rng(
+    Eigen::MatrixXd theta_pred = laplace_latent_poisson_log_rng(
         y, y_index, theta_0, diagonal_kernel_functor{},
         std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
         std::make_tuple(), rng, nullptr);
@@ -70,13 +70,13 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_likelihood) {
 }
 
 TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
-  using stan::math::laplace_marginal_poisson_2_log_rng;
+  using stan::math::laplace_latent_poisson_2_log_rng;
   using stan::math::multi_normal_rng;
   using stan::math::sqrt;
   using stan::math::square;
 
   rng.seed(1954);
-  Eigen::MatrixXd theta_pred_exp = laplace_marginal_poisson_2_log_rng(
+  Eigen::MatrixXd theta_pred_exp = laplace_latent_poisson_2_log_rng(
       y, y_index, ye, theta_0, diagonal_kernel_functor{},
       std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
       std::make_tuple(), rng, nullptr);
@@ -88,7 +88,7 @@ TEST_F(laplace_count_two_dim_diag_test, poisson_log_exp_likelihood) {
   Eigen::VectorXd theta_dim1(n_sim);
   for (int i = 0; i < n_sim; i++) {
     rng.seed(2025 + i);
-    Eigen::MatrixXd theta_pred = laplace_marginal_poisson_2_log_rng(
+    Eigen::MatrixXd theta_pred = laplace_latent_poisson_2_log_rng(
         y, y_index, ye, theta_0, diagonal_kernel_functor{},
         std::forward_as_tuple(phi(0), phi(1)), std::make_tuple(),
         std::make_tuple(), rng, nullptr);
