@@ -114,7 +114,7 @@ auto in_throw_list(T1&& test_values, T2&& test_arr) {
   }
   return false;
 }
-/*
+
 TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::math::laplace_marginal_lpmf;
   using stan::math::laplace_marginal_tol_lpmf;
@@ -180,28 +180,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
          hessian_block_size++) {
       for (int max_steps_line_search = 0; max_steps_line_search < 4;
            ++max_steps_line_search) {
-        std::cout << "__________\nsolver_num: " << solver_num
-                  << "\nmax_steps_line_search: " << max_steps_line_search
-                  << "\nhessian_block_size: " << hessian_block_size
-                  << std::endl;
-        // logger->update_laplace_info(solver_num, hessian_block_size,
-        // max_steps_line_search);
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
-          if (is_var_v<std::decay_t<stan::scalar_type_t<decltype(
-                  x_v)>>> || is_var_v<std::decay_t<decltype(alpha)>> || is_var_v<std::decay_t<decltype(rho)>>) {
-            std::cout << "=====\nvar: ";
-            if constexpr (is_var_v<std::decay_t<
-                              stan::scalar_type_t<decltype(x_v)>>>) {
-              std::cout << "x ";
-            }
-            if constexpr (is_var_v<std::decay_t<decltype(alpha)>>) {
-              std::cout << "alpha ";
-            }
-            if constexpr (is_var_v<std::decay_t<decltype(rho)>>) {
-              std::cout << "rho ";
-            }
-            std::cout << "\n";
-          }
           return laplace_marginal_tol_lpmf<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
@@ -344,7 +323,7 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
     }
   }
 }
-*/
+
 struct covariance_motorcycle_functor {
   template <typename TX, typename LengthF, typename LengthG, typename SigmaF,
             typename SigmaG>
@@ -441,19 +420,21 @@ class laplace_motorcyle_gp_test : public laplace_test_listen {
   Eigen::VectorXd phi_dbl{{length_scale_f, length_scale_g, sigma_f, sigma_g}};
 };
 
+
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
+
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal_lpdf;
   using stan::math::laplace_marginal_tol_lpdf;
   using stan::math::value_of;
 
   {
-    double tolerance = 1e-08;
+    constexpr double tolerance = 1e-08;
     constexpr int max_num_steps = 100;
-    int hessian_block_size = 2;
+    constexpr int hessian_block_size = 2;
     solver = 2;
-    int do_line_search = 1;
-    int max_steps_line_search = 10;
+    constexpr int do_line_search = 1;
+    constexpr int max_steps_line_search = 10;
 
     double target = laplace_marginal_tol_lpdf<false>(
         normal_likelihood{}, std::forward_as_tuple(y, delta_int[0]), theta0,
@@ -466,72 +447,91 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
 
   // TODO(Steve): benchmark this result against GPStuff.
   constexpr double tolerance = 1e-6;
-  constexpr int max_num_steps = 2000;
+  constexpr int max_num_steps = 1000;
   auto phi_0 = phi_dbl(0);
   auto phi_1 = phi_dbl(1);
   Eigen::VectorXd phi_rest = phi_dbl.tail(2);
   Eigen::VectorXd phi_01{{phi_0, phi_1}};
   using stan::math::test::laplace_issue;
-  // NaN in normal for avx512
+  using stan::math::test::LaplaceFailures;
   constexpr std::array known_issues{
-    //laplace_issue{2, 100, 1},
-    laplace_issue{2, 200, 1}
-    //laplace_issue{2, 300, 1},
-    //laplace_issue{2, 400, 1},
-    //laplace_issue{2, 500, 1},
+    std::pair(laplace_issue{1, 0, 1},LaplaceFailures::HessianFailure),
+    std::pair(laplace_issue{1, 100, 1},LaplaceFailures::HessianFailure),
+    std::pair(laplace_issue{1, 200, 1},LaplaceFailures::HessianFailure),
+    std::pair(laplace_issue{1, 300, 1},LaplaceFailures::HessianFailure),
+    std::pair(laplace_issue{1, 400, 1},LaplaceFailures::HessianFailure),
+    std::pair(laplace_issue{1, 500, 1},LaplaceFailures::HessianFailure),
+    std::pair(laplace_issue{1, 0, 2},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 100, 2},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 200, 2},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 300, 2},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 400, 2},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 500, 2},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 0, 3},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 100, 3},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 200, 3},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 300, 3},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 400, 3},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 500, 3},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 0, 4},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 100, 4},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 200, 4},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 300, 4},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 400, 4},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{1, 500, 4},LaplaceFailures::SqrtDNE),
+    std::pair(laplace_issue{2, 0, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 100, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 200, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 300, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 400, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 500, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 0, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 100, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 200, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 300, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 400, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 500, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{2, 0, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{2, 100, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{2, 200, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{2, 300, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{2, 400, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{2, 500, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{3, 0, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 100, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 200, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 300, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 400, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 500, 1},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 0, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 100, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 200, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 300, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 400, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 500, 3},LaplaceFailures::NaNTheta),
+    std::pair(laplace_issue{3, 0, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{3, 100, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{3, 200, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{3, 300, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{3, 400, 4},LaplaceFailures::IterExceeded),
+    std::pair(laplace_issue{3, 500, 4},LaplaceFailures::IterExceeded)
+  };
 
-    };
-  for (int solver_num = 2; solver_num < 4; solver_num++) {
-      for (int hessian_block_size = 1; hessian_block_size < 5;
-          hessian_block_size++) {
-    for (int max_steps_line_search = 100; max_steps_line_search <= 500;
-          max_steps_line_search += 100) {
-          std::cout << "----------" << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-        // logger->update_laplace_info(solver_num, hessian_block_size,
-        // max_steps_line_search);
-        if (flag_test(known_issues, solver_num, max_steps_line_search, hessian_block_size)) {
-        } else {
-          try {
-            auto ret =  laplace_marginal_tol_lpdf<false>(
-              normal_likelihood{}, std::forward_as_tuple(y, delta_int[0]),
-              theta0, covariance_motorcycle_functor{},
-              std::forward_as_tuple(x, phi_01(0), phi_01(0), phi_rest(0),
-                                    phi_rest(1), n_obs),
-              tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-            std::cout << "PASSSSEEEDDDD\n\n";
-          } catch (const std::domain_error e) {
-          std::cout << "__BAD____" << std::endl;
-          std::cout << e.what() << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
-          std::cout << "__________" << std::endl;
-          stan::math::recover_memory();
-          }
-        }
-      }
-    }
-  }
-  /*
+  /**
+   * Note: This test is designed to check the error behavior
+   *  of the laplace_marginal_tol_lpdf function. We do not force
+   *  a function to fail because some of these errors can be machine
+   *  specific. So for cases we know there can be a test failure for a
+   *  machine we call the function in a try block. if it *does* fail,
+   *  we expect it to be the associated error found in the known_issues array.
+   *  If we have not seen this parameter combination fail before, we run the
+   *  standard AD testing procedure.
+   */
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int max_steps_line_search = 100; max_steps_line_search <= 500;
           max_steps_line_search += 100) {
       for (int hessian_block_size = 1; hessian_block_size < 5;
           hessian_block_size++) {
-          std::cout << "----------" << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
         auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
@@ -545,30 +545,34 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         };
         stan::test::ad_tolerances tols;
         tols.gradient_grad_ = 1e-3;
-        if (flag_test(known_issues, solver_num, max_steps_line_search, hessian_block_size)) {
-          EXPECT_THROW(stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest), std::domain_error);
+        using stan::math::test::flag_test;
+        auto flag_val = flag_test(known_issues, solver_num, max_steps_line_search, hessian_block_size);
+        if (flag_val != LaplaceFailures::None) {
+          try {
+            auto ret = f(y, phi_01, phi_rest);
+          } catch (const std::domain_error& e) {
+            using stan::math::test::err_to_laplace_failure;
+            LaplaceFailures err_val = err_to_laplace_failure(e);
+            EXPECT_EQ(err_val, flag_val);
+          }
           stan::math::recover_memory();
         } else {
           try {
             stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
           } catch (const std::domain_error e) {
-          std::cout << "__BAD____" << std::endl;
-          std::cout << e.what() << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
-          std::cout << "__________" << std::endl;
-          stan::math::recover_memory();
+            ADD_FAILURE() << "Exception: " << e.what() <<
+            "\n\tsolver_num: " << solver_num <<
+            "\n\tmax_steps_line_search: " << max_steps_line_search <<
+            "\n\thessian_block_size: " << hessian_block_size << std::endl;
+            stan::math::recover_memory();
           }
         }
       }
     }
   }
-  */
+
 }
-/*
+
 struct normal_likelihood2 {
   template <typename Theta, typename Eta>
   auto operator()(const Theta& theta, const Eigen::VectorXd& y,
@@ -650,4 +654,3 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
     }
   }
 }
-*/

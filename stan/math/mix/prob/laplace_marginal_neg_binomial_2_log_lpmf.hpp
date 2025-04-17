@@ -87,7 +87,7 @@ struct neg_binomial_2_log_likelihood_summary {
  * @param[in] msgs message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
  */
-template <typename CovarFun, typename Eta, typename ThetaVec,
+template <bool propto = false, typename CovarFun, typename Eta, typename ThetaVec,
           typename CovarArgs, require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
@@ -127,7 +127,7 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
  * @param[in] msgs  message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
  */
-template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
+template <bool propto = false, typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
     const std::vector<int>& counts_per_group, const Eta& eta,
@@ -178,7 +178,7 @@ inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
  * @param[in] msgs message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
  */
-template <typename CovarFun, typename Eta, typename ThetaVec,
+template <bool propto = false, typename CovarFun, typename Eta, typename ThetaVec,
           typename CovarArgs, require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
@@ -216,7 +216,7 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @param[in] msgs  message stream for the covariance and likelihood function.
  * @param[in] args model parameters and data for the covariance functor.
  */
-template <typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
+template <bool propto = false, typename CovarFun, typename Eta, typename Theta0, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     const Theta0& theta_0, CovarFun&& covariance_function,

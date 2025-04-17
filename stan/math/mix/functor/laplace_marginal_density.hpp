@@ -176,9 +176,6 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
     const auto& u_mat = schurOfA.matrixU();
     // Check if diagonal of schur is not positive
     if ((t_mat.diagonal().array() < 0).any()) {
-      std::cout << "local_block: \n" << local_block << std::endl;
-      std::cout << "t_mat: \n" << schurOfA.matrixT() << std::endl;
-      std::cout << "u_mat: \n" << schurOfA.matrixU() << std::endl;
       throw std::domain_error(
           std::string("Error in block_matrix_sqrt: "
                       "values less than 0 detected in block diagonal's schur "
@@ -191,9 +188,6 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
       // Compute square root of arg
       local_block_sqrt = u_mat * sqrt_t_mat * u_mat.adjoint();
     } catch (const std::exception& e) {
-      std::cout << "local_block: \n" << local_block << std::endl;
-      std::cout << "t_mat: \n" << schurOfA.matrixT() << std::endl;
-      std::cout << "u_mat: \n" << schurOfA.matrixU() << std::endl;
       throw std::domain_error(
           "Error in block_matrix_sqrt: "
           "The matrix is not positive definite");
@@ -240,7 +234,6 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
       }
     }
   }
-  std::cout << "+++++++++++\n";
   return std::make_tuple(objective_new, std::move(a), std::move(theta));
 }
 

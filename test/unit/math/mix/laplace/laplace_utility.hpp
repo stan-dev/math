@@ -11,6 +11,10 @@ namespace stan {
 namespace math {
 namespace test {
 
+
+
+
+
 struct laplace_issue {
   int solver_num;
   int max_steps_line_search;
@@ -26,28 +30,83 @@ struct laplace_issue {
   }
 };
 
-template <typename T1, typename T2>
-inline constexpr bool flag_test(T1&& known_issues, T2&& test_params) {
-  for (auto&& issue : known_issues) {
-    if (issue == test_params) {
-      return true;
-    }
+namespace internal {
+template <typename T>
+struct is_pair : std::false_type { };
+
+template <typename T, typename U>
+struct is_pair<std::pair<T, U>> : std::true_type { };
+}
+
+template <typename T>
+static constexpr bool is_pair_v = internal::is_pair<std::decay_t<T>>::value;
+
+enum class LaplaceFailures{
+  HessianFailure = 0,
+  SqrtDNE = 1,
+  NaNTheta = 2,
+  IterExceeded = 3,
+  Other = 4,
+  None = 5
+};
+inline std::string to_string(LaplaceFailures value) {
+  switch (value) {
+    case LaplaceFailures::HessianFailure:
+      return "LaplaceFailures::HessianFailure";
+    case LaplaceFailures::SqrtDNE:
+      return "LaplaceFailures::SqrtDNE";
+    case LaplaceFailures::NaNTheta:
+      return "LaplaceFailures::NaNTheta";
+    case LaplaceFailures::IterExceeded:
+      return "LaplaceFailures::IterExceeded";
+    case LaplaceFailures::None:
+      return "LaplaceFailures::None";
+    default:
+      return "LaplaceFailures::Other";
   }
-  return false;
+}
+
+template <typename T>
+inline auto err_to_laplace_failure(T&& e) {
+  if (std::string(e.what()).find("positive") != std::string::npos) {
+    return LaplaceFailures::HessianFailure;
+  } else if (std::string(e.what()).find("schur") != std::string::npos) {
+    return LaplaceFailures::SqrtDNE;
+  } else if (std::string(e.what()).find("NaN") != std::string::npos) {
+    return LaplaceFailures::NaNTheta;
+  } else if (std::string(e.what()).find("iteration") != std::string::npos) {
+    return LaplaceFailures::IterExceeded;
+  } else {
+    return LaplaceFailures::Other;
+  }
+  return LaplaceFailures::None;
+}
+
+template <typename T1, typename T2>
+inline constexpr auto flag_test(T1&& known_issues, T2&& test_params) {
+  if constexpr (is_pair_v<decltype(known_issues[0])>) {
+    for (auto&& issue : known_issues) {
+      if (issue.first == test_params) {
+        return issue.second;
+      }
+    }
+    return LaplaceFailures::None;
+  } else {
+    for (auto&& issue : known_issues) {
+      if (issue == test_params) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 template <typename T1>
-inline constexpr bool flag_test(T1&& known_issues, int solver_num,
+inline constexpr auto flag_test(T1&& known_issues, int solver_num,
                                 int max_steps_line_search,
                                 int hessian_block_size) {
-  for (auto&& issue : known_issues) {
-    if (issue.solver_num == solver_num
-        && issue.max_steps_line_search == max_steps_line_search
-        && issue.hessian_block_size == hessian_block_size) {
-      return true;
-    }
-  }
-  return false;
+    return flag_test(known_issues,
+        laplace_issue{solver_num, max_steps_line_search, hessian_block_size});
 }
 
 /* Functions and functors used in several lgp tests. */
