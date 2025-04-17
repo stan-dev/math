@@ -70,11 +70,7 @@ inline Eigen::VectorXd laplace_base_rng(
       std::tuple_cat(covar_args_val, std::forward<TrainTuple>(train_tuple)),
       options, msgs);
   // Modified R&W method
-  MatrixXd covariance_pred = apply(
-      [&covariance_function, &msgs](auto&&... args_val) {
-        return covariance_function(args_val..., msgs);
-      },
-      std::tuple_cat(covar_args_val, std::forward<PredTuple>(pred_tuple)));
+  auto&& covariance_pred = md_est.covariance;
   VectorXd pred_mean = covariance_pred * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec
