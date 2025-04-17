@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_RNG_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_RNG_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_LATENT_RNG_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_LATENT_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
@@ -62,7 +62,7 @@ namespace math {
 template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
           typename CovarFun, typename CovarArgs, typename TrainTuple,
           typename PredTuple, typename RNG>
-inline Eigen::VectorXd laplace_marginal_tol_rng(
+inline Eigen::VectorXd laplace_latent_tol_rng(
     LLFunc&& L_f, LLArgs&& l_args, const ThetaMatrix& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     TrainTuple&& train_tuple, PredTuple&& pred_tuple, const double tolerance,
@@ -119,7 +119,7 @@ inline Eigen::VectorXd laplace_marginal_tol_rng(
 template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
           typename CovarFun, typename CovarArgs, typename TrainTuple,
           typename PredTuple, typename RNG>
-inline Eigen::VectorXd laplace_marginal_rng(LLFunc&& L_f, LLArgs&& l_args,
+inline Eigen::VectorXd laplace_latent_rng(LLFunc&& L_f, LLArgs&& l_args,
                                             const ThetaMatrix& theta_0,
                                             CovarFun&& covariance_function,
                                             CovarArgs&& covar_args,

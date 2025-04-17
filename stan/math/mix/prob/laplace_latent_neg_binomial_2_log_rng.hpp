@@ -1,8 +1,9 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_NEG_BINOMIAL_2_LOG_RNG_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_NEG_BINOMIAL_2_LOG_RNG_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_LATENT_NEG_BINOMIAL_2_LOG_RNG_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_LATENT_NEG_BINOMIAL_2_LOG_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
+#include <stan/math/mix/prob/laplace_marginal_neg_binomial_2_log_lpmf.hpp>
 
 namespace stan {
 namespace math {

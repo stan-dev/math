@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_LPDF_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_LPDF_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_MARGINAL_HPP
 
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>

@@ -1,5 +1,5 @@
-#ifndef STAN_MATH_MIX_PROB_LAPLACE_POISSON_LOG_EXPOSURE_RNG_HPP
-#define STAN_MATH_MIX_PROB_LAPLACE_POISSON_LOG_EXPOSURE_RNG_HPP
+#ifndef STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_EXPOSURE_RNG_HPP
+#define STAN_MATH_MIX_PROB_LAPLACE_LATENT_POISSON_LOG_EXPOSURE_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_base_rng.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
