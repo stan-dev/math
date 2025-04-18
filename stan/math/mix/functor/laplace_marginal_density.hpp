@@ -215,7 +215,7 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
   int j = 0;
   for (; j < max_steps_line_search && (objective_new < objective_old_tmp);
        ++j) {
-    a_tmp.noalias()  = a_prev + 0.5 * (a - a_prev);
+    a_tmp.noalias() = a_prev + 0.5 * (a - a_prev);
     theta_tmp.noalias() = covariance * a_tmp;
     if (!theta_tmp.allFinite()) {
       break;
@@ -278,8 +278,10 @@ inline void collect_adjoints(Output& output, Input1&& precalc) {
 }
 
 template <typename NameStr, typename ParamStr, typename Param>
-STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str, Param&& param) {
-  std::string msg = std::string("Error in ") + name_str + ": " + std::string(param_str) + " contains NaN values";
+STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
+                              Param&& param) {
+  std::string msg = std::string("Error in ") + name_str + ": "
+                    + std::string(param_str) + " contains NaN values";
   if ((Eigen::isnan(param.array()) || Eigen::isinf(param.array())).all()) {
     msg += " for all values.";
     throw std::domain_error(msg);
@@ -435,12 +437,13 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // Simple Newton step
       theta.noalias() = covariance * a;
       objective_old = objective_new;
-      if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array())).any())) {
+      if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
+                       .any())) {
         throw_nan("laplace_marginal_density", "theta", theta);
       }
       objective_new = -0.5 * a.dot(theta)
-                      + laplace_likelihood::log_likelihood(
-                          ll_fun, theta, ll_args_vals, msgs);
+                      + laplace_likelihood::log_likelihood(ll_fun, theta,
+                                                           ll_args_vals, msgs);
       if (options.max_steps_line_search) {
         std::tie(objective_new, a, theta)
             = line_search(objective_new, std::move(a), a_prev, std::move(theta),
@@ -490,7 +493,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // Simple Newton step
       theta = covariance * a;
       objective_old = objective_new;
-      if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array())).any())) {
+      if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
+                       .any())) {
         throw_nan("laplace_marginal_density", "theta", theta);
       }
       objective_new = -0.5 * a.dot(value_of(theta))
@@ -541,12 +545,13 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       theta.noalias() = covariance * a;
       objective_old = objective_new;
       // TODO(Charles) Throw if theta is not finite?
-      if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array())).any())) {
+      if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
+                       .any())) {
         throw_nan("laplace_marginal_density", "theta", theta);
       }
       objective_new = -0.5 * a.dot(theta)
-                      + laplace_likelihood::log_likelihood(
-                          ll_fun, theta, ll_args_vals, msgs);
+                      + laplace_likelihood::log_likelihood(ll_fun, theta,
+                                                           ll_args_vals, msgs);
       // linesearch
       if (options.max_steps_line_search > 0) {
         std::tie(objective_new, a, theta)
@@ -588,7 +593,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // Simple Newton step
       theta = covariance * a;
       objective_old = objective_new;
-      if (((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array())).any())) {
+      if (((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
+               .any())) {
         throw_nan("laplace_marginal_density", "theta", theta);
       }
       objective_new = -0.5 * a.dot(value_of(theta))
@@ -720,10 +726,10 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
         },
         output, precalc);
   } else if constexpr (is_std_vector<Output>::value) {
-      const auto output_size = output.size();
-      for (std::size_t i = 0; i < output_size; ++i) {
-        collect_adjoints(output[i], precalc[i]);
-      }
+    const auto output_size = output.size();
+    for (std::size_t i = 0; i < output_size; ++i) {
+      collect_adjoints(output[i], precalc[i]);
+    }
     if constexpr (!is_stan_scalar<value_type_t<Output>>::value) {
     } else {
       Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output.data(),
@@ -986,12 +992,12 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
   double lmd = 0.0;
   {
     nested_rev_autodiff nested;
-  // Solver 1, 2
-  arena_t<Eigen::MatrixXd> R;
-  // Solver 3
-  arena_t<Eigen::MatrixXd> LU_solve_covariance;
-  // Solver 1, 2, 3
-  arena_t<std::decay_t<Theta>> s2(theta_0.size());
+    // Solver 1, 2
+    arena_t<Eigen::MatrixXd> R;
+    // Solver 3
+    arena_t<Eigen::MatrixXd> LU_solve_covariance;
+    // Solver 1, 2, 3
+    arena_t<std::decay_t<Theta>> s2(theta_0.size());
     // Make one hard copy here
     using laplace_likelihood::internal::conditional_copy_and_promote;
     using laplace_likelihood::internal::COPY_TYPE;

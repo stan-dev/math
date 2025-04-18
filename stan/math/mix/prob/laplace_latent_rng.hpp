@@ -23,9 +23,9 @@ namespace math {
  * @tparam CovarFun A functor with an
  *  `operator()(CovarArgsElements..., {TrainTupleElements...|
  * PredTupleElements...})` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the `operator()`
- * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
+ * arguments the inner elements of `CovarArgs`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  * `CovarFun::operator()`
  * @tparam RNG A valid boost rng type
@@ -55,8 +55,8 @@ template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
 inline auto laplace_latent_tol_rng(
     LLFunc&& L_f, LLArgs&& ll_args, ThetaMatrix&& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const double tolerance,
-    const int64_t max_num_steps, const int hessian_block_size, const int solver,
+    const double tolerance, const int64_t max_num_steps,
+    const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   const laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                             tolerance, max_num_steps};
@@ -100,10 +100,10 @@ inline auto laplace_latent_tol_rng(
 template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
           typename CovarFun, typename CovarArgs, typename RNG>
 inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
-                                            ThetaMatrix&& theta_0,
-                                            CovarFun&& covariance_function,
-                                            CovarArgs&& covar_args, RNG& rng,
-                                            std::ostream* msgs) {
+                               ThetaMatrix&& theta_0,
+                               CovarFun&& covariance_function,
+                               CovarArgs&& covar_args, RNG& rng,
+                               std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),

@@ -60,21 +60,23 @@ namespace math {
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename Eta, typename ThetaMatrix, typename CovarFun, typename CovarArgs, typename RNG,
+template <typename Eta, typename ThetaMatrix, typename CovarFun,
+          typename CovarArgs, typename RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
     ThetaMatrix&& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args,
-    const double tolerance, const int64_t max_num_steps,
+    CovarArgs&& covar_args, const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
-  return laplace_base_rng(neg_binomial_2_log_likelihood{},
-                          std::forward_as_tuple(std::forward<Eta>(eta), y, y_index), std::forward<ThetaMatrix>(theta_0),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+  return laplace_base_rng(
+      neg_binomial_2_log_likelihood{},
+      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
+      std::forward<ThetaMatrix>(theta_0),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 /**
@@ -115,19 +117,20 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename Eta, typename ThetaMatrix, typename CovarFun, typename CovarArgs, typename RNG,
+template <typename Eta, typename ThetaMatrix, typename CovarFun,
+          typename CovarArgs, typename RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
     ThetaMatrix&& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args,
-    RNG& rng, std::ostream* msgs) {
+    CovarArgs&& covar_args, RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
-  return laplace_base_rng(neg_binomial_2_log_likelihood{},
-                          std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
-                          std::forward<ThetaMatrix>(theta_0),
-                          std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
+  return laplace_base_rng(
+      neg_binomial_2_log_likelihood{},
+      std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
+      std::forward<ThetaMatrix>(theta_0),
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 }  // namespace math

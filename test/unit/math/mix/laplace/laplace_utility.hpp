@@ -11,10 +11,6 @@ namespace stan {
 namespace math {
 namespace test {
 
-
-
-
-
 struct laplace_issue {
   int solver_num;
   int max_steps_line_search;
@@ -32,16 +28,16 @@ struct laplace_issue {
 
 namespace internal {
 template <typename T>
-struct is_pair : std::false_type { };
+struct is_pair : std::false_type {};
 
 template <typename T, typename U>
-struct is_pair<std::pair<T, U>> : std::true_type { };
-}
+struct is_pair<std::pair<T, U>> : std::true_type {};
+}  // namespace internal
 
 template <typename T>
 static constexpr bool is_pair_v = internal::is_pair<std::decay_t<T>>::value;
 
-enum class LaplaceFailures{
+enum class LaplaceFailures {
   HessianFailure = 0,
   SqrtDNE = 1,
   NaNTheta = 2,
@@ -105,8 +101,9 @@ template <typename T1>
 inline constexpr auto flag_test(T1&& known_issues, int solver_num,
                                 int max_steps_line_search,
                                 int hessian_block_size) {
-    return flag_test(known_issues,
-        laplace_issue{solver_num, max_steps_line_search, hessian_block_size});
+  return flag_test(
+      known_issues,
+      laplace_issue{solver_num, max_steps_line_search, hessian_block_size});
 }
 
 /* Functions and functors used in several lgp tests. */

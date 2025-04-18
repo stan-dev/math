@@ -420,9 +420,7 @@ class laplace_motorcyle_gp_test : public laplace_test_listen {
   Eigen::VectorXd phi_dbl{{length_scale_f, length_scale_g, sigma_f, sigma_g}};
 };
 
-
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
-
   // logger->current_test_name_ = "gp_motorcycle";
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
@@ -455,67 +453,66 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
   using stan::math::test::laplace_issue;
   using stan::math::test::LaplaceFailures;
   constexpr std::array known_issues{
-    std::pair(laplace_issue{1, 0, 1},LaplaceFailures::HessianFailure),
-    std::pair(laplace_issue{1, 100, 1},LaplaceFailures::HessianFailure),
-    std::pair(laplace_issue{1, 200, 1},LaplaceFailures::HessianFailure),
-    std::pair(laplace_issue{1, 300, 1},LaplaceFailures::HessianFailure),
-    std::pair(laplace_issue{1, 400, 1},LaplaceFailures::HessianFailure),
-    std::pair(laplace_issue{1, 500, 1},LaplaceFailures::HessianFailure),
-    std::pair(laplace_issue{1, 0, 2},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 100, 2},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 200, 2},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 300, 2},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 400, 2},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 500, 2},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 0, 3},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 100, 3},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 200, 3},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 300, 3},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 400, 3},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 500, 3},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 0, 4},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 100, 4},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 200, 4},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 300, 4},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 400, 4},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{1, 500, 4},LaplaceFailures::SqrtDNE),
-    std::pair(laplace_issue{2, 0, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 100, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 200, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 300, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 400, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 500, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 0, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 100, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 200, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 300, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 400, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 500, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{2, 0, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{2, 100, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{2, 200, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{2, 300, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{2, 400, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{2, 500, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{3, 0, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 100, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 200, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 300, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 400, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 500, 1},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 0, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 100, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 200, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 300, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 400, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 500, 3},LaplaceFailures::NaNTheta),
-    std::pair(laplace_issue{3, 0, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{3, 100, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{3, 200, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{3, 300, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{3, 400, 4},LaplaceFailures::IterExceeded),
-    std::pair(laplace_issue{3, 500, 4},LaplaceFailures::IterExceeded)
-  };
+      std::pair(laplace_issue{1, 0, 1}, LaplaceFailures::HessianFailure),
+      std::pair(laplace_issue{1, 100, 1}, LaplaceFailures::HessianFailure),
+      std::pair(laplace_issue{1, 200, 1}, LaplaceFailures::HessianFailure),
+      std::pair(laplace_issue{1, 300, 1}, LaplaceFailures::HessianFailure),
+      std::pair(laplace_issue{1, 400, 1}, LaplaceFailures::HessianFailure),
+      std::pair(laplace_issue{1, 500, 1}, LaplaceFailures::HessianFailure),
+      std::pair(laplace_issue{1, 0, 2}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 100, 2}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 200, 2}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 300, 2}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 400, 2}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 500, 2}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 0, 3}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 100, 3}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 200, 3}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 300, 3}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 400, 3}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 500, 3}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 0, 4}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 100, 4}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 200, 4}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 300, 4}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 400, 4}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{1, 500, 4}, LaplaceFailures::SqrtDNE),
+      std::pair(laplace_issue{2, 0, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 100, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 200, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 300, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 400, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 500, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 0, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 100, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 200, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 300, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 400, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 500, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{2, 0, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{2, 100, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{2, 200, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{2, 300, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{2, 400, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{2, 500, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{3, 0, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 100, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 200, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 300, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 400, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 500, 1}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 0, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 100, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 200, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 300, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 400, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 500, 3}, LaplaceFailures::NaNTheta),
+      std::pair(laplace_issue{3, 0, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{3, 100, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{3, 200, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{3, 300, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{3, 400, 4}, LaplaceFailures::IterExceeded),
+      std::pair(laplace_issue{3, 500, 4}, LaplaceFailures::IterExceeded)};
 
   /**
    * Note: This test is designed to check the error behavior
@@ -529,9 +526,9 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
    */
   for (int solver_num = 1; solver_num < 4; solver_num++) {
     for (int max_steps_line_search = 100; max_steps_line_search <= 500;
-          max_steps_line_search += 100) {
+         max_steps_line_search += 100) {
       for (int hessian_block_size = 1; hessian_block_size < 5;
-          hessian_block_size++) {
+           hessian_block_size++) {
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
         auto f = [&](auto&& y_v, auto&& phi_01_v, auto&& phi_rest_v) {
@@ -546,7 +543,8 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
         stan::test::ad_tolerances tols;
         tols.gradient_grad_ = 1e-3;
         using stan::math::test::flag_test;
-        auto flag_val = flag_test(known_issues, solver_num, max_steps_line_search, hessian_block_size);
+        auto flag_val = flag_test(known_issues, solver_num,
+                                  max_steps_line_search, hessian_block_size);
         if (flag_val != LaplaceFailures::None) {
           try {
             auto ret = f(y, phi_01, phi_rest);
@@ -560,17 +558,18 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
           try {
             stan::test::expect_ad<true>(tols, f, y, phi_01, phi_rest);
           } catch (const std::domain_error e) {
-            ADD_FAILURE() << "Exception: " << e.what() <<
-            "\n\tsolver_num: " << solver_num <<
-            "\n\tmax_steps_line_search: " << max_steps_line_search <<
-            "\n\thessian_block_size: " << hessian_block_size << std::endl;
+            ADD_FAILURE() << "Exception: " << e.what()
+                          << "\n\tsolver_num: " << solver_num
+                          << "\n\tmax_steps_line_search: "
+                          << max_steps_line_search
+                          << "\n\thessian_block_size: " << hessian_block_size
+                          << std::endl;
             stan::math::recover_memory();
           }
         }
       }
     }
   }
-
 }
 
 struct normal_likelihood2 {

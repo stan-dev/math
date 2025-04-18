@@ -33,7 +33,8 @@ namespace math {
  *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
  * @tparam RNG A valid boost rng type
- * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ `CovarFun::operator()`
  * @param ll_fun Likelihood function.
  * @param ll_args Arguments for likelihood function.
  * @param theta_0 Initial guess for finding the mode of the conditional
@@ -48,17 +49,19 @@ template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
           typename CovarFun, typename CovarArgs, typename RNG,
           require_all_eigen_t<ThetaMatrix>* = nullptr,
           require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
-inline Eigen::VectorXd laplace_base_rng(
-    LLFunc&& ll_fun, LLArgs&& ll_args, ThetaMatrix&& theta_0,
-    CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const laplace_options& options, RNG& rng, std::ostream* msgs) {
+inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
+                                        ThetaMatrix&& theta_0,
+                                        CovarFun&& covariance_function,
+                                        CovarArgs&& covar_args,
+                                        const laplace_options& options,
+                                        RNG& rng, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
-  auto covar_args_val
-      = to_ref(std::forward<CovarArgs>(covar_args));
+  auto covar_args_val = to_ref(std::forward<CovarArgs>(covar_args));
   auto md_est = laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args), std::forward<ThetaMatrix>(theta_0),
-      std::forward<CovarFun>(covariance_function), covar_args_val, options, msgs);
+      std::forward<CovarFun>(covariance_function), covar_args_val, options,
+      msgs);
   // Modified R&W method
   auto&& covariance_train = md_est.covariance;
   VectorXd mean_train = covariance_train * md_est.theta_grad;

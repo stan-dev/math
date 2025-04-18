@@ -70,8 +70,8 @@ struct poisson_log_likelihood {
  * @param[in] msgs
  * @param[in] args model parameters and data for the covariance functor.
  */
-template <bool propto = false, typename CovarFun, typename ThetaVec, typename CovarArgs,
-          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename CovarFun, typename ThetaVec,
+          typename CovarArgs, require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaVec& theta_0, CovarFun&& covariance_function,

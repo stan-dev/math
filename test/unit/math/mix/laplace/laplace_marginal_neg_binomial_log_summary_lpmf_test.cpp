@@ -112,11 +112,11 @@ TEST_F(laplace_disease_map_test,
       for (int hessian_block_size = 1; hessian_block_size < 4;
            hessian_block_size++) {
         auto f = [&](auto&& alpha, auto&& rho, auto&& eta) {
-            return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
-                y, n_per_group, counts_per_group, eta, theta_0,
-                stan::math::test::sqr_exp_kernel_functor{},
-                std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
-                hessian_block_size, solver_num, max_steps_line_search, nullptr);
+          return laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
+              y, n_per_group, counts_per_group, eta, theta_0,
+              stan::math::test::sqr_exp_kernel_functor{},
+              std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
+              hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1], eta);
       }
