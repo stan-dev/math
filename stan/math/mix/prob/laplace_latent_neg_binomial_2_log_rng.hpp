@@ -20,24 +20,19 @@ namespace math {
  * Negative Binomial with a log link. This function uses the second
  * parameterization of the Negative Binomial.
  *
+ * @tparam Eta A type for the overdispersion parameter.
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
  * @tparam CovarFun A functor with an
  *  `operator()(CovarArgsElements..., {TrainTupleElements...|
  PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`, followed by either the inner elements of
- *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  inner elements of `CovarArgs`. The return type of the `operator()` method
  *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
- * @tparam Eta A type for the overdispersion parameter.
- * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam RNG A valid boost rng type
- * @tparam TrainTuple A tuple of types to passed as the end arguments of
- `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of
- `CovarFun::operator()`
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
- `CovarFun::operator()`
+ * `CovarFun::operator()`
+ * @tparam RNG A valid boost rng type
  * @param y Observed counts.
  * @param y_index Index indicating which group each observation belongs to.
  * @param eta Overdisperison parameter.
@@ -65,24 +60,21 @@ namespace math {
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename CovarFun, typename Eta, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename CovarArgs,
+template <typename Eta, typename ThetaMatrix, typename CovarFun, typename CovarArgs, typename RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
-    const ThetaMatrix& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
+    ThetaMatrix&& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
     const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_base_rng(neg_binomial_2_log_likelihood{},
-                          std::forward_as_tuple(eta, y, y_index), theta_0,
+                          std::forward_as_tuple(std::forward<Eta>(eta), y, y_index), std::forward<ThetaMatrix>(theta_0),
                           std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
+                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 /**
@@ -97,6 +89,9 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * Negative Binomial with a log link. This function uses the second
  * parameterization of the Negative Binomial.
  *
+ * @tparam Eta A type for the overdispersion parameter.
+ * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * sized rows and 1 column.
  * @tparam CovarFun A functor with an
  *  `operator()(CovarArgsElements..., {TrainTupleElements...|
  * PredTupleElements...})` method. The `operator()` method should accept as
@@ -104,16 +99,9 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * elements of `TrainTuple` or `PredTuple`. The return type of the `operator()`
  * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
- * @tparam Eta A type for the overdispersion parameter.
- * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
- * sized rows and 1 column.
- * @tparam RNG A valid boost rng type
- * @tparam TrainTuple A tuple of types to passed as the end arguments of
- * `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of
- * `CovarFun::operator()`
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  * `CovarFun::operator()`
+ * @tparam RNG A valid boost rng type
  * @param y Observed counts.
  * @param y_index Index indicating which group each observation belongs to.
  * @param eta Overdisperison parameter.
@@ -127,21 +115,19 @@ inline Eigen::VectorXd laplace_latent_tol_neg_binomial_2_log_rng(
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename CovarFun, typename Eta, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename CovarArgs,
+template <typename Eta, typename ThetaMatrix, typename CovarFun, typename CovarArgs, typename RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd laplace_latent_neg_binomial_2_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
-    const ThetaMatrix& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    const std::vector<int>& y, const std::vector<int>& y_index, Eta&& eta,
+    ThetaMatrix&& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(neg_binomial_2_log_likelihood{},
-                          std::forward_as_tuple(eta, y, y_index), theta_0,
+                          std::forward_as_tuple(std::forward<Eta>(eta), y, y_index),
+                          std::forward<ThetaMatrix>(theta_0),
                           std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
+                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 }  // namespace math

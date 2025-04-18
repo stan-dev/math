@@ -22,23 +22,17 @@ namespace math {
  * @tparam CovarFun A functor with an
  *  `operator()(CovarArgsElements..., {TrainTupleElements...|
  * PredTupleElements...})` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`, followed by either the inner
- * elements of `TrainTuple` or `PredTuple`. The return type of the `operator()`
+ * arguments the inner elements of `CovarArgs`. The return type of the `operator()`
  * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
- * @tparam RNG A valid boost rng type
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  * `CovarFun::operator()`
- * @tparam TrainTuple A tuple of types to passed as the end arguments of
- * `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of
- * `CovarFun::operator()`
+ * @tparam RNG A valid boost rng type
  * @param y Vector Vector of total number of trials with a positive outcome.
  * @param n_samples Vector of number of trials.
  * @param theta_0 Initial guess for mode of Laplace approximation.
  * @param covariance_function Covariance function.
- * @param train_tuple Observed/training covariates for covariance function.
- * @param pred_tuple Predictive covariates for covariance function.
+ * @param covar_args Observed/training covariates for covariance function.
  * @param tolerance Tolerared change in objective function for Laplace approx.
  * @param max_num_steps Max number of iterations of Newton solver for Laplace
  *                      approx.
@@ -55,13 +49,12 @@ namespace math {
  * @param msgs Streaming message for covariance functions.
  */
 template <typename ThetaMatrix, typename CovarFun, typename CovarArgs,
-          typename TrainTuple, typename PredTuple, class RNG,
-          require_eigen_t<ThetaMatrix>* = nullptr>
+          typename RNG, require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_latent_tol_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaMatrix& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    ThetaMatrix&& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
     const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
@@ -69,10 +62,8 @@ laplace_latent_tol_bernoulli_logit_rng(
                       tolerance, max_num_steps};
   return laplace_base_rng(bernoulli_logit_likelihood{},
                           std::forward_as_tuple(to_vector(y), n_samples),
-                          theta_0, std::forward<CovarFun>(covariance_function),
-                          std::forward<CovarArgs>(covar_args),
-                          std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
+                          std::forward<ThetaMatrix>(theta_0), std::forward<CovarFun>(covariance_function),
+                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 /**
@@ -90,23 +81,17 @@ laplace_latent_tol_bernoulli_logit_rng(
  *  `operator()(CovarArgsElements..., {TrainTupleElements...|
  PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`, followed by either the inner elements of
- *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  inner elements of `CovarArgs`. The return type of the `operator()` method
  *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
- * @tparam RNG A valid boost rng type
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  `CovarFun::operator()`
- * @tparam TrainTuple A tuple of types to passed as the end arguments of
- `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of
- `CovarFun::operator()`
+ * @tparam RNG A valid boost rng type
  * @param y Vector Vector of total number of trials with a positive outcome.
  * @param n_samples Vector of number of trials.
  * @param theta_0 Initial guess for mode of Laplace approximation.
  * @param covariance_function Covariance function.
- * @param train_tuple Observed/training covariates for covariance function.
- * @param pred_tuple Predictive covariates for covariance function.
+ * @param covar_args Observed/training covariates for covariance function.
  * @param tolerance Tolerared change in objective function for Laplace approx.
  * @param max_num_steps Max number of iterations of Newton solver for Laplace
  *                      approx.
@@ -122,22 +107,20 @@ laplace_latent_tol_bernoulli_logit_rng(
  * @param rng Rng number.
  * @param msgs Streaming message for covariance and likelihood functions.
  */
-template <typename CovarFun, typename ThetaMatrix, class RNG,
-          typename TrainTuple, typename PredTuple, typename CovarArgs,
+template <typename CovarFun, typename ThetaMatrix,
+          typename CovarArgs, typename RNG,
           require_eigen_t<ThetaMatrix>* = nullptr>
 inline Eigen::VectorXd  // CHECK -- right return type
 laplace_latent_bernoulli_logit_rng(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaMatrix& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args, TrainTuple&& train_tuple, PredTuple&& pred_tuple,
+    ThetaMatrix&& theta_0, CovarFun&& covariance_function,
+    CovarArgs&& covar_args,
     RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(bernoulli_logit_likelihood{},
                           std::forward_as_tuple(to_vector(y), n_samples),
-                          theta_0, covariance_function,
-                          std::forward<CovarArgs>(covar_args),
-                          std::forward<TrainTuple>(train_tuple),
-                          std::forward<PredTuple>(pred_tuple), ops, rng, msgs);
+                          std::forward<ThetaMatrix>(theta_0), std::forward<CovarFun>(covariance_function),
+                          std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
 
 }  // namespace math

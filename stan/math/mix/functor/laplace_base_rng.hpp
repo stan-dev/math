@@ -22,71 +22,61 @@ namespace math {
  * are drawn for covariates x_pred (pred_tuple).
  * To sample the "original" theta's, set pred_tuple = train_tuple.
  * @tparam LLFunc Type of likelihood function.
- * @tparam LLArgs Type of arguments of likelihood function.
+ * @tparam LLArgs Tuple of arguments types of likelihood function.
  * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
  *  `operator()(CovarArgsElements..., {TrainTupleElements...|
  PredTupleElements...})`
  *  method. The `operator()` method should accept as arguments the
- *  inner elements of `CovarArgs`, followed by either the inner elements of
- *  `TrainTuple` or `PredTuple`. The return type of the `operator()` method
+ *  inner elements of `CovarArgs`. The return type of the `operator()` method
  *  should be a type inheriting from `Eigen::EigenBase` with dynamic sized
  *  rows and columns.
  * @tparam RNG A valid boost rng type
- * @tparam CovarArgs A tuple of types to passed as the first arguments of
- `CovarFun::operator()`
- * @tparam TrainTuple A tuple of types to passed as the end arguments of
- `CovarFun::operator()`
- * @tparam PredTuple  A tuple of types to passed as the end arguments of
- `CovarFun::operator()`
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of `CovarFun::operator()`
  * @param ll_fun Likelihood function.
  * @param ll_args Arguments for likelihood function.
- * @param covariance_function Covariance function.
- * @param eta Additional arguments for likelihood function.
  * @param theta_0 Initial guess for finding the mode of the conditional
                   pi(theta_pred | y, phi, x_pred).
+ * @param covariance_function Covariance function.
+ * @param covar_args Observed/training covariates for covariance function.
  * @param options Control parameter for optimizer underlying Laplace approx.
- * @param train_tuple Observed/training covariates for covariance function.
- * @param pred_tuple Predictive covariates for covariance function.
  * @param rng Rng number.
  * @param msgs Stream for function prints.
- * @param args Variadic arguments for likelihood function.
  */
 template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
-          typename CovarFun, typename CovarArgs, class RNG, typename TrainTuple,
-          typename PredTuple, require_all_eigen_t<ThetaMatrix>* = nullptr>
+          typename CovarFun, typename CovarArgs, typename RNG,
+          require_all_eigen_t<ThetaMatrix>* = nullptr,
+          require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(
-    LLFunc&& ll_fun, LLArgs&& ll_args, const ThetaMatrix& theta_0,
+    LLFunc&& ll_fun, LLArgs&& ll_args, ThetaMatrix&& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    TrainTuple&& train_tuple, PredTuple&& pred_tuple,
     const laplace_options& options, RNG& rng, std::ostream* msgs) {
   using Eigen::MatrixXd;
   using Eigen::VectorXd;
   auto covar_args_val
-      = stan::math::to_ref(value_of(std::forward<CovarArgs>(covar_args)));
+      = to_ref(std::forward<CovarArgs>(covar_args));
   auto md_est = laplace_marginal_density_est(
-      ll_fun, ll_args, value_of(theta_0), covariance_function,
-      std::tuple_cat(covar_args_val, std::forward<TrainTuple>(train_tuple)),
-      options, msgs);
+      ll_fun, std::forward<LLArgs>(ll_args), std::forward<ThetaMatrix>(theta_0),
+      std::forward<CovarFun>(covariance_function), covar_args_val, options, msgs);
   // Modified R&W method
-  auto&& covariance_pred = md_est.covariance;
-  VectorXd pred_mean = covariance_pred * md_est.theta_grad;
+  auto&& covariance_train = md_est.covariance;
+  VectorXd mean_train = covariance_train * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec
         = md_est.L.template triangularView<Eigen::Lower>().solve(
-            md_est.W_r * covariance_pred);
-    Eigen::MatrixXd Sigma = covariance_pred - V_dec.transpose() * V_dec;
-    return multi_normal_rng(pred_mean, Sigma, rng);
+            md_est.W_r * covariance_train);
+    Eigen::MatrixXd Sigma = covariance_train - V_dec.transpose() * V_dec;
+    return multi_normal_rng(mean_train, Sigma, rng);
   } else {
     Eigen::MatrixXd Sigma
-        = covariance_pred
-          - covariance_pred
+        = covariance_train
+          - covariance_train
                 * (md_est.W_r
                    - md_est.W_r
                          * md_est.LU.solve(md_est.covariance * md_est.W_r))
-                * covariance_pred;
-    return multi_normal_rng(pred_mean, Sigma, rng);
+                * covariance_train;
+    return multi_normal_rng(mean_train, Sigma, rng);
   }
 }
 
