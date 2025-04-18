@@ -30,6 +30,14 @@ struct deduce_cvr {
       = std::conditional_t<std::is_rvalue_reference_v<T>, std::decay_t<T>, T&&>;
 };
 
+namespace internal {
+  template <typename... Types>
+  static constexpr bool is_partial_forward_nothrow_constructible =
+  ((std::is_lvalue_reference_v<Types&&> ||
+    (std::is_rvalue_reference_v<Types&&> &&
+      std::is_nothrow_constructible_v<std::decay_t<Types>, Types&&>)) && ...);
+}
+
 template <typename T>
 using deduce_cvr_t = typename deduce_cvr<T>::type;
 /**
@@ -60,12 +68,13 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * type whose move constructor is nothrow
  */
 template <typename... Types>
-inline constexpr std::tuple<deduce_cvr_t<Types&&>...>
-partially_forward_as_tuple(Types&&... args) noexcept((
-    (std::is_rvalue_reference_v<
-         Types&&> || (std::is_rvalue_reference_v<Types&&> && std::is_nothrow_constructible_v<std::decay_t<Types>, Types&&>))
-    && ...)) {
-  return {std::forward<Types>(args)...};
+inline constexpr auto partially_forward_as_tuple(Types&&... args)
+  noexcept(internal::is_partial_forward_nothrow_constructible<Types&&...>) {
+  if constexpr (sizeof...(Types) == 0) {
+    return std::tuple<>{};
+  } else {
+    return std::tuple<deduce_cvr_t<Types&&>...>{std::forward<Types>(args)...};
+  }
 }
 }  // namespace math
 }  // namespace stan
