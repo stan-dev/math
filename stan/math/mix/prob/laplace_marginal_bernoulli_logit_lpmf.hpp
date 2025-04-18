@@ -37,14 +37,20 @@ struct bernoulli_logit_likelihood {
  * for more details.
  *
  * @tparam propto boolean ignored
- * @tparam CovarF Type of structure for covariance function.
- * @tparam ThetaMatrix The type of the initial guess, theta_0.
- * @tparam Args Type of variadic arguments for likelihood function.
+ * @tparam ThetaVec The type of the initial guess, theta_0.
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
+ * arguments the inner elements of `CovarArgs`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ * `CovarFun::operator()`
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param covariance_function Covariance function
+ * @param covar_args arguments for the covariance function.
  * @param[in] tolerance controls the convergence criterion when finding
  *            the mode in the Laplace approximation.
  * @param[in] max_num_steps maximum number of steps before the Newton solver
@@ -61,11 +67,11 @@ struct bernoulli_logit_likelihood {
  * @param msgs Rng number.
  * @param[in] args data for the covariance function.
  */
-template <bool propto = false, typename CovarF, typename ThetaMatrix,
-          typename CovarArgs, require_eigen_t<ThetaMatrix>* = nullptr>
+template <bool propto = false, typename CovarFun, typename ThetaVec,
+          typename CovarArgs, require_eigen_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaMatrix& theta_0, CovarF&& covariance_function,
+    const ThetaVec& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
@@ -74,7 +80,7 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarFun>(covariance_function), std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -86,27 +92,34 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  *
  * @tparam propto boolean ignored
  * @tparam CovarF Type of structure for covariance function.
- * @tparam ThetaMatrix The type of the initial guess, theta_0.
- * @tparam Args Arguments for likelihood function.
+ * @tparam ThetaVec The type of the initial guess, theta_0.
+ * @tparam CovarFun A functor with an
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
+ * arguments the inner elements of `CovarArgs`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
+ * @tparam CovarArgs A tuple of types to passed as the first arguments of
+ * `CovarFun::operator()`
  * @param[in] y total counts per group. Second sufficient statistics.
  * @param[in] n_samples number of samples per group. First sufficient
  *            statistics.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param covariance_function
+ * @param covar_args arguments for the covariance function.
  * @param msgs Streaming message for covariance functions.
  * @param[in] args data for the covariance function.
  */
-template <bool propto = false, typename CovarF, typename ThetaMatrix,
-          typename CovarArgs, require_eigen_t<ThetaMatrix>* = nullptr>
+template <bool propto = false, typename CovarFun, typename ThetaVec,
+          typename CovarArgs, require_eigen_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_bernoulli_logit_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_samples,
-    const ThetaMatrix& theta_0, CovarF&& covariance_function,
+    const ThetaVec& theta_0, CovarFun&& covariance_function,
     CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      covariance_function, std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarFun>(covariance_function), std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 }  // namespace math

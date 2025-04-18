@@ -19,7 +19,7 @@ namespace math {
  * @tparam LArgs A tuple of arguments to the log likelihood.
  * @tparam EtaVec The type of the parameter arguments for the likelihood fn.
  * @tparam CovarFun The function which returns the prior covariance matrix.
- * @tparam Theta0 The type of the initial guess, theta_0.
+ * @tparam ThetaVec The type of the initial guess, theta_0.
  * @tparam CovarArgs Arguments supplied to CovarFun.
  * @param[in] L_f a function which returns the log likelihood.
  * @param[in] l_args A tuple of arguments to pass to the log likelihood.
@@ -42,20 +42,18 @@ namespace math {
  *               3. computes no square-root and uses LU decomposition.
  * @param[in] max_steps_line_search Number of steps after which the algorithm
  *                        gives up on doing a linesearch. If 0, no linesearch.
- * @param[in] msgs message stream for the covariance and likelihood function.
+ * @param[in, out] msgs message stream for the covariance and likelihood function.
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
-          typename Theta0, typename CovarArgs,
-          require_all_eigen_vector_t<Theta0>* = nullptr>
-inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
-                                 const Theta0& theta_0, CovarFun&& K_f,
-                                 CovarArgs&& covar_args, double tolerance,
-                                 int64_t max_num_steps,
-                                 const int hessian_block_size, const int solver,
-                                 const int max_steps_line_search,
-                                 std::ostream* msgs) {
+          typename ThetaVec, typename CovarArgs,
+          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+inline auto laplace_marginal_tol(
+    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
+    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
+    const int hessian_block_size, const int solver,
+    const int max_steps_line_search, std::ostream* msgs) {
   // TEST: provisional signature to agree with parser.
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
@@ -64,6 +62,7 @@ inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
       std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
       msgs);
 }
+
 
 /**
  * Wrapper function around the laplace_marginal function.
@@ -77,7 +76,7 @@ inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
  * @tparam LFun The function which returns the log likelihood.
  * @tparam LArgs A tuple of arguments to the log likelihood.
  * @tparam CovarFun The function which returns the prior covariance matrix.
- * @tparam Theta0 The type of the initial guess, theta_0.
+ * @tparam ThetaVec The type of the initial guess, theta_0.
  * @tparam CovarArgs Arguments supplied to the CovarFun
  * @param[in] L_f a function which returns the log likelihood.
  * @param[in] l_args A tuple of arguments to pass to the log likelihood
@@ -85,22 +84,23 @@ inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
  *  the Laplace approximation.
  * @param[in] K_f a function which returns the prior
  *              covariance for the marginalized out latent Gaussian.
- * @param[in] msgs message stream for the covariance and likelihood function.
+ * @param[in, out] msgs message stream for the covariance and likelihood function.
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
-          typename Theta0, typename CovarArgs,
-          require_all_eigen_vector_t<Theta0>* = nullptr>
-inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args, const Theta0& theta_0,
-                             CovarFun&& K_f, CovarArgs&& covar_args,
-                             std::ostream* msgs) {
+          typename ThetaVec, typename CovarArgs,
+          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
+                                  const ThetaVec& theta_0, CovarFun&& K_f,
+                                  CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
       std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
       msgs);
 }
+
 
 }  // namespace math
 }  // namespace stan

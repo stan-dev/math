@@ -18,11 +18,10 @@ namespace math {
  * where the log likelihood is given by L_f.
  * @tparam LLFunc Type of likelihood function.
  * @tparam LLArgs Type of arguments of likelihood function.
- * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...|
- * PredTupleElements...})` method. The `operator()` method should accept as
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
  * arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
@@ -50,10 +49,10 @@ namespace math {
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
+template <typename LLFunc, typename LLArgs, typename ThetaVec,
           typename CovarFun, typename CovarArgs, typename RNG>
 inline auto laplace_latent_tol_rng(
-    LLFunc&& L_f, LLArgs&& ll_args, ThetaMatrix&& theta_0,
+    LLFunc&& L_f, LLArgs&& ll_args, ThetaVec&& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
     const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
@@ -62,7 +61,7 @@ inline auto laplace_latent_tol_rng(
                             tolerance, max_num_steps};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
-                          std::forward<ThetaMatrix>(theta_0),
+                          std::forward<ThetaVec>(theta_0),
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }
@@ -77,11 +76,10 @@ inline auto laplace_latent_tol_rng(
  * where the log likelihood is given by L_f.
  * @tparam LLFunc Type of likelihood function.
  * @tparam LLArgs Type of arguments of likelihood function.
- * @tparam ThetaMatrix A type inheriting from `Eigen::EigenBase` with dynamic
+ * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements..., {TrainTupleElements...|
- * PredTupleElements...})` method. The `operator()` method should accept as
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
  * arguments the inner elements of `CovarArgs`, followed by either the inner
  * elements of `TrainTuple` or `PredTuple`. The return type of the `operator()`
  * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
@@ -97,17 +95,17 @@ inline auto laplace_latent_tol_rng(
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename LLFunc, typename LLArgs, typename ThetaMatrix,
+template <typename LLFunc, typename LLArgs, typename ThetaVec,
           typename CovarFun, typename CovarArgs, typename RNG>
 inline auto laplace_latent_rng(LLFunc&& L_f, LLArgs&& ll_args,
-                               ThetaMatrix&& theta_0,
+                               ThetaVec&& theta_0,
                                CovarFun&& covariance_function,
                                CovarArgs&& covar_args, RNG& rng,
                                std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(std::forward<LLFunc>(L_f),
                           std::forward<LLArgs>(ll_args),
-                          std::forward<ThetaMatrix>(theta_0),
+                          std::forward<ThetaVec>(theta_0),
                           std::forward<CovarFun>(covariance_function),
                           std::forward<CovarArgs>(covar_args), ops, rng, msgs);
 }

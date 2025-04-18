@@ -28,16 +28,15 @@ struct poisson_log_exposure_likelihood {
    * @tparam Eta Type of the auxiliary parameter (not used here).
    * @param[in] theta log Poisson rate for each group.
    * @param[in] y First n elements contain the sum of counts in each group
+   * @param[in] y_index group to which each observation belongs.
    * @param[in] ye next n elements the exposure in each group, where n is the
    * number of groups.
-   * @param[in] delta_int number of observations in each group.
-   * return lpmf for a Poisson with a log link.
-   * @param pstream
+   * @param[in, out] pstream msgs that are not used here
    */
   template <typename Theta, typename YVec, typename YIndexVec, typename YeVec>
   inline auto operator()(const Theta& theta, const YVec& y,
                          const YIndexVec& y_index, const YeVec& ye,
-                         std::ostream* pstream) const {
+                         std::ostream* /*pstream*/) const {
     Eigen::VectorXd y_vec = to_vector(y);
     Eigen::VectorXd counts_per_group = Eigen::VectorXd::Zero(theta.size());
     Eigen::VectorXd n_per_group = Eigen::VectorXd::Zero(theta.size());
@@ -45,9 +44,8 @@ struct poisson_log_exposure_likelihood {
       counts_per_group(y_index[i]) += y[i];
       n_per_group(y_index[i]) += 1;
     }
-
     // auto n_samples = to_vector(delta_int);
-    auto shifted_mean = to_ref(theta + log(ye));
+    auto shifted_mean = to_ref(add(theta, log(ye)));
     return -sum(lgamma(add(y_vec, 1))) + dot_product(shifted_mean, y_vec)
            - dot_product(n_per_group, exp(shifted_mean));
   }
@@ -62,29 +60,32 @@ struct poisson_log_exposure_likelihood {
  *
  * @tparam CovarFun The type of the initial guess, theta_0.
  * @tparam YeVec The type for the global parameter, phi.
- * @tparam Theta0 The type of the initial guess, theta_0.
+ * @tparam ThetaVec The type of the initial guess, theta_0.
  * @tparam Args The type of variadic arguments for the covariance function.
  * @param[in] y total counts per group. Second sufficient statistics.
- * @param[in] n_samples number of samples per group. First sufficient
- *            statistics.
- * @param[in] ye
+ * @param[in] y_index group to which each observation belongs.
+ * @param[in] ye the exposure for each group.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] tolerance controls the convergence criterion when finding
- *            the mode in the Laplace approximation.
- * @param[in] max_num_steps maximum number of steps before the Newton solver
- *            breaks and returns an error.
- * @param[in] hessian_block_size the size of the block for a block-diagonal
- *              Hessian of the log likelihood. If 0, the Hessian is stored
- *              inside a vector. If the Hessian is dense, this should be the
- *              size of the Hessian.
- * @param[in] solver
+ * @param[in] covar_args arguments for the covariance function.
+ * @param tolerance Tolerated gradient norm for Newton solver.
+ * @param max_num_steps maximum number of steps before the Newton solver
+ *                      breaks and returns an error.
+ * @param hessian_block_size the size of the block for a block-diagonal
+ *              Hessian of the log likelihood, i.e second derivative of
+ *              log p(y|theta,phi) wrt theta.
+ * @param solver Type of Newton solver. Each corresponds to a distinct choice
+ *               of B matrix (i.e. application SWM formula):
+ *               1. computes square-root of negative Hessian.
+ *               2. computes square-root of covariance matrix.
+ *               3. computes no square-root and uses LU decomposition.
+ * @param max_steps_line_search Number of steps after which the algorithm
+ *                        gives up on doing a linesearch. If 0, no linesearch.
  * @param[in] max_steps_line_search
- * @param[in] msgs
- * @param[in] args model parameters and data for the covariance functor.
+ * @param[in, out] msgs
  */
-template <bool propto = false, typename CovarFun, typename YeVec,
-          typename ThetaVec, typename CovarArgs,
+template <bool propto = false, typename YeVec, typename ThetaVec, typename CovarFun,
+          typename CovarArgs,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
@@ -92,9 +93,6 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, std::ostream* msgs) {
-  Eigen::VectorXd y_vec = to_vector(y);
-  Eigen::VectorXd y_and_ye(y_vec.size() + ye.size());
-  y_and_ye << y_vec, ye;
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
   return laplace_marginal_density(
@@ -115,16 +113,15 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
  * @tparam ThetaVec The type of the initial guess, theta_0.
  * @tparam Args
  * @param[in] y total counts per group. Second sufficient statistics.
- * @param[in] n_samples number of samples per group. First sufficient
- *            statistics.
- * @param[in] ye
+ * @param[in] y_index group to which each observation belongs.
+ * @param[in] ye the exposure for each group.
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param[in] covariance_function a function which returns the prior covariance.
- * @param[in] msgs
- * @param[in] args model parameters and data for the covariance functor.
+ * @param[in] covar_args arguments for the covariance function.
+ * @param[in, out] msgs
  */
-template <bool propto = false, typename CovarFun, typename YeVec,
-          typename ThetaVec, typename CovarArgs,
+template <bool propto = false, typename YeVec, typename ThetaVec, typename CovarFun,
+          typename CovarArgs,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
