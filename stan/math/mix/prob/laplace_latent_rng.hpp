@@ -21,8 +21,8 @@ namespace math {
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -79,11 +79,11 @@ inline auto laplace_latent_tol_rng(
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`, followed by either the inner
- * elements of `TrainTuple` or `PredTuple`. The return type of the `operator()`
- * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`, followed by either the
+ * inner elements of `TrainTuple` or `PredTuple`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
  * @tparam RNG A valid boost rng type
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  * `CovarFun::operator()`

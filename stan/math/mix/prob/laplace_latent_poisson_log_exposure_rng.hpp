@@ -18,10 +18,10 @@ namespace math {
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the `operator()`
- * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  * `CovarFun::operator()`
  * @tparam RNG A valid boost rng type
@@ -47,8 +47,8 @@ laplace_latent_tol_poisson_2_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const Eigen::VectorXd& ye, ThetaVec&& theta_0,
     CovarFun&& covariance_function, CovarArgs&& covar_args,
-    const double tolerance,
-    const int64_t max_num_steps, const int hessian_block_size, const int solver,
+    const double tolerance, const int64_t max_num_steps,
+    const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
@@ -69,10 +69,10 @@ laplace_latent_tol_poisson_2_log_rng(
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the `operator()`
- * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
  * `CovarFun::operator()`
  * @tparam RNG A valid boost rng type
@@ -89,11 +89,12 @@ laplace_latent_tol_poisson_2_log_rng(
 template <typename ThetaVec, typename CovarFun, typename CovarArgs,
           typename RNG, require_eigen_t<ThetaVec>* = nullptr>
 inline auto  // TODO(Steve): Allow scalar or std vector return
-laplace_latent_poisson_2_log_rng(
-    const std::vector<int>& y, const std::vector<int>& y_index,
-    const Eigen::VectorXd& ye, ThetaVec&& theta_0,
-    CovarFun&& covariance_function, CovarArgs&& covar_args, RNG& rng,
-    std::ostream* msgs) {
+laplace_latent_poisson_2_log_rng(const std::vector<int>& y,
+                                 const std::vector<int>& y_index,
+                                 const Eigen::VectorXd& ye, ThetaVec&& theta_0,
+                                 CovarFun&& covariance_function,
+                                 CovarArgs&& covar_args, RNG& rng,
+                                 std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_exposure_likelihood{},
                           std::forward_as_tuple(y, y_index, ye),

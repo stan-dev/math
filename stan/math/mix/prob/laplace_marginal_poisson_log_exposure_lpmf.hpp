@@ -84,8 +84,8 @@ struct poisson_log_exposure_likelihood {
  * @param[in] max_steps_line_search
  * @param[in, out] msgs
  */
-template <bool propto = false, typename YeVec, typename ThetaVec, typename CovarFun,
-          typename CovarArgs,
+template <bool propto = false, typename YeVec, typename ThetaVec,
+          typename CovarFun, typename CovarArgs,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,
@@ -120,8 +120,8 @@ inline auto laplace_marginal_tol_poisson_2_log_lpmf(
  * @param[in] covar_args arguments for the covariance function.
  * @param[in, out] msgs
  */
-template <bool propto = false, typename YeVec, typename ThetaVec, typename CovarFun,
-          typename CovarArgs,
+template <bool propto = false, typename YeVec, typename ThetaVec,
+          typename CovarFun, typename CovarArgs,
           require_all_eigen_vector_t<YeVec, ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const YeVec& ye,

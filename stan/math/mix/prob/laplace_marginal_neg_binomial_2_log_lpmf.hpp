@@ -46,7 +46,6 @@ struct neg_binomial_2_log_likelihood {
   }
 };
 
-
 /**
  * Wrapper function around the laplace_marginal function for
  * a negative binomial likelihood. Uses the 2nd parameterization.
@@ -58,8 +57,8 @@ struct neg_binomial_2_log_likelihood {
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -86,10 +85,11 @@ struct neg_binomial_2_log_likelihood {
  *               3. computes no square-root and uses LU decomposition.
  * @param[in] max_steps_line_search Number of steps after which the algorithm
  *                          gives up on doing a linesearch. If 0, no linesearch.
- * @param[in,out] msgs message stream for the covariance and likelihood function.
+ * @param[in,out] msgs message stream for the covariance and likelihood
+ * function.
  */
-template <bool propto = false, typename Eta,
-          typename ThetaVec, typename CovarFun, typename CovarArgs,
+template <bool propto = false, typename Eta, typename ThetaVec,
+          typename CovarFun, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
@@ -116,8 +116,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -130,10 +130,11 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_lpmf(
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] covar_args arguments for the covariance function.
- * @param[in, out] msgs  message stream for the covariance and likelihood function.
+ * @param[in, out] msgs  message stream for the covariance and likelihood
+ * function.
  */
-template <bool propto = false, typename Eta, typename ThetaVec, typename CovarFun,
-          typename CovarArgs>
+template <bool propto = false, typename Eta, typename ThetaVec,
+          typename CovarFun, typename CovarArgs>
 inline auto laplace_marginal_neg_binomial_2_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index, const Eta& eta,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
@@ -176,8 +177,8 @@ struct neg_binomial_2_log_likelihood_summary {
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -204,10 +205,11 @@ struct neg_binomial_2_log_likelihood_summary {
  *               3. computes no square-root and uses LU decomposition.
  * @param[in] max_steps_line_search Number of steps after which the algorithm
  *                          gives up on doing a linesearch. If 0, no linesearch.
- * @param[in, out] msgs message stream for the covariance and likelihood function.
+ * @param[in, out] msgs message stream for the covariance and likelihood
+ * function.
  */
-template <bool propto = false, typename Eta,
-          typename ThetaVec,  typename CovarFun, typename CovarArgs,
+template <bool propto = false, typename Eta, typename ThetaVec,
+          typename CovarFun, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,
@@ -236,8 +238,8 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -249,10 +251,11 @@ inline auto laplace_marginal_tol_neg_binomial_2_log_summary_lpmf(
  * @param[in] theta_0 the initial guess for the Laplace approximation.
  * @param[in] covariance_function a function which returns the prior covariance.
  * @param[in] covar_args arguments for the covariance function.
- * @param[in, out] msgs message stream for the covariance and likelihood function.
+ * @param[in, out] msgs message stream for the covariance and likelihood
+ * function.
  */
-template <bool propto = false, typename Eta,
-          typename ThetaVec,  typename CovarFun, typename CovarArgs,
+template <bool propto = false, typename Eta, typename ThetaVec,
+          typename CovarFun, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_neg_binomial_2_log_summary_lpmf(
     const std::vector<int>& y, const std::vector<int>& n_per_group,

@@ -55,8 +55,8 @@ struct poisson_log_likelihood {
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -82,8 +82,8 @@ struct poisson_log_likelihood {
  * @param[in] max_steps_line_search
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <bool propto = false, typename ThetaVec, typename CovarFun, typename CovarArgs,
-          require_all_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename ThetaVec, typename CovarFun,
+          typename CovarArgs, require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_tol_poisson_log_lpmf(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
@@ -108,8 +108,8 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -121,8 +121,8 @@ inline auto laplace_marginal_tol_poisson_log_lpmf(
  * @param covar_args arguments for the covariance function.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <bool propto = false, typename ThetaVec, typename CovarFun, typename CovarArgs,
-          require_eigen_vector_t<ThetaVec>* = nullptr>
+template <bool propto = false, typename ThetaVec, typename CovarFun,
+          typename CovarArgs, require_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal_poisson_log_lpmf(const std::vector<int>& y,
                                               const std::vector<int>& y_index,
                                               const ThetaVec& theta_0,

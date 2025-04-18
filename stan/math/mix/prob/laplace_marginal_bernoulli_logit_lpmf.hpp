@@ -39,8 +39,8 @@ struct bernoulli_logit_likelihood {
  * @tparam propto boolean ignored
  * @tparam ThetaVec The type of the initial guess, theta_0.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -80,7 +80,8 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      std::forward<CovarFun>(covariance_function), std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 /**
@@ -94,8 +95,8 @@ inline auto laplace_marginal_tol_bernoulli_logit_lpmf(
  * @tparam CovarF Type of structure for covariance function.
  * @tparam ThetaVec The type of the initial guess, theta_0.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
  * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
  * dynamic sized rows and columns.
  * @tparam CovarArgs A tuple of types to passed as the first arguments of
@@ -119,7 +120,8 @@ inline auto laplace_marginal_bernoulli_logit_lpmf(
   return laplace_marginal_density(
       bernoulli_logit_likelihood{},
       std::forward_as_tuple(to_vector(y), n_samples), theta_0,
-      std::forward<CovarFun>(covariance_function), std::forward<CovarArgs>(covar_args), ops, msgs);
+      std::forward<CovarFun>(covariance_function),
+      std::forward<CovarArgs>(covar_args), ops, msgs);
 }
 
 }  // namespace math

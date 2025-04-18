@@ -52,13 +52,11 @@ namespace math {
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename ThetaVec, typename CovarFun,
-          typename CovarArgs, typename RNG,
-          require_eigen_t<ThetaVec>* = nullptr>
+template <typename ThetaVec, typename CovarFun, typename CovarArgs,
+          typename RNG, require_eigen_t<ThetaVec>* = nullptr>
 inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
-    ThetaVec&& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args,
+    ThetaVec&& theta_0, CovarFun&& covariance_function, CovarArgs&& covar_args,
     const double tolerance, const int64_t max_num_steps,
     const int hessian_block_size, const int solver,
     const int max_steps_line_search, RNG& rng, std::ostream* msgs) {
@@ -82,10 +80,10 @@ inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
  * In this specialized function, the likelihood p(y|theta) is a
  * Poisson with a log link.
  * @tparam CovarFun A functor with an
- *  `operator()(CovarArgsElements...)` method. The `operator()` method should accept as
- * arguments the inner elements of `CovarArgs`. The return type of the `operator()`
- * method should be a type inheriting from `Eigen::EigenBase` with dynamic sized
- *  rows and columns.
+ *  `operator()(CovarArgsElements...)` method. The `operator()` method should
+ * accept as arguments the inner elements of `CovarArgs`. The return type of the
+ * `operator()` method should be a type inheriting from `Eigen::EigenBase` with
+ * dynamic sized rows and columns.
  * @tparam ThetaVec A type inheriting from `Eigen::EigenBase` with dynamic
  * sized rows and 1 column.
  * @tparam RNG A valid boost rng type
@@ -103,14 +101,12 @@ inline Eigen::VectorXd laplace_latent_tol_poisson_log_rng(
  * @param rng seed for rng.
  * @param msgs message stream for the covariance and likelihood function.
  */
-template <typename ThetaVec, typename CovarFun,
-          typename CovarArgs, typename RNG,
-          require_eigen_t<ThetaVec>* = nullptr>
+template <typename ThetaVec, typename CovarFun, typename CovarArgs,
+          typename RNG, require_eigen_t<ThetaVec>* = nullptr>
 inline Eigen::VectorXd laplace_latent_poisson_log_rng(
     const std::vector<int>& y, const std::vector<int>& y_index,
     const ThetaVec& theta_0, CovarFun&& covariance_function,
-    CovarArgs&& covar_args,
-    RNG& rng, std::ostream* msgs) {
+    CovarArgs&& covar_args, RNG& rng, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_base_rng(poisson_log_likelihood{},
                           std::forward_as_tuple(y, y_index), theta_0,

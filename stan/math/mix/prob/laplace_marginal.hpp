@@ -42,18 +42,21 @@ namespace math {
  *               3. computes no square-root and uses LU decomposition.
  * @param[in] max_steps_line_search Number of steps after which the algorithm
  *                        gives up on doing a linesearch. If 0, no linesearch.
- * @param[in, out] msgs message stream for the covariance and likelihood function.
+ * @param[in, out] msgs message stream for the covariance and likelihood
+ * function.
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
 template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename ThetaVec, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
-inline auto laplace_marginal_tol(
-    LFun&& L_f, LArgs&& l_args, const ThetaVec& theta_0, CovarFun&& K_f,
-    CovarArgs&& covar_args, double tolerance, int64_t max_num_steps,
-    const int hessian_block_size, const int solver,
-    const int max_steps_line_search, std::ostream* msgs) {
+inline auto laplace_marginal_tol(LFun&& L_f, LArgs&& l_args,
+                                 const ThetaVec& theta_0, CovarFun&& K_f,
+                                 CovarArgs&& covar_args, double tolerance,
+                                 int64_t max_num_steps,
+                                 const int hessian_block_size, const int solver,
+                                 const int max_steps_line_search,
+                                 std::ostream* msgs) {
   // TEST: provisional signature to agree with parser.
   laplace_options ops{hessian_block_size, solver, max_steps_line_search,
                       tolerance, max_num_steps};
@@ -62,7 +65,6 @@ inline auto laplace_marginal_tol(
       std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
       msgs);
 }
-
 
 /**
  * Wrapper function around the laplace_marginal function.
@@ -84,7 +86,8 @@ inline auto laplace_marginal_tol(
  *  the Laplace approximation.
  * @param[in] K_f a function which returns the prior
  *              covariance for the marginalized out latent Gaussian.
- * @param[in, out] msgs message stream for the covariance and likelihood function.
+ * @param[in, out] msgs message stream for the covariance and likelihood
+ * function.
  * @param[in] covar_args A tuple of arguments for use in the covariance
  * function
  */
@@ -92,15 +95,14 @@ template <bool propto = false, typename LFun, typename LArgs, typename CovarFun,
           typename ThetaVec, typename CovarArgs,
           require_all_eigen_vector_t<ThetaVec>* = nullptr>
 inline auto laplace_marginal(LFun&& L_f, LArgs&& l_args,
-                                  const ThetaVec& theta_0, CovarFun&& K_f,
-                                  CovarArgs&& covar_args, std::ostream* msgs) {
+                             const ThetaVec& theta_0, CovarFun&& K_f,
+                             CovarArgs&& covar_args, std::ostream* msgs) {
   constexpr laplace_options ops{1, 1, 0, 1e-6, 100};
   return laplace_marginal_density(
       std::forward<LFun>(L_f), std::forward<LArgs>(l_args), theta_0,
       std::forward<CovarFun>(K_f), std::forward<CovarArgs>(covar_args), ops,
       msgs);
 }
-
 
 }  // namespace math
 }  // namespace stan
