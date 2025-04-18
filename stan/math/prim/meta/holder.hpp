@@ -231,8 +231,8 @@ namespace math {
  * expressions will be deleted.
  * @tparam T type of argument expression
  * @tparam Ptrs types of pointers
- * @param a argument expression
- * @param ptrs pointers to objects the constructed object will own.
+ * @param arg argument expression
+ * @param pointers pointers to objects the constructed object will own.
  * @return holder operation
  */
 template <typename T, typename... Ptrs,
