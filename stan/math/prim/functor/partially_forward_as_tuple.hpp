@@ -33,8 +33,8 @@ struct deduce_cvr {
 namespace internal {
 template <typename... Types>
 static constexpr bool is_partial_forward_nothrow_constructible
-    = ((std::is_lvalue_reference_v<Types&&> ||
-    (std::is_nothrow_constructible_v<std::decay_t<Types>, Types&&>))
+    = ((std::is_lvalue_reference_v<
+            Types&&> || (std::is_nothrow_constructible_v<std::decay_t<Types>, Types&&>))
        && ...);
 }
 
