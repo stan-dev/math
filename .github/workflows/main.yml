@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ develop ]
+    branches: [ develop, winarm64-ci ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-24.04-arm]
+        os: [windows-11-arm]
         config: [
           { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
           { label: prim, tests: 'test/unit/math/prim' },
@@ -41,15 +41,12 @@ jobs:
       with:
         python-version: '3.x'
 
-    - uses: r-lib/actions/setup-r@v2
+    - name: Download and install Rtools45
       if: runner.os == 'Windows'
-      with:
-        r-version: 'release'
-        rtools-version: '45'
-
-    - name: Set path for Rtools45
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools45/usr/bin;C:/rtools45/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: |
+        Invoke-WebRequest -Uri https://github.com/r-hub/rtools45/releases/download/latest/rtools45-aarch64.exe -OutFile rtools45-aarch64.exe
+        Start-Process -FilePath rtools45-aarch64.exe -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        echo "C:/rtools45-aarch64/usr/bin;C:/rtools45-aarch64/aarch64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
@@ -80,7 +77,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-24.04-arm]
+        os: [windows-11-arm]
         group: [1, 2, 3, 4, 5]
 
     steps:
@@ -89,15 +86,12 @@ jobs:
       with:
         python-version: '3.x'
 
-    - uses: r-lib/actions/setup-r@v2
+    - name: Download and install Rtools45
       if: runner.os == 'Windows'
-      with:
-        r-version: 'release'
-        rtools-version: '45'
-
-    - name: Set path for Rtools45
-      if: runner.os == 'Windows'
-      run: echo "C:/rtools45/usr/bin;C:/rtools45/x86_64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: |
+        Invoke-WebRequest -Uri https://github.com/r-hub/rtools45/releases/download/latest/rtools45-aarch64.exe -OutFile rtools45-aarch64.exe
+        Start-Process -FilePath rtools45-aarch64.exe -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        echo "C:/rtools45-aarch64/usr/bin;C:/rtools45-aarch64/aarch64-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
       shell: pwsh
