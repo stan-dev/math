@@ -6,6 +6,15 @@
 #include <vector>
 
 namespace stan {
+namespace internal {
+template <typename T>
+using is_matrix_or_std_vector
+  = math::disjunction<is_matrix<T>, is_std_vector<T>>;
+
+template <typename T>
+using is_scalar_container = math::conjunction<is_matrix_or_std_vector<T>,
+                                              is_stan_scalar<value_type_t<T>>>;
+}
 
 /**
  * This class provides a low-cost wrapper for situations where you either need
@@ -33,7 +42,7 @@ class vector_seq_view;
  * @tparam T the type of the underlying Vector
  */
 template <typename T>
-class vector_seq_view<T, require_matrix_t<T>> {
+class vector_seq_view<T, require_t<internal::is_scalar_container<T>>> {
  public:
   explicit vector_seq_view(const T& m) : m_(m) {}
   static constexpr auto size() { return 1; }
@@ -46,18 +55,12 @@ class vector_seq_view<T, require_matrix_t<T>> {
 
   template <typename C = T, require_st_autodiff<C>* = nullptr>
   inline auto val(size_t /* i */) const noexcept {
-    return m_.val();
+    return value_of(m_);
   }
 
  private:
   const ref_type_t<T> m_;
 };
-
-namespace internal {
-template <typename T>
-using is_matrix_or_std_vector
-    = math::disjunction<is_matrix<T>, is_std_vector<T>>;
-}
 
 /**
  * This class provides a low-cost wrapper for situations where you either need
