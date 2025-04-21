@@ -22,8 +22,9 @@ namespace math {
  * @return the last row of the computed log probability matrix
  */
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>,
-          require_eigen_vector_t<T_theta>* = nullptr>
-plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
+          require_vector_t<T_theta>* = nullptr>
+Eigen::Matrix<T_scalar, 1, -1>
+  poisson_binomial_log_probs(int y, const T_theta& theta) {
   int size_theta = theta.size();
   plain_type_t<T_theta> log_theta = log(theta);
   plain_type_t<T_theta> log1m_theta = log1m(theta);
@@ -39,32 +40,16 @@ plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
 
     // 0 < j < i successes in i trials
     for (int j = 0; j < std::min(y, i); ++j) {
-      alpha(i + 1, j + 1) = log_sum_exp(alpha(i, j) + log_theta[i],
-                                        alpha(i, j + 1) + log1m_theta[i]);
+      alpha(i + 1, j + 1) = log_mix(theta[i], alpha(i, j), alpha(i, j + 1));
     }
 
     // i successes in i trials
     if (i < y) {
-      alpha(i + 1, i + 1) = alpha(i, i) + log_theta(i);
+      alpha(i + 1, i + 1) = alpha(i, i) + log_theta[i];
     }
   }
 
   return alpha.row(size_theta);
-}
-
-template <typename T_y, typename T_theta, require_vt_integral<T_y>* = nullptr>
-auto poisson_binomial_log_probs(const T_y& y, const T_theta& theta) {
-  using T_scalar = scalar_type_t<T_theta>;
-  size_t max_sizes = std::max(stan::math::size(y), size_mvt(theta));
-  std::vector<Eigen::Matrix<T_scalar, Eigen::Dynamic, 1>> result(max_sizes);
-  scalar_seq_view<T_y> y_vec(y);
-  vector_seq_view<T_theta> theta_vec(theta);
-
-  for (size_t i = 0; i < max_sizes; ++i) {
-    result[i] = poisson_binomial_log_probs(y_vec[i], theta_vec[i]);
-  }
-
-  return result;
 }
 
 }  // namespace math
