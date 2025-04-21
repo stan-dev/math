@@ -11,8 +11,6 @@ TEST(MathMatrix, to_ref_matrix_exprs_tuple) {
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(3, 3);
   auto x = std::make_tuple(a * a, a, a.array() * 3);
   auto x_ref = stan::math::to_ref(x);
-  std::cout << stan::math::test::type_name<decltype(x)>() << std::endl;
-  std::cout << stan::math::test::type_name<decltype(x_ref)>() << std::endl;
   using x_ref_t = decltype(x_ref);
   static_assert(is_same_tuple_element_v<0, x_ref_t, Eigen::MatrixXd>,
                 "first entry should be Eigen::MatrixXd!");
@@ -29,8 +27,6 @@ TEST(MathMatrix, to_ref_matrix_views_tuple) {
   auto x = std::make_tuple(a.block(0, 0, 1, 1),
                            a(Eigen::placeholders::all, {2, 1, 1}), a.array());
   auto x_ref = stan::math::to_ref(x);
-  std::cout << stan::math::test::type_name<decltype(x)>() << std::endl;
-  std::cout << stan::math::test::type_name<decltype(x_ref)>() << std::endl;
   using x_ref_t = decltype(x_ref);
   using stan::test::is_same_tuple_element_v;
   static_assert(!is_same_tuple_element_v<0, x_ref_t, Eigen::MatrixXd>,
