@@ -2,11 +2,12 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_LIKELIHOOD_HPP
 
 // #include <stan/math/mix/laplace/hessian_times_vector.hpp>
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
 #include <stan/math/rev/fun.hpp>
+#include <stan/math/fwd/fun/Eigen_NumTraits.hpp>
 #include <stan/math/fwd/fun.hpp>
 #include <stan/math/prim/functor.hpp>
-#include <Eigen/Sparse>
 
 namespace stan {
 namespace math {
