@@ -2,7 +2,6 @@
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_BASE_RNG_HPP
 
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
-#include <stan/math/prim/fun.hpp>
 #include <stan/math/prim/prob/multi_normal_cholesky_rng.hpp>
 
 #include <Eigen/Sparse>
