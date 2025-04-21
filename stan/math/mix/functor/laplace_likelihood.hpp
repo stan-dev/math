@@ -3,9 +3,8 @@
 
 // #include <stan/math/mix/laplace/hessian_times_vector.hpp>
 #include <stan/math/mix/functor/hessian_block_diag.hpp>
-#include <stan/math/rev/fun.hpp>
-#include <stan/math/fwd/fun.hpp>
 #include <stan/math/prim/functor.hpp>
+#include <stan/math/prim/fun.hpp>
 
 namespace stan {
 namespace math {
