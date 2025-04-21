@@ -52,6 +52,7 @@ jobs:
       shell: pwsh
       run: |
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
+        Add-Content make\local "STAN_THREADS=true`n"
         make -f make/standalone math-libs -j2
 
     - name: Add TBB to PATH
@@ -97,6 +98,7 @@ jobs:
       shell: pwsh
       run: |
         Add-Content make\local "CPPFLAGS=-w -Wno-psabi -Wno-misleading-indentation`n"
+        Add-Content make\local "STAN_THREADS=true`n"
         make -f make/standalone math-libs -j2
 
     - name: Add TBB to PATH
