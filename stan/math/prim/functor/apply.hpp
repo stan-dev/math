@@ -39,7 +39,7 @@ inline constexpr bool is_apply_nothrow_v
  */
 template <class F, class Tuple, typename... PreArgs, std::size_t... I>
 inline constexpr decltype(auto) apply_impl(
-    F&& f, Tuple&& t, std::index_sequence<I...> i,
+    F&& f, Tuple&& t, std::index_sequence<I...> /* i */,
     PreArgs&&... pre_args) noexcept(is_apply_nothrow_v<F, Tuple, PreArgs...>) {
   return std::forward<F>(f)(std::forward<PreArgs>(pre_args)...,
                             std::get<I>(std::forward<Tuple>(t))...);
