@@ -60,7 +60,7 @@ jobs:
     - name: Add TBB to PATH
       if: runner.os == 'Windows'
       shell: pwsh
-      run: echo "C:/a/math/math/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+      run: echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Run ${{ matrix.config.label }} unit tests
       shell: pwsh
