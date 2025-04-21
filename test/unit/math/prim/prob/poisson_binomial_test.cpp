@@ -37,8 +37,10 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1_vectorial_y) {
   EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y0, to_row_vector(v0)), 0.0);
   EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y0, to_array_1d(v0)), 0.0);
   EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y1, v1), std::log(0.4) * 2);
-  EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y1, to_row_vector(v1)), std::log(0.4) * 2);
-  EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y1, to_array_1d(v1)), std::log(0.4) * 2);
+  EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y1, to_row_vector(v1)),
+                  std::log(0.4) * 2);
+  EXPECT_FLOAT_EQ(poisson_binomial_lpmf(y1, to_array_1d(v1)),
+                  std::log(0.4) * 2);
 }
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
