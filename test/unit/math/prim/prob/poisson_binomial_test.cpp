@@ -7,8 +7,8 @@
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1) {
   using stan::math::poisson_binomial_lpmf;
-  using stan::math::to_row_vector;
   using stan::math::to_array_1d;
+  using stan::math::to_row_vector;
 
   Eigen::VectorXd v0(0);
   Eigen::VectorXd v1(1);
@@ -23,8 +23,8 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1) {
 }
 TEST(ProbDistributionsPoissonBinomial, lpmf_length_0_length_1_vectorial_y) {
   using stan::math::poisson_binomial_lpmf;
-  using stan::math::to_row_vector;
   using stan::math::to_array_1d;
+  using stan::math::to_row_vector;
 
   Eigen::VectorXd v0(0);
   Eigen::VectorXd v1(1);
@@ -58,8 +58,8 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_scalar_arguments) {
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
   using stan::math::poisson_binomial_lpmf;
-  using stan::math::to_row_vector;
   using stan::math::to_array_1d;
+  using stan::math::to_row_vector;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
   vec p(3, 1);
@@ -73,8 +73,8 @@ TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y) {
 
 TEST(ProbDistributionsPoissonBinomial, lpmf_works_on_vectorial_y_and_theta) {
   using stan::math::poisson_binomial_lpmf;
-  using stan::math::to_row_vector;
   using stan::math::to_array_1d;
+  using stan::math::to_row_vector;
   using vec = Eigen::Matrix<double, Eigen::Dynamic, 1>;
 
   vec p(3, 1);

@@ -9,13 +9,13 @@ namespace stan {
 namespace internal {
 template <typename T>
 using is_matrix_or_std_vector
-  = math::disjunction<is_matrix<T>, is_std_vector<T>>;
+    = math::disjunction<is_matrix<T>, is_std_vector<T>>;
 
 template <typename T>
 using is_scalar_container = math::disjunction<
-  is_matrix<T>,
-  math::conjunction<is_std_vector<T>, is_stan_scalar<value_type_t<T>>>>;
-}
+    is_matrix<T>,
+    math::conjunction<is_std_vector<T>, is_stan_scalar<value_type_t<T>>>>;
+}  // namespace internal
 
 /**
  * This class provides a low-cost wrapper for situations where you either need
