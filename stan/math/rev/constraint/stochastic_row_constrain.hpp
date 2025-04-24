@@ -93,17 +93,18 @@ inline plain_type_t<T> stochastic_row_constrain(const T& y,
     const auto N = arena_y.rows();
 
     auto&& x_val = arena_x.val_op();
-    // backprop for log jacobian contribution to log density
-    arena_x.adj().array() += lp.adj() / x_val.array();
-
     auto&& x_adj = arena_x.adj_op();
+
+    const auto x_val_cols = x_val.cols();
 
     Eigen::VectorXd x_pre_softmax_adj(x_val.cols());
     for (Eigen::Index i = 0; i < N; ++i) {
       // backprop for softmax
       x_pre_softmax_adj.noalias()
-          = -x_val.row(i) * x_adj.row(i).dot(x_val.row(i))
-            + x_val.row(i).cwiseProduct(x_adj.row(i));
+          = -x_val.row(i)
+                * (x_adj.row(i).dot(x_val.row(i)) + lp.adj() * x_val_cols)
+            + (x_val.row(i).cwiseProduct(x_adj.row(i)).array() + lp.adj())
+                  .matrix();
 
       // backprop for sum_to_zero_constrain
       internal::sum_to_zero_vector_backprop(arena_y.row(i).adj(),
