@@ -25,18 +25,18 @@ TEST(MathMatrix, to_ref_matrix_exprs_tuple) {
 TEST(MathMatrix, to_ref_matrix_views_tuple) {
   Eigen::MatrixXd a = Eigen::MatrixXd::Random(3, 3);
   auto x = std::make_tuple(a.block(0, 0, 1, 1),
-                           a(Eigen::placeholders::all, {2, 1, 1}), a.array());
+                           a(Eigen::placeholders::all, std::vector{2, 1, 1}), a.array());
   auto x_ref = stan::math::to_ref(x);
   using x_ref_t = decltype(x_ref);
   using stan::test::is_same_tuple_element_v;
   static_assert(!is_same_tuple_element_v<0, x_ref_t, Eigen::MatrixXd>,
-                "first entry should be a view of an Eigen::MatrixXd!");
-  static_assert(!is_same_tuple_element_v<1, x_ref_t, Eigen::MatrixXd>,
-                "second entry should be a view of an Eigen::MatrixXd!");
+                "0th entry should be a view of an Eigen::MatrixXd!");
+  static_assert(is_same_tuple_element_v<1, x_ref_t, Eigen::Matrix<double, -1, -1, 0, -1, -1>>,
+                "1st entry should be a view of an Eigen::MatrixXd!");
   static_assert(
       !is_same_tuple_element_v<2, x_ref_t,
                                Eigen::Array<double, -1, -1, 0, -1, -1>>,
-      "third entry should be a view of an Eigen::ArrayXd!");
+      "2nd entry should be a view of an Eigen::ArrayXd!");
 }
 
 TEST(MathMatrix, to_ref_matrix_views_exprs_tuple) {
@@ -44,9 +44,9 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_tuple) {
   auto x = std::make_tuple(
       a.block(0, 0, 1, 1),
       std::make_tuple(a.block(0, 0, 1, 1),
-                      a(Eigen::placeholders::all, {2, 1, 1}), a.array()),
+                      a(Eigen::placeholders::all, std::vector{2, 1, 1}), a.array()),
       std::make_tuple(a * a, a, a.array() * 3),
-      a(Eigen::placeholders::all, {2, 1, 1}), a.array() * a.array());
+      a(Eigen::placeholders::all, std::vector{2, 1, 1}), a.array() * a.array());
   auto x_ref = stan::math::to_ref(x);
   using x_ref_t = decltype(x_ref);
   using stan::test::is_same_tuple_element_v;
@@ -59,7 +59,7 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_tuple) {
         "tuple<1><0> entry should be a veiw of an Eigen::MatrixXd!");
     static_assert(
         is_same_tuple_element_v<1, view_inner_tuple,
-                                Eigen::Matrix<double, -1, 3, 0, -1, 3>>,
+                                Eigen::Matrix<double, -1, -1, 0, -1, -1>>,
         "tuple<1><1> entry should be Eigen::MatrixXd!");
     static_assert(
         !is_same_tuple_element_v<2, view_inner_tuple,
@@ -81,7 +81,7 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_tuple) {
     }
     static_assert(
         is_same_tuple_element_v<3, x_ref_t,
-                                Eigen::Matrix<double, -1, 3, 0, -1, 3>>,
+                                Eigen::Matrix<double, -1, -1, 0, -1, -1>>,
         "tuple<3> entry should be Eigen::MatrixXd!");
     static_assert(
         is_same_tuple_element_v<4, x_ref_t,
@@ -96,11 +96,11 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_moves_tuple) {
       std::forward_as_tuple(
           a.block(0, 0, 1, 1),
           a(Eigen::placeholders::all,
-            {Eigen::Index{2}, Eigen::Index{1}, Eigen::Index{1}}),
+            std::vector{Eigen::Index{2}, Eigen::Index{1}, Eigen::Index{1}}),
           a.array()),
       std::forward_as_tuple(a * a, a, a.array() * 3),
       a(Eigen::placeholders::all,
-        {Eigen::Index{2}, Eigen::Index{1}, Eigen::Index{1}}),
+        std::vector{Eigen::Index{2}, Eigen::Index{1}, Eigen::Index{1}}),
       a.array() * a.array()));
   using x_ref_t = decltype(x_ref);
   // These should all be evaluated
@@ -113,7 +113,7 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_moves_tuple) {
                   "tuple<1><0> entry should be Eigen::MatrixXd!");
     static_assert(
         is_same_tuple_element_v<1, view_inner_tuple,
-                                Eigen::Matrix<double, -1, 3, 0, -1, 3>>,
+                                Eigen::Matrix<double, -1, -1, 0, -1, -1>>,
         "tuple<1><1> entry should be Eigen::MatrixXd!");
     static_assert(
         is_same_tuple_element_v<2, view_inner_tuple,
@@ -132,7 +132,7 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_moves_tuple) {
         "tuple<2><2> entry should be Eigen::ArrayXd!");
   }
   static_assert(is_same_tuple_element_v<3, x_ref_t,
-                                        Eigen::Matrix<double, -1, 3, 0, -1, 3>>,
+                                        Eigen::Matrix<double, -1, -1, 0, -1, -1>>,
                 "tuple<4> entry should be Eigen::ArrayXd!");
   static_assert(
       is_same_tuple_element_v<4, x_ref_t,
