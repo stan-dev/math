@@ -1035,9 +1035,10 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       if (!ll_args_contain_var && options.hessian_block_size == 1) {
         auto s2_tmp
             = (0.5
-              * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
-                    .cwiseProduct(laplace_likelihood::third_diff(
-                        ll_fun, md_est.theta, value_of(ll_args_copy), msgs))).eval();
+               * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
+                     .cwiseProduct(laplace_likelihood::third_diff(
+                         ll_fun, md_est.theta, value_of(ll_args_copy), msgs)))
+                  .eval();
         s2.deep_copy(s2_tmp);
       } else {
         arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
