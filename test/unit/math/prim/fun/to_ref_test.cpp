@@ -56,7 +56,7 @@ TEST(MathMatrix, to_ref_matrix_views_exprs_tuple) {
     using view_inner_tuple = std::tuple_element_t<1, decltype(x_ref)>;
     static_assert(
         !is_same_tuple_element_v<0, view_inner_tuple, Eigen::MatrixXd>,
-        "tuple<1><0> entry should be a veiw of an Eigen::MatrixXd!");
+        "tuple<1><0> entry should be a view of an Eigen::MatrixXd!");
     static_assert(
         is_same_tuple_element_v<1, view_inner_tuple,
                                 Eigen::Matrix<double, -1, -1, 0, -1, -1>>,
