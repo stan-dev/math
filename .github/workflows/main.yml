@@ -46,18 +46,17 @@ jobs:
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
-        echo "ARCH=$ARCH" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
-        echo "RTOOLS=$RTOOLS" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
-        Invoke-WebRequest `
-            -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
-            -Headers @{ 'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}" } `
-            -OutFile "$RTOOLS.exe"
 
-    - name: Install Rtools45
-      if: runner.os == 'Windows'
-      run: |
-        Start-Process -FilePath "$env:RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
-        echo "C:/$env:RTOOLS/usr/bin;C:/$env:RTOOLS/$env:ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        # Installation will hang if the toolchain is already installed
+        if (-Not Test-Path -Path "$RTOOLS") {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -Headers @{ 'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}" } `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        }
+
+        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
