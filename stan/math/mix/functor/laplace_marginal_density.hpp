@@ -240,13 +240,13 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
 template <bool ZeroInput = false, typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output& output, Input1&& precalc) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     stan::math::for_each(
         [](auto& output_i, auto&& precalc_i) {
           collect_adjoints(output_i, precalc_i);
         },
         output, precalc);
-  } else if constexpr (is_std_vector<Output>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (is_stan_scalar<value_type_t<Output>>::value) {
       Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output.data(),
                                                           output.size());
@@ -262,7 +262,7 @@ inline void collect_adjoints(Output& output, Input1&& precalc) {
         collect_adjoints(output[i], precalc[i]);
       }
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     output.array() += precalc.adj().array();
     if constexpr (ZeroInput) {
       precalc.adj().setZero();
@@ -691,12 +691,12 @@ inline double laplace_marginal_density(LLFun&& ll_fun, LLTupleArgs&& ll_args,
 template <typename Output, typename Input1>
 inline void collect_adjoints(Output&& output, const vari* ret,
                              Input1&& precalc) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     static_assert(1,
                   "Accumulate Adjoints called on a tuple, but tuples cannot be "
                   "on the reverse mode stack!");
-  } else if constexpr (is_std_vector<Output>::value) {
-    if constexpr (!is_var<value_type_t<Output>>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
+    if constexpr (!is_var_v<value_type_t<Output>>) {
       const auto output_size = output.size();
       for (std::size_t i = 0; i < output_size; ++i) {
         collect_adjoints(output[i], ret, precalc[i]);
@@ -708,42 +708,52 @@ inline void collect_adjoints(Output&& output, const vari* ret,
                                                            precalc.size());
       output_map.array().adj() += ret->adj_ * precalc_map.array();
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     output.adj().array() += ret->adj_ * precalc.array();
-  } else if constexpr (is_var<Output>::value) {
+  } else if constexpr (is_var_v<Output>) {
     output.adj() += ret->adj_ * precalc;
+  }
+}
+
+template <typename F, typename... Types>
+inline auto map_fun(F&& f, Types&&... args) {
+  if constexpr ((is_tuple_v<Types> && ...)) {
+    stan::math::for_each(
+        [&f](auto&&... args_i) {
+          return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
+        },
+        std::forward<Types>(args)...);
+  } else {
+    return f(std::forward<Types>(args)...);
   }
 }
 
 template <typename Output, typename Input1,
           require_t<is_all_arithmetic_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc) {
-  if constexpr (is_tuple<Output>::value) {
-    stan::math::for_each(
-        [](auto&& output_i, auto&& precalc_i) {
-          collect_adjoints(output_i, precalc_i);
-        },
-        output, precalc);
-  } else if constexpr (is_std_vector<Output>::value) {
-    const auto output_size = output.size();
-    for (std::size_t i = 0; i < output_size; ++i) {
-      collect_adjoints(output[i], precalc[i]);
-    }
-    if constexpr (!is_stan_scalar<value_type_t<Output>>::value) {
+  return map_fun([](auto&& output_i, auto&& precalc_i) {
+    using output_i_t = std::decay_t<decltype(output_i)>;
+    if constexpr (is_std_vector_v<output_i_t>) {
+      const auto output_size = output_i.size();
+      for (std::size_t i = 0; i < output_size; ++i) {
+        collect_adjoints(output_i[i], precalc_i[i]);
+      }
+      if constexpr (!is_stan_scalar<value_type_t<output_i_t>>::value) {
+      } else {
+        Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                            output_i.size());
+        Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(precalc_i.data(),
+                                                            precalc_i.size());
+        output_map.array() += precalc_map.array();
+      }
+    } else if constexpr (is_eigen_v<output_i_t>) {
+      output_i.array() += precalc_i.array();
+    } else if constexpr (is_stan_scalar_v<output_i_t>) {
+      output_i += precalc_i;
     } else {
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output.data(),
-                                                          output.size());
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(precalc.data(),
-                                                           precalc.size());
-      output_map.array() += precalc_map.array();
+      static_assert(1, "We missed!!!");
     }
-  } else if constexpr (is_eigen<Output>::value) {
-    output.array() += precalc.array();
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    output += precalc;
-  } else {
-    static_assert(1, "We missed!!!");
-  }
+  }, std::forward<Output>(output), std::forward<Input1>(precalc));
 }
 
 inline void constexpr copy_compute_s2(const std::tuple<>& output,
@@ -760,7 +770,7 @@ inline void copy_compute_s2(Output&& output, Input1&& precalc) {
           }
         },
         output, precalc);
-  } else if constexpr (is_std_vector<Output>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (!is_stan_scalar<value_type_t<Output>>::value) {
       const auto output_size = output.size();
       for (std::size_t i = 0; i < output_size; ++i) {
@@ -773,7 +783,7 @@ inline void copy_compute_s2(Output&& output, Input1&& precalc) {
                                                         precalc.size());
       output_map.array() += 0.5 * precalc_map.adj().array();
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     output.array() += 0.5 * precalc.adj().array();
   } else if constexpr (is_stan_scalar_v<Output>) {
     output += (0.5 * precalc.adj());
@@ -792,7 +802,7 @@ inline void collect_adjoints(Output&& output, Input1&& precalc1,
           collect_adjoints(output_i, precalc1_i, precalc2_i);
         },
         output, precalc1, precalc2);
-  } else if constexpr (is_std_vector<Output>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
     if constexpr (!is_stan_scalar<value_type_t<Output>>::value) {
       const auto output_size = output.size();
       for (std::size_t i = 0; i < output_size; ++i) {
@@ -807,7 +817,7 @@ inline void collect_adjoints(Output&& output, Input1&& precalc1,
                                                             precalc2.size());
       output_map.array() += precalc1_map.array() + precalc2_map.array();
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     output.array() += precalc1.array() + precalc2.array();
   } else if constexpr (is_stan_scalar_v<Output>) {
     output += precalc1 + precalc2;
@@ -823,11 +833,11 @@ static constexpr bool is_dbl_nothrow_constructible_v
 
 template <typename Output>
 inline constexpr auto make_zero(Output&& output) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     return stan::math::filter_map<is_any_var_scalar>(
         [](auto&& output_i) { return make_zero(output_i); }, output);
-  } else if constexpr (is_std_vector<Output>::value) {
-    if constexpr (!is_var<value_type_t<Output>>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
+    if constexpr (!is_var_v<value_type_t<Output>>) {
       const auto output_size = output.size();
       arena_t<promote_scalar_t<double, Output>> ret;
       ret.reserve(output_size);
@@ -838,7 +848,7 @@ inline constexpr auto make_zero(Output&& output) {
     } else {
       return arena_t<std::vector<double>>(output.size(), 0.0);
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     return arena_t<promote_scalar_t<double, Output>>(
         plain_type_t<promote_scalar_t<double, Output>>::Zero(output.rows(),
                                                              output.cols()));
@@ -850,12 +860,12 @@ inline constexpr auto make_zero(Output&& output) {
 template <typename Output,
           require_t<is_all_arithmetic_scalar<Output>>* = nullptr>
 inline void print_adjoint(Output&& output) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     std::cout << "tuple adj\n";
     return stan::math::for_each(
         [](auto&& output_i) { return print_adjoint(output_i); }, output);
-  } else if constexpr (is_std_vector<Output>::value) {
-    if constexpr (is_var<value_type_t<Output>>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
+    if constexpr (is_var_v<value_type_t<Output>>) {
       Eigen::Map<const Eigen::Matrix<double, -1, -1>> map_x(output.data(),
                                                             output.size());
       std::cout << "eigen adj: \n" << map_x << std::endl;
@@ -865,7 +875,7 @@ inline void print_adjoint(Output&& output) {
         print_adjoint(output[i]);
       }
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     std::cout << "adj: \n" << output << std::endl;
   } else if constexpr (is_stan_scalar_v<Output>) {
     std::cout << "adj: " << output << std::endl;
@@ -876,12 +886,12 @@ inline void print_adjoint(Output&& output) {
 
 template <typename Output, require_t<is_any_var_scalar<Output>>* = nullptr>
 inline void print_adjoint(Output&& output) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     std::cout << "tuple adj\n";
     return stan::math::for_each(
         [](auto&& output_i) { return print_adjoint(output_i); }, output);
-  } else if constexpr (is_std_vector<Output>::value) {
-    if constexpr (is_var<value_type_t<Output>>::value) {
+  } else if constexpr (is_std_vector_v<Output>) {
+    if constexpr (is_var_v<value_type_t<Output>>) {
       Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
                                                          output.size());
       std::cout << "eigen adj: \n" << map_x.adj() << std::endl;
@@ -891,7 +901,7 @@ inline void print_adjoint(Output&& output) {
         print_adjoint(output[i]);
       }
     }
-  } else if constexpr (is_eigen<Output>::value) {
+  } else if constexpr (is_eigen_v<Output>) {
     std::cout << "adj: \n" << output.adj() << std::endl;
   } else if constexpr (is_stan_scalar_v<Output>) {
     std::cout << "adj: " << output.adj() << std::endl;
@@ -981,7 +991,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
     // Solver 3
     arena_t<Eigen::MatrixXd> LU_solve_covariance;
     // Solver 1, 2, 3
-    arena_t<std::decay_t<Theta>> s2(theta_0.size());
+    arena_t<promote_scalar_t<double, std::decay_t<Theta>>> s2(theta_0.size());
     // Make one hard copy here
     using laplace_likelihood::internal::conditional_copy_and_promote;
     using laplace_likelihood::internal::COPY_TYPE;

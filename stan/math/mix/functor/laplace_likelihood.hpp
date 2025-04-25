@@ -233,7 +233,7 @@ inline void set_zero_adjoint(Output&& output) {
           set_zero_adjoint(elem);
         }
       }
-    } else if constexpr (is_eigen<Output>::value) {
+    } else if constexpr (is_eigen_v<Output>) {
       output.adj().setZero();
     } else if constexpr (is_stan_scalar_v<Output>) {
       output.adj() = 0;
