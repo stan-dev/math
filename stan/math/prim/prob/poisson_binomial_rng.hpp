@@ -21,17 +21,17 @@ namespace math {
  * @return a Poisson binomial distribution random variable
  * @throw std::domain_error if theta is not a valid probability
  */
-template <typename T_theta, typename RNG,
-          require_eigen_vt<std::is_arithmetic, T_theta>* = nullptr>
+template <typename T_theta, typename RNG>
 inline int poisson_binomial_rng(const T_theta& theta, RNG& rng) {
   static constexpr const char* function = "poisson_binomial_rng";
-  check_finite(function, "Probability parameters", theta);
-  check_bounded(function, "Probability parameters", value_of(theta), 0.0, 1.0);
+  ref_type_t<T_theta> theta_ref = theta;
+  check_finite(function, "Probability parameters", theta_ref);
+  check_bounded(function, "Probability parameters", theta_ref, 0.0, 1.0);
 
   int y = 0;
   for (size_t i = 0; i < theta.size(); ++i) {
     boost::variate_generator<RNG&, boost::bernoulli_distribution<> >
-        bernoulli_rng(rng, boost::bernoulli_distribution<>(theta(i)));
+        bernoulli_rng(rng, boost::bernoulli_distribution<>(theta_ref[i]));
     y += bernoulli_rng();
   }
 

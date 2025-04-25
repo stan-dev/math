@@ -5,6 +5,7 @@
 #include <stan/math/prim/fun/log.hpp>
 #include <stan/math/prim/fun/log1m.hpp>
 #include <stan/math/prim/fun/log_sum_exp.hpp>
+#include <stan/math/prim/fun/log_mix.hpp>
 #include <stan/math/prim/fun/max_size.hpp>
 #include <stan/math/prim/fun/vector_seq_view.hpp>
 
@@ -22,34 +23,34 @@ namespace math {
  * @return the last row of the computed log probability matrix
  */
 template <typename T_theta, typename T_scalar = scalar_type_t<T_theta>,
-          require_eigen_vector_t<T_theta>* = nullptr>
-plain_type_t<T_theta> poisson_binomial_log_probs(int y, const T_theta& theta) {
+          require_vector_t<T_theta>* = nullptr>
+Eigen::Matrix<T_scalar, -1, 1> poisson_binomial_log_probs(
+    int y, const T_theta& theta) {
   int size_theta = theta.size();
   plain_type_t<T_theta> log_theta = log(theta);
   plain_type_t<T_theta> log1m_theta = log1m(theta);
 
-  Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> alpha(size_theta + 1,
-                                                                y + 1);
+  Eigen::Matrix<T_scalar, Eigen::Dynamic, Eigen::Dynamic> alpha(y + 1,
+                                                                size_theta + 1);
 
   // alpha[i, j] = log prob of j successes in first i trials
   alpha(0, 0) = 0.0;
   for (int i = 0; i < size_theta; ++i) {
     // no success in i trials
-    alpha(i + 1, 0) = alpha(i, 0) + log1m_theta[i];
+    alpha(0, i + 1) = alpha(0, i) + log1m_theta[i];
 
     // 0 < j < i successes in i trials
     for (int j = 0; j < std::min(y, i); ++j) {
-      alpha(i + 1, j + 1) = log_sum_exp(alpha(i, j) + log_theta[i],
-                                        alpha(i, j + 1) + log1m_theta[i]);
+      alpha(j + 1, i + 1) = log_mix(theta[i], alpha(j, i), alpha(j + 1, i));
     }
 
     // i successes in i trials
     if (i < y) {
-      alpha(i + 1, i + 1) = alpha(i, i) + log_theta(i);
+      alpha(i + 1, i + 1) = alpha(i, i) + log_theta[i];
     }
   }
 
-  return alpha.row(size_theta);
+  return alpha.col(size_theta);
 }
 
 template <typename T_y, typename T_theta, require_vt_integral<T_y>* = nullptr>
