@@ -825,10 +825,7 @@ template <typename Output>
 inline constexpr auto make_zero(Output&& output) {
   if constexpr (is_tuple<Output>::value) {
     return stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& output_i) {
-          return make_zero(output_i);
-        },
-        output);
+        [](auto&& output_i) { return make_zero(output_i); }, output);
   } else if constexpr (is_std_vector<Output>::value) {
     if constexpr (!is_var<value_type_t<Output>>::value) {
       const auto output_size = output.size();
@@ -856,10 +853,7 @@ inline void print_adjoint(Output&& output) {
   if constexpr (is_tuple<Output>::value) {
     std::cout << "tuple adj\n";
     return stan::math::for_each(
-        [](auto&& output_i) {
-          return print_adjoint(output_i);
-        },
-        output);
+        [](auto&& output_i) { return print_adjoint(output_i); }, output);
   } else if constexpr (is_std_vector<Output>::value) {
     if constexpr (is_var<value_type_t<Output>>::value) {
       Eigen::Map<const Eigen::Matrix<double, -1, -1>> map_x(output.data(),
@@ -885,10 +879,7 @@ inline void print_adjoint(Output&& output) {
   if constexpr (is_tuple<Output>::value) {
     std::cout << "tuple adj\n";
     return stan::math::for_each(
-        [](auto&& output_i) {
-          return print_adjoint(output_i);
-        },
-        output);
+        [](auto&& output_i) { return print_adjoint(output_i); }, output);
   } else if constexpr (is_std_vector<Output>::value) {
     if constexpr (is_var<value_type_t<Output>>::value) {
       Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
