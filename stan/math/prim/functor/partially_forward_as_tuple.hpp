@@ -70,8 +70,7 @@ using deduce_cvr_t = typename deduce_cvr<T>::type;
  * type whose move constructor is nothrow
  */
 template <typename... Types>
-inline constexpr auto partially_forward_as_tuple(Types&&... args) noexcept(
-    internal::is_partial_forward_nothrow_constructible<Types&&...>) {
+inline constexpr auto partially_forward_as_tuple(Types&&... args) {
   if constexpr (sizeof...(Types) == 0) {
     return std::tuple<>{};
   } else {

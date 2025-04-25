@@ -586,7 +586,6 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       Eigen::PartialPivLU<Eigen::MatrixXd> LU(
           MatrixXd::Identity(theta_size, theta_size) + covariance * W);
       // L on upper and U on lower triangular
-      auto&& U = LU.matrixLU();
       b.noalias() = W * theta + theta_grad;
 
       a.noalias() = b - W * LU.solve(covariance * b);
@@ -823,12 +822,10 @@ static constexpr bool is_dbl_nothrow_constructible_v
         promote_scalar_t<double, std::decay_t<T>>>::value;
 
 template <typename Output>
-inline constexpr auto make_zero(Output&& output) noexcept(
-    is_dbl_nothrow_constructible_v<Output>) {
+inline constexpr auto make_zero(Output&& output) {
   if constexpr (is_tuple<Output>::value) {
     return stan::math::filter_map<is_any_var_scalar>(
-        [](auto&& output_i) noexcept(
-            is_dbl_nothrow_constructible_v<decltype(output_i)>) {
+        [](auto&& output_i) {
           return make_zero(output_i);
         },
         output);
@@ -859,8 +856,7 @@ inline void print_adjoint(Output&& output) {
   if constexpr (is_tuple<Output>::value) {
     std::cout << "tuple adj\n";
     return stan::math::for_each(
-        [](auto&& output_i) noexcept(
-            std::is_nothrow_constructible_v<std::decay_t<decltype(output_i)>>) {
+        [](auto&& output_i) {
           return print_adjoint(output_i);
         },
         output);
@@ -889,8 +885,7 @@ inline void print_adjoint(Output&& output) {
   if constexpr (is_tuple<Output>::value) {
     std::cout << "tuple adj\n";
     return stan::math::for_each(
-        [](auto&& output_i) noexcept(
-            std::is_nothrow_constructible_v<std::decay_t<decltype(output_i)>>) {
+        [](auto&& output_i) {
           return print_adjoint(output_i);
         },
         output);

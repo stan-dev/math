@@ -26,8 +26,7 @@ inline constexpr bool c_is_nothrow_invocable_v
     = c_is_nothrow_invocable<FilterOn, F, Types...>::value;
 
 template <template <typename...> class Filter, typename F, typename Arg>
-inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) noexcept(
-    c_is_nothrow_invocable_v<Filter<Arg>::value, F, Arg>) {
+inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg)  {
   if constexpr (Filter<Arg>::value) {
     return f(std::forward<Arg>(arg));
   } else {
@@ -60,9 +59,7 @@ template <template <typename...> class Filter, typename F, typename Tuple,
           require_t<is_tuple<Tuple>>* = nullptr>
 inline constexpr auto map_if(F&& f, Tuple&& arg) {
   return stan::math::apply(
-      [](auto&& f, auto&&... args) noexcept(
-          (internal::is_filter_fun_nothrow_v<Filter, F,
-                                             decltype(args)> && ...)) {
+      [](auto&& f, auto&&... args) {
         return partially_forward_as_tuple(internal::filter_fun<Filter>(
             std::forward<decltype(f)>(f),
             std::forward<decltype(args)>(args))...);
@@ -87,8 +84,7 @@ inline constexpr auto map_if(F&& f, Tuple&& arg) {
 template <template <typename...> class Filter, typename F, typename Arg1,
           typename... Args,
           require_t<bool_constant<!is_tuple<Arg1>::value>>* = nullptr>
-inline constexpr auto map_if(F&& f, Arg1&& arg1, Args&&... args) noexcept(
-    (internal::is_filter_fun_nothrow_v<Filter, F, Args> && ...)) {
+inline constexpr auto map_if(F&& f, Arg1&& arg1, Args&&... args) {
   return partially_forward_as_tuple(
       internal::filter_fun<Filter>(f, std::forward<Arg1>(arg1)),
       internal::filter_fun<Filter>(f, std::forward<Args>(args))...);
@@ -96,8 +92,7 @@ inline constexpr auto map_if(F&& f, Arg1&& arg1, Args&&... args) noexcept(
 
 template <template <typename...> class Filter, typename F, typename Arg,
           require_t<bool_constant<!is_tuple<Arg>::value>>* = nullptr>
-inline constexpr decltype(auto) map_if(F&& f, Arg&& arg) noexcept(
-    internal::is_filter_fun_nothrow_v<Filter, F, Arg>) {
+inline constexpr decltype(auto) map_if(F&& f, Arg&& arg) {
   return internal::filter_fun<Filter>(std::forward<F>(f),
                                       std::forward<Arg>(arg));
 }
