@@ -56,8 +56,8 @@ jobs:
     - name: Install Rtools45
       if: runner.os == 'Windows'
       run: |
-        Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
-        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        Start-Process -FilePath "$env:$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        echo "C:/$env:$RTOOLS/usr/bin;C:/$env:$RTOOLS/$env:$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
@@ -109,8 +109,8 @@ jobs:
     - name: Install Rtools45
       if: runner.os == 'Windows'
       run: |
-        Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
-        echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+        Start-Process -FilePath "$env:$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+        echo "C:/$env:$RTOOLS/usr/bin;C:/$RTOOLS/$env:$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - name: Build Math libs
