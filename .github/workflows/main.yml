@@ -48,7 +48,7 @@ jobs:
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
 
         # Installation will hang if the toolchain is already installed
-        if (-Not Test-Path -Path "$RTOOLS") {
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
           Invoke-WebRequest `
               -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
               -Headers @{ 'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}" } `
