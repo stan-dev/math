@@ -731,29 +731,31 @@ inline auto map_fun(F&& f, Types&&... args) {
 template <typename Output, typename Input1,
           require_t<is_all_arithmetic_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc) {
-  return map_fun([](auto&& output_i, auto&& precalc_i) {
-    using output_i_t = std::decay_t<decltype(output_i)>;
-    if constexpr (is_std_vector_v<output_i_t>) {
-      const auto output_size = output_i.size();
-      for (std::size_t i = 0; i < output_size; ++i) {
-        collect_adjoints(output_i[i], precalc_i[i]);
-      }
-      if constexpr (!is_stan_scalar<value_type_t<output_i_t>>::value) {
-      } else {
-        Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                            output_i.size());
-        Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(precalc_i.data(),
-                                                            precalc_i.size());
-        output_map.array() += precalc_map.array();
-      }
-    } else if constexpr (is_eigen_v<output_i_t>) {
-      output_i.array() += precalc_i.array();
-    } else if constexpr (is_stan_scalar_v<output_i_t>) {
-      output_i += precalc_i;
-    } else {
-      static_assert(1, "We missed!!!");
-    }
-  }, std::forward<Output>(output), std::forward<Input1>(precalc));
+  return map_fun(
+      [](auto&& output_i, auto&& precalc_i) {
+        using output_i_t = std::decay_t<decltype(output_i)>;
+        if constexpr (is_std_vector_v<output_i_t>) {
+          const auto output_size = output_i.size();
+          for (std::size_t i = 0; i < output_size; ++i) {
+            collect_adjoints(output_i[i], precalc_i[i]);
+          }
+          if constexpr (!is_stan_scalar<value_type_t<output_i_t>>::value) {
+          } else {
+            Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(
+                output_i.data(), output_i.size());
+            Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(
+                precalc_i.data(), precalc_i.size());
+            output_map.array() += precalc_map.array();
+          }
+        } else if constexpr (is_eigen_v<output_i_t>) {
+          output_i.array() += precalc_i.array();
+        } else if constexpr (is_stan_scalar_v<output_i_t>) {
+          output_i += precalc_i;
+        } else {
+          static_assert(1, "We missed!!!");
+        }
+      },
+      std::forward<Output>(output), std::forward<Input1>(precalc));
 }
 
 inline void constexpr copy_compute_s2(const std::tuple<>& output,
