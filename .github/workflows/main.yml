@@ -46,8 +46,8 @@ jobs:
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
-        echo $ARCH | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
-        echo $RTOOLS | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+        echo "ARCH=$ARCH" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+        echo "RTOOLS=$RTOOLS" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
         Invoke-WebRequest `
             -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
             -Headers @{ 'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}" } `
@@ -99,8 +99,8 @@ jobs:
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
-        echo $ARCH | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
-        echo $RTOOLS | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+        echo "ARCH=$ARCH" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+        echo "RTOOLS=$RTOOLS" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
         Invoke-WebRequest `
             -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
             -Headers @{ 'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}" } `
