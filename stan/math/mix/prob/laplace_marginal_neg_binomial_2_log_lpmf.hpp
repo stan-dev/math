@@ -149,7 +149,7 @@ inline auto laplace_marginal_neg_binomial_2_log_lpmf(
 struct neg_binomial_2_log_likelihood_summary {
   template <typename T_theta, typename T_eta>
   inline return_type_t<T_theta, T_eta> operator()(
-      const Eigen::Matrix<T_theta, Eigen::Dynamic, 1>& theta, const T_eta& eta,
+      const T_theta& theta, const T_eta& eta,
       const std::vector<int>& y, const std::vector<int>& n_per_group,
       const std::vector<int>& counts_per_group, std::ostream* pstream) const {
     Eigen::Map<const Eigen::VectorXi> y_map(y.data(), y.size());

@@ -26,9 +26,8 @@ namespace math {
  */
 template <typename T>
 struct deduce_cvr {
-  using type = std::conditional_t<
-      is_stan_scalar_v<std::decay_t<T>>, std::decay_t<T>,
-      std::conditional_t<std::is_rvalue_reference_v<T>, std::decay_t<T>, T&&>>;
+  using type
+      = std::conditional_t<std::is_rvalue_reference_v<T>, std::decay_t<T>, T&&>;
 };
 
 namespace internal {
