@@ -26,9 +26,8 @@ namespace math {
 struct neg_binomial_2_log_likelihood {
   template <typename T_theta, typename T_eta>
   inline return_type_t<T_theta, T_eta> operator()(
-      const T_theta& theta, const T_eta& eta,
-      const std::vector<int>& y, const std::vector<int>& y_index,
-      std::ostream* pstream) const {
+      const T_theta& theta, const T_eta& eta, const std::vector<int>& y,
+      const std::vector<int>& y_index, std::ostream* pstream) const {
     Eigen::VectorXi n_per_group = Eigen::VectorXi::Zero(theta.size());
     Eigen::VectorXi counts_per_group = Eigen::VectorXi::Zero(theta.size());
 
