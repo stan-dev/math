@@ -26,7 +26,7 @@ inline constexpr bool c_is_nothrow_invocable_v
     = c_is_nothrow_invocable<FilterOn, F, Types...>::value;
 
 template <template <typename...> class Filter, typename F, typename Arg>
-inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg)  {
+inline constexpr decltype(auto) filter_fun(F&& f, Arg&& arg) {
   if constexpr (Filter<Arg>::value) {
     return f(std::forward<Arg>(arg));
   } else {
