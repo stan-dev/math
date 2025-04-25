@@ -41,13 +41,20 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Download and install Rtools45
+    - name: Download and Install Rtools45
       if: runner.os == 'Windows'
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
-        Invoke-WebRequest -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe -OutFile "$RTOOLS.exe"
-        Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+
+        # Installation will hang if the toolchain is already installed
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
+        }
+
         echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
@@ -85,13 +92,20 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Download and install Rtools45
+    - name: Download and Install Rtools45
       if: runner.os == 'Windows'
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
-        Invoke-WebRequest -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe -OutFile "$RTOOLS.exe"
-        Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/install /norestart /verysilent /SUPPRESSMSGBOXES" -NoNewWindow -Wait
+
+        # Installation will hang if the toolchain is already installed
+        if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
+          Invoke-WebRequest `
+              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -OutFile "$RTOOLS.exe"
+          Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
+        }
+
         echo "C:/$RTOOLS/usr/bin;C:/$RTOOLS/$ARCH-w64-mingw32.static.posix/bin" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
         echo "$(pwd)/lib/tbb" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
 
