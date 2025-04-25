@@ -28,9 +28,7 @@ class nested_rev_autodiff {
  public:
   nested_rev_autodiff() { start_nested(); }
 
-  ~nested_rev_autodiff() {
-    recover_memory_nested();
-  }
+  ~nested_rev_autodiff() { recover_memory_nested(); }
 
   // Prevent undesirable operations
   nested_rev_autodiff(const nested_rev_autodiff&) = delete;

@@ -85,12 +85,10 @@ TEST(MathFunctions, filter_map_inner_tuple_mix_value_type) {
                 "0th should be a double!");
   static_assert(!stan::test::is_ref_element_v<0, args_t>,
                 "0th should not be a reference!");
-  static_assert(is_lvalue_ref_element_v<1, args_t>,
-                "1st should be an lvalue!");
+  static_assert(is_lvalue_ref_element_v<1, args_t>, "1st should be an lvalue!");
   static_assert(is_same_tuple_element_v<1, args_t, std::vector<int>>,
                 "1st should be an std::vector<int>!");
-  static_assert(is_lvalue_ref_element_v<2, args_t>,
-                "2nd should be an lvalue!");
+  static_assert(is_lvalue_ref_element_v<2, args_t>, "2nd should be an lvalue!");
   static_assert(is_same_tuple_element_v<2, args_t, double>,
                 "2nd should be a double!");
   static_assert(!stan::test::is_ref_element_v<3, args_t>,
@@ -106,8 +104,7 @@ TEST(MathFunctions, filter_map_inner_tuple_mix_value_type) {
                 "tuple<4><1> should be an lvalue!");
   static_assert(is_same_tuple_element_v<1, inner_tuple_t, std::vector<int>>,
                 "tuple<4><1> should be an std::vector<int>!");
-  static_assert(is_lvalue_ref_element_v<5, args_t>,
-                "5th should be an lvalue!");
+  static_assert(is_lvalue_ref_element_v<5, args_t>, "5th should be an lvalue!");
   static_assert(is_same_tuple_element_v<5, args_t, std::vector<int>>,
                 "5th should be an std::vector<int>!");
   static_assert(!stan::test::is_ref_element_v<6, args_t>,
