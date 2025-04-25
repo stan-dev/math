@@ -1006,7 +1006,6 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           }
         },
         partial_parm, ll_args_filter);
-
     if (options.solver == 1) {
       // TODO(Steve): Solve without casting from sparse to dense
       Eigen::MatrixXd tmp
