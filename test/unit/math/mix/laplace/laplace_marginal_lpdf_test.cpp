@@ -184,7 +184,7 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
           return laplace_marginal_tol<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
               stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(x_v, alpha, rho), tolerance, max_num_steps,
+              std::forward_as_tuple(x_v, std::make_tuple(alpha, rho)), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::ad_tolerances tols;

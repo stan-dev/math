@@ -186,6 +186,13 @@ struct squared_kernel_functor {
     return stan::math::gp_exp_quad_cov(x, arg1, arg2)
            + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
   }
+  template <typename T1, typename T2, typename T3>
+  Eigen::Matrix<return_type_t<T1, T2, T3>, Eigen::Dynamic, Eigen::Dynamic>
+  operator()(const T1& x, std::tuple<T2, T3> arg1,
+             std::ostream* msgs = nullptr) const {
+    return stan::math::gp_exp_quad_cov(x, std::get<0>(arg1), std::get<1>(arg1))
+           + 1e-9 * Eigen::MatrixXd::Identity(x.size(), x.size());
+  }
 };
 
 // TO DO: delete this structure.

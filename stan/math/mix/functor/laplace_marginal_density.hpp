@@ -752,7 +752,7 @@ inline void constexpr copy_compute_s2(const std::tuple<>& output,
 template <typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void copy_compute_s2(Output&& output, Input1&& precalc) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     stan::math::for_each(
         [](auto& output_i, auto&& precalc_i) {
           if constexpr (is_any_var_scalar<Input1>::value) {
@@ -786,7 +786,7 @@ template <typename Output, typename Input1, typename Input2,
           require_t<is_all_arithmetic_scalar<Input1, Input2>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc1,
                              Input2&& precalc2) {
-  if constexpr (is_tuple<Output>::value) {
+  if constexpr (is_tuple_v<Output>) {
     stan::math::for_each(
         [](auto&& output_i, auto&& precalc1_i, auto&& precalc2_i) {
           collect_adjoints(output_i, precalc1_i, precalc2_i);
@@ -909,26 +909,24 @@ inline void print_adjoint(Output&& output) {
   }
 }
 
-template <typename LLArgs, typename Precalc>
-inline void laplace_tuple_collect_adjoints(var ret, LLArgs&& ll_args,
+template <typename Arg, typename Precalc>
+inline void laplace_tuple_collect_adjoints(var ret, Arg&& arg,
                                            Precalc&& precalc) {
-  stan::math::for_each(
-      [ret](auto&& ll_arg, auto&& precalc_arg) {
-        if constexpr (is_tuple<decltype(ll_arg)>::value) {
-          stan::math::for_each(
-              [ret](auto&& ll_arg_i, auto&& precalc_arg_i) {
-                laplace_tuple_collect_adjoints(ret, ll_arg_i, precalc_arg_i);
-              },
-              ll_arg, precalc_arg);
-        } else {
-          reverse_pass_callback(
-              [vi = ret.vi_, ll_arg_arena = to_arena(ll_arg),
-               precalc_arg_arena = to_arena(precalc_arg)]() mutable {
-                collect_adjoints(ll_arg_arena, vi, precalc_arg_arena);
-              });
-        }
-      },
-      ll_args, precalc);
+  if constexpr (is_tuple_v<Arg>) {
+    stan::math::for_each(
+        [ret](auto&& inner_arg, auto&& inner_precalc) mutable {
+          laplace_tuple_collect_adjoints(ret,
+           std::forward<decltype(inner_arg)>(inner_arg),
+           std::forward<decltype(inner_precalc)>(inner_precalc));
+        },
+        std::forward<Arg>(arg), std::forward<Precalc>(precalc));
+  } else {
+    reverse_pass_callback(
+        [vi = ret.vi_, arg_arena = to_arena(std::forward<Arg>(arg)),
+        precalc_arena = to_arena(std::forward<Precalc>(precalc))]() mutable {
+          collect_adjoints(arg_arena, vi, precalc_arena);
+        });
+  }
 }
 
 /**
