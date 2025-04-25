@@ -9,7 +9,6 @@
 #include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>
 
-
 namespace stan {
 namespace math {
 
