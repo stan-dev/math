@@ -906,15 +906,15 @@ inline void laplace_tuple_collect_adjoints(var ret, Arg&& arg,
   if constexpr (is_tuple_v<Arg>) {
     stan::math::for_each(
         [ret](auto&& inner_arg, auto&& inner_precalc) mutable {
-          laplace_tuple_collect_adjoints(ret,
-           std::forward<decltype(inner_arg)>(inner_arg),
-           std::forward<decltype(inner_precalc)>(inner_precalc));
+          laplace_tuple_collect_adjoints(
+              ret, std::forward<decltype(inner_arg)>(inner_arg),
+              std::forward<decltype(inner_precalc)>(inner_precalc));
         },
         std::forward<Arg>(arg), std::forward<Precalc>(precalc));
   } else {
     reverse_pass_callback(
         [vi = ret.vi_, arg_arena = to_arena(std::forward<Arg>(arg)),
-        precalc_arena = to_arena(std::forward<Precalc>(precalc))]() mutable {
+         precalc_arena = to_arena(std::forward<Precalc>(precalc))]() mutable {
           collect_adjoints(arg_arena, vi, precalc_arena);
         });
   }
