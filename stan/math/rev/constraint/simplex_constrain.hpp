@@ -8,8 +8,7 @@
 #include <stan/math/rev/constraint/sum_to_zero_constrain.hpp>
 #include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>
-#include <tuple>
-#include <vector>
+
 
 namespace stan {
 namespace math {

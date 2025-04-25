@@ -9,8 +9,6 @@
 #include <stan/math/prim/constraint/stochastic_column_constrain.hpp>
 #include <stan/math/rev/constraint/sum_to_zero_constrain.hpp>
 #include <cmath>
-#include <tuple>
-#include <vector>
 
 namespace stan {
 namespace math {
