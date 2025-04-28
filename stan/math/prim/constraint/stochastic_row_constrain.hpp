@@ -3,10 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/fun/Eigen.hpp>
-#include <stan/math/prim/fun/inv_logit.hpp>
-#include <stan/math/prim/fun/log.hpp>
-#include <stan/math/prim/fun/log1p_exp.hpp>
-#include <stan/math/prim/fun/logit.hpp>
 #include <stan/math/prim/constraint/simplex_constrain.hpp>
 #include <cmath>
 
@@ -16,7 +12,8 @@ namespace math {
 /**
  * Return a row stochastic matrix.
  *
- * The transform is based on a centered stick-breaking process.
+ * The transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam Mat type of the Matrix
  * @param y Free Matrix input of dimensionality (N, K - 1).
@@ -27,23 +24,17 @@ template <typename Mat, require_eigen_matrix_dynamic_t<Mat>* = nullptr,
 inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
-  int Km1 = y_ref.cols();
-  plain_type_t<Mat> x(N, Km1 + 1);
-  using eigen_arr = Eigen::Array<scalar_type_t<Mat>, -1, 1>;
-  eigen_arr stick_len = eigen_arr::Constant(N, 1.0);
-  for (Eigen::Index k = 0; k < Km1; ++k) {
-    auto z_k = inv_logit(y_ref.array().col(k) - log(Km1 - k));
-    x.array().col(k) = stick_len * z_k;
-    stick_len -= x.array().col(k);
+  plain_type_t<Mat> ret(N, y_ref.cols() + 1);
+  for (Eigen::Index i = 0; i < N; ++i) {
+    ret.row(i) = simplex_constrain(y_ref.row(i));
   }
-  x.array().col(Km1) = stick_len;
-  return x;
+  return ret;
 }
 
 /**
  * Return a row stochastic matrix.
- * The simplex transform is defined through a centered
- * stick-breaking process.
+ * The simplex transform is defined using the inverse of the
+ * isometric log ratio (ILR) transform
  *
  * @tparam Mat type of the matrix
  * @tparam Lp A scalar type for the lp argument. The scalar type of Mat should
@@ -59,21 +50,11 @@ template <typename Mat, typename Lp,
 inline plain_type_t<Mat> stochastic_row_constrain(const Mat& y, Lp& lp) {
   auto&& y_ref = to_ref(y);
   const Eigen::Index N = y_ref.rows();
-  Eigen::Index Km1 = y_ref.cols();
-  plain_type_t<Mat> x(N, Km1 + 1);
-  Eigen::Array<scalar_type_t<Mat>, -1, 1> stick_len
-      = Eigen::Array<scalar_type_t<Mat>, -1, 1>::Constant(N, 1.0);
-  for (Eigen::Index k = 0; k < Km1; ++k) {
-    const auto eq_share = -log(Km1 - k);  // = logit(1.0/(Km1 + 1 - k));
-    auto adj_y_k = (y_ref.array().col(k) + eq_share).eval();
-    auto z_k = inv_logit(adj_y_k);
-    x.array().col(k) = stick_len * z_k;
-    lp += -sum(log1p_exp(adj_y_k)) - sum(log1p_exp(-adj_y_k))
-          + sum(log(stick_len));
-    stick_len -= x.array().col(k);  // equivalently *= (1 - z_k);
+  plain_type_t<Mat> ret(N, y_ref.cols() + 1);
+  for (Eigen::Index i = 0; i < N; ++i) {
+    ret.row(i) = simplex_constrain(y_ref.row(i), lp);
   }
-  x.col(Km1).array() = stick_len;
-  return x;
+  return ret;
 }
 
 /**
