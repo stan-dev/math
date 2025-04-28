@@ -102,6 +102,19 @@ struct traits<stan::math::Holder<ArgType, Ptrs...>> {
 }  // namespace Eigen
 
 namespace stan {
+namespace internal {
+  template <typename T>
+  struct is_holder : std::false_type {};
+  template <typename ArgType, typename... Ptrs>
+  struct is_holder<stan::math::Holder<ArgType, Ptrs...>> : std::true_type {};
+}
+
+template <typename T>
+struct is_holder : internal::is_holder<std::decay_t<T>> {};
+
+template <typename T>
+inline constexpr bool is_holder_v = is_holder<T>::value;
+
 namespace math {
 
 /**

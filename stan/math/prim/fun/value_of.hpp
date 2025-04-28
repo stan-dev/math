@@ -39,12 +39,15 @@ inline constexpr decltype(auto) value_of(T&& x) {
         },
         std::forward<T>(x));
   } else {
+    constexpr bool is_float_or_int
+        = std::is_floating_point_v<
+              val_t> || std::is_integral_v<val_t>;
     constexpr bool is_base_float_or_int
         = std::is_floating_point_v<
               base_type_t<val_t>> || std::is_integral_v<base_type_t<val_t>>;
-    if constexpr (is_base_float_or_int) {
+    if constexpr (is_float_or_int) {
       return val_t{x};
-    } else if constexpr (is_base_float_or_int) {
+    } else if constexpr (is_base_float_or_int && !is_eigen_v<val_t>) {
       if constexpr (std::is_rvalue_reference_v<T&&>) {
         return plain_type_t<T>(std::forward<T>(x));
       } else {
@@ -62,11 +65,36 @@ inline constexpr decltype(auto) value_of(T&& x) {
       }
       return ret;
     } else if constexpr (is_eigen_v<val_t>) {
-      return make_holder(
-          [](auto& m) {
-            return m.unaryExpr([](auto x_i) { return value_of(x_i); });
-          },
-          std::forward<T>(x));
+        /** 
+         * Because of lifetimes of eigen expressions we have to account
+         * for a few choices.
+         * 1. If a base type of double
+         *  a. and it is an rvalue reference and not a holder
+         *    - Wrap it in a holder and forward the object
+         *  b. and it is an rvalue holder
+         *    - pass x to decayed holder
+         *  c. it is an rvalue
+         *    - pass x
+         * 2. Any other value type that does not have a base type of double
+         *  - wrap it ina a holder with an unary expr to pull out the values
+         */
+        if constexpr (is_base_float_or_int) {
+          if constexpr (std::is_rvalue_reference_v<T&&> && !is_holder_v<val_t>) {
+            return make_holder([](auto&& x_inner) {
+              return x_inner;
+            }, std::forward<T>(x));
+          } else if constexpr (is_holder_v<val_t>) {
+            return std::decay_t<T>(std::forward<T>(x));
+          } else {
+            return x;
+          }
+        } else {
+          return make_holder(
+            [](auto& m) {
+              return m.unaryExpr([](auto x_i) { return value_of(x_i); });
+            },
+            std::forward<T>(x));
+      }
     } else if constexpr (is_var_v<val_t>) {
       return x.vi_->val_;
     } else if constexpr (is_fvar<val_t>::value) {
