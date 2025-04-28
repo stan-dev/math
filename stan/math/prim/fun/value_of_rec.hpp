@@ -15,8 +15,8 @@ namespace math {
 /**
  * Return the value of the specified scalar argument
  * converted to a double value. For types with a \ref base_type
- *  of double this is itself. For types with a \ref base_type 
- *  of \ref var or \ref fvar this the `value_of_rec` of the 
+ *  of double this is itself. For types with a \ref base_type
+ *  of \ref var or \ref fvar this the `value_of_rec` of the
  *  value type until a double is found.
  *
  * <p>See the <code>primitive_value</code> function to
@@ -48,17 +48,17 @@ inline constexpr decltype(auto) value_of_rec(T&& x) {
     return ret;
   } else if constexpr (is_eigen_v<val_t>) {
     return make_holder(
-      [](auto& m) {
-        return m.unaryExpr([](auto x_i) { return value_of_rec(x_i); });
-      },
-      std::forward<T>(x));
+        [](auto& m) {
+          return m.unaryExpr([](auto x_i) { return value_of_rec(x_i); });
+        },
+        std::forward<T>(x));
   } else if constexpr (is_tuple_v<val_t>) {
     return stan::math::apply(
-      [](auto&&... args) {
-        return partially_forward_as_tuple(
-            value_of_rec(std::forward<decltype(args)>(args))...);
-      },
-      std::forward<T>(x));
+        [](auto&&... args) {
+          return partially_forward_as_tuple(
+              value_of_rec(std::forward<decltype(args)>(args))...);
+        },
+        std::forward<T>(x));
   } else if constexpr (is_var_v<val_t>) {
     return x.vi_->val_;
   } else if constexpr (is_fvar<val_t>::value) {

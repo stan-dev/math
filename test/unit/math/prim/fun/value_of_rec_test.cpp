@@ -73,29 +73,31 @@ TEST(MathFunctions, value_of_rec_return_type_short_circuit_std_vector) {
   std::vector<double> a(5);
   const std::vector<double> b(5);
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(a)),
-                            std::vector<double>&>::value)) << "stan::math::value_of_rec(a)) = " << 
-                             stan::math::test::type_name<decltype(stan::math::value_of_rec(a))>() <<
-                             ". But expected std::vector<double>&";
+                            std::vector<double>&>::value))
+      << "stan::math::value_of_rec(a)) = "
+      << stan::math::test::type_name<decltype(stan::math::value_of_rec(a))>()
+      << ". But expected std::vector<double>&";
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(b)),
-                            const std::vector<double>&>::value)) << "stan::math::value_of_rec(b)) = " << 
-                            stan::math::test::type_name<decltype(stan::math::value_of_rec(b))>() <<
-                            ". But expected const std::vector<double>&";
+                            const std::vector<double>&>::value))
+      << "stan::math::value_of_rec(b)) = "
+      << stan::math::test::type_name<decltype(stan::math::value_of_rec(b))>()
+      << ". But expected const std::vector<double>&";
 }
 
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_vector_xd) {
   Eigen::Matrix<double, Eigen::Dynamic, 1> a(5);
   const Eigen::Matrix<double, Eigen::Dynamic, 1> b(5);
   EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(a)),
-                            Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value))  
-                            << "stan::math::value_of_rec(a)) = " << 
-                            stan::math::test::type_name<decltype(stan::math::value_of_rec(a))>() <<
-                            ". But expected Eigen::Matrix<double, Eigen::Dynamic, 1>&";
+                            Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value))
+      << "stan::math::value_of_rec(a)) = "
+      << stan::math::test::type_name<decltype(stan::math::value_of_rec(a))>()
+      << ". But expected Eigen::Matrix<double, Eigen::Dynamic, 1>&";
   EXPECT_TRUE(
       (std::is_same<decltype(stan::math::value_of_rec(b)),
                     const Eigen::Matrix<double, Eigen::Dynamic, 1>&>::value))
-                    << "stan::math::value_of_rec(b)) = " << 
-                    stan::math::test::type_name<decltype(stan::math::value_of_rec(b))>() <<
-                    ". But expected const Eigen::Matrix<double, Eigen::Dynamic, 1>&";
+      << "stan::math::value_of_rec(b)) = "
+      << stan::math::test::type_name<decltype(stan::math::value_of_rec(b))>()
+      << ". But expected const Eigen::Matrix<double, Eigen::Dynamic, 1>&";
 }
 
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_row_vector_xd) {
