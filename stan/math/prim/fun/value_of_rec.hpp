@@ -21,7 +21,7 @@ namespace math {
  *
  * <p>See the <code>primitive_value</code> function to
  * extract values without casting to <code>double</code>.
- * @tparam A container or scalar type
+ * @tparam T A container or scalar type
  * @param x The type whose values will be extracted.
  * @return An object with a \ref base_type of double.
  */
