@@ -9,11 +9,42 @@
 #include <stan/math/prim/fun/sqrt.hpp>
 #include <stan/math/prim/constraint/sum_to_zero_constrain.hpp>
 #include <cmath>
-#include <tuple>
-#include <vector>
 
 namespace stan {
 namespace math {
+
+namespace internal {
+
+/**
+ * The reverse pass backprop for the sum_to_zero_constrain on
+ * vectors. This is separated out so it can also be called by
+ * simplex_constrain.
+ *
+ * @tparam T type of the adjoint vector
+ * @param y_adj The adjoint of the free vector (size N)
+ * @param z_adj The adjoint of the zero-sum vector (size N + 1)
+ */
+template <typename T>
+void sum_to_zero_vector_backprop(T&& y_adj, const Eigen::VectorXd& z_adj) {
+  const auto N = y_adj.size();
+
+  double sum_u_adj = 0;
+  for (int i = 0; i < N; ++i) {
+    double n = static_cast<double>(i + 1);
+
+    // adjoint of the reverse cumulative sum computed in the forward mode
+    sum_u_adj += z_adj.coeff(i);
+
+    // adjoint of the offset subtraction
+    double v_adj = -z_adj.coeff(i + 1) * n;
+
+    double w_adj = v_adj + sum_u_adj;
+
+    y_adj.coeffRef(i) += w_adj / sqrt(n * (n + 1));
+  }
+}
+
+}  // namespace internal
 
 /**
  * Return a vector with sum zero corresponding to the specified
@@ -49,22 +80,7 @@ inline auto sum_to_zero_constrain(T&& y) {
   arena_t<ret_type> arena_z = sum_to_zero_constrain(arena_y.val());
 
   reverse_pass_callback([arena_y, arena_z]() mutable {
-    const auto N = arena_y.size();
-
-    double sum_u_adj = 0;
-    for (int i = 0; i < N; ++i) {
-      double n = static_cast<double>(i + 1);
-
-      // adjoint of the reverse cumulative sum computed in the forward mode
-      sum_u_adj += arena_z.adj().coeff(i);
-
-      // adjoint of the offset subtraction
-      double v_adj = -arena_z.adj().coeff(i + 1) * n;
-
-      double w_adj = v_adj + sum_u_adj;
-
-      arena_y.adj().coeffRef(i) += w_adj / sqrt(n * (n + 1));
-    }
+    internal::sum_to_zero_vector_backprop(arena_y.adj(), arena_z.adj());
   });
 
   return arena_z;
