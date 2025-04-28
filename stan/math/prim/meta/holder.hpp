@@ -360,8 +360,7 @@ auto make_holder_impl(const F& func, std::index_sequence<Is...>,
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
-          require_not_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
+          require_not_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
 auto make_holder(const F& func, Args&&... args) {
   return internal::make_holder_impl(func,
                                     std::make_index_sequence<sizeof...(Args)>(),
@@ -379,8 +378,7 @@ auto make_holder(const F& func, Args&&... args) {
  * @return `holder` referencing expression constructed by given functor
  */
 template <typename F, typename... Args,
-          require_plain_type_t<
-              decltype(std::declval<F>()(std::declval<Args&>()...))>* = nullptr>
+          require_plain_type_t<std::invoke_result_t<F, Args&&...>>* = nullptr>
 auto make_holder(const F& func, Args&&... args) {
   return func(std::forward<Args>(args)...);
 }

@@ -10,97 +10,125 @@
 
 namespace stan {
 namespace math {
+  template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+  inline auto value_of(Tuple&& tup);
+  template <typename T, require_std_vector_t<T>* = nullptr,
+  require_not_st_arithmetic<T>* = nullptr>
+inline auto value_of(const T& x);
+/**
+ * Inputs that are arithmetic types or containers of airthmetric types
+ * are returned from value_of unchanged
+ *
+ * @tparam T Input type
+ * @param[in] x Input argument
+ * @return Forwarded input argument
+ **/
+template <typename T, require_st_arithmetic<T>* = nullptr>
+inline T value_of(T&& x) {
+  return std::forward<T>(x);
+}
+
+template <typename T, require_complex_t<T>* = nullptr,
+          require_t<std::is_arithmetic<
+              typename std::decay_t<T>::value_type>>* = nullptr>
+inline auto value_of(T&& x) {
+  return std::forward<T>(x);
+}
+
+template <
+    typename T, require_complex_t<T>* = nullptr,
+    require_not_arithmetic_t<typename std::decay_t<T>::value_type>* = nullptr>
+inline auto value_of(T&& x) {
+  using inner_t = partials_type_t<typename std::decay_t<T>::value_type>;
+  return std::complex<inner_t>{value_of(x.real()), value_of(x.imag())};
+}
 
 /**
- * Return the value of the specified argument.
- *  For types with a \ref base_type of double or int returns itself.
- *  For types with a \ref base_type of \ref var or \ref fvar
- *  the `value` member of their class is returned.
+ * For std::vectors of non-arithmetic types, return a std::vector composed
+ * of value_of applied to each element.
  *
- *  So for `std::complex<fvar<var>>` this will return
- *  a `std::complex<var>`. And for `std::vector<var>`
- *  this will return a `std:vector<double>` whose
- *  values are the `val_` members of the `var`s.
+ * @tparam T Input element type
+ * @param[in] x Input std::vector
+ * @return std::vector of values
+ **/
+template <typename T, require_std_vector_t<T>*,
+          require_not_st_arithmetic<T>*>
+inline auto value_of(const T& x) {
+  std::vector<plain_type_t<decltype(value_of(std::declval<value_type_t<T>>()))>>
+      out;
+  out.reserve(x.size());
+  for (auto&& x_elem : x) {
+    out.emplace_back(value_of(x_elem));
+  }
+  return out;
+}
+
+/**
+ * For Eigen matrices and expressions of non-arithmetic types, return an
+ *expression that represents the Eigen::Matrix resulting from applying value_of
+ *elementwise
  *
- * <p>See the <code>primitive_value</code> function to
- * extract values without casting to <code>double</code>.
- * @tparam T A container or scalar type
- * @param x The object whose values will be extracted.
- * @return An object whose \ref scalar_type
- */
-template <typename T>
-inline constexpr decltype(auto) value_of(T&& x) {
-  using val_t = std::decay_t<T>;
-  if constexpr (is_tuple_v<val_t>) {
-    return stan::math::apply(
-        [](auto&&... args) {
-          return partially_forward_as_tuple(
-              value_of(std::forward<decltype(args)>(args))...);
-        },
-        std::forward<T>(x));
-  } else {
-    constexpr bool is_float_or_int
-        = std::is_floating_point_v<val_t> || std::is_integral_v<val_t>;
-    constexpr bool is_base_float_or_int
-        = std::is_floating_point_v<
-              base_type_t<val_t>> || std::is_integral_v<base_type_t<val_t>>;
-    if constexpr (is_float_or_int) {
-      return val_t{x};
-    } else if constexpr (is_base_float_or_int && !is_eigen_v<val_t>) {
-      if constexpr (std::is_rvalue_reference_v<T&&>) {
-        return plain_type_t<T>(std::forward<T>(x));
-      } else {
-        return x;
-      }
-    } else if constexpr (is_complex<val_t>::value) {
-      return std::complex<double>{value_of(x.real()), value_of(x.imag())};
-    } else if constexpr (is_std_vector_v<val_t>) {
-      std::vector<
-          plain_type_t<decltype(value_of(std::declval<value_type_t<T>>()))>>
-          ret;
-      ret.reserve(x.size());
-      for (auto&& x_i : x) {
-        ret.push_back(value_of(std::forward<decltype(x_i)>(x_i)));
-      }
-      return ret;
-    } else if constexpr (is_eigen_v<val_t>) {
-      /**
-       * Because of lifetimes of eigen expressions we have to account
-       * for a few choices.
-       * 1. If a base type of double
-       *  a. and it is an rvalue reference and not a holder
-       *    - Wrap it in a holder and forward the object
-       *  b. and it is an rvalue holder
-       *    - pass x to decayed holder
-       *  c. it is an rvalue
-       *    - pass x
-       * 2. Any other value type that does not have a base type of double
-       *  - wrap it ina a holder with an unary expr to pull out the values
-       */
-      if constexpr (is_base_float_or_int) {
-        if constexpr (std::is_rvalue_reference_v<T&&> && !is_holder_v<val_t>) {
-          return make_holder([](auto&& x_inner) { return x_inner; },
-                             std::forward<T>(x));
-        } else if constexpr (is_holder_v<val_t>) {
-          return std::decay_t<T>(std::forward<T>(x));
-        } else {
-          return x;
-        }
-      } else {
-        return make_holder(
-            [](auto& m) {
-              return m.unaryExpr([](auto x_i) { return value_of(x_i); });
-            },
-            std::forward<T>(x));
-      }
-    } else if constexpr (is_var_v<val_t>) {
-      return x.vi_->val_;
-    } else if constexpr (is_fvar<val_t>::value) {
-      return x.val();
-    } else {
-      static_assert(1, "Type not caught!");
+ * @tparam EigMat type of the matrix
+ *
+ * @param[in] M Matrix to be converted
+ * @return Matrix of values
+ **/
+template <typename EigMat, require_eigen_dense_base_t<EigMat>* = nullptr,
+          require_not_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M) {
+  return make_holder(
+      [](auto&& a) {
+        return a.unaryExpr([](const auto& scal) { return value_of(scal); });
+      },
+      std::forward<EigMat>(M));
+}
+
+template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
+          require_not_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M) {
+  auto&& M_ref = to_ref(M);
+  using scalar_t = decltype(value_of(std::declval<value_type_t<EigMat>>()));
+  promote_scalar_t<scalar_t, plain_type_t<EigMat>> ret(M_ref.rows(),
+                                                       M_ref.cols());
+  ret.reserve(M_ref.nonZeros());
+  for (int k = 0; k < M_ref.outerSize(); ++k) {
+    for (typename std::decay_t<EigMat>::InnerIterator it(M_ref, k); it; ++it) {
+      ret.insert(it.row(), it.col()) = value_of(it.valueRef());
     }
   }
+  ret.makeCompressed();
+  return ret;
+}
+
+/*
+ * For Sparse Eigen matrices and expressions of non-arithmetic types, return an
+ *expression that represents the Eigen::Matrix resulting from applying value_of
+ *elementwise
+ *
+ * @tparam EigMat type of the matrix
+ *
+ * @param[in] M Matrix to be converted
+ * @return Matrix of values
+ */
+template <typename EigMat, require_eigen_sparse_base_t<EigMat>* = nullptr,
+          require_st_arithmetic<EigMat>* = nullptr>
+inline auto value_of(EigMat&& M) {
+  return std::forward<EigMat>(M);
+}
+
+/**
+ * Converts a tuples elements scalar types from ad to their child type.
+ * @tparam Tuple type of tuple
+ * @param[in] tup tuple to be converted
+ */
+template <typename Tuple, require_tuple_t<Tuple>*>
+inline auto value_of(Tuple&& tup) {
+  return stan::math::apply(
+      [](auto&&... args) {
+        return partially_forward_as_tuple(
+            value_of(std::forward<decltype(args)>(args))...);
+      },
+      std::forward<Tuple>(tup));
 }
 
 }  // namespace math

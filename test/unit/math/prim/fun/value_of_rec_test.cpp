@@ -123,11 +123,12 @@ TEST(MathFunctions, value_of_rec_return_type_short_circuit_matrix_xd) {
 
 TEST(MathFunctions, value_of_rec_return_type_short_circuit_expression) {
   const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic> a(5, 4);
-
   const auto& expr = 3 * a;
-
-  EXPECT_TRUE((std::is_same<decltype(stan::math::value_of_rec(expr)),
-                            decltype(expr)>::value));
+  auto blah = stan::math::value_of_rec(expr);
+  EXPECT_TRUE((std::is_same_v<decltype(blah), std::decay_t<decltype(expr)>>))
+  << "stan::math::value_of_rec(expr) = "
+  << stan::math::test::type_name<decltype(blah)>()
+  << ". But expected an expr type";
 }
 
 TEST(MathFunctions,

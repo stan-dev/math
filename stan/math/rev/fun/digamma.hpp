@@ -17,7 +17,7 @@ namespace math {
  * @return derivative of log gamma function at argument
  */
 inline var digamma(const var& a) {
-  return make_callback_var(digamma(a.val()), [a](auto& vi) {
+  return make_callback_var(digamma(a.val()), [a](auto&& vi) {
     a.adj() += vi.adj() * trigamma(a.val());
   });
 }
@@ -35,13 +35,13 @@ inline auto digamma(const T& a) {
   return make_callback_var(
       a.val()
           .array()
-          .unaryExpr([](auto& x) { return digamma(x); })
+          .unaryExpr([](auto&& x) { return digamma(x); })
           .matrix()
           .eval(),
-      [a](auto& vi) mutable {
+      [a](auto&& vi) mutable {
         a.adj().array()
             += vi.adj().array()
-               * a.val().array().unaryExpr([](auto& x) { return trigamma(x); });
+               * a.val().array().unaryExpr([](auto&& x) { return trigamma(x); });
       });
 }
 

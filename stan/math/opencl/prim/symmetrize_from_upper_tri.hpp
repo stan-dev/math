@@ -21,7 +21,7 @@ template <typename T_x,
 inline auto symmetrize_from_upper_tri(T_x&& x) {
   check_square("symmetrize_from_upper_tri", "x", x);
   return make_holder_cl(
-      [](auto& arg) {
+      [](auto&& arg) {
         return select(col_index() < row_index(), transpose(arg), arg);
       },
       std::forward<T_x>(x));

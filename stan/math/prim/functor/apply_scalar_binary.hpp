@@ -56,7 +56,7 @@ template <typename F, typename T1, typename T2,
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_dims("Binary function", "x", x, "y", y);
   return make_holder(
-      [](auto& f_inner, auto& x_inner, auto& y_inner) {
+      [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         return x_inner.binaryExpr(y_inner, f_inner);
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
@@ -80,7 +80,7 @@ template <typename F, typename T1, typename T2,
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   return make_holder(
-      [](auto& f_inner, auto& x_inner, auto& y_inner) {
+      [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         using int_vec_t = promote_scalar_t<value_type_t<decltype(y_inner)>,
                                            plain_type_t<decltype(x_inner)>>;
         Eigen::Map<const int_vec_t> y_map(y_inner.data(), y_inner.size());
@@ -107,7 +107,7 @@ template <typename F, typename T1, typename T2,
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   check_matching_sizes("Binary function", "x", x, "y", y);
   return make_holder(
-      [](auto& f_inner, auto& x_inner, auto& y_inner) {
+      [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         using int_vec_t = promote_scalar_t<value_type_t<decltype(x_inner)>,
                                            plain_type_t<decltype(y_inner)>>;
         Eigen::Map<const int_vec_t> x_map(x_inner.data(), x_inner.size());
@@ -201,9 +201,9 @@ template <typename F, typename T1, typename T2, require_eigen_t<T1>* = nullptr,
           require_stan_scalar_t<T2>* = nullptr>
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
-      [](auto& f_inner, auto& x_inner, auto& y_inner) {
+      [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         return x_inner.unaryExpr(
-            [f_inner, y_inner](const auto& v) { return f_inner(v, y_inner); });
+            [f_inner, y_inner](const auto&& v) { return f_inner(v, y_inner); });
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
@@ -227,9 +227,9 @@ template <typename F, typename T1, typename T2,
           require_stan_scalar_t<T1>* = nullptr, require_eigen_t<T2>* = nullptr>
 inline auto apply_scalar_binary(F&& f, T1&& x, T2&& y) {
   return make_holder(
-      [](auto& f_inner, auto& x_inner, auto& y_inner) {
+      [](auto&& f_inner, auto&& x_inner, auto&& y_inner) {
         return y_inner.unaryExpr(
-            [f_inner, x_inner](const auto& v) { return f_inner(x_inner, v); });
+            [f_inner, x_inner](const auto&& v) { return f_inner(x_inner, v); });
       },
       std::forward<F>(f), std::forward<T1>(x), std::forward<T2>(y));
 }
@@ -290,7 +290,7 @@ inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   using T_return = std::decay_t<decltype(f(x[0], y))>;
   std::vector<T_return> result(x.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = x_vec.unaryExpr([f, y](const auto& v) { return f(v, y); });
+      = x_vec.unaryExpr([f, y](const auto&& v) { return f(v, y); });
   return result;
 }
 
@@ -320,7 +320,7 @@ inline auto apply_scalar_binary(const F& f, const T1& x, const T2& y) {
   using T_return = std::decay_t<decltype(f(x, y[0]))>;
   std::vector<T_return> result(y.size());
   Eigen::Map<Eigen::Matrix<T_return, -1, 1>>(result.data(), result.size())
-      = y_vec.unaryExpr([f, x](const auto& v) { return f(x, v); });
+      = y_vec.unaryExpr([f, x](const auto&& v) { return f(x, v); });
   return result;
 }
 
