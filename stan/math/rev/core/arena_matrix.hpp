@@ -480,7 +480,8 @@ namespace Eigen {
 namespace internal {
 
 template <typename T>
-struct traits<stan::math::arena_matrix<T, stan::require_eigen_dense_base_t<T>>> {
+struct traits<
+    stan::math::arena_matrix<T, stan::require_eigen_dense_base_t<T>>> {
   using base = traits<Eigen::Map<T>>;
   using Scalar = typename base::Scalar;
   using XprKind = typename Eigen::internal::traits<std::decay_t<T>>::XprKind;
@@ -494,7 +495,8 @@ struct traits<stan::math::arena_matrix<T, stan::require_eigen_dense_base_t<T>>> 
 };
 
 template <typename T>
-struct traits<stan::math::arena_matrix<T, stan::require_eigen_sparse_base_t<T>>> : traits<Eigen::Map<T>> {
+struct traits<stan::math::arena_matrix<T, stan::require_eigen_sparse_base_t<T>>>
+    : traits<Eigen::Map<T>> {
   using base = traits<Eigen::Map<T>>;
   using Scalar = typename base::Scalar;
   using XprKind = typename Eigen::internal::traits<std::decay_t<T>>::XprKind;
