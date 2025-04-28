@@ -37,7 +37,8 @@ inline constexpr decltype(auto) value_of_rec(T&& x) {
         },
         std::forward<T>(x));
   } else {
-    if constexpr (std::is_integral_v<val_t> || std::is_floating_point_v<val_t>) {
+    if constexpr (std::is_integral_v<
+                      val_t> || std::is_floating_point_v<val_t>) {
       return static_cast<double>(x);
     } else if constexpr (std::is_floating_point_v<base_type_t<val_t>>) {
       if constexpr (std::is_rvalue_reference_v<T&&>) {
@@ -46,7 +47,8 @@ inline constexpr decltype(auto) value_of_rec(T&& x) {
         return x;
       }
     } else if constexpr (is_complex<val_t>::value) {
-      return std::complex<double>{value_of_rec(x.real()), value_of_rec(x.imag())};
+      return std::complex<double>{value_of_rec(x.real()),
+                                  value_of_rec(x.imag())};
     } else if constexpr (is_std_vector_v<val_t>) {
       promote_scalar_t<double, val_t> ret;
       ret.reserve(x.size());

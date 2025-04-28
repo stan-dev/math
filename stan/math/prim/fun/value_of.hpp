@@ -40,8 +40,11 @@ inline constexpr decltype(auto) value_of(T&& x) {
         },
         std::forward<T>(x));
   } else {
-    constexpr bool is_base_float_or_int = std::is_floating_point_v<base_type_t<val_t>> || std::is_integral_v<base_type_t<val_t>>;
-    if constexpr (std::is_integral_v<val_t> || std::is_floating_point_v<val_t>) {
+    constexpr bool is_base_float_or_int
+        = std::is_floating_point_v<
+              base_type_t<val_t>> || std::is_integral_v<base_type_t<val_t>>;
+    if constexpr (std::is_integral_v<
+                      val_t> || std::is_floating_point_v<val_t>) {
       return val_t{x};
     } else if constexpr (is_base_float_or_int) {
       if constexpr (std::is_rvalue_reference_v<T&&>) {
@@ -71,7 +74,6 @@ inline constexpr decltype(auto) value_of(T&& x) {
     } else if constexpr (is_fvar<val_t>::value) {
       return x.val();
     }
-  
   }
 }
 
