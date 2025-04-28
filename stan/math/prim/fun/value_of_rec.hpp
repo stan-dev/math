@@ -66,6 +66,8 @@ inline constexpr decltype(auto) value_of_rec(T&& x) {
       return x.vi_->val_;
     } else if constexpr (is_fvar<val_t>::value) {
       return value_of_rec(x.val());
+    } else {
+      static_assert(1, "Type not caught!");
     }
   }
 }

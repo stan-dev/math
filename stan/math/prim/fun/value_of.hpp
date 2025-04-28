@@ -10,6 +10,7 @@
 
 namespace stan {
 namespace math {
+  
 
 /**
  * Return the value of the specified argument.
@@ -31,7 +32,6 @@ namespace math {
 template <typename T>
 inline constexpr decltype(auto) value_of(T&& x) {
   using val_t = std::decay_t<T>;
-  // ints are cast to doubles, types with base double are passed along
   if constexpr (is_tuple_v<val_t>) {
     return stan::math::apply(
         [](auto&&... args) {
@@ -43,8 +43,7 @@ inline constexpr decltype(auto) value_of(T&& x) {
     constexpr bool is_base_float_or_int
         = std::is_floating_point_v<
               base_type_t<val_t>> || std::is_integral_v<base_type_t<val_t>>;
-    if constexpr (std::is_integral_v<
-                      val_t> || std::is_floating_point_v<val_t>) {
+    if constexpr (is_base_float_or_int) {
       return val_t{x};
     } else if constexpr (is_base_float_or_int) {
       if constexpr (std::is_rvalue_reference_v<T&&>) {
@@ -73,6 +72,8 @@ inline constexpr decltype(auto) value_of(T&& x) {
       return x.vi_->val_;
     } else if constexpr (is_fvar<val_t>::value) {
       return x.val();
+    } else {
+      static_assert(1, "Type not caught!");
     }
   }
 }
