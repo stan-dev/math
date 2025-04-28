@@ -10,10 +10,10 @@
 
 namespace stan {
 namespace math {
-  template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
-  inline auto value_of(Tuple&& tup);
-  template <typename T, require_std_vector_t<T>* = nullptr,
-  require_not_st_arithmetic<T>* = nullptr>
+template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
+inline auto value_of(Tuple&& tup);
+template <typename T, require_std_vector_t<T>* = nullptr,
+          require_not_st_arithmetic<T>* = nullptr>
 inline auto value_of(const T& x);
 /**
  * Inputs that are arithmetic types or containers of airthmetric types
@@ -51,8 +51,7 @@ inline auto value_of(T&& x) {
  * @param[in] x Input std::vector
  * @return std::vector of values
  **/
-template <typename T, require_std_vector_t<T>*,
-          require_not_st_arithmetic<T>*>
+template <typename T, require_std_vector_t<T>*, require_not_st_arithmetic<T>*>
 inline auto value_of(const T& x) {
   std::vector<plain_type_t<decltype(value_of(std::declval<value_type_t<T>>()))>>
       out;

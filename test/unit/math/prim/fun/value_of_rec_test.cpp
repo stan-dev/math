@@ -126,9 +126,9 @@ TEST(MathFunctions, value_of_rec_return_type_short_circuit_expression) {
   const auto& expr = 3 * a;
   auto blah = stan::math::value_of_rec(expr);
   EXPECT_TRUE((std::is_same_v<decltype(blah), std::decay_t<decltype(expr)>>))
-  << "stan::math::value_of_rec(expr) = "
-  << stan::math::test::type_name<decltype(blah)>()
-  << ". But expected an expr type";
+      << "stan::math::value_of_rec(expr) = "
+      << stan::math::test::type_name<decltype(blah)>()
+      << ". But expected an expr type";
 }
 
 TEST(MathFunctions,

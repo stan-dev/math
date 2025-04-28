@@ -128,13 +128,8 @@ inline decltype(auto) value_of_rec(T&& x) {
     }
   } else {
     std::cout << "holder\n";
-    return make_holder(
-      [](auto&& m) {
-        return m;
-      },
-      std::forward<T>(x));
+    return make_holder([](auto&& m) { return m; }, std::forward<T>(x));
   }
-
 }
 
 /**
