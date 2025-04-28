@@ -10,7 +10,6 @@
 
 namespace stan {
 namespace math {
-  
 
 /**
  * Return the value of the specified argument.
