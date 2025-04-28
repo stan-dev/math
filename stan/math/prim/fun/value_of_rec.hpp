@@ -37,8 +37,10 @@ inline constexpr decltype(auto) value_of_rec(T&& x) {
         },
         std::forward<T>(x));
   } else {
-    constexpr bool is_float_or_int = std::is_integral_v<val_t> || std::is_floating_point_v<val_t>;
-    constexpr bool is_base_float_and_not_eigen = std::is_floating_point_v<base_type_t<val_t>> && !is_eigen_v<val_t>;
+    constexpr bool is_float_or_int
+        = std::is_integral_v<val_t> || std::is_floating_point_v<val_t>;
+    constexpr bool is_base_float_and_not_eigen
+        = std::is_floating_point_v<base_type_t<val_t>> && !is_eigen_v<val_t>;
     if constexpr (is_float_or_int) {
       return static_cast<double>(x);
     } else if constexpr (is_base_float_and_not_eigen) {
