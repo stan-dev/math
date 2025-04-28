@@ -14,6 +14,15 @@ namespace stan {
 template <typename T, typename = void>
 struct is_fvar : std::false_type {};
 
+/** \ingroup type_trait
+ * Specialization for pointers returns the underlying value the pointer is
+ * pointing to.
+ */
+template <typename T>
+struct value_type<T, std::enable_if_t<is_fvar<std::decay_t<T>>::value>> {
+  using type = typename std::decay_t<T>::Scalar;
+};
+
 /*! \ingroup require_stan_scalar_real */
 /*! \defgroup fvar_types fvar  */
 /*! \addtogroup fvar_types */

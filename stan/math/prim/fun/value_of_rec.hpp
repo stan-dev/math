@@ -12,148 +12,58 @@
 namespace stan {
 namespace math {
 
-template <typename Tuple, require_tuple_t<Tuple>* = nullptr>
-inline auto value_of_rec(Tuple&& tup);
-
-template <typename T, require_not_same_t<double, T>* = nullptr>
-inline std::vector<promote_scalar_t<double, T>> value_of_rec(
-    const std::vector<T>& x);
-
 /**
  * Return the value of the specified scalar argument
- * converted to a double value.
+ * converted to a double value. For types with a \ref base_type
+ *  of double this is itself. For types with a \ref base_type 
+ *  of \ref var or \ref fvar this the `value_of_rec` of the 
+ *  value type until a double is found.
  *
  * <p>See the <code>primitive_value</code> function to
  * extract values without casting to <code>double</code>.
- *
- * <p>This function is meant to cover the primitive types. For
- * types requiring pass-by-reference, this template function
- * should be specialized.
- *
- * @tparam T Type of scalar.
- * @param x Scalar to convert to double.
- * @return Value of scalar cast to a double.
- */
-template <typename T, require_stan_scalar_t<T> = nullptr>
-inline double value_of_rec(const T x) {
-  return static_cast<double>(x);
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified value.
- * @return Specified value.
- */
-inline double value_of_rec(double x) { return x; }
-
-/**
- * Recursively apply value-of to the parts of the argument.
- *
- * @tparam T value type of argument
- * @param[in] x argument
- * @return real complex value of argument
+ * @tparam A container or scalar type
+ * @param x The type whose values will be extracted.
+ * @return An object with a \ref base_type of double.
  */
 template <typename T>
-inline std::complex<double> value_of_rec(const std::complex<T>& x) {
-  return {value_of_rec(x.real()), value_of_rec(x.imag())};
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of_rec(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @param x Specified std::vector.
- * @return Specified std::vector.
- */
-template <typename T, require_std_vector_t<T>* = nullptr,
-          require_vt_same<double, T>* = nullptr>
-inline T value_of_rec(T&& x) {
-  return std::forward<T>(x);
-}
-
-/**
- * Convert a matrix of type T to a matrix of doubles.
- *
- * T must implement value_of_rec. See
- * test/unit/math/fwd/fun/value_of_test.cpp for fvar and var usage.
- *
- * @tparam T Type of matrix
- * @param[in] M Matrix to be converted
- * @return Matrix of values
- **/
-template <typename T, require_not_st_same<T, double>* = nullptr,
-          require_eigen_t<T>* = nullptr>
-inline auto value_of_rec(T&& M) {
-  return make_holder(
+inline constexpr decltype(auto) value_of_rec(T&& x) {
+  using val_t = std::decay_t<T>;
+  // ints are cast to doubles, types with base double are passed along
+  if constexpr (std::is_integral_v<val_t> || std::is_floating_point_v<val_t>) {
+    return static_cast<double>(x);
+  } else if constexpr (std::is_floating_point_v<base_type_t<val_t>>) {
+    if constexpr (std::is_rvalue_reference_v<T&&>) {
+      return plain_type_t<T>(std::forward<T>(x));
+    } else {
+      return x;
+    }
+  } else if constexpr (is_complex<val_t>::value) {
+    return std::complex<double>{value_of_rec(x.real()), value_of_rec(x.imag())};
+  } else if constexpr (is_std_vector_v<val_t>) {
+    promote_scalar_t<double, val_t> ret;
+    ret.reserve(x.size());
+    for (auto&& x_i : x) {
+      ret.push_back(value_of_rec(std::forward<decltype(x_i)>(x_i)));
+    }
+    return ret;
+  } else if constexpr (is_eigen_v<val_t>) {
+    return make_holder(
       [](auto& m) {
-        return m.unaryExpr([](auto x) { return value_of_rec(x); });
+        return m.unaryExpr([](auto x_i) { return value_of_rec(x_i); });
       },
-      std::forward<T>(M));
-}
-
-/**
- * Return the specified argument.
- *
- * <p>See <code>value_of_rec(T)</code> for a polymorphic
- * implementation using static casts.
- *
- * <p>This inline pass-through no-op should be compiled away.
- *
- * @tparam T Type of matrix.
- * @param x Specified matrix.
- * @return Specified matrix.
- */
-template <typename T, require_st_same<T, double>* = nullptr,
-          require_eigen_t<T>* = nullptr>
-inline auto value_of_rec(T&& x) {
-  return make_holder([](auto&& m) { return std::forward<decltype(m)>(m); },
-                     std::forward<T>(x));
-}
-
-/**
- * Convert a std::vector of type T to a std::vector of doubles.
- *
- * T must implement value_of_rec. See
- * test/math/fwd/fun/value_of_rec.cpp for fvar and var usage.
- *
- * @tparam T Scalar type in std::vector
- * @param[in] x std::vector to be converted
- * @return std::vector of values
- **/
-template <typename T, require_not_same_t<double, T>*>
-inline std::vector<promote_scalar_t<double, T>> value_of_rec(
-    const std::vector<T>& x) {
-  size_t x_size = x.size();
-  std::vector<promote_scalar_t<double, plain_type_t<T>>> result(x_size);
-  for (size_t i = 0; i < x_size; i++) {
-    result[i] = value_of_rec(x[i]);
-  }
-  return result;
-}
-
-/**
- * Converts a tuples elements scalar types from ad to double types
- * @tparam Tuple type of tuple
- * @param[in] tup tuple to be converted
- */
-template <typename Tuple, require_tuple_t<Tuple>*>
-inline auto value_of_rec(Tuple&& tup) {
-  return stan::math::apply(
+      std::forward<T>(x));
+  } else if constexpr (is_tuple_v<val_t>) {
+    return stan::math::apply(
       [](auto&&... args) {
         return partially_forward_as_tuple(
             value_of_rec(std::forward<decltype(args)>(args))...);
       },
-      std::forward<Tuple>(tup));
+      std::forward<T>(x));
+  } else if constexpr (is_var_v<val_t>) {
+    return x.vi_->val_;
+  } else if constexpr (is_fvar<val_t>::value) {
+    return value_of_rec(x.val());
+  }
 }
 
 }  // namespace math
