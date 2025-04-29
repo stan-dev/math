@@ -240,13 +240,16 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
 // iter_tuple_n
 template <typename F, typename... Types>
 inline auto map_fun(F&& f, Types&&... args) {
+  constexpr bool is_vec_container = (is_std_vector_v<Types> && ...)
+                       && (!is_stan_scalar<value_type_t<Types>>::value
+                           && ...);
   if constexpr ((is_tuple_v<Types> && ...)) {
     stan::math::for_each(
         [&f](auto&&... args_i) {
           return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
         },
         std::forward<Types>(args)...);
-  } else if constexpr ((is_std_vector_v<Types> && ...)) {
+  } else if constexpr (is_vec_container) {
     const auto vec_size = max_size(args...);
     for (Eigen::Index i = 0; i < vec_size; ++i) {
       map_fun(f, args[i]...);

@@ -19,11 +19,13 @@ inline std::basic_ostream<char>* value_of(std::basic_ostream<char>*& pstream) {
 namespace laplace_likelihood {
 namespace internal {
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
  * @tparam Args Type of variadic arguments.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian variable.
+ * @param msgs Stream for messages.
  * @param args Additional variational arguments for likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
@@ -90,15 +92,16 @@ inline auto shallow_copy_vargs(Args&&... args) {
 }
 
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
  * @tparam Args Type of variadic arguments.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian model.
- * @param gradient Gradient of likelihood returned by function.
  * @param hessian_block_size If the Hessian of the log likelihood function w.r.t
  *                           the latent Gaussian variable is block-diagonal,
  *                           size of each block.
+ * @param msgs Stream for messages.
  * @param args Variadic arguments for the likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
@@ -135,18 +138,17 @@ inline auto diff(F&& f, const Theta& theta,
 }
 
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
  * @tparam Args Type of variadic arguments for likelihood function.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian variable.
+ * @param msgs Stream for messages.
  * @param args Variadic arguments for likelihood function.
  */
 template <typename F, typename Theta, typename Stream, typename... Args,
           require_eigen_vector_t<Theta>* = nullptr>
-// TODO(Steve): Thiis has a std::basic_ostream at the end...
-//          require_all_t<is_all_arithmetic_scalar<Args>...>* = nullptr>
-// Do this for the tuple version...
 inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Stream&& msgs,
                                   Args&&... args) {
   nested_rev_autodiff nested;
@@ -162,8 +164,10 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Stream&& msgs,
 }
 
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta An Eigen Matrix
+ * @tparam AMat An Eigen Matrix
+ * @tparam Stream Type of stream for messages.
  * @tparam Args Type of variadic arguments for likelihood function.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian variable.
@@ -171,6 +175,7 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta, Stream&& msgs,
  *        (line 21 in Algorithm 4, https://arxiv.org/pdf/2306.14976)
  * @param hessian_block_size If the Hessian of the log likelihood w.r.t theta
  *                           is block diagonal, size of each block.
+ * @param msgs Stream for messages.
  * @param args Variational arguments for likelihood function.
  */
 template <typename F, typename Theta, typename AMat, typename Stream,
@@ -219,12 +224,15 @@ inline auto compute_s2(F&& f, const Theta& theta, AMat&& A,
 }
 
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
- * @tparam Args Type of variational arguments for likelhood function.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam V_t A type assignable to an Eigen vector type
+ * @tparam Theta A type assignable to an Eigen vector type
+ * @tparam Stream Type of stream for messages.
+ * @tparam Args Parameter pack of arguments to `F`'s `operator()`
  * @param f Log likelihood function.
  * @param v Initial tangent.
  * @param theta Latent Gaussian variable.
+ * @param msgs Stream for messages.
  * @param args Variadic arguments for likelhood function.
  */
 template <typename F, typename V_t, typename Theta, typename Stream,
@@ -261,19 +269,20 @@ inline auto diff_eta_implicit(F&& f, const V_t& v, const Theta& theta,
 }  // namespace internal
 
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of arguments for covariance function.
+ * @tparam Stream Type of stream for messages.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian model.
- * @param ll_tup Arguments for covariance function.
+ * @param ll_tup Arguments for likelihood function
  * @param msgs stream messages.
  */
-template <typename F, typename Theta, typename TupleArgs,
+template <typename F, typename Theta, typename TupleArgs, typename Stream,
           require_eigen_vector_t<Theta>* = nullptr,
           require_tuple_t<TupleArgs>* = nullptr>
 inline auto log_likelihood(F&& f, const Theta& theta, TupleArgs&& ll_tup,
-                           std::ostream* msgs) {
+                           Stream* msgs) {
   return apply(
       [](auto&& f, auto&& theta, auto&& msgs, auto&&... args) {
         return internal::log_likelihood(std::forward<decltype(f)>(f), theta,
@@ -284,15 +293,15 @@ inline auto log_likelihood(F&& f, const Theta& theta, TupleArgs&& ll_tup,
 }
 
 /**
- * @tparam F Type of log likelihood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
+ * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of arguments for covariance function.
+ * @tparam Stream Type of stream for messages.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian model.
- * @param gradient Vector to store gradient of log likelihood w.r.t theta.
  * @param hessian_block_size If Hessian of log likelihood w.r.t theta is
  *                           block diagonal, size of block.
- * @param ll_tuple Arguments of covariance function.
+ * @param ll_tuple Arguments for likelihood function
  * @param msgs Stream messages.
  */
 template <typename F, typename Theta, typename TupleArgs, typename Stream,
@@ -314,8 +323,9 @@ inline auto diff(F&& f, const Theta& theta,
 
 /**
  * @tparam F Type of log likelhood function.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of arguments for covariance function.
+ * @tparam Stream Type of stream for messages.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian variable.
  * @param ll_args Variadic arguments for likelihood function.
@@ -338,6 +348,7 @@ inline Eigen::VectorXd third_diff(F&& f, const Theta& theta,
  * @tparam F Type of log likelhood function.
  * @tparam Theta Type of latent Gaussian ba
  * @tparam TupleArgs Type of arguments for covariance function.
+ * @tparam Stream Type of stream for messages.
  * @param f Log likelihood function.
  * @param theta Latent Gaussian variable.
  * @param A Matrix storing initial tangents for higher-order differentiation
@@ -365,10 +376,11 @@ inline auto compute_s2(F&& f, const Theta& theta, const Eigen::MatrixXd& A,
 }
 
 /**
- * @tparam F Type of log likelihood function.
+ * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam V_t Type of initial tangent.
- * @tparam Theta Type of latent Gaussian variable.
+ * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of variadic arguments for likelihood function.
+ * @tparam Stream Type of stream for messages.
  * @param f Log likelihood function.
  * @param v Initial tangent.
  * @param theta Latent Gaussian variable.
