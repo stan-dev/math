@@ -246,9 +246,7 @@ inline auto map_fun(F&& f, Types&&... args) {
           return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
         },
         std::forward<Types>(args)...);
-  } else if constexpr ((is_std_vector_v<Types> && ...)
-                       && (!is_stan_scalar<value_type_t<Types>>::value
-                           && ...)) {
+  } else if constexpr ((is_std_vector_v<Types> && ...)) {
     const auto vec_size = max_size(args...);
     for (Eigen::Index i = 0; i < vec_size; ++i) {
       map_fun(f, args[i]...);
