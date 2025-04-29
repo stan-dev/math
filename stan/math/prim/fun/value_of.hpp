@@ -21,7 +21,8 @@ inline auto value_of(const T& x);
  *
  * @tparam T Input type
  * @param[in] x Input argument
- * @return Forwarded input argument
+ * @return if T is an rvalue, use x's move constructor to return a new type.
+ *  else if x is an lvalue return x as a reference.
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
 inline decltype(auto) value_of(T&& x) {
