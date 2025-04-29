@@ -24,8 +24,12 @@ inline auto value_of(const T& x);
  * @return Forwarded input argument
  **/
 template <typename T, require_st_arithmetic<T>* = nullptr>
-inline T value_of(T&& x) {
-  return std::forward<T>(x);
+inline decltype(auto) value_of(T&& x) {
+  if constexpr (std::is_rvalue_reference_v<T&&>) {
+    return std::decay_t<T>(std::forward<T>(x));
+  } else {
+    return std::forward<T>(x);
+  }
 }
 
 template <typename T, require_complex_t<T>* = nullptr,

@@ -215,34 +215,6 @@ inline auto compute_s2(F&& f, const Theta& theta, AMat&& A,
   return (0.5 * theta_var.adj()).eval();
 }
 
-template <typename Output>
-inline void set_zero_adjoint(Output&& output) {
-  if constexpr (is_all_arithmetic_scalar_v<Output>) {
-    return;
-  } else {
-    if constexpr (is_tuple<Output>::value) {
-      stan::math::for_each([](auto&& output_i) { set_zero_adjoint(output_i); },
-                           output);
-    } else if constexpr (is_std_vector<Output>::value) {
-      if constexpr (is_var<value_type_t<Output>>::value) {
-        Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output.data(),
-                                                           output.size());
-        map_x.adj().setZero();
-      } else {
-        for (auto& elem : output) {
-          set_zero_adjoint(elem);
-        }
-      }
-    } else if constexpr (is_eigen_v<Output>) {
-      output.adj().setZero();
-    } else if constexpr (is_stan_scalar_v<Output>) {
-      output.adj() = 0;
-    } else {
-      static_assert(1, "set_zero_adjoint missed!!! This is an internal error please report an issue on the Stan github");
-    }
-  }
-}
-
 /**
  * @tparam F Type of log likelihood function.
  * @tparam Theta Type of latent Gaussian variable.

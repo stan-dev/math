@@ -116,7 +116,7 @@ inline auto value_of_rec(T&& M) {
 template <typename T, require_st_same<T, double>* = nullptr,
           require_eigen_t<T>* = nullptr>
 inline decltype(auto) value_of_rec(T&& x) {
-  if constexpr (is_plain_type<T>::value) {
+  if constexpr (is_plain_type<T>::value || is_holder_v<T>) {
     if constexpr (std::is_rvalue_reference_v<T&&>) {
       return std::decay_t<T>(std::forward<T>(x));
     } else {

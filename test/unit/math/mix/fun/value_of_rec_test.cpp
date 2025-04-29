@@ -150,3 +150,22 @@ TEST(AgradMix, tuple_value_of_rec) {
       stan::math::value_of_rec(a_b_tuple_vec_tuple_ad),
       a_b_tuple_vec_tuple_dbl);
 }
+
+TEST(AgradMix, value_of_rec_expr) {
+  using stan::math::fvar;
+  using stan::math::value_of;
+  using stan::math::var;
+  Eigen::Matrix<double, -1, -1> x_d = Eigen::MatrixXd::Random(3, 3);
+  Eigen::Matrix<var, -1, -1> x_v = x_d;
+  Eigen::Matrix<fvar<double>, -1, -1> x_fd = x_d;
+  Eigen::Matrix<fvar<var>, -1, -1> x_fv = x_d;
+
+  using stan::math::value_of_rec;
+  using stan::math::as_array_or_scalar;
+  using stan::math::to_ref;
+  auto y_d = value_of_rec(as_array_or_scalar(to_ref(x_d * x_d)));
+  auto y_v = value_of_rec(as_array_or_scalar(to_ref(x_v * x_v)));
+  auto y_fd = value_of_rec(as_array_or_scalar(to_ref(x_fd * x_fd)));
+  auto y_fv = value_of_rec(as_array_or_scalar(to_ref(x_fv * x_fv)));
+  stan::math::recover_memory();
+}

@@ -237,45 +237,79 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
   return std::make_tuple(objective_new, std::move(a), std::move(theta));
 }
 
+// iter_tuple_n
+template <typename F, typename... Types>
+inline auto map_fun(F&& f, Types&&... args) {
+  if constexpr ((is_tuple_v<Types> && ...)) {
+    stan::math::for_each(
+        [&f](auto&&... args_i) {
+          return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
+        },
+        std::forward<Types>(args)...);
+  } else if constexpr ((is_std_vector_v<Types> && ...) && (!is_stan_scalar<value_type_t<Types>>::value && ...)){
+    const auto vec_size = max_size(args...);
+    for (Eigen::Index i = 0; i  < vec_size; ++i) {
+      map_fun(f, args[i]...);
+    }
+  } else {
+    return f(std::forward<Types>(args)...);
+  }
+}
+
+template <typename Output>
+inline void set_zero_adjoint(Output&& output) {
+  if constexpr (is_all_arithmetic_scalar_v<Output>) {
+    return;
+  } else {
+  return map_fun([](auto&& output_i) {
+    using output_i_t = std::decay_t<decltype(output_i)>;
+      if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
+        return;
+      } else if constexpr (is_std_vector<output_i_t>::value) {
+          Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output_i.data(),
+                                                            output_i.size());
+          map_x.adj().setZero();
+      } else if constexpr (is_eigen_v<output_i_t>) {
+        output_i.adj().setZero();
+      } else if constexpr (is_stan_scalar_v<output_i_t>) {
+        output_i.adj() = 0;
+      } else {
+        static_assert(1, "set_zero_adjoint missed!!! This is an internal error please report an issue on the Stan github");
+      }
+    }, std::forward<Output>(output));
+  }
+}
+
 template <bool ZeroInput = false, typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output& output, Input1&& precalc) {
-  if constexpr (is_tuple_v<Output>) {
-    stan::math::for_each(
-        [](auto& output_i, auto&& precalc_i) {
-          collect_adjoints(output_i, precalc_i);
-        },
-        output, precalc);
-  } else if constexpr (is_std_vector_v<Output>) {
-    if constexpr (is_stan_scalar<value_type_t<Output>>::value) {
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output.data(),
-                                                          output.size());
-      Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc.data(),
-                                                        precalc.size());
+  return map_fun([](auto&& output_i, auto&& precalc_i) {
+    using output_i_t = std::decay_t<decltype(output_i)>;
+    if constexpr (is_std_vector_v<output_i_t>) {
+      Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                          output_i.size());
+      Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc_i.data(),
+                                                        precalc_i.size());
       output_map.array() += precalc_map.adj().array();
       if constexpr (ZeroInput) {
         precalc_map.adj().setZero();
       }
-    } else {
-      const auto output_size = output.size();
-      for (std::size_t i = 0; i < output_size; ++i) {
-        collect_adjoints(output[i], precalc[i]);
+    } else if constexpr (is_eigen_v<output_i_t>) {
+      output_i.array() += precalc_i.adj().array();
+      if constexpr (ZeroInput) {
+        precalc_i.adj().setZero();
       }
+    } else if constexpr (is_stan_scalar_v<output_i_t>) {
+      output_i += precalc_i.adj();
+      if constexpr (ZeroInput) {
+        precalc_i.adj() = 0;
+      }
+    } else {
+      static_assert(1, "We missed!!!");
     }
-  } else if constexpr (is_eigen_v<Output>) {
-    output.array() += precalc.adj().array();
-    if constexpr (ZeroInput) {
-      precalc.adj().setZero();
-    }
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    output += precalc.adj();
-    if constexpr (ZeroInput) {
-      precalc.adj() = 0;
-    }
-  } else {
-    static_assert(1, "We missed!!!");
-  }
+  }, std::forward<Output>(output), std::forward<Input1>(precalc));
 }
+
 
 template <typename NameStr, typename ParamStr, typename Param>
 STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
@@ -391,7 +425,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   };
   auto ll_args_vals = value_of(ll_args);
   const Eigen::Index theta_size = theta_0.size();
-  promote_scalar_t<double, plain_type_t<Theta>> theta = value_of_rec(theta_0);
+  std::decay_t<Theta> theta = theta_0;
   double objective_old = std::numeric_limits<double>::lowest();
   double objective_new = std::numeric_limits<double>::lowest() + 1;
   Eigen::VectorXd a_prev = Eigen::VectorXd::Zero(theta_size);
@@ -466,7 +500,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             Eigen::MatrixXd(0, 0)};
       } else {
         a_prev = std::move(a);
-        laplace_likelihood::internal::set_zero_adjoint(ll_args);
+        set_zero_adjoint(ll_args);
       }
     }
     throw_overstep(options.max_num_steps);
@@ -522,7 +556,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             Eigen::MatrixXd(0, 0)};
       } else {
         a_prev = a;
-        laplace_likelihood::internal::set_zero_adjoint(ll_args);
+        set_zero_adjoint(ll_args);
       }
     }
     throw_overstep(options.max_num_steps);
@@ -575,7 +609,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             std::move(K_root)};
       } else {
         a_prev = a;
-        laplace_likelihood::internal::set_zero_adjoint(ll_args);
+        set_zero_adjoint(ll_args);
       }
     }
     throw_overstep(options.max_num_steps);
@@ -624,7 +658,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
             Eigen::MatrixXd(0, 0)};
       } else {
         a_prev = a;
-        laplace_likelihood::internal::set_zero_adjoint(ll_args);
+        set_zero_adjoint(ll_args);
       }
     }
     throw_overstep(options.max_num_steps);
@@ -715,18 +749,6 @@ inline void collect_adjoints(Output&& output, const vari* ret,
   }
 }
 
-template <typename F, typename... Types>
-inline auto map_fun(F&& f, Types&&... args) {
-  if constexpr ((is_tuple_v<Types> && ...)) {
-    stan::math::for_each(
-        [&f](auto&&... args_i) {
-          return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
-        },
-        std::forward<Types>(args)...);
-  } else {
-    return f(std::forward<Types>(args)...);
-  }
-}
 
 template <typename Output, typename Input1,
           require_t<is_all_arithmetic_scalar<Input1>>* = nullptr>
@@ -735,18 +757,11 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
       [](auto&& output_i, auto&& precalc_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
-          const auto output_size = output_i.size();
-          for (std::size_t i = 0; i < output_size; ++i) {
-            collect_adjoints(output_i[i], precalc_i[i]);
-          }
-          if constexpr (!is_stan_scalar<value_type_t<output_i_t>>::value) {
-          } else {
             Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(
                 output_i.data(), output_i.size());
             Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(
                 precalc_i.data(), precalc_i.size());
             output_map.array() += precalc_map.array();
-          }
         } else if constexpr (is_eigen_v<output_i_t>) {
           output_i.array() += precalc_i.array();
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
@@ -764,68 +779,48 @@ inline void constexpr copy_compute_s2(const std::tuple<>& output,
 template <typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void copy_compute_s2(Output&& output, Input1&& precalc) {
-  if constexpr (is_tuple_v<Output>) {
-    stan::math::for_each(
-        [](auto& output_i, auto&& precalc_i) {
-          if constexpr (is_any_var_scalar<Input1>::value) {
-            copy_compute_s2(output_i, precalc_i);
-          }
-        },
-        output, precalc);
-  } else if constexpr (is_std_vector_v<Output>) {
-    if constexpr (!is_stan_scalar<value_type_t<Output>>::value) {
-      const auto output_size = output.size();
-      for (std::size_t i = 0; i < output_size; ++i) {
-        copy_compute_s2(output[i], precalc[i]);
-      }
+  return map_fun([](auto&& output_i, auto&& precalc_i) {
+    using output_i_t = std::decay_t<decltype(output_i)>;
+    if constexpr (is_std_vector_v<output_i_t>) {
+        Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                            output_i.size());
+        Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc_i.data(),
+                                                          precalc_i.size());
+        output_map.array() += 0.5 * precalc_map.adj().array();
+    } else if constexpr (is_eigen_v<output_i_t>) {
+      output_i.array() += 0.5 * precalc_i.adj().array();
+    } else if constexpr (is_stan_scalar_v<output_i_t>) {
+      output_i += (0.5 * precalc_i.adj());
     } else {
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output.data(),
-                                                          output.size());
-      Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc.data(),
-                                                        precalc.size());
-      output_map.array() += 0.5 * precalc_map.adj().array();
+      static_assert(1, "We missed!!!");
     }
-  } else if constexpr (is_eigen_v<Output>) {
-    output.array() += 0.5 * precalc.adj().array();
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    output += (0.5 * precalc.adj());
-  } else {
-    static_assert(1, "We missed!!!");
-  }
+  }, std::forward<Output>(output), std::forward<Input1>(precalc));
 }
+
 
 template <typename Output, typename Input1, typename Input2,
           require_t<is_all_arithmetic_scalar<Input1, Input2>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc1,
                              Input2&& precalc2) {
-  if constexpr (is_tuple_v<Output>) {
-    stan::math::for_each(
-        [](auto&& output_i, auto&& precalc1_i, auto&& precalc2_i) {
-          collect_adjoints(output_i, precalc1_i, precalc2_i);
-        },
-        output, precalc1, precalc2);
-  } else if constexpr (is_std_vector_v<Output>) {
-    if constexpr (!is_stan_scalar<value_type_t<Output>>::value) {
-      const auto output_size = output.size();
-      for (std::size_t i = 0; i < output_size; ++i) {
-        collect_adjoints(output[i], precalc1[i], precalc2[i]);
-      }
+  return map_fun([](auto&& output_i, auto&& precalc1_i, auto&& precalc2_i) {
+    using output_i_t = std::decay_t<decltype(output_i)>;
+    if constexpr (is_std_vector_v<output_i_t>) {
+        Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                            output_i.size());
+        Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc1_map(precalc1_i.data(),
+                                                              precalc1_i.size());
+        Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc2_map(precalc2_i.data(),
+                                                              precalc2_i.size());
+        output_map.array() += precalc1_map.array() + precalc2_map.array();
+    } else if constexpr (is_eigen_v<output_i_t>) {
+      output_i.array() += precalc1_i.array() + precalc2_i.array();
+    } else if constexpr (is_stan_scalar_v<output_i_t>) {
+      output_i += precalc1_i + precalc2_i;
     } else {
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output.data(),
-                                                          output.size());
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc1_map(precalc1.data(),
-                                                            precalc1.size());
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc2_map(precalc2.data(),
-                                                            precalc2.size());
-      output_map.array() += precalc1_map.array() + precalc2_map.array();
+      static_assert(1, "Collect adjoints missed!!!");
     }
-  } else if constexpr (is_eigen_v<Output>) {
-    output.array() += precalc1.array() + precalc2.array();
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    output += precalc1 + precalc2;
-  } else {
-    static_assert(1, "Collect adjoints missed!!!");
-  }
+  }, std::forward<Output>(output), std::forward<Input1>(precalc1),
+                 std::forward<Input2>(precalc2));
 }
 
 template <typename T>
@@ -1014,7 +1009,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
         [](auto&& output_i, auto&& ll_arg_i) {
           if (is_any_var_scalar_v<decltype(ll_arg_i)>) {
             collect_adjoints(output_i, ll_arg_i);
-            laplace_likelihood::internal::set_zero_adjoint(ll_arg_i);
+            set_zero_adjoint(ll_arg_i);
           }
         },
         partial_parm, ll_args_filter);
@@ -1042,7 +1037,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                                      ll_args_copy, msgs);
         s2.deep_copy(s2_tmp);
         copy_compute_s2(partial_parm, ll_args_filter);
-        laplace_likelihood::internal::set_zero_adjoint(ll_args_filter);
+        set_zero_adjoint(ll_args_filter);
       }
     } else if (options.solver == 2) {
       R = md_est.W_r
@@ -1061,7 +1056,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           options.hessian_block_size, ll_args_copy, msgs);
       s2.deep_copy(s2_tmp);
       copy_compute_s2(partial_parm, ll_args_filter);
-      laplace_likelihood::internal::set_zero_adjoint(ll_args_filter);
+      set_zero_adjoint(ll_args_filter);
     } else {  // options.solver with LU decomposition
       LU_solve_covariance = md_est.LU.solve(md_est.covariance);
       R = md_est.W_r - md_est.W_r * LU_solve_covariance * md_est.W_r;
@@ -1073,7 +1068,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
                                                    ll_args_copy, msgs);
       s2.deep_copy(s2_tmp);
       copy_compute_s2(partial_parm, ll_args_filter);
-      laplace_likelihood::internal::set_zero_adjoint(ll_args_filter);
+      set_zero_adjoint(ll_args_filter);
     }
     lmd = md_est.lmd;
     if constexpr (is_any_var_scalar_v<scalar_type_t<CovarTupleArgs>>) {
@@ -1125,7 +1120,7 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
       laplace_likelihood::diff_eta_implicit(ll_fun, v, md_est.theta,
                                             ll_args_copy, msgs);
       collect_adjoints(partial_parm, ll_args_filter);
-      laplace_likelihood::internal::set_zero_adjoint(ll_args_filter);
+      set_zero_adjoint(ll_args_filter);
     }
   }
   var ret(lmd);
