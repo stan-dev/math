@@ -172,13 +172,12 @@ TEST(AgradMix, value_of_expr) {
   Eigen::Matrix<fvar<double>, -1, -1> x_fd = x_d;
   Eigen::Matrix<fvar<var>, -1, -1> x_fv = x_d;
 
-  using stan::math::value_of;
   using stan::math::as_array_or_scalar;
   using stan::math::to_ref;
+  using stan::math::value_of;
   auto y_d = value_of(as_array_or_scalar(to_ref(x_d * x_d)));
   auto y_v = value_of(as_array_or_scalar(to_ref(x_v * x_v)));
   auto y_fd = value_of(as_array_or_scalar(to_ref(x_fd * x_fd)));
   auto y_fv = value_of(as_array_or_scalar(to_ref(x_fv * x_fv)));
   stan::math::recover_memory();
 }
-

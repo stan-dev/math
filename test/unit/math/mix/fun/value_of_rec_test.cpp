@@ -160,9 +160,9 @@ TEST(AgradMix, value_of_rec_expr) {
   Eigen::Matrix<fvar<double>, -1, -1> x_fd = x_d;
   Eigen::Matrix<fvar<var>, -1, -1> x_fv = x_d;
 
-  using stan::math::value_of_rec;
   using stan::math::as_array_or_scalar;
   using stan::math::to_ref;
+  using stan::math::value_of_rec;
   auto y_d = value_of_rec(as_array_or_scalar(to_ref(x_d * x_d)));
   auto y_v = value_of_rec(as_array_or_scalar(to_ref(x_v * x_v)));
   auto y_fd = value_of_rec(as_array_or_scalar(to_ref(x_fd * x_fd)));

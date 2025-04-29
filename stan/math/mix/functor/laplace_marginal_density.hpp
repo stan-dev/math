@@ -246,9 +246,11 @@ inline auto map_fun(F&& f, Types&&... args) {
           return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
         },
         std::forward<Types>(args)...);
-  } else if constexpr ((is_std_vector_v<Types> && ...) && (!is_stan_scalar<value_type_t<Types>>::value && ...)){
+  } else if constexpr ((is_std_vector_v<Types> && ...)
+                       && (!is_stan_scalar<value_type_t<Types>>::value
+                           && ...)) {
     const auto vec_size = max_size(args...);
-    for (Eigen::Index i = 0; i  < vec_size; ++i) {
+    for (Eigen::Index i = 0; i < vec_size; ++i) {
       map_fun(f, args[i]...);
     }
   } else {
@@ -261,55 +263,60 @@ inline void set_zero_adjoint(Output&& output) {
   if constexpr (is_all_arithmetic_scalar_v<Output>) {
     return;
   } else {
-  return map_fun([](auto&& output_i) {
-    using output_i_t = std::decay_t<decltype(output_i)>;
-      if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
-        return;
-      } else if constexpr (is_std_vector<output_i_t>::value) {
-          Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output_i.data(),
-                                                            output_i.size());
-          map_x.adj().setZero();
-      } else if constexpr (is_eigen_v<output_i_t>) {
-        output_i.adj().setZero();
-      } else if constexpr (is_stan_scalar_v<output_i_t>) {
-        output_i.adj() = 0;
-      } else {
-        static_assert(1, "set_zero_adjoint missed!!! This is an internal error please report an issue on the Stan github");
-      }
-    }, std::forward<Output>(output));
+    return map_fun(
+        [](auto&& output_i) {
+          using output_i_t = std::decay_t<decltype(output_i)>;
+          if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
+            return;
+          } else if constexpr (is_std_vector<output_i_t>::value) {
+            Eigen::Map<const Eigen::Matrix<var, -1, -1>> map_x(output_i.data(),
+                                                               output_i.size());
+            map_x.adj().setZero();
+          } else if constexpr (is_eigen_v<output_i_t>) {
+            output_i.adj().setZero();
+          } else if constexpr (is_stan_scalar_v<output_i_t>) {
+            output_i.adj() = 0;
+          } else {
+            static_assert(1,
+                          "set_zero_adjoint missed!!! This is an internal "
+                          "error please report an issue on the Stan github");
+          }
+        },
+        std::forward<Output>(output));
   }
 }
 
 template <bool ZeroInput = false, typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output& output, Input1&& precalc) {
-  return map_fun([](auto&& output_i, auto&& precalc_i) {
-    using output_i_t = std::decay_t<decltype(output_i)>;
-    if constexpr (is_std_vector_v<output_i_t>) {
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                          output_i.size());
-      Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc_i.data(),
-                                                        precalc_i.size());
-      output_map.array() += precalc_map.adj().array();
-      if constexpr (ZeroInput) {
-        precalc_map.adj().setZero();
-      }
-    } else if constexpr (is_eigen_v<output_i_t>) {
-      output_i.array() += precalc_i.adj().array();
-      if constexpr (ZeroInput) {
-        precalc_i.adj().setZero();
-      }
-    } else if constexpr (is_stan_scalar_v<output_i_t>) {
-      output_i += precalc_i.adj();
-      if constexpr (ZeroInput) {
-        precalc_i.adj() = 0;
-      }
-    } else {
-      static_assert(1, "We missed!!!");
-    }
-  }, std::forward<Output>(output), std::forward<Input1>(precalc));
+  return map_fun(
+      [](auto&& output_i, auto&& precalc_i) {
+        using output_i_t = std::decay_t<decltype(output_i)>;
+        if constexpr (is_std_vector_v<output_i_t>) {
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                              output_i.size());
+          Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc_i.data(),
+                                                            precalc_i.size());
+          output_map.array() += precalc_map.adj().array();
+          if constexpr (ZeroInput) {
+            precalc_map.adj().setZero();
+          }
+        } else if constexpr (is_eigen_v<output_i_t>) {
+          output_i.array() += precalc_i.adj().array();
+          if constexpr (ZeroInput) {
+            precalc_i.adj().setZero();
+          }
+        } else if constexpr (is_stan_scalar_v<output_i_t>) {
+          output_i += precalc_i.adj();
+          if constexpr (ZeroInput) {
+            precalc_i.adj() = 0;
+          }
+        } else {
+          static_assert(1, "We missed!!!");
+        }
+      },
+      std::forward<Output>(output), std::forward<Input1>(precalc));
 }
-
 
 template <typename NameStr, typename ParamStr, typename Param>
 STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
@@ -749,7 +756,6 @@ inline void collect_adjoints(Output&& output, const vari* ret,
   }
 }
 
-
 template <typename Output, typename Input1,
           require_t<is_all_arithmetic_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc) {
@@ -757,11 +763,11 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
       [](auto&& output_i, auto&& precalc_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
-            Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(
-                output_i.data(), output_i.size());
-            Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(
-                precalc_i.data(), precalc_i.size());
-            output_map.array() += precalc_map.array();
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                              output_i.size());
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(
+              precalc_i.data(), precalc_i.size());
+          output_map.array() += precalc_map.array();
         } else if constexpr (is_eigen_v<output_i_t>) {
           output_i.array() += precalc_i.array();
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
@@ -779,48 +785,51 @@ inline void constexpr copy_compute_s2(const std::tuple<>& output,
 template <typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void copy_compute_s2(Output&& output, Input1&& precalc) {
-  return map_fun([](auto&& output_i, auto&& precalc_i) {
-    using output_i_t = std::decay_t<decltype(output_i)>;
-    if constexpr (is_std_vector_v<output_i_t>) {
-        Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                            output_i.size());
-        Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc_i.data(),
-                                                          precalc_i.size());
-        output_map.array() += 0.5 * precalc_map.adj().array();
-    } else if constexpr (is_eigen_v<output_i_t>) {
-      output_i.array() += 0.5 * precalc_i.adj().array();
-    } else if constexpr (is_stan_scalar_v<output_i_t>) {
-      output_i += (0.5 * precalc_i.adj());
-    } else {
-      static_assert(1, "We missed!!!");
-    }
-  }, std::forward<Output>(output), std::forward<Input1>(precalc));
+  return map_fun(
+      [](auto&& output_i, auto&& precalc_i) {
+        using output_i_t = std::decay_t<decltype(output_i)>;
+        if constexpr (is_std_vector_v<output_i_t>) {
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                              output_i.size());
+          Eigen::Map<Eigen::Matrix<var, -1, 1>> precalc_map(precalc_i.data(),
+                                                            precalc_i.size());
+          output_map.array() += 0.5 * precalc_map.adj().array();
+        } else if constexpr (is_eigen_v<output_i_t>) {
+          output_i.array() += 0.5 * precalc_i.adj().array();
+        } else if constexpr (is_stan_scalar_v<output_i_t>) {
+          output_i += (0.5 * precalc_i.adj());
+        } else {
+          static_assert(1, "We missed!!!");
+        }
+      },
+      std::forward<Output>(output), std::forward<Input1>(precalc));
 }
-
 
 template <typename Output, typename Input1, typename Input2,
           require_t<is_all_arithmetic_scalar<Input1, Input2>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc1,
                              Input2&& precalc2) {
-  return map_fun([](auto&& output_i, auto&& precalc1_i, auto&& precalc2_i) {
-    using output_i_t = std::decay_t<decltype(output_i)>;
-    if constexpr (is_std_vector_v<output_i_t>) {
-        Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                            output_i.size());
-        Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc1_map(precalc1_i.data(),
-                                                              precalc1_i.size());
-        Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc2_map(precalc2_i.data(),
-                                                              precalc2_i.size());
-        output_map.array() += precalc1_map.array() + precalc2_map.array();
-    } else if constexpr (is_eigen_v<output_i_t>) {
-      output_i.array() += precalc1_i.array() + precalc2_i.array();
-    } else if constexpr (is_stan_scalar_v<output_i_t>) {
-      output_i += precalc1_i + precalc2_i;
-    } else {
-      static_assert(1, "Collect adjoints missed!!!");
-    }
-  }, std::forward<Output>(output), std::forward<Input1>(precalc1),
-                 std::forward<Input2>(precalc2));
+  return map_fun(
+      [](auto&& output_i, auto&& precalc1_i, auto&& precalc2_i) {
+        using output_i_t = std::decay_t<decltype(output_i)>;
+        if constexpr (is_std_vector_v<output_i_t>) {
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
+                                                              output_i.size());
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc1_map(
+              precalc1_i.data(), precalc1_i.size());
+          Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc2_map(
+              precalc2_i.data(), precalc2_i.size());
+          output_map.array() += precalc1_map.array() + precalc2_map.array();
+        } else if constexpr (is_eigen_v<output_i_t>) {
+          output_i.array() += precalc1_i.array() + precalc2_i.array();
+        } else if constexpr (is_stan_scalar_v<output_i_t>) {
+          output_i += precalc1_i + precalc2_i;
+        } else {
+          static_assert(1, "Collect adjoints missed!!!");
+        }
+      },
+      std::forward<Output>(output), std::forward<Input1>(precalc1),
+      std::forward<Input2>(precalc2));
 }
 
 template <typename T>
