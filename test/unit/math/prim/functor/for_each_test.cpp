@@ -24,7 +24,7 @@ TEST(MathFunctions, for_each_basic_unary_index) {
   std::vector<int> v = {-5, 2};
   auto x = std::make_tuple(v, v);
 
-  auto f = [](auto& y) {
+  auto f = [](auto&& y) {
     y[0] += 1;
     y[1] += 1;
     return;
