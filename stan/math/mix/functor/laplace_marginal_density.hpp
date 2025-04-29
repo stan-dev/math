@@ -240,9 +240,9 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
 // iter_tuple_n
 template <typename F, typename... Types>
 inline auto map_fun(F&& f, Types&&... args) {
-  constexpr bool is_vec_container = (is_std_vector_v<Types> && ...)
-                       && (!is_stan_scalar<value_type_t<Types>>::value
-                           && ...);
+  constexpr bool is_vec_container
+      = (is_std_vector_v<Types> && ...)
+        && (!is_stan_scalar<value_type_t<Types>>::value && ...);
   if constexpr ((is_tuple_v<Types> && ...)) {
     stan::math::for_each(
         [&f](auto&&... args_i) {
