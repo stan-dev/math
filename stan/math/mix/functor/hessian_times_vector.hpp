@@ -54,8 +54,10 @@ void hessian_times_vector(const F& f,
  * to handle functions which take in arguments
  * and pstream.
  */
-template <typename F, typename XAdj, typename XVec, typename VVec, typename... Args>
-inline void hessian_times_vector(const F& f, XAdj& x_adj, XVec&& x, VVec&& v, Args&&... args) {
+template <typename F, typename XAdj, typename XVec, typename VVec,
+          typename... Args>
+inline void hessian_times_vector(const F& f, XAdj& x_adj, XVec&& x, VVec&& v,
+                                 Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index x_size = x.size();
   Eigen::Matrix<var, Eigen::Dynamic, 1> x_var = std::forward<XVec>(x);
