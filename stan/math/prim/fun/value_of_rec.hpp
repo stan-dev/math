@@ -35,7 +35,7 @@ inline std::vector<promote_scalar_t<double, T>> value_of_rec(
  * @return Value of scalar cast to a double.
  */
 template <typename T, require_stan_scalar_t<T> = nullptr>
-inline double value_of_rec(const T x) {
+inline double constexpr value_of_rec(const T x) noexcept {
   return static_cast<double>(x);
 }
 
@@ -50,7 +50,7 @@ inline double value_of_rec(const T x) {
  * @param x Specified value.
  * @return Specified value.
  */
-inline double value_of_rec(double x) { return x; }
+inline double constexpr value_of_rec(double x) noexcept { return x; }
 
 /**
  * Recursively apply value-of to the parts of the argument.
@@ -94,7 +94,6 @@ inline T value_of_rec(T&& x) {
 template <typename T, require_not_st_same<T, double>* = nullptr,
           require_eigen_t<T>* = nullptr>
 inline auto value_of_rec(T&& M) {
-  std::cout << "1st called\n";
   return make_holder(
       [](auto&& m) {
         return m.unaryExpr([](auto x) { return value_of_rec(x); });
@@ -117,17 +116,13 @@ inline auto value_of_rec(T&& M) {
 template <typename T, require_st_same<T, double>* = nullptr,
           require_eigen_t<T>* = nullptr>
 inline decltype(auto) value_of_rec(T&& x) {
-  std::cout << "2nd called\n";
   if constexpr (is_plain_type<T>::value) {
     if constexpr (std::is_rvalue_reference_v<T&&>) {
-      std::cout << "rvalue\n";
       return std::decay_t<T>(std::forward<T>(x));
     } else {
-      std::cout << "lvalue\n";
       return x;
     }
   } else {
-    std::cout << "holder\n";
     return make_holder([](auto&& m) { return m; }, std::forward<T>(x));
   }
 }
