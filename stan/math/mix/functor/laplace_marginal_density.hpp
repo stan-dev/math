@@ -145,7 +145,8 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
 
 template <typename WRootMat>
 inline void block_matrix_sqrt(WRootMat& W_root,
-    const Eigen::SparseMatrix<double>& W, const Eigen::Index block_size) {
+                              const Eigen::SparseMatrix<double>& W,
+                              const Eigen::Index block_size) {
   int n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);
   Eigen::MatrixXd local_block_sqrt(block_size, block_size);
@@ -457,8 +458,8 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       // TODO(Steve): Memory can be made once out of the loop
       // This is our main cost
       B.noalias() = MatrixXd::Identity(theta_size, theta_size)
-          + W_r.diagonal().asDiagonal() * covariance
-                * W_r.diagonal().asDiagonal();
+                    + W_r.diagonal().asDiagonal() * covariance
+                          * W_r.diagonal().asDiagonal();
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
       auto L = llt_B.matrixL();
       auto LT = llt_B.matrixU();
@@ -749,8 +750,8 @@ inline void collect_adjoints(Output&& output, const vari* ret,
     } else {
       Eigen::Map<Eigen::Matrix<var, -1, 1>> output_map(output.data(),
                                                        output.size());
-      Eigen::Map<const Eigen::Matrix<double, -1, 1>> precalc_map(precalc.data(),
-                                                           precalc.size());
+      Eigen::Map<const Eigen::Matrix<double, -1, 1>> precalc_map(
+          precalc.data(), precalc.size());
       output_map.array().adj() += ret->adj_ * precalc_map.array();
     }
   } else if constexpr (is_eigen_v<Output>) {
@@ -777,7 +778,10 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += precalc_i;
         } else {
-          static_assert(1, "collect_adjoints was given an unexpected type! This is an internal bug. Please file an issue on Stan's github repository.");
+          static_assert(1,
+                        "collect_adjoints was given an unexpected type! This "
+                        "is an internal bug. Please file an issue on Stan's "
+                        "github repository.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -809,7 +813,6 @@ inline void copy_compute_s2(Output&& output, Input1&& precalc) {
       std::forward<Output>(output), std::forward<Input1>(precalc));
 }
 
-
 template <typename T>
 static constexpr bool is_dbl_nothrow_constructible_v
     = std::is_nothrow_constructible<
@@ -840,7 +843,6 @@ inline constexpr auto make_zero(Output&& output) {
     return static_cast<double>(0.0);
   }
 }
-
 
 template <typename Output, require_t<is_any_var_scalar<Output>>* = nullptr>
 inline void print_adjoint(Output&& output) {
@@ -984,10 +986,11 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           = md_est.L.template triangularView<Eigen::Lower>().solve(
               md_est.W_r * md_est.covariance);
       if (!ll_args_contain_var && options.hessian_block_size == 1) {
-        s2.deep_copy((0.5
-               * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
-                     .cwiseProduct(laplace_likelihood::third_diff(
-                         ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
+        s2.deep_copy(
+            (0.5
+             * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
+                   .cwiseProduct(laplace_likelihood::third_diff(
+                       ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
       } else {
         arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,

@@ -121,8 +121,8 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
   if (hessian_block_size == 1) {
     auto v = Eigen::VectorXd::Ones(theta_size);
     Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
-    hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v), value_of(args)...,
-                         msgs);
+    hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v),
+                         value_of(args)..., msgs);
     Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
     hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
     for (Eigen::Index i = 0; i < theta_size; i++) {

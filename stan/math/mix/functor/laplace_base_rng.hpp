@@ -44,10 +44,10 @@ namespace math {
  * @param rng Rng number.
  * @param msgs Stream for function prints.
  */
-template <typename LLFunc, typename LLArgs, typename ThetaVec,
-          typename CovarFun, typename CovarArgs, typename RNG,
-          require_all_eigen_t<ThetaVec>* = nullptr,
-          require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs, ThetaVec>>* = nullptr>
+template <
+    typename LLFunc, typename LLArgs, typename ThetaVec, typename CovarFun,
+    typename CovarArgs, typename RNG, require_all_eigen_t<ThetaVec>* = nullptr,
+    require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs, ThetaVec>>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
                                         ThetaVec&& theta_0,
                                         CovarFun&& covariance_function,
@@ -56,9 +56,8 @@ inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
                                         RNG& rng, std::ostream* msgs) {
   auto md_est = laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args), std::forward<ThetaVec>(theta_0),
-      std::forward<CovarFun>(covariance_function), to_ref(std::forward<CovarArgs>(covar_args)),
-      options,
-      msgs);
+      std::forward<CovarFun>(covariance_function),
+      to_ref(std::forward<CovarArgs>(covar_args)), options, msgs);
   // Modified R&W method
   auto&& covariance_train = md_est.covariance;
   Eigen::VectorXd mean_train = covariance_train * md_est.theta_grad;
