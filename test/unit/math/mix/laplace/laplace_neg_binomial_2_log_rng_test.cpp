@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 
+namespace {
 struct stationary_point_nb {
   template <typename T0, typename T1>
   inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
@@ -144,3 +145,4 @@ TEST(laplace_latent_neg_binomial_2_log_rng, count_two_dim_diag) {
   EXPECT_NEAR(K_laplace(1, 1), K_sample(1, 1), 6e-3);
   EXPECT_NEAR(K_laplace(0, 1), K_sample(0, 1), 1e-3);
 }
+}  // namespace

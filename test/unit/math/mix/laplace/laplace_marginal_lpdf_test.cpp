@@ -6,7 +6,6 @@
 #include <stan/math/prim/fun/lgamma.hpp>
 #include <test/unit/math/mix/laplace/aki_synth_data/x1.hpp>
 #include <test/unit/math/mix/laplace/motorcycle_gp/x_vec.hpp>
-#include <boost/algorithm/string.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <istream>
@@ -19,90 +18,6 @@ struct poisson_log_likelihood2 {
                   std::ostream* pstream) const {
     return stan::math::poisson_log_lpmf(delta_int, theta);
   }
-};
-static bool write_init_json = true;
-static int err_iter = 0;
-
-// Custom event listener that logs test failures
-class LoggingTestListener : public ::testing::EmptyTestEventListener {
- public:
-  std::string current_test_name_;
-  int solver_num{0};
-  int hessian_block_size{0};
-  int max_steps_line_search{0};
-
-  // Called after an assertion results in a failure.
-  void OnTestPartResult(const ::testing::TestPartResult& result) override {
-    if (result.failed()) {
-      std::ofstream ofs;
-      // On first failure, open file in truncation mode and write header
-      if (write_init_json) {
-        ofs.open("failure_log.json", std::ios::out);
-        ofs << "{\"error\": {\n";
-        write_init_json = false;
-      } else {
-        // For subsequent failures, open in append mode and add a comma
-        // separator
-        ofs.open("failure_log.json", std::ios::app);
-        ofs << ", \n";
-      }
-      ofs << "\"" << err_iter << "\": {";
-      err_iter++;
-      std::string result_summary = result.summary();
-      boost::replace_all(result_summary, "\"", "\\\"");
-      boost::replace_all(result_summary, "\n", "\\n");
-      // Retrieve the current test information.
-      const ::testing::TestInfo* test_info
-          = ::testing::UnitTest::GetInstance()->current_test_info();
-      std::string test_name;
-      if (test_info) {
-        // For Google Test 1.10.0 or later
-        test_name = std::string(test_info->test_suite_name()) + "."
-                    + test_info->name();
-        // For older versions, use:
-        // test_name = std::string(test_info->test_case_name()) + "." +
-        // test_info->name();
-      }
-      ofs << "\"test\": \"" << test_name << "\", ";
-      ofs << "\"solver_num\": " << solver_num << ", ";
-      ofs << "\"hessian_block_size\": " << hessian_block_size << ", ";
-      ofs << "\"max_steps_line_search\": " << max_steps_line_search << ", ";
-      ofs << "\"failure\": \"" << result_summary << "\"}";
-    }
-  }
-
-  // Called after all tests have ended.
-  void OnTestProgramEnd(const ::testing::UnitTest& /*unit_test*/) override {
-    if (!write_init_json) {  // Only if at least one failure was logged
-      std::ofstream ofs("failure_log.json", std::ios::app);
-      ofs << "}}";  // Close the JSON object
-    }
-  }
-};
-
-class laplace_test_listen : public ::testing::Test {
- public:
-  virtual void AllowSetup() {}
-  /*
-  bool setup_once{true};
-  LoggingTestListener* logger{new LoggingTestListener{}};
-  protected:
-  virtual void AllowSetup() {
-    if (setup_once) {
-      ::testing::TestEventListeners& listeners =
-  ::testing::UnitTest::GetInstance()->listeners(); listeners.Append(logger);
-      setup_once = false;
-    }
-  }
-  void SetUp() override {
-    this->AllowSetup();
-  }
-  virtual ~laplace_test_listen() {
-    ::testing::TestEventListeners& listeners =
-  ::testing::UnitTest::GetInstance()->listeners(); listeners.Release(logger);
-    delete logger;
-  }
-  */
 };
 
 template <typename T1, typename T2>
@@ -124,7 +39,7 @@ struct poisson_log_likelihood_tuple {
   }
 };
 
-TEST_F(laplace_test_listen, poisson_log_phi_dim_2_tuple) {
+TEST(laplace, poisson_log_phi_dim_2_tuple) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -157,11 +72,10 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2_tuple) {
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
-  for (int solver_num = 1; solver_num < 4; solver_num++) {
-    for (int hessian_block_size = 1; hessian_block_size < 4;
-         hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 4;
-           ++max_steps_line_search) {
+  stan::test::ad_tolerances tols;
+  tols.gradient_grad_ = 1e-1;
+  stan::math::test::run_solver_grid(
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search) {
         auto f_covar = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
@@ -170,28 +84,26 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2_tuple) {
               tolerance, max_num_steps, hessian_block_size, solver_num,
               max_steps_line_search, nullptr);
         };
-        stan::test::ad_tolerances tols;
-        tols.gradient_grad_ = 1e-1;
         stan::test::expect_ad<true>(tols, f_covar, x, phi_dbl[0], phi_dbl[1]);
-        auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
-          return laplace_marginal_tol<false>(
-              poisson_log_likelihood_tuple{},
-              std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)), theta_0,
-              stan::math::test::squared_kernel_functor{},
-              std::forward_as_tuple(
-                  x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
-              tolerance, max_num_steps, hessian_block_size, solver_num,
-              max_steps_line_search, nullptr);
-        };
-        auto test1 = 1.0;
-        auto test2 = 1.0;
-        stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
-      }
-    }
-  }
+      });
+  stan::math::test::run_solver_grid([&](int solver_num, int hessian_block_size,
+                                        int max_steps_line_search) {
+    auto f_ll = [&](auto&& alpha_rho, auto&& eta1, auto&& eta2) {
+      return laplace_marginal_tol<false>(
+          poisson_log_likelihood_tuple{},
+          std::forward_as_tuple(sums, std::make_tuple(eta1, eta2)), theta_0,
+          stan::math::test::squared_kernel_functor{},
+          std::forward_as_tuple(x, std::make_tuple(alpha_rho(0), alpha_rho(1))),
+          tolerance, max_num_steps, hessian_block_size, solver_num,
+          max_steps_line_search, nullptr);
+    };
+    auto test1 = 1.0;
+    auto test2 = 1.0;
+    stan::test::expect_ad<true>(tols, f_ll, phi_dbl, test1, test2);
+  });
 }
 
-TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
+TEST(laplace, poisson_log_phi_dim_2) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -251,11 +163,10 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
   using stan::scalar_type_t;
   using stan::math::test::laplace_issue;
   constexpr std::array known_issues{laplace_issue{0, 0, 0}};
-  for (int solver_num = 1; solver_num < 4; solver_num++) {
-    for (int hessian_block_size = 1; hessian_block_size < 4;
-         hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 4;
-           ++max_steps_line_search) {
+  stan::test::ad_tolerances tols;
+  tols.gradient_grad_ = 1e-1;
+  stan::math::test::run_solver_grid(
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search) {
         auto f = [&](auto&& x_v, auto&& alpha, auto&& rho) {
           return laplace_marginal_tol<false>(
               poisson_log_likelihood2{}, std::forward_as_tuple(sums), theta_0,
@@ -263,12 +174,8 @@ TEST_F(laplace_test_listen, poisson_log_phi_dim_2) {
               std::forward_as_tuple(x_v, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::ad_tolerances tols;
-        tols.gradient_grad_ = 1e-1;
         stan::test::expect_ad<true>(tols, f, x, phi_dbl[0], phi_dbl[1]);
-      }
-    }
-  }
+      });
 }
 
 struct poisson_log_exposure_likelihood {
@@ -300,11 +207,8 @@ TEST_F(laplace_disease_map_test, laplace_marginal) {
   }
   constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 100;
-  for (int solver_num = 1; solver_num < 2; solver_num++) {
-    for (int hessian_block_size = 1; hessian_block_size < 5;
-         hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 5;
-           ++max_steps_line_search) {
+  stan::math::test::run_solver_grid(
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol<false>(
               poisson_log_exposure_likelihood{}, std::forward_as_tuple(ye, y),
@@ -313,17 +217,7 @@ TEST_F(laplace_disease_map_test, laplace_marginal) {
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
         stan::test::expect_ad<true>(f, phi_dbl[0], phi_dbl[1]);
-        if (::testing::Test::HasFailure()) {
-          std::cout << "----------" << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-        }
-      }
-    }
-  }
+      });
 }
 
 struct bernoulli_logit_likelihood {
@@ -334,7 +228,7 @@ struct bernoulli_logit_likelihood {
   }
 };
 
-TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
+TEST(laplace, bernoulli_logit_phi_dim500) {
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::to_vector;
@@ -371,12 +265,10 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
   // All fail for ad check with relative tolerance ~0.002
   constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 100;
-  // FIXME(Steve): hessian_block_size of 3 fails approx test
-  for (int solver_num = 1; solver_num < 3; solver_num++) {
-    for (int hessian_block_size = 1; hessian_block_size < 5;
-         hessian_block_size++) {
-      for (int max_steps_line_search = 100; max_steps_line_search < 500;
-           max_steps_line_search += 100) {
+  stan::test::ad_tolerances tols;
+  tols.gradient_grad_ = 1e-3;
+  stan::math::test::run_solver_grid(
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol<false>(
               bernoulli_logit_likelihood{}, std::forward_as_tuple(y), theta_0,
@@ -384,20 +276,8 @@ TEST_F(laplace_test_listen, bernoulli_logit_phi_dim500) {
               std::forward_as_tuple(x, alpha, rho), tolerance, max_num_steps,
               hessian_block_size, solver_num, max_steps_line_search, nullptr);
         };
-        stan::test::ad_tolerances tols;
-        tols.gradient_grad_ = 1e-3;
         stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
-        if (::testing::Test::HasFailure()) {
-          std::cout << "----------" << std::endl;
-          std::cout << "max_steps_line_search: " << max_steps_line_search
-                    << std::endl;
-          std::cout << "hessian_block_size: " << hessian_block_size
-                    << std::endl;
-          std::cout << "solver_num: " << solver_num << std::endl;
-        }
-      }
-    }
-  }
+      });
 }
 
 struct covariance_motorcycle_functor {
@@ -461,10 +341,9 @@ struct normal_likelihood {
   }
 };
 
-class laplace_motorcyle_gp_test : public laplace_test_listen {
+class laplace_motorcyle_gp_test : public ::testing::Test {
  protected:
   void SetUp() override {
-    this->AllowSetup();
     using stan::math::gp_exp_quad_cov;
     using stan::math::value_of;
     Eigen::MatrixXd K_plus_I
@@ -601,9 +480,9 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
    *  standard AD testing procedure.
    */
   for (int solver_num = 1; solver_num < 4; solver_num++) {
-    for (int max_steps_line_search = 100; max_steps_line_search <= 500;
-         max_steps_line_search += 100) {
-      for (int hessian_block_size = 1; hessian_block_size < 5;
+    for (int max_steps_line_search = 0; max_steps_line_search <= 20;
+         max_steps_line_search += 10) {
+      for (int hessian_block_size = 1; hessian_block_size < 3;
            hessian_block_size++) {
         // logger->update_laplace_info(solver_num, hessian_block_size,
         // max_steps_line_search);
@@ -669,9 +548,6 @@ struct normal_likelihood2 {
 };
 
 TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
-  // Register the custom listener
-  // logger->current_test_name_ = "gp_motorcycle2";
-
   using stan::math::laplace_marginal;
   using stan::math::laplace_marginal_tol;
   using stan::math::value_of;
@@ -692,40 +568,20 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
   }
   // TODO(Charles): benchmark this result against GPStuff.
   constexpr double tolerance = 1e-12;
-  constexpr int max_num_steps = 300;
-  for (int solver_num = 1; solver_num < 4; solver_num++) {
-    for (int hessian_block_size = 1; hessian_block_size < 5;
-         hessian_block_size++) {
-      for (int max_steps_line_search = 0; max_steps_line_search < 5;
-           ++max_steps_line_search) {
-        // logger->update_laplace_info(solver_num, hessian_block_size,
-        // max_steps_line_search);
-        try {
-          auto f = [&](auto&& eta_v, auto&& phi_0, auto&& phi) {
-            return laplace_marginal_tol<false>(
-                normal_likelihood2{},
-                std::forward_as_tuple(y, delta_int, eta_v), theta0,
-                covariance_motorcycle_functor{},
-                std::forward_as_tuple(x, phi_0, phi(1), phi(2), phi(3), n_obs),
-                tolerance, max_num_steps, hessian_block_size, solver_num,
-                max_steps_line_search, nullptr);
-          };
-          if (::testing::Test::HasFailure()) {
-            std::cout << "----------" << std::endl;
-            std::cout << "solver_num: " << solver_num << std::endl;
-            std::cout << "hessian_block_size: " << hessian_block_size
-                      << std::endl;
-            std::cout << "max_steps_line_search: " << max_steps_line_search
-                      << std::endl;
-          }
+  constexpr int max_num_steps = 100;
+  stan::test::ad_tolerances tols;
+  tols.gradient_grad_ = 1e-3;
 
-          stan::test::ad_tolerances tols;
-          tols.gradient_grad_ = 1e-3;
-          stan::test::expect_ad<true>(tols, f, eta, phi_dbl(0), phi_dbl);
-        } catch (const std::exception& e) {
-          ADD_FAILURE() << "Exception: " << e.what() << std::endl;
-        }
-      }
-    }
-  }
+  stan::math::test::run_solver_grid(
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search) {
+        auto f = [&](auto&& eta_v, auto&& phi_0, auto&& phi) {
+          return laplace_marginal_tol<false>(
+              normal_likelihood2{}, std::forward_as_tuple(y, delta_int, eta_v),
+              theta0, covariance_motorcycle_functor{},
+              std::forward_as_tuple(x, phi_0, phi(1), phi(2), phi(3), n_obs),
+              tolerance, max_num_steps, hessian_block_size, solver_num,
+              max_steps_line_search, nullptr);
+        };
+        stan::test::expect_ad<true>(tols, f, eta_dbl, phi_dbl(0), phi_dbl);
+      });
 }

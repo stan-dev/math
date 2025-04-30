@@ -121,7 +121,7 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
   if (hessian_block_size == 1) {
     auto v = Eigen::VectorXd::Ones(theta_size);
     Eigen::VectorXd hessian_v = Eigen::VectorXd::Zero(theta_size);
-    hessian_times_vector(f, hessian_v, theta, std::move(v), value_of(args)...,
+    hessian_times_vector(f, hessian_v, std::forward<Theta>(theta), std::move(v), value_of(args)...,
                          msgs);
     Eigen::SparseMatrix<double> hessian_theta(theta_size, theta_size);
     hessian_theta.reserve(Eigen::VectorXi::Constant(theta_size, 1));
@@ -154,7 +154,7 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
                                   Args&&... args) {
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = theta;
+  Eigen::Matrix<var, Eigen::Dynamic, 1> theta_var = std::forward<Theta>(theta);
   Eigen::Matrix<fvar<fvar<var>>, Eigen::Dynamic, 1> theta_ffvar(theta_size);
   for (Eigen::Index i = 0; i < theta_size; ++i) {
     theta_ffvar(i) = fvar<fvar<var>>(fvar<var>(theta_var(i), 1.0), 1.0);
@@ -191,7 +191,7 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
 
   nested_rev_autodiff nested;
   const Eigen::Index theta_size = theta.size();
-  Matrix<var, Dynamic, 1> theta_var = theta;
+  Matrix<var, Dynamic, 1> theta_var = std::forward<Theta>(theta);
   int n_blocks = theta_size / hessian_block_size;
   VectorXd v(theta_size);
   VectorXd w(theta_size);

@@ -12,6 +12,7 @@
 #include <fstream>
 #include <vector>
 
+namespace {
 struct stationary_point {
   template <typename T0, typename T1>
   inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
@@ -85,8 +86,8 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
       std::forward_as_tuple(phi(0), phi(1)), rng, nullptr);
 
   // Compute exact mean and covariance
-  Eigen::VectorXd theta_root
-      = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
+  Eigen::VectorXd theta_root = algebra_solver(
+      stationary_point{}, theta_0, phi, d0, di0);
   Eigen::MatrixXd K_laplace = laplace_covariance(theta_root, phi);
 
   rng.seed(1954);
@@ -97,3 +98,4 @@ TEST(laplace_bernoulli_logit_rng, two_dim_diag) {
   EXPECT_NEAR(theta_benchmark(0), theta_pred(0), tol);
   EXPECT_NEAR(theta_benchmark(1), theta_pred(1), tol);
 }
+}  // namespace

@@ -47,29 +47,27 @@ namespace math {
 template <typename LLFunc, typename LLArgs, typename ThetaVec,
           typename CovarFun, typename CovarArgs, typename RNG,
           require_all_eigen_t<ThetaVec>* = nullptr,
-          require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs>>* = nullptr>
+          require_t<is_all_arithmetic_scalar<CovarArgs, LLArgs, ThetaVec>>* = nullptr>
 inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
                                         ThetaVec&& theta_0,
                                         CovarFun&& covariance_function,
                                         CovarArgs&& covar_args,
                                         const laplace_options& options,
                                         RNG& rng, std::ostream* msgs) {
-  using Eigen::MatrixXd;
-  using Eigen::VectorXd;
-  auto covar_args_val = to_ref(std::forward<CovarArgs>(covar_args));
   auto md_est = laplace_marginal_density_est(
       ll_fun, std::forward<LLArgs>(ll_args), std::forward<ThetaVec>(theta_0),
-      std::forward<CovarFun>(covariance_function), covar_args_val, options,
+      std::forward<CovarFun>(covariance_function), to_ref(std::forward<CovarArgs>(covar_args)),
+      options,
       msgs);
   // Modified R&W method
   auto&& covariance_train = md_est.covariance;
-  VectorXd mean_train = covariance_train * md_est.theta_grad;
+  Eigen::VectorXd mean_train = covariance_train * md_est.theta_grad;
   if (options.solver == 1 || options.solver == 2) {
     Eigen::MatrixXd V_dec
         = md_est.L.template triangularView<Eigen::Lower>().solve(
             md_est.W_r * covariance_train);
     Eigen::MatrixXd Sigma = covariance_train - V_dec.transpose() * V_dec;
-    return multi_normal_rng(mean_train, Sigma, rng);
+    return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
   } else {
     Eigen::MatrixXd Sigma
         = covariance_train
@@ -78,7 +76,7 @@ inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
                    - md_est.W_r
                          * md_est.LU.solve(md_est.covariance * md_est.W_r))
                 * covariance_train;
-    return multi_normal_rng(mean_train, Sigma, rng);
+    return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
   }
 }
 

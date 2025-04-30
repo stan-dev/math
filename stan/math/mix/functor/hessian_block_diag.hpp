@@ -50,6 +50,7 @@ inline Eigen::SparseMatrix<double> hessian_block_diag(
   return H;
 }
 
+
 }  // namespace math
 }  // namespace stan
 

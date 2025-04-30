@@ -143,20 +143,13 @@ inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
   });
 }
 
-/**
- * Return the matrix square-root for a block diagonal matrix
- * @param W Block-diagonal matrix
- * @param block_size Size of blocks in W
- */
-inline Eigen::SparseMatrix<double> block_matrix_sqrt(
+template <typename WRootMat>
+inline void block_matrix_sqrt(WRootMat& W_root,
     const Eigen::SparseMatrix<double>& W, const Eigen::Index block_size) {
   int n_block = W.cols() / block_size;
   Eigen::MatrixXd local_block(block_size, block_size);
   Eigen::MatrixXd local_block_sqrt(block_size, block_size);
   Eigen::MatrixXd sqrt_t_mat = Eigen::MatrixXd::Zero(block_size, block_size);
-  Eigen::SparseMatrix<double> W_root(W.rows(), W.cols());
-  W_root.reserve(Eigen::VectorXi::Constant(W_root.cols(), block_size));
-
   // No block operation available for sparse matrices, so we have to loop
   // See https://eigen.tuxfamily.org/dox/group__TutorialSparse.html#title7
   for (int i = 0; i < n_block; i++) {
@@ -194,13 +187,11 @@ inline Eigen::SparseMatrix<double> block_matrix_sqrt(
     }
     for (int k = 0; k < block_size; k++) {
       for (int j = 0; j < block_size; j++) {
-        W_root.insert(i * block_size + j, i * block_size + k)
+        W_root.coeffRef(i * block_size + j, i * block_size + k)
             = local_block_sqrt(j, k);
       }
     }
   }
-  W_root.makeCompressed();
-  return W_root;
 }
 template <typename AVec, typename APrev, typename ThetaVec, typename LLFun,
           typename LLArgs, typename Covar, typename Msgs>
@@ -239,20 +230,20 @@ inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
 
 // iter_tuple_n
 template <typename F, typename... Types>
-inline auto map_fun(F&& f, Types&&... args) {
+inline auto iter_tuple_n(F&& f, Types&&... args) {
   constexpr bool is_vec_container
       = (is_std_vector_v<Types> && ...)
         && (!is_stan_scalar<value_type_t<Types>>::value && ...);
   if constexpr ((is_tuple_v<Types> && ...)) {
     stan::math::for_each(
         [&f](auto&&... args_i) {
-          return map_fun(f, std::forward<decltype(args_i)>(args_i)...);
+          return iter_tuple_n(f, std::forward<decltype(args_i)>(args_i)...);
         },
         std::forward<Types>(args)...);
   } else if constexpr (is_vec_container) {
     const auto vec_size = max_size(args...);
     for (Eigen::Index i = 0; i < vec_size; ++i) {
-      map_fun(f, args[i]...);
+      iter_tuple_n(f, args[i]...);
     }
   } else {
     return f(std::forward<Types>(args)...);
@@ -264,7 +255,7 @@ inline void set_zero_adjoint(Output&& output) {
   if constexpr (is_all_arithmetic_scalar_v<Output>) {
     return;
   } else {
-    return map_fun(
+    return iter_tuple_n(
         [](auto&& output_i) {
           using output_i_t = std::decay_t<decltype(output_i)>;
           if constexpr (is_all_arithmetic_scalar_v<output_i_t>) {
@@ -290,7 +281,7 @@ inline void set_zero_adjoint(Output&& output) {
 template <bool ZeroInput = false, typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output& output, Input1&& precalc) {
-  return map_fun(
+  return iter_tuple_n(
       [](auto&& output_i, auto&& precalc_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
@@ -465,7 +456,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       */
       // TODO(Steve): Memory can be made once out of the loop
       // This is our main cost
-      B = MatrixXd::Identity(theta_size, theta_size)
+      B.noalias() = MatrixXd::Identity(theta_size, theta_size)
           + W_r.diagonal().asDiagonal() * covariance
                 * W_r.diagonal().asDiagonal();
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
@@ -513,6 +504,19 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
     }
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 1 && !(options.hessian_block_size == 1)) {
+    Eigen::SparseMatrix<double> W_r(theta.rows(), theta.rows());
+    Eigen::Index block_size = options.hessian_block_size;
+    W_r.reserve(Eigen::VectorXi::Constant(W_r.cols(), block_size));
+    const Eigen::Index n_block = W_r.cols() / block_size;
+    // Prefill W_r so we only make space once
+    for (Eigen::Index i = 0; i < n_block; i++) {
+      for (Eigen::Index k = 0; k < block_size; k++) {
+        for (Eigen::Index j = 0; j < block_size; j++) {
+          W_r.insert(i * block_size + j, i * block_size + k) = 1.0;
+        }
+      }
+    }
+    W_r.makeCompressed();
     for (Eigen::Index i = 0; i <= options.max_num_steps; i++) {
       auto [theta_grad, W] = laplace_likelihood::diff(
           ll_fun, theta, options.hessian_block_size, ll_args, msgs);
@@ -523,8 +527,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
               "definite");
         }
       }
-      Eigen::SparseMatrix<double> W_r
-          = block_matrix_sqrt(W, options.hessian_block_size);
+      block_matrix_sqrt(W_r, W, options.hessian_block_size);
       B.noalias() = MatrixXd::Identity(theta_size, theta_size)
                     + W_r * (covariance * W_r);
       Eigen::LLT<Eigen::Ref<Eigen::MatrixXd>> llt_B(B);
@@ -533,7 +536,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
       b.noalias() = W * theta + theta_grad;
       a.noalias() = b - W_r * LT.solve(L.solve(W_r * (covariance * b)));
       // Simple Newton step
-      theta = covariance * a;
+      theta.noalias() = covariance * a;
       objective_old = objective_new;
       if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
                        .any())) {
@@ -632,7 +635,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
 
       a.noalias() = b - W * LU.solve(covariance * b);
       // Simple Newton step
-      theta = covariance * a;
+      theta.noalias() = covariance * a;
       objective_old = objective_new;
       if (((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
                .any())) {
@@ -746,7 +749,7 @@ inline void collect_adjoints(Output&& output, const vari* ret,
     } else {
       Eigen::Map<Eigen::Matrix<var, -1, 1>> output_map(output.data(),
                                                        output.size());
-      Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc_map(precalc.data(),
+      Eigen::Map<const Eigen::Matrix<double, -1, 1>> precalc_map(precalc.data(),
                                                            precalc.size());
       output_map.array().adj() += ret->adj_ * precalc_map.array();
     }
@@ -760,7 +763,7 @@ inline void collect_adjoints(Output&& output, const vari* ret,
 template <typename Output, typename Input1,
           require_t<is_all_arithmetic_scalar<Input1>>* = nullptr>
 inline void collect_adjoints(Output&& output, Input1&& precalc) {
-  return map_fun(
+  return iter_tuple_n(
       [](auto&& output_i, auto&& precalc_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
@@ -774,7 +777,7 @@ inline void collect_adjoints(Output&& output, Input1&& precalc) {
         } else if constexpr (is_stan_scalar_v<output_i_t>) {
           output_i += precalc_i;
         } else {
-          static_assert(1, "We missed!!!");
+          static_assert(1, "collect_adjoints was given an unexpected type! This is an internal bug. Please file an issue on Stan's github repository.");
         }
       },
       std::forward<Output>(output), std::forward<Input1>(precalc));
@@ -786,7 +789,7 @@ inline void constexpr copy_compute_s2(const std::tuple<>& output,
 template <typename Output, typename Input1,
           require_t<is_any_var_scalar<Input1>>* = nullptr>
 inline void copy_compute_s2(Output&& output, Input1&& precalc) {
-  return map_fun(
+  return iter_tuple_n(
       [](auto&& output_i, auto&& precalc_i) {
         using output_i_t = std::decay_t<decltype(output_i)>;
         if constexpr (is_std_vector_v<output_i_t>) {
@@ -806,32 +809,6 @@ inline void copy_compute_s2(Output&& output, Input1&& precalc) {
       std::forward<Output>(output), std::forward<Input1>(precalc));
 }
 
-template <typename Output, typename Input1, typename Input2,
-          require_t<is_all_arithmetic_scalar<Input1, Input2>>* = nullptr>
-inline void collect_adjoints(Output&& output, Input1&& precalc1,
-                             Input2&& precalc2) {
-  return map_fun(
-      [](auto&& output_i, auto&& precalc1_i, auto&& precalc2_i) {
-        using output_i_t = std::decay_t<decltype(output_i)>;
-        if constexpr (is_std_vector_v<output_i_t>) {
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> output_map(output_i.data(),
-                                                              output_i.size());
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc1_map(
-              precalc1_i.data(), precalc1_i.size());
-          Eigen::Map<Eigen::Matrix<double, -1, 1>> precalc2_map(
-              precalc2_i.data(), precalc2_i.size());
-          output_map.array() += precalc1_map.array() + precalc2_map.array();
-        } else if constexpr (is_eigen_v<output_i_t>) {
-          output_i.array() += precalc1_i.array() + precalc2_i.array();
-        } else if constexpr (is_stan_scalar_v<output_i_t>) {
-          output_i += precalc1_i + precalc2_i;
-        } else {
-          static_assert(1, "Collect adjoints missed!!!");
-        }
-      },
-      std::forward<Output>(output), std::forward<Input1>(precalc1),
-      std::forward<Input2>(precalc2));
-}
 
 template <typename T>
 static constexpr bool is_dbl_nothrow_constructible_v
@@ -864,32 +841,6 @@ inline constexpr auto make_zero(Output&& output) {
   }
 }
 
-template <typename Output,
-          require_t<is_all_arithmetic_scalar<Output>>* = nullptr>
-inline void print_adjoint(Output&& output) {
-  if constexpr (is_tuple_v<Output>) {
-    std::cout << "tuple adj\n";
-    return stan::math::for_each(
-        [](auto&& output_i) { return print_adjoint(output_i); }, output);
-  } else if constexpr (is_std_vector_v<Output>) {
-    if constexpr (is_var_v<value_type_t<Output>>) {
-      Eigen::Map<const Eigen::Matrix<double, -1, -1>> map_x(output.data(),
-                                                            output.size());
-      std::cout << "eigen adj: \n" << map_x << std::endl;
-    } else {
-      std::cout << "stdvec adjoint\n";
-      for (int i = 0; i < output.size(); ++i) {
-        print_adjoint(output[i]);
-      }
-    }
-  } else if constexpr (is_eigen_v<Output>) {
-    std::cout << "adj: \n" << output << std::endl;
-  } else if constexpr (is_stan_scalar_v<Output>) {
-    std::cout << "adj: " << output << std::endl;
-  } else {
-    static_assert(1, "print missed!!!");
-  }
-}
 
 template <typename Output, require_t<is_any_var_scalar<Output>>* = nullptr>
 inline void print_adjoint(Output&& output) {
@@ -1033,13 +984,10 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
           = md_est.L.template triangularView<Eigen::Lower>().solve(
               md_est.W_r * md_est.covariance);
       if (!ll_args_contain_var && options.hessian_block_size == 1) {
-        auto s2_tmp
-            = (0.5
+        s2.deep_copy((0.5
                * (md_est.covariance.diagonal() - (C.transpose() * C).diagonal())
                      .cwiseProduct(laplace_likelihood::third_diff(
-                         ll_fun, md_est.theta, value_of(ll_args_copy), msgs)))
-                  .eval();
-        s2.deep_copy(s2_tmp);
+                         ll_fun, md_est.theta, value_of(ll_args_copy), msgs))));
       } else {
         arena_t<Eigen::MatrixXd> A = md_est.covariance - C.transpose() * C;
         auto s2_tmp = laplace_likelihood::compute_s2(ll_fun, md_est.theta, A,

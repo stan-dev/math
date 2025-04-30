@@ -2,6 +2,7 @@
 #define STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
 #include <stan/math/mix.hpp>
 #include <test/unit/math/mix/laplace/aki_disease_data/x1.hpp>
+#include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <istream>
 #include <fstream>
@@ -106,70 +107,6 @@ inline constexpr auto flag_test(T1&& known_issues, int solver_num,
       laplace_issue{solver_num, max_steps_line_search, hessian_block_size});
 }
 
-/* Functions and functors used in several lgp tests. */
-
-/////////////////////////////////////////////////////////////////////
-// Covariance functions
-
-// Function to construct spatial covariance matrix.
-template <typename T>
-Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> covariance(
-    Eigen::Matrix<T, Eigen::Dynamic, 1> phi, int M,
-    bool space_matters = false) {
-  using std::pow;
-  T sigma = phi[0];
-  T rho = phi[1];
-  double exponent;
-
-  Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Sigma(M, M);
-
-  for (int i = 0; i < M; i++) {
-    for (int j = 0; j < i; j++) {
-      if (space_matters) {
-        exponent = i - j;
-      } else {
-        exponent = 1;
-      }
-      Sigma(i, j) = pow(rho, exponent) * sigma;
-      Sigma(j, i) = Sigma(i, j);
-    }
-    Sigma(i, i) = sigma;
-  }
-
-  return Sigma;
-}
-
-struct spatial_covariance {
-  template <typename T1, typename T2>
-  Eigen::Matrix<typename stan::return_type<T1, T2>::type, Eigen::Dynamic,
-                Eigen::Dynamic>
-  operator()(const std::vector<Eigen::Matrix<T2, Eigen::Dynamic, 1>>& x,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi, int M = 0) const {
-    typedef typename stan::return_type<T1, T2>::type scalar;
-    int space_matters = true;
-    using std::pow;
-    scalar sigma = phi[0];
-    scalar rho = phi[1];
-    double exponent;
-
-    Eigen::Matrix<scalar, Eigen::Dynamic, Eigen::Dynamic> Sigma(M, M);
-
-    for (int i = 0; i < M; i++) {
-      for (int j = 0; j < i; j++) {
-        if (space_matters) {
-          exponent = i - j;
-        } else {
-          exponent = 1;
-        }
-        Sigma(i, j) = pow(rho, exponent) * sigma;
-        Sigma(j, i) = Sigma(i, j);
-      }
-      Sigma(i, i) = sigma;
-    }
-    return Sigma;
-  }
-};
-
 struct squared_kernel_functor {
   template <typename T1, typename T2>
   Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> operator()(
@@ -213,222 +150,69 @@ struct sqr_exp_kernel_functor {
   }
 };
 
-// Naive implementation of the functor (a smarter implementation
-// precomputes the covariance matrix).
-struct inla_functor {
+struct stationary_point {
   template <typename T0, typename T1>
   inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
                        1>
   operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parm,
+             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parms,
              const std::vector<double>& dat, const std::vector<int>& dat_int,
              std::ostream* pstream__ = 0) const {
-    using stan::math::head;
-    using stan::math::tail;
-    using stan::math::to_vector;
-
-    int n_groups = theta.size();
-    Eigen::VectorXd n_samples = to_vector(head(dat, n_groups));
-    Eigen::VectorXd sums = to_vector(tail(dat, dat.size() - n_groups));
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> Sigma
-        = stan::math::test::covariance(parm, n_groups, 1);
-
-    return sums - stan::math::elt_multiply(n_samples, stan::math::exp(theta))
-           - stan::math::mdivide_left(Sigma, theta);
+    Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic, 1>
+        z(2);
+    z(0) = 1 - exp(theta(0)) - theta(0) / (parms(0) * parms(0));
+    z(1) = 0 - exp(theta(1)) - theta(1) / (parms(1) * parms(1));
+    return z;
   }
 };
 
-// simple case where the covariance matrix is diagonal.
-struct lgp_functor {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
-                       1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& phi,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
-             std::ostream* pstream__) const {
-    typedef typename stan::return_type<T0, T1>::type scalar;
-    Eigen::Matrix<scalar, Eigen::Dynamic, 1> fgrad;
-    int dim_theta = 2;
-
-    Eigen::VectorXd n_samples(dim_theta);
-    n_samples(0) = dat[0];
-    n_samples(1) = dat[1];
-
-    Eigen::VectorXd sums(dim_theta);
-    sums(0) = dat[2];
-    sums(1) = dat[3];
-
-    return sums - stan::math::elt_multiply(n_samples, stan::math::exp(theta))
-           - theta / phi(0);
+struct diagonal_kernel_functor {
+  template <typename T1, typename T2>
+  auto operator()(const T1& alpha, const T2& rho,
+                  std::ostream* msgs = nullptr) const {
+    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+    K(0, 0) = alpha * alpha;
+    K(1, 1) = rho * rho;
+    K(0, 1) = 0;
+    K(1, 0) = 0;
+    return K;
   }
 };
 
-// Function to read in data for computer experiment.
-// Note y and index are only required to compute the likelihood,
-// although it is more efficient to do this using sufficient
-// statistics.
-void read_in_data(int dim_theta, int n_observations, std::string data_directory,
-                  std::vector<int>& y, std::vector<int>& index,
-                  std::vector<int>& sums, std::vector<int>& n_samples,
-                  bool get_raw_data = false) {
-  std::ifstream input_data;
-  std::string dim_theta_string = std::to_string(dim_theta);
-  std::string file_y = data_directory + "y_" + dim_theta_string + ".csv";
-  std::string file_index
-      = data_directory + "index_" + dim_theta_string + ".csv";
-  std::string file_m = data_directory + "m_" + dim_theta_string + ".csv";
-  std::string file_sums = data_directory + "sums_" + dim_theta_string + ".csv";
-
-  input_data.open(file_m);
-  double buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    n_samples[n] = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_sums);
-  buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    sums[n] = buffer;
-  }
-  input_data.close();
-
-  if (get_raw_data) {
-    input_data.open(file_y);
-    buffer = 0.0;
-    for (int n = 0; n < n_observations; ++n) {
-      input_data >> buffer;
-      y[n] = buffer;
+template <typename F>
+void run_solver_grid(F&& body) {
+  constexpr std::array solver_nums{1, 2, 3};            // [1, 3]
+  constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
+  constexpr std::array max_steps_line_searches{0, 10};  // 0, 10
+  for (int solver : solver_nums) {
+    for (int hblock : hessian_block_sizes) {
+      for (int ls_steps : max_steps_line_searches) {
+        try {
+          std::forward<F>(body)(solver, hblock, ls_steps);
+        } catch (const std::exception& e) {
+          ADD_FAILURE() << "Exception: " << e.what();
+        }
+        if (::testing::Test::HasFailure()) {
+          std::cout << "----------" << std::endl;
+          std::cout << "solver_num: " << solver << std::endl;
+          std::cout << "hessian_block_size: " << hblock << std::endl;
+          std::cout << "max_steps_line_search: " << ls_steps << std::endl;
+        }
+      }
     }
-    input_data.close();
-
-    input_data.open(file_index);
-    buffer = 0.0;
-    for (int n = 0; n < n_observations; ++n) {
-      input_data >> buffer;
-      index[n] = buffer;
-    }
-    input_data.close();
   }
 }
 
-// Overload function to read data from Aki's experiment
-// using a logistic and latent Gaussian process.
-void read_in_data(int dim_theta, int n_observations, std::string data_directory,
-                  std::vector<double>& x1, std::vector<double>& x2,
-                  std::vector<int>& y) {
-  std::ifstream input_data;
-  std::string file_x1 = data_directory + "x1.csv";
-  std::string file_x2 = data_directory + "x2.csv";
-  std::string file_y = data_directory + "y.csv";
-
-  input_data.open(file_x1);
-  double buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    x1[n] = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_x2);
-  buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    x2[n] = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_y);
-  buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    y[n] = buffer;
-  }
-  input_data.close();
-}
-
-// Overload function to read in disease mapping data.
-// Same as above, but in addition include an exposure term.
-void read_in_data(int dim_theta, int dim_observations,
-                  std::string data_directory, std::vector<double>& x1,
-                  std::vector<double>& x2, std::vector<int>& y,
-                  Eigen::VectorXd& ye) {
-  read_in_data(dim_theta, dim_observations, data_directory, x1, x2, y);
-
-  std::ifstream input_data;
-  std::string file_ye = data_directory + "ye.csv";
-
-  input_data.open(file_ye);
-  double buffer = 0.0;
-  for (int n = 0; n < dim_theta; ++n) {
-    input_data >> buffer;
-    ye(n) = buffer;
-  }
-  input_data.close();
-}
-
-// Overload function to read in skim data.
-// The covariates have a different structure.
-void read_in_data(int dim_theta, int dim_observations,
-                  std::string data_directory, Eigen::MatrixXd& X,
-                  std::vector<int>& y, Eigen::VectorXd& lambda) {
-  std::ifstream input_data;
-  std::string file_y = data_directory + "y.csv";
-  std::string file_X = data_directory + "X.csv";
-  std::string file_lambda = data_directory + "lambda.csv";
-
-  input_data.open(file_X);
-  double buffer = 0.0;
-  for (int m = 0; m < dim_theta; ++m)
-    for (int n = 0; n < dim_observations; ++n) {
-      input_data >> buffer;
-      X(n, m) = buffer;
-    }
-  input_data.close();
-
-  input_data.open(file_y);
-  buffer = 0.0;
-  for (int n = 0; n < dim_observations; ++n) {
-    input_data >> buffer;
-    y[n] = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_lambda);
-  buffer = 0.0;
-  for (int m = 0; m < dim_theta; ++m) {
-    input_data >> buffer;
-    lambda[m] = buffer;
-  }
-}
-
-// TODO(Steve): Should not be reading in data
-// Overload function to read in gp motorcycle data.
-void read_data(int dim_observations, std::string data_directory,
-               std::vector<double>& x, Eigen::VectorXd& y) {
-  std::ifstream input_data;
-  std::string file_y = data_directory + "y_vec.csv";
-  std::string file_x = data_directory + "x_vec.csv";
-
-  input_data.open(file_y);
-  double buffer = 0.0;
-  y.resize(dim_observations);
-  for (int i = 0; i < dim_observations; ++i) {
-    input_data >> buffer;
-    y(i) = buffer;
-  }
-  input_data.close();
-
-  input_data.open(file_x);
-  buffer = 0.0;
-  x.resize(dim_observations);
-  for (int i = 0; i < dim_observations; ++i) {
-    input_data >> buffer;
-    x[i] = buffer;
-  }
+template <typename T1, typename T2>
+Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
+    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
+    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
+  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
+  K(0, 0) = 1 / (stan::math::exp(theta_root(0)) + 1 / (phi(0) * phi(0)));
+  K(1, 1) = 1 / (stan::math::exp(theta_root(1)) + 1 / (phi(1) * phi(1)));
+  K(0, 1) = 0;
+  K(1, 0) = 0;
+  return K;
 }
 
 }  // namespace test
@@ -499,47 +283,6 @@ class laplace_disease_map_test : public ::testing::Test {
   // stan::math::poisson_log_likelihood f;
 };
 
-struct stationary_point {
-  template <typename T0, typename T1>
-  inline Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic,
-                       1>
-  operator()(const Eigen::Matrix<T0, Eigen::Dynamic, 1>& theta,
-             const Eigen::Matrix<T1, Eigen::Dynamic, 1>& parms,
-             const std::vector<double>& dat, const std::vector<int>& dat_int,
-             std::ostream* pstream__ = 0) const {
-    Eigen::Matrix<typename stan::return_type<T0, T1>::type, Eigen::Dynamic, 1>
-        z(2);
-    z(0) = 1 - exp(theta(0)) - theta(0) / (parms(0) * parms(0));
-    z(1) = 0 - exp(theta(1)) - theta(1) / (parms(1) * parms(1));
-    return z;
-  }
-};
-
-struct diagonal_kernel_functor {
-  template <typename T1, typename T2>
-  auto operator()(const T1& alpha, const T2& rho,
-                  std::ostream* msgs = nullptr) const {
-    Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-    K(0, 0) = alpha * alpha;
-    K(1, 1) = rho * rho;
-    K(0, 1) = 0;
-    K(1, 0) = 0;
-    return K;
-  }
-};
-
-template <typename T1, typename T2>
-Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> laplace_covariance(
-    const Eigen::Matrix<T1, Eigen::Dynamic, 1>& theta_root,
-    const Eigen::Matrix<T2, Eigen::Dynamic, 1>& phi) {
-  Eigen::Matrix<T1, Eigen::Dynamic, Eigen::Dynamic> K(2, 2);
-  K(0, 0) = 1 / (stan::math::exp(theta_root(0)) + 1 / (phi(0) * phi(0)));
-  K(1, 1) = 1 / (stan::math::exp(theta_root(1)) + 1 / (phi(1) * phi(1)));
-  K(0, 1) = 0;
-  K(1, 0) = 0;
-  return K;
-}
-
 class laplace_count_two_dim_diag_test : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -550,8 +293,9 @@ class laplace_count_two_dim_diag_test : public ::testing::Test {
     y_index.resize(2);
     y_index = {0, 1};
 
-    theta_root = algebra_solver(stationary_point(), theta_0, phi, d0, di0);
-    K_laplace = laplace_covariance(theta_root, phi);
+    theta_root = algebra_solver(stan::math::test::stationary_point(), theta_0,
+                                phi, d0, di0);
+    K_laplace = stan::math::test::laplace_covariance(theta_root, phi);
 
     rng.seed(1954);
     theta_benchmark = stan::math::multi_normal_rng(theta_root, K_laplace, rng);
@@ -575,5 +319,90 @@ class laplace_count_two_dim_diag_test : public ::testing::Test {
   double tol;
   int n_sim;
 };
+#ifdef DEBUG_LAPLACE
+static bool write_init_json = true;
+static int err_iter = 0;
+
+// Custom event listener that logs test failures
+class LoggingTestListener : public ::testing::EmptyTestEventListener {
+ public:
+  std::string current_test_name_;
+  int solver_num{0};
+  int hessian_block_size{0};
+  int max_steps_line_search{0};
+
+  // Called after an assertion results in a failure.
+  void OnTestPartResult(const ::testing::TestPartResult& result) override {
+    if (result.failed()) {
+      std::ofstream ofs;
+      // On first failure, open file in truncation mode and write header
+      if (write_init_json) {
+        ofs.open("failure_log.json", std::ios::out);
+        ofs << "{\"error\": {\n";
+        write_init_json = false;
+      } else {
+        // For subsequent failures, open in append mode and add a comma
+        // separator
+        ofs.open("failure_log.json", std::ios::app);
+        ofs << ", \n";
+      }
+      ofs << "\"" << err_iter << "\": {";
+      err_iter++;
+      std::string result_summary = result.summary();
+      boost::replace_all(result_summary, "\"", "\\\"");
+      boost::replace_all(result_summary, "\n", "\\n");
+      // Retrieve the current test information.
+      const ::testing::TestInfo* test_info
+          = ::testing::UnitTest::GetInstance()->current_test_info();
+      std::string test_name;
+      if (test_info) {
+        // For Google Test 1.10.0 or later
+        test_name = std::string(test_info->test_suite_name()) + "."
+                    + test_info->name();
+        // For older versions, use:
+        // test_name = std::string(test_info->test_case_name()) + "." +
+        // test_info->name();
+      }
+      ofs << "\"test\": \"" << test_name << "\", ";
+      ofs << "\"solver_num\": " << solver_num << ", ";
+      ofs << "\"hessian_block_size\": " << hessian_block_size << ", ";
+      ofs << "\"max_steps_line_search\": " << max_steps_line_search << ", ";
+      ofs << "\"failure\": \"" << result_summary << "\"}";
+    }
+  }
+
+  // Called after all tests have ended.
+  void OnTestProgramEnd(const ::testing::UnitTest& /*unit_test*/) override {
+    if (!write_init_json) {  // Only if at least one failure was logged
+      std::ofstream ofs("failure_log.json", std::ios::app);
+      ofs << "}}";  // Close the JSON object
+    }
+  }
+};
+
+class laplace_test_listen : public ::testing::Test {
+ public:
+  virtual void AllowSetup() {}
+  bool setup_once{true};
+  LoggingTestListener* logger{new LoggingTestListener{}};
+
+ protected:
+  virtual void AllowSetup() {
+    if (setup_once) {
+      ::testing::TestEventListeners& listeners
+          = ::testing::UnitTest::GetInstance()->listeners();
+      listeners.Append(logger);
+      setup_once = false;
+    }
+  }
+  void SetUp() override { this->AllowSetup(); }
+  virtual ~laplace_test_listen() {
+    ::testing::TestEventListeners& listeners
+        = ::testing::UnitTest::GetInstance()->listeners();
+    listeners.Release(logger);
+    delete logger;
+  }
+}
+#endif
 
 #endif
