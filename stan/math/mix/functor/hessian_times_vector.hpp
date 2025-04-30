@@ -55,7 +55,7 @@ void hessian_times_vector(const F& f,
  * and pstream.
  */
 template <typename F, typename XAdj, typename XVec, typename VVec,
-          typename... Args>
+          typename... Args, require_all_eigen_vector_t<XAdj, XVec, VVec>* = nullptr>
 inline void hessian_times_vector(const F& f, XAdj& x_adj, XVec&& x, VVec&& v,
                                  Args&&... args) {
   nested_rev_autodiff nested;
