@@ -1,7 +1,7 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
-#include <test/unit/math/mix/laplace/laplace_utility.hpp>
+#include <test/unit/math/laplace/laplace_utility.hpp>
 #include <test/unit/math/rev/fun/util.hpp>
 
 #include <gtest/gtest.h>

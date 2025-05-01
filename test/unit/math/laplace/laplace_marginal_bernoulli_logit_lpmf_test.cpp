@@ -1,8 +1,8 @@
 #include <test/unit/math/test_ad.hpp>
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
-#include <test/unit/math/mix/laplace/laplace_utility.hpp>
-#include <test/unit/math/mix/laplace/aki_synth_data/x1.hpp>
+#include <test/unit/math/laplace/laplace_utility.hpp>
+#include <test/unit/math/laplace/aki_synth_data/x1.hpp>
 
 #include <test/unit/math/rev/fun/util.hpp>
 

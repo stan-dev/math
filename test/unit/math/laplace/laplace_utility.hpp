@@ -1,7 +1,7 @@
 #ifndef STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
 #define STAN_TEST_UNIT_MATH_MIX_LAPLACE_UTILITY_HPP
 #include <stan/math/mix.hpp>
-#include <test/unit/math/mix/laplace/aki_disease_data/x1.hpp>
+#include <test/unit/math/laplace/aki_disease_data/x1.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <istream>
@@ -228,7 +228,7 @@ class laplace_disease_map_test : public ::testing::Test {
   void SetUp() override {
     dim_theta = 911;
     n_observations = 911;
-    data_directory = "test/unit/math/mix/laplace/aki_disease_data/";
+    data_directory = "test/unit/math/laplace/aki_disease_data/";
     x1 = stan::test::laplace::disease::x1;
     x2 = stan::test::laplace::disease::x2;
     y = stan::test::laplace::disease::y;
