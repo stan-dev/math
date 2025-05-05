@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ develop, mingwv12 ]
+    branches: [ develop, rtools-mingwv12 ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
