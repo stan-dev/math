@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ develop, master ]
   push:
-    branches: [ develop ]
+    branches: [ develop, mingwv12 ]
     paths-ignore:
       - 'doygen/**'
       - 'hooks/**'
@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
+        os: [windows-latest]
         config: [
           { label: misc, tests: 'test/unit/*_test.cpp test/unit/math/*_test.cpp test/unit/math/memory' },
           { label: prim, tests: 'test/unit/math/prim' },
@@ -50,7 +50,7 @@ jobs:
         # Installation will hang if the toolchain is already installed
         if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
           Invoke-WebRequest `
-              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -Uri https://www.r-project.org/nosvn/winutf8/tmp/rc1/rtools45-6527-6492.exe `
               -OutFile "$RTOOLS.exe"
           Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
         }
@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-11-arm, windows-latest, ubuntu-24.04-arm]
+        os: [windows-latest]
         group: [1, 2, 3, 4, 5]
 
     steps:
@@ -101,7 +101,7 @@ jobs:
         # Installation will hang if the toolchain is already installed
         if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
           Invoke-WebRequest `
-              -Uri https://github.com/r-hub/rtools45/releases/download/latest/$RTOOLS.exe `
+              -Uri https://www.r-project.org/nosvn/winutf8/tmp/rc1/rtools45-6527-6492.exe `
               -OutFile "$RTOOLS.exe"
           Start-Process -FilePath "$RTOOLS.exe" -ArgumentList "/INSTALL /VERYSILENT /SUPPRESSMSGBOXES" -Wait
         }
