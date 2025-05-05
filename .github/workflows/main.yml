@@ -46,6 +46,7 @@ jobs:
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
+        Remove-Item -Path "C:/$RTOOLS" -Recurse -Force
 
         # Installation will hang if the toolchain is already installed
         if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
@@ -97,6 +98,7 @@ jobs:
       run: |
         $ARCH = if ('${{ matrix.os }}' -eq 'windows-11-arm') { 'aarch64' } else { 'x86_64' }
         $RTOOLS = if ('${{ matrix.os }}' -eq 'windows-11-arm') { "rtools45-$ARCH" } else { 'rtools45' }
+        Remove-Item -Path "C:/$RTOOLS" -Recurse -Force
 
         # Installation will hang if the toolchain is already installed
         if (-Not $(Test-Path -Path "C:/$RTOOLS")) {
