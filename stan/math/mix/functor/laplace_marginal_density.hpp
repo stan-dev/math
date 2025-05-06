@@ -138,63 +138,66 @@ inline void block_matrix_sqrt(WRootMat& W_root,
 /**
  * @brief Performs a simple line search
  *
- * @tparam AVec   Type of the parameter update vector (`a`), e.g. Eigen::VectorXd.
- * @tparam APrev  Type of the previous parameter vector (`a_prev`), same shape as AVec.
+ * @tparam AVec   Type of the parameter update vector (`a`), e.g.
+ * Eigen::VectorXd.
+ * @tparam APrev  Type of the previous parameter vector (`a_prev`), same shape
+ * as AVec.
  * @tparam ThetaVec Type of the transformed vector (`theta`), e.g. Σ·a.
  * @tparam LLFun  Functor type for computing the log‐likelihood.
  * @tparam LLArgs Tuple or pack type forwarded to `ll_fun`.
  * @tparam Covar  Matrix type for the covariance Σ, e.g. Eigen::MatrixXd.
  * @tparam Msgs   Diagnostics container type for capturing warnings/errors.
  *
- * @param[in,out] objective_new On entry: objective at the full‐step `a` (must satisfy objective_new < objective_old). On exit:  best objective found.
- * @param[in,out] a On entry: candidate parameter vector. On exit:  updated to the step achieving the lowest objective.
- * @param[in,out] theta On entry: Σ·a for the initial candidate. On exit:  Σ·a for the accepted best step.
- * @param[in,out] a_prev On entry: previous parameter vector, with objective `objective_old`. On exit: rolled forward to each newly accepted step.
- * @param[in] ll_fun Callable that computes the log‐likelihood given `(theta, ll_args, msgs)`.
+ * @param[in,out] objective_new On entry: objective at the full‐step `a` (must
+ * satisfy objective_new < objective_old). On exit:  best objective found.
+ * @param[in,out] a On entry: candidate parameter vector. On exit:  updated to
+ * the step achieving the lowest objective.
+ * @param[in,out] theta On entry: Σ·a for the initial candidate. On exit:  Σ·a
+ * for the accepted best step.
+ * @param[in,out] a_prev On entry: previous parameter vector, with objective
+ * `objective_old`. On exit: rolled forward to each newly accepted step.
+ * @param[in] ll_fun Callable that computes the log‐likelihood given `(theta,
+ * ll_args, msgs)`.
  * @param[in] ll_args Arguments forwarded to `ll_fun` at each evaluation.
  * @param[in] covariance Covariance matrix Σ used to compute `theta = Σ·a`.
  * @param[in] max_steps_line_search Maximum number of iterations.
- * @param[in] objective_old Objective value at the initial `a_prev` (used as f₀ for the first pass).
- * @param[in,out] msgs Pointer to a diagnostics container; may be used by `ll_fun` to record warnings.
+ * @param[in] objective_old Objective value at the initial `a_prev` (used as f₀
+ * for the first pass).
+ * @param[in,out] msgs Pointer to a diagnostics container; may be used by
+ * `ll_fun` to record warnings.
  */
-template <typename AVec, typename APrev, typename ThetaVec,
-          typename LLFun, typename LLArgs, typename Covar, typename Msgs>
-          inline void line_search(double& objective_new,
-            AVec& a,
-            ThetaVec& theta,
-            APrev& a_prev,
-            LLFun&& ll_fun,
-            LLArgs&& ll_args,
-            Covar&& covariance,
-            const int max_steps_line_search,
-            const double objective_old,
-            double tolerance,
-            Msgs* msgs) {
-              Eigen::VectorXd a_tmp(a.size());
-              double objective_new_tmp = 0.0;
-              double objective_old_tmp = objective_old;
-              Eigen::VectorXd theta_tmp(covariance.rows());
-              for (int j = 0; j < max_steps_line_search && (objective_new < objective_old_tmp);
-                   ++j) {
-                a_tmp.noalias() = a_prev + 0.5 * (a - a_prev);
-                theta_tmp.noalias() = covariance * a_tmp;
-                if (!theta_tmp.allFinite()) {
-                  break;
-                } else {
-                  objective_new_tmp = -0.5 * a_tmp.dot(theta_tmp)
-                                      + laplace_likelihood::log_likelihood(
-                                          ll_fun, theta_tmp, ll_args, msgs);
-                  if (objective_new_tmp < objective_new) {
-                    a_prev.swap(a);
-                    a.swap(a_tmp);
-                    theta.swap(theta_tmp);
-                    objective_old_tmp = objective_new;
-                    objective_new = objective_new_tmp;
-                  } else {
-                    break;
-                  }
-                }
-              }
+template <typename AVec, typename APrev, typename ThetaVec, typename LLFun,
+          typename LLArgs, typename Covar, typename Msgs>
+inline void line_search(double& objective_new, AVec& a, ThetaVec& theta,
+                        APrev& a_prev, LLFun&& ll_fun, LLArgs&& ll_args,
+                        Covar&& covariance, const int max_steps_line_search,
+                        const double objective_old, double tolerance,
+                        Msgs* msgs) {
+  Eigen::VectorXd a_tmp(a.size());
+  double objective_new_tmp = 0.0;
+  double objective_old_tmp = objective_old;
+  Eigen::VectorXd theta_tmp(covariance.rows());
+  for (int j = 0;
+       j < max_steps_line_search && (objective_new < objective_old_tmp); ++j) {
+    a_tmp.noalias() = a_prev + 0.5 * (a - a_prev);
+    theta_tmp.noalias() = covariance * a_tmp;
+    if (!theta_tmp.allFinite()) {
+      break;
+    } else {
+      objective_new_tmp = -0.5 * a_tmp.dot(theta_tmp)
+                          + laplace_likelihood::log_likelihood(
+                              ll_fun, theta_tmp, ll_args, msgs);
+      if (objective_new_tmp < objective_new) {
+        a_prev.swap(a);
+        a.swap(a_tmp);
+        theta.swap(theta_tmp);
+        objective_old_tmp = objective_new;
+        objective_new = objective_new_tmp;
+      } else {
+        break;
+      }
+    }
+  }
 }
 
 // iter_tuple_n
@@ -447,9 +450,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                       + laplace_likelihood::log_likelihood(ll_fun, theta,
                                                            ll_args_vals, msgs);
       if (options.max_steps_line_search) {
-        line_search(objective_new, a, theta, a_prev, 
-                          ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
+        line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
+                    covariance, options.max_steps_line_search, objective_old,
+                    options.tolerance, msgs);
       }
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
@@ -514,9 +517,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                       + laplace_likelihood::log_likelihood(
                           ll_fun, value_of(theta), ll_args_vals, msgs);
       if (options.max_steps_line_search > 0) {
-        line_search(objective_new, a, theta, a_prev,
-                          ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
+        line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
+                    covariance, options.max_steps_line_search, objective_old,
+                    options.tolerance, msgs);
       }
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
@@ -566,9 +569,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                                            ll_args_vals, msgs);
       // linesearch
       if (options.max_steps_line_search > 0) {
-        line_search(objective_new, a, theta, a_prev,
-                          ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
+        line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
+                    covariance, options.max_steps_line_search, objective_old,
+                    options.tolerance, msgs);
       }
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
@@ -612,9 +615,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
 
       // TODO(Charles): How do we handle NA values in theta?
       if (options.max_steps_line_search > 0) {
-        line_search(objective_new, a, theta, a_prev, 
-                          ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
+        line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
+                    covariance, options.max_steps_line_search, objective_old,
+                    options.tolerance, msgs);
       }
       if (abs(objective_new - objective_old) < options.tolerance) {
         // TODO(Charles): There has to be a simple trick for this

@@ -66,11 +66,12 @@ inline auto conditional_copy_and_promote(Args&&... args) {
             return stan::math::eval(promote_scalar<PromotedType>(
                 value_of_rec(std::forward<decltype(arg)>(arg))));
           } else if (CopyType == COPY_TYPE::SHALLOW) {
-            if constexpr (std::is_same_v<PromotedType, scalar_type_t<decltype(arg)>>) {
+            if constexpr (std::is_same_v<PromotedType,
+                                         scalar_type_t<decltype(arg)>>) {
               return std::forward<decltype(arg)>(arg);
             } else {
-              return stan::math::eval(
-                promote_scalar<PromotedType>(std::forward<decltype(arg)>(arg)));
+              return stan::math::eval(promote_scalar<PromotedType>(
+                  std::forward<decltype(arg)>(arg)));
             }
           }
         }
@@ -93,7 +94,8 @@ inline auto shallow_copy_vargs(Args&&... args) {
 }
 
 /**
- * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam Stream Type of stream for messages.
@@ -141,7 +143,8 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
 }
 
 /**
- * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam Stream Type of stream for messages.
@@ -168,7 +171,8 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
 }
 
 /**
- * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta An Eigen Matrix
  * @tparam AMat An Eigen Matrix
@@ -229,7 +233,8 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
 }
 
 /**
- * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
+ * @note If `Args` contains \ref var types then their adjoints will be
+ * calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam V_t A type assignable to an Eigen vector type
  * @tparam Theta A type assignable to an Eigen vector type
