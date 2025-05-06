@@ -163,6 +163,7 @@ inline void block_matrix_sqrt(WRootMat& W_root,
  * @param[in] max_steps_line_search Maximum number of iterations.
  * @param[in] objective_old Objective value at the initial `a_prev` (used as f₀
  * for the first pass).
+ * @param[in] tolerance Minimum tolerance to accept a step
  * @param[in,out] msgs Pointer to a diagnostics container; may be used by
  * `ll_fun` to record warnings.
  */
