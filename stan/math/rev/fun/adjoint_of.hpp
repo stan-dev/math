@@ -64,25 +64,6 @@ inline auto get_adj(const T& x) {
   return res;
 }
 
-template <typename T>
-inline auto get_adj2(const T& x) noexcept {
-  if constexpr (is_var<T>::value) {
-    return x.adj();
-  }
-  if constexpr (is_eigen<T>::value) {
-    return x.adj();
-  } else if constexpr (is_std_vector<T>::value) {
-    std::vector<promote_scalar_t<double, value_type_t<T>>> res(x.size());
-    for (size_t i = 0; i < x.size(); ++i) {
-      res[i] = get_adj2(x[i]);
-    }
-    return res;
-  } else if constexpr (is_tuple<T>::value) {
-    return stan::math::apply(
-        [](auto&&... args) { return std::make_tuple(get_adj2(args)...); }, x);
-  }
-}
-
 /**
  * Returns a reference to a variable's adjoint. If the input object is not var,
  * it does not have an adjoint and this returns a dummy object. It defines

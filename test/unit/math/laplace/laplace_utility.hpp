@@ -228,7 +228,6 @@ class laplace_disease_map_test : public ::testing::Test {
   void SetUp() override {
     dim_theta = 911;
     n_observations = 911;
-    data_directory = "test/unit/math/laplace/aki_disease_data/";
     x1 = stan::test::laplace::disease::x1;
     x2 = stan::test::laplace::disease::x2;
     y = stan::test::laplace::disease::y;

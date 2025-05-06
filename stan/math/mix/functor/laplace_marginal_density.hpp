@@ -1,5 +1,6 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_MARGINAL_DENSITY_HPP
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_likelihood.hpp>
 #include <stan/math/rev/meta.hpp>
 #include <stan/math/rev/core.hpp>
@@ -8,7 +9,6 @@
 #include <stan/math/rev/functor.hpp>
 #include <stan/math/prim/fun/to_ref.hpp>
 #include <stan/math/prim/fun/quad_form_diag.hpp>
-#include <Eigen/Sparse>
 #include <Eigen/LU>
 #include <unsupported/Eigen/MatrixFunctions>
 
@@ -83,66 +83,6 @@ struct laplace_density_estimates {
         K_root(std::move(K_root_)) {}
 };
 
-/**
- * Function to compute the pseudo target, $\tilde Z$,
- * with a custom derivative method
- * NOTE: we actually don't need to compute the pseudo-target, only its
- * derivative
- * @tparam Kmat Type inheriting from `Eigen::EigenBase` with dynamic rows and
- * columns
- * @tparam AVec Type of matrix of initial tangents
- * @tparam RMat Type of the stable R matrix
- * @tparam LGradVec Type of the gradient of the log likelihood
- * @tparam S2Vec Type of the s2 vector
- */
-template <
-    typename KMat, typename AVec, typename RMat, typename LGradVec,
-    typename S2Vec,
-    require_eigen_matrix_dynamic_vt<std::is_floating_point, KMat>* = nullptr>
-inline constexpr double laplace_pseudo_target(KMat&& /* K */, AVec&& /* a */,
-                                              RMat&& /* R */,
-                                              LGradVec&& /* l_grad */,
-                                              S2Vec&& /* s2 */) {
-  return static_cast<double>(0.0);
-}
-
-/**
- * Overload function for case where K is passed as a matrix of var
- * @tparam Kmat Type inheriting from `Eigen::EigenBase` with dynamic rows and
- * columns
- * @tparam AVec Type inheriting from `Eigen::EigenBase` with dynamic columns and
- * a single row
- * @tparam RMat Type inheriting from `Eigen::EigenBase` with dynamic rows and
- * columns
- * @tparam LGradVec Type inheriting from `Eigen::EigenBase` with dynamic rows
- * and a single column
- * @tparam S2Vec Type of s2 vector
- * @param K Covariance matrix
- * @param a Saved a vector from Newton solver
- * @param R Stable R matrix
- * @param l_grad Saved gradient of log likelihood
- * @param s2 Gradient of log determinant w.r.t latent Gaussian variable
- */
-template <typename KMat, typename AVec, typename RMat, typename LGradVec,
-          typename S2Vec,
-          require_eigen_matrix_dynamic_vt<is_var, KMat>* = nullptr>
-inline auto laplace_pseudo_target(KMat&& K, AVec&& a, RMat&& R,
-                                  LGradVec&& l_grad, S2Vec&& s2) {
-  const Eigen::Index dim_theta = K.rows();
-  auto K_arena = to_arena(std::forward<KMat>(K));
-  auto&& a_ref = to_ref(std::forward<AVec>(a));
-  auto&& R_ref = to_ref(std::forward<RMat>(R));
-  auto&& s2_ref = to_ref(std::forward<S2Vec>(s2));
-  auto&& l_grad_ref = to_ref(std::forward<LGradVec>(l_grad));
-  arena_matrix<Eigen::MatrixXd> K_adj_arena
-      = 0.5 * a_ref * a_ref.transpose() - 0.5 * R_ref
-        + s2_ref * l_grad_ref.transpose()
-        - (R_ref * (value_of(K_arena) * s2_ref)) * l_grad_ref.transpose();
-  return make_callback_var(0.0, [K_arena, K_adj_arena](auto&& vi) mutable {
-    K_arena.adj().array() += vi.adj() * K_adj_arena.array();
-  });
-}
-
 template <typename WRootMat>
 inline void block_matrix_sqrt(WRootMat& W_root,
                               const Eigen::SparseMatrix<double>& W,
@@ -194,39 +134,67 @@ inline void block_matrix_sqrt(WRootMat& W_root,
     }
   }
 }
-template <typename AVec, typename APrev, typename ThetaVec, typename LLFun,
-          typename LLArgs, typename Covar, typename Msgs>
-inline auto line_search(double& objective_new, AVec&& a, APrev& a_prev,
-                        ThetaVec&& theta, LLFun&& ll_fun, LLArgs&& ll_args,
-                        Covar&& covariance, const int max_steps_line_search,
-                        const double objective_old, Msgs* msgs) {
-  Eigen::VectorXd a_tmp(a.size());
-  double objective_new_tmp = 0.0;
-  double objective_old_tmp = objective_old;
-  Eigen::VectorXd theta_tmp(covariance.rows());
-  int j = 0;
-  for (; j < max_steps_line_search && (objective_new < objective_old_tmp);
-       ++j) {
-    a_tmp.noalias() = a_prev + 0.5 * (a - a_prev);
-    theta_tmp.noalias() = covariance * a_tmp;
-    if (!theta_tmp.allFinite()) {
-      break;
-    } else {
-      objective_new_tmp = -0.5 * a_tmp.dot(theta_tmp)
-                          + laplace_likelihood::log_likelihood(
-                              ll_fun, theta_tmp, ll_args, msgs);
-      if (objective_new_tmp < objective_new) {
-        a_prev.swap(a);
-        a.swap(a_tmp);
-        theta.swap(theta_tmp);
-        objective_old_tmp = objective_new;
-        objective_new = objective_new_tmp;
-      } else {
-        break;
-      }
-    }
-  }
-  return std::make_tuple(objective_new, std::move(a), std::move(theta));
+
+/**
+ * @brief Performs a simple line search
+ *
+ * @tparam AVec   Type of the parameter update vector (`a`), e.g. Eigen::VectorXd.
+ * @tparam APrev  Type of the previous parameter vector (`a_prev`), same shape as AVec.
+ * @tparam ThetaVec Type of the transformed vector (`theta`), e.g. Σ·a.
+ * @tparam LLFun  Functor type for computing the log‐likelihood.
+ * @tparam LLArgs Tuple or pack type forwarded to `ll_fun`.
+ * @tparam Covar  Matrix type for the covariance Σ, e.g. Eigen::MatrixXd.
+ * @tparam Msgs   Diagnostics container type for capturing warnings/errors.
+ *
+ * @param[in,out] objective_new On entry: objective at the full‐step `a` (must satisfy objective_new < objective_old). On exit:  best objective found.
+ * @param[in,out] a On entry: candidate parameter vector. On exit:  updated to the step achieving the lowest objective.
+ * @param[in,out] theta On entry: Σ·a for the initial candidate. On exit:  Σ·a for the accepted best step.
+ * @param[in,out] a_prev On entry: previous parameter vector, with objective `objective_old`. On exit: rolled forward to each newly accepted step.
+ * @param[in] ll_fun Callable that computes the log‐likelihood given `(theta, ll_args, msgs)`.
+ * @param[in] ll_args Arguments forwarded to `ll_fun` at each evaluation.
+ * @param[in] covariance Covariance matrix Σ used to compute `theta = Σ·a`.
+ * @param[in] max_steps_line_search Maximum number of iterations.
+ * @param[in] objective_old Objective value at the initial `a_prev` (used as f₀ for the first pass).
+ * @param[in,out] msgs Pointer to a diagnostics container; may be used by `ll_fun` to record warnings.
+ */
+template <typename AVec, typename APrev, typename ThetaVec,
+          typename LLFun, typename LLArgs, typename Covar, typename Msgs>
+          inline void line_search(double& objective_new,
+            AVec& a,
+            ThetaVec& theta,
+            APrev& a_prev,
+            LLFun&& ll_fun,
+            LLArgs&& ll_args,
+            Covar&& covariance,
+            const int max_steps_line_search,
+            const double objective_old,
+            double tolerance,
+            Msgs* msgs) {
+              Eigen::VectorXd a_tmp(a.size());
+              double objective_new_tmp = 0.0;
+              double objective_old_tmp = objective_old;
+              Eigen::VectorXd theta_tmp(covariance.rows());
+              for (int j = 0; j < max_steps_line_search && (objective_new < objective_old_tmp);
+                   ++j) {
+                a_tmp.noalias() = a_prev + 0.5 * (a - a_prev);
+                theta_tmp.noalias() = covariance * a_tmp;
+                if (!theta_tmp.allFinite()) {
+                  break;
+                } else {
+                  objective_new_tmp = -0.5 * a_tmp.dot(theta_tmp)
+                                      + laplace_likelihood::log_likelihood(
+                                          ll_fun, theta_tmp, ll_args, msgs);
+                  if (objective_new_tmp < objective_new) {
+                    a_prev.swap(a);
+                    a.swap(a_tmp);
+                    theta.swap(theta_tmp);
+                    objective_old_tmp = objective_new;
+                    objective_new = objective_new_tmp;
+                  } else {
+                    break;
+                  }
+                }
+              }
 }
 
 // iter_tuple_n
@@ -479,10 +447,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                       + laplace_likelihood::log_likelihood(ll_fun, theta,
                                                            ll_args_vals, msgs);
       if (options.max_steps_line_search) {
-        std::tie(objective_new, a, theta)
-            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+        line_search(objective_new, a, theta, a_prev, 
                           ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, msgs);
+                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
       }
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
@@ -547,10 +514,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                       + laplace_likelihood::log_likelihood(
                           ll_fun, value_of(theta), ll_args_vals, msgs);
       if (options.max_steps_line_search > 0) {
-        std::tie(objective_new, a, theta)
-            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+        line_search(objective_new, a, theta, a_prev,
                           ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, msgs);
+                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
       }
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
@@ -600,10 +566,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                                                            ll_args_vals, msgs);
       // linesearch
       if (options.max_steps_line_search > 0) {
-        std::tie(objective_new, a, theta)
-            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+        line_search(objective_new, a, theta, a_prev,
                           ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, msgs);
+                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
       }
       // Check for convergence
       if (abs(objective_new - objective_old) < options.tolerance) {
@@ -633,7 +598,6 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           MatrixXd::Identity(theta_size, theta_size) + covariance * W);
       // L on upper and U on lower triangular
       b.noalias() = W * theta + theta_grad;
-
       a.noalias() = b - W * LU.solve(covariance * b);
       // Simple Newton step
       theta.noalias() = covariance * a;
@@ -647,13 +611,10 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
                           ll_fun, value_of(theta), ll_args_vals, msgs);
 
       // TODO(Charles): How do we handle NA values in theta?
-      // linesearch
-      // CHECK -- does linesearch work for options.solver 2?
       if (options.max_steps_line_search > 0) {
-        std::tie(objective_new, a, theta)
-            = line_search(objective_new, std::move(a), a_prev, std::move(theta),
+        line_search(objective_new, a, theta, a_prev, 
                           ll_fun, ll_args_vals, covariance,
-                          options.max_steps_line_search, objective_old, msgs);
+                          options.max_steps_line_search, objective_old, options.tolerance, msgs);
       }
       if (abs(objective_new - objective_old) < options.tolerance) {
         // TODO(Charles): There has to be a simple trick for this
@@ -1046,8 +1007,6 @@ inline auto laplace_marginal_density(const LLFun& ll_fun, LLTupleArgs&& ll_args,
               return covariance_function(args..., msgs);
             },
             covar_args_copy));
-        //      var Z = laplace_pseudo_target(K_var, md_est.a, R,
-        //      md_est.theta_grad, s2);
         arena_t<Eigen::MatrixXd> K_adj_arena
             = 0.5 * md_est.a * md_est.a.transpose() - 0.5 * R
               + s2 * md_est.theta_grad.transpose()

@@ -1,8 +1,8 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_HESSIAN_BLOCK_DIAG_HPP
 #define STAN_MATH_MIX_FUNCTOR_HESSIAN_BLOCK_DIAG_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/hessian_times_vector.hpp>
-#include <Eigen/Sparse>
 
 namespace stan {
 namespace math {

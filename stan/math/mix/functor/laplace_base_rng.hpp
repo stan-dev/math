@@ -1,10 +1,11 @@
 #ifndef STAN_MATH_MIX_FUNCTOR_LAPLACE_BASE_RNG_HPP
 #define STAN_MATH_MIX_FUNCTOR_LAPLACE_BASE_RNG_HPP
 
+#include <stan/math/prim/fun/Eigen.hpp>
 #include <stan/math/mix/functor/laplace_marginal_density.hpp>
 #include <stan/math/prim/prob/multi_normal_cholesky_rng.hpp>
 
-#include <Eigen/Sparse>
+
 
 namespace stan {
 namespace math {
@@ -73,7 +74,7 @@ inline Eigen::VectorXd laplace_base_rng(LLFunc&& ll_fun, LLArgs&& ll_args,
           - covariance_train
                 * (md_est.W_r
                    - md_est.W_r
-                         * md_est.LU.solve(md_est.covariance * md_est.W_r))
+                         * md_est.LU.solve(covariance_train * md_est.W_r))
                 * covariance_train;
     return multi_normal_rng(std::move(mean_train), std::move(Sigma), rng);
   }

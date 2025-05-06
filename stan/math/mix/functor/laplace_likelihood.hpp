@@ -8,9 +8,6 @@
 
 namespace stan {
 namespace math {
-inline std::basic_ostream<char>* value_of(std::basic_ostream<char>*& pstream) {
-  return pstream;
-}
 
 /**
  * functions to compute the log density, first, second,
@@ -55,13 +52,13 @@ template <template <typename...> class Filter,
 inline auto conditional_copy_and_promote(Args&&... args) {
   return map_if<Filter>(
       [](auto&& arg) {
-        if constexpr (is_tuple<std::decay_t<decltype(arg)>>::value) {
+        if constexpr (is_tuple_v<decltype(arg)>) {
           return stan::math::apply(
-              [](auto&&... args) {
+              [](auto&&... inner_args) {
                 return partially_forward_as_tuple(
                     conditional_copy_and_promote<Filter, PromotedType,
                                                  CopyType>(
-                        std::forward<decltype(args)>(args))...);
+                        std::forward<decltype(inner_args)>(inner_args))...);
               },
               std::forward<decltype(arg)>(arg));
         } else {
@@ -69,8 +66,12 @@ inline auto conditional_copy_and_promote(Args&&... args) {
             return stan::math::eval(promote_scalar<PromotedType>(
                 value_of_rec(std::forward<decltype(arg)>(arg))));
           } else if (CopyType == COPY_TYPE::SHALLOW) {
-            return stan::math::eval(
+            if constexpr (std::is_same_v<PromotedType, scalar_type_t<decltype(arg)>>) {
+              return std::forward<decltype(arg)>(arg);
+            } else {
+              return stan::math::eval(
                 promote_scalar<PromotedType>(std::forward<decltype(arg)>(arg)));
+            }
           }
         }
       },
@@ -92,6 +93,7 @@ inline auto shallow_copy_vargs(Args&&... args) {
 }
 
 /**
+ * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam Stream Type of stream for messages.
@@ -139,6 +141,7 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
 }
 
 /**
+ * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam Stream Type of stream for messages.
@@ -165,6 +168,7 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
 }
 
 /**
+ * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta An Eigen Matrix
  * @tparam AMat An Eigen Matrix
@@ -225,6 +229,7 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
 }
 
 /**
+ * @note If `Args` contains \ref var types then their adjoints will be calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam V_t A type assignable to an Eigen vector type
  * @tparam Theta A type assignable to an Eigen vector type
@@ -270,6 +275,7 @@ inline auto diff_eta_implicit(F&& f, V_t&& v, Theta&& theta, Stream* msgs,
 }  // namespace internal
 
 /**
+ * A wrapper that accepts a tuple as arguments.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of arguments for covariance function.
@@ -295,6 +301,7 @@ inline auto log_likelihood(F&& f, Theta&& theta, TupleArgs&& ll_tup,
 }
 
 /**
+ * A wrapper that accepts a tuple as arguments.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of arguments for covariance function.
@@ -323,6 +330,7 @@ inline auto diff(F&& f, Theta&& theta, const Eigen::Index hessian_block_size,
 }
 
 /**
+ * A wrapper that accepts a tuple as arguments.
  * @tparam F Type of log likelhood function.
  * @tparam Theta A class assignable to an Eigen vector type
  * @tparam TupleArgs Type of arguments for covariance function.
@@ -348,6 +356,7 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, TupleArgs&& ll_args,
 }
 
 /**
+ * A wrapper that accepts a tuple as arguments.
  * @tparam F Type of log likelhood function.
  * @tparam Theta Type of latent Gaussian ba
  * @tparam TupleArgs Type of arguments for covariance function.
@@ -380,6 +389,7 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A, int hessian_block_size,
 }
 
 /**
+ * A wrapper that accepts a tuple as arguments.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
  * @tparam V_t Type of initial tangent.
  * @tparam Theta A class assignable to an Eigen vector type

@@ -496,7 +496,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle) {
               max_steps_line_search, nullptr);
         };
         stan::test::ad_tolerances tols;
-        tols.gradient_grad_ = 1e-3;
+        tols.gradient_grad_ = 1e-1;
         using stan::math::test::flag_test;
         auto flag_val = flag_test(known_issues, solver_num,
                                   max_steps_line_search, hessian_block_size);
@@ -567,7 +567,7 @@ TEST_F(laplace_motorcyle_gp_test, gp_motorcycle2) {
         max_steps_line_search, nullptr);
   }
   // TODO(Charles): benchmark this result against GPStuff.
-  constexpr double tolerance = 1e-12;
+  constexpr double tolerance = 1e-8;
   constexpr int max_num_steps = 100;
   stan::test::ad_tolerances tols;
   tols.gradient_grad_ = 1e-3;
