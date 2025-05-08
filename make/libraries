@@ -252,11 +252,8 @@ endif
 ############################################################
 # Google Test:
 #   Build the google test library.
-$(GTEST)/src/gtest-all.o: CXXFLAGS += $(CXXFLAGS_GTEST)
-$(GTEST)/src/gtest-all.o: CPPFLAGS += $(CPPFLAGS_GTEST)
-$(GTEST)/src/gtest-all.o: INC += $(INC_GTEST)
-
-
+$(GTEST)/src/gtest-all.o: $(GTEST)/src/gtest-all.cc
+	$(COMPILE.cpp) -x c++ $(CXXFLAGS_GTEST) $(CPPFLAGS_GTEST) $(INC_GTEST) -o $@ -c $<
 
 ############################################################
 # Clean all libraries

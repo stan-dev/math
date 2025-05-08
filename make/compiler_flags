@@ -75,8 +75,7 @@ CXX_MINOR := $(word 2,$(subst ., ,$(CXX_VERSION)))
 # this should make Make slightly faster, as well as avoiding some unexpected
 # behavior when there are other files lying around with the same name as
 # Stan models
-# We do need to leave some rules in place for things like googletest to function
-.SUFFIXES: .cc 
+.SUFFIXES:
 
 ################################################################################
 # Set optional compiler flags for performance
