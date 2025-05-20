@@ -3,7 +3,6 @@
 
 #include <stan/math/prim/meta.hpp>
 #include <stan/math/prim/functor/apply_scalar_binary.hpp>
-#include <stan/math/prim/fun/boost_policy.hpp>
 #include <boost/math/special_functions/owens_t.hpp>
 
 namespace stan {
@@ -57,7 +56,10 @@ namespace math {
  * @return Owen's T function applied to the arguments.
  */
 inline double owens_t(double h, double a) {
-  return boost::math::owens_t(h, a, boost_policy_t<>());
+  if (unlikely(std::isnan(h) || std::isnan(a))) {
+    return std::numeric_limits<double>::quiet_NaN();
+  }
+  return boost::math::owens_t(h, a);
 }
 
 /**
