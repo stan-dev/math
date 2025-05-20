@@ -132,10 +132,6 @@ struct squared_kernel_functor {
   }
 };
 
-// TO DO: delete this structure.
-// To experiment with the prototype, provide a built-in covariance
-// function. In the final version, the user will pass the covariance
-// function.
 struct sqr_exp_kernel_functor {
   template <typename T1, typename T2, typename T3>
   auto operator()(const T1& x, const T2& alpha, const T3& rho,
@@ -179,16 +175,21 @@ struct diagonal_kernel_functor {
   }
 };
 
-template <typename F>
-void run_solver_grid(F&& body) {
+template <typename F, typename ThetaVec>
+void run_solver_grid(F&& body, ThetaVec&& theta_0) {
   constexpr std::array solver_nums{1, 2, 3};            // [1, 3]
   constexpr std::array hessian_block_sizes{1, 2, 3};    // [1, 2]
   constexpr std::array max_steps_line_searches{0, 10};  // 0, 10
   for (int solver : solver_nums) {
     for (int hblock : hessian_block_sizes) {
       for (int ls_steps : max_steps_line_searches) {
+        if (theta_0.size() % hblock != 0) {
+          std::cerr << "[          ] [ INFO ]" << " Skipping test for hessian of size " << theta_0.size() <<
+          " with hessian block size of " << hblock << std::endl;
+          continue;
+        }
         try {
-          std::forward<F>(body)(solver, hblock, ls_steps);
+          std::forward<F>(body)(solver, hblock, ls_steps, theta_0);
         } catch (const std::exception& e) {
           ADD_FAILURE() << "Exception: " << e.what();
         }
