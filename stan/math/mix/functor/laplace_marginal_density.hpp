@@ -30,10 +30,11 @@ struct laplace_options {
   /* Size of the blocks in block diagonal hessian*/
   int hessian_block_size{1};
   /**
-   * Which Newton solver to use: (B matrix in equation 1 of https://arxiv.org/pdf/2306.14976)
-   * (1) method using the cholesky decomposition of `W` (the negative Hessian of log likelihood)
-   * (2) method using the cholesky decomposition of `K` (the covariance matrix)
-   * (3) method using an LU decomposition (more general, but slower)
+   * Which Newton solver to use: (B matrix in equation 1 of
+   * https://arxiv.org/pdf/2306.14976) (1) method using the cholesky
+   * decomposition of `W` (the negative Hessian of log likelihood) (2) method
+   * using the cholesky decomposition of `K` (the covariance matrix) (3) method
+   * using an LU decomposition (more general, but slower)
    */
   int solver{1};
   /* Maximum number of steps in line search */
@@ -81,7 +82,7 @@ struct laplace_density_estimates {
         K_root(std::move(K_root_)) {}
 };
 
-  // TODO(Steve): Try to doing cholesky decomposition of the sparse matrix
+// TODO(Steve): Try to doing cholesky decomposition of the sparse matrix
 /**
  * Returns the principal square root of a block diagonal matrix.
  */
@@ -265,7 +266,7 @@ inline void collect_adjoints(Output& output, Input1&& precalc) {
 
 template <typename NameStr, typename ParamStr, typename Param>
 inline STAN_COLD_PATH void throw_nan(NameStr&& name_str, ParamStr&& param_str,
-                              Param&& param) {
+                                     Param&& param) {
   std::string msg = std::string("Error in ") + name_str + ": "
                     + std::string(param_str) + " contains NaN values";
   if ((Eigen::isnan(param.array()) || Eigen::isinf(param.array())).all()) {
@@ -367,10 +368,12 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
   if (unlikely(theta_0.size() % options.hessian_block_size != 0)) {
     [&]() STAN_COLD_PATH {
       std::stringstream msg;
-      msg << "laplace_marginal_density: The hessian size (" <<
-          theta_0.size() << ", " << theta_0.size() <<
-          ") is not divisible by the hessian block size (" << options.hessian_block_size << ")"
-          ". Try a hessian block size such as [1, ";
+      msg << "laplace_marginal_density: The hessian size (" << theta_0.size()
+          << ", " << theta_0.size()
+          << ") is not divisible by the hessian block size ("
+          << options.hessian_block_size
+          << ")"
+             ". Try a hessian block size such as [1, ";
       for (int i = 2; i < 12; ++i) {
         if (theta_0.size() % i == 0) {
           msg << i << ", ";
@@ -441,13 +444,14 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         // Simple Newton step
         theta.noalias() = covariance * a;
         objective_old = objective_new;
-        if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
-                        .any())) {
+        if (unlikely(
+                (Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
+                    .any())) {
           throw_nan("laplace_marginal_density", "theta", theta);
         }
         objective_new = -0.5 * a.dot(theta)
-                        + laplace_likelihood::log_likelihood(ll_fun, theta,
-                                                            ll_args_vals, msgs);
+                        + laplace_likelihood::log_likelihood(
+                            ll_fun, theta, ll_args_vals, msgs);
         if (options.max_steps_line_search) {
           line_search(objective_new, a, theta, a_prev, ll_fun, ll_args_vals,
                       covariance, options.max_steps_line_search, objective_old,
@@ -507,8 +511,9 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
         // Simple Newton step
         theta.noalias() = covariance * a;
         objective_old = objective_new;
-        if (unlikely((Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
-                        .any())) {
+        if (unlikely(
+                (Eigen::isinf(theta.array()) || Eigen::isnan(theta.array()))
+                    .any())) {
           throw_nan("laplace_marginal_density", "theta", theta);
         }
         objective_new = -0.5 * a.dot(value_of(theta))
@@ -538,7 +543,7 @@ inline auto laplace_marginal_density_est(LLFun&& ll_fun, LLTupleArgs&& ll_args,
           set_zero_adjoint(ll_args);
         }
       }
-      }
+    }
     throw_overstep(options.max_num_steps);
   } else if (options.solver == 2) {
     Eigen::MatrixXd K_root

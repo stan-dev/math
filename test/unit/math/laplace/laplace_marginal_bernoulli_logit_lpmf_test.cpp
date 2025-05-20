@@ -52,7 +52,8 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
   constexpr std::array known_issues{
       laplace_issue{1, 1, 1}, laplace_issue{1, 2, 1}, laplace_issue{1, 2, 3}};
   stan::math::test::run_solver_grid(
-      [&](int solver_num, int hessian_block_size, int max_steps_line_search, auto&& theta_0) {
+      [&](int solver_num, int hessian_block_size, int max_steps_line_search,
+          auto&& theta_0) {
         auto f = [&](auto&& alpha, auto&& rho) {
           return laplace_marginal_tol_bernoulli_logit_lpmf(
               y, n_samples, theta_0, sqr_exp_kernel_functor{},
@@ -65,5 +66,6 @@ TEST(laplace_marginal_bernoulli_logit_lpmf, phi_dim500) {
           tols.gradient_grad_ = 0.005;
         }
         stan::test::expect_ad<true>(tols, f, phi_dbl[0], phi_dbl[1]);
-      }, theta_0);
+      },
+      theta_0);
 }

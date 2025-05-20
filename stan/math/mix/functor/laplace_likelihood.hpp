@@ -94,7 +94,8 @@ inline auto shallow_copy_vargs(Args&&... args) {
 }
 
 /**
- * Computes theta gradient and negative block diagonal Hessian of `f` wrt `theta` and `args...`
+ * Computes theta gradient and negative block diagonal Hessian of `f` wrt
+ * `theta` and `args...`
  * @note If `Args` contains \ref var types then their adjoints will be
  * calculated as a side effect.
  * @tparam F A functor with `opertor()(Args&&...)` returning a scalar
@@ -174,7 +175,8 @@ inline Eigen::VectorXd third_diff(F&& f, Theta&& theta, Stream&& msgs,
 
 /**
  * The derivative of the log likelihood wrt `theta` evaluated at the mode.
- * @brief Compute $s_2 = \Delta_{\theta} log \pi_G(y|\phi,\eta) = -\frac{1}{2} trace((K^{-1}+W)^{-1})$
+ * @brief Compute $s_2 = \Delta_{\theta} log \pi_G(y|\phi,\eta) = -\frac{1}{2}
+ * trace((K^{-1}+W)^{-1})$
  * @note Equation 15 in https://arxiv.org/pdf/2306.14976
  * @note If `Args` contains \ref var types then their adjoints will be
  * calculated as a side effect.
@@ -211,7 +213,7 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
   Matrix<fvar<fvar<var>>, Dynamic, 1> theta_ffvar(theta_size);
   auto shallow_copy_args
       = shallow_copy_vargs<fvar<fvar<var>>>(std::forward_as_tuple(args...));
-// build a “row” index 0,1,2,…,total-1
+  // build a “row” index 0,1,2,…,total-1
   Eigen::Index total = n_blocks * hessian_block_size;
   for (Eigen::Index i = 0; i < hessian_block_size; ++i) {
     nested_rev_autodiff nested;
@@ -256,7 +258,8 @@ inline auto compute_s2(F&& f, Theta&& theta, AMat&& A,
  * @param theta Latent Gaussian variable.
  * @param msgs Stream for messages.
  * @param args Variadic arguments for likelhood function.
- * @return `args` which are var types will have their adjoints set as a side effect of this function.
+ * @return `args` which are var types will have their adjoints set as a side
+ * effect of this function.
  */
 template <typename F, typename V_t, typename Theta, typename Stream,
           typename... Args, require_eigen_vector_t<Theta>* = nullptr>

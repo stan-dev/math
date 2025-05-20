@@ -184,8 +184,9 @@ void run_solver_grid(F&& body, ThetaVec&& theta_0) {
     for (int hblock : hessian_block_sizes) {
       for (int ls_steps : max_steps_line_searches) {
         if (theta_0.size() % hblock != 0) {
-          std::cerr << "[          ] [ INFO ]" << " Skipping test for hessian of size " << theta_0.size() <<
-          " with hessian block size of " << hblock << std::endl;
+          std::cerr << "[          ] [ INFO ]"
+                    << " Skipping test for hessian of size " << theta_0.size()
+                    << " with hessian block size of " << hblock << std::endl;
           continue;
         }
         try {

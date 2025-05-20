@@ -8,12 +8,16 @@
 #include <utility>
 namespace stan::math {
 /**
- * Iterate and nest into a tuple or std::vector to apply `f` to each matrix or scalar type.
+ * Iterate and nest into a tuple or std::vector to apply `f` to each matrix or
+ * scalar type.
  * @tparam F a functor with `operator()(Arg&&)`
  * @tparam Types types of arguments to `f`
  * @param f functor to apply
- * @param args arguments to apply `f` to. If `args` is a tuple or std::vector, this function will nest until it finds an Eigen type or scalar then apply `f` to that value.
- * @return void, all arguments are passed by reference and this function will only create side effects.
+ * @param args arguments to apply `f` to. If `args` is a tuple or std::vector,
+ * this function will nest until it finds an Eigen type or scalar then apply `f`
+ * to that value.
+ * @return void, all arguments are passed by reference and this function will
+ * only create side effects.
  */
 template <typename F, typename... Types>
 inline auto iter_tuple_n(F&& f, Types&&... args) {
@@ -36,5 +40,5 @@ inline auto iter_tuple_n(F&& f, Types&&... args) {
   }
 }
 
-}
+}  // namespace stan::math
 #endif

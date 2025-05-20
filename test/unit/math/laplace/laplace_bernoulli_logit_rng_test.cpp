@@ -1,7 +1,6 @@
 #include <stan/math.hpp>
 #include <stan/math/mix.hpp>
 
-
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/math/distributions.hpp>
 
